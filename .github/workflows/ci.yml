@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run TypeScript type checking
+      run: npx tsc --noEmit
+
+    - name: Run ESLint
+      run: npx eslint . --ext .ts,.tsx --max-warnings 0
+
+    - name: Lint CSS
+      run: npm run lint:css
+
+    - name: Build application
+      run: npm run build
+
+    - name: Run tests (if available)
+      run: npm test --if-present
+
+  accessibility:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build application
+      run: npm run build
+
+    - name: Start application
+      run: npm start &
+      env:
+        CI: true
+
+    - name: Wait for application to start
+      run: sleep 30
+
+    - name: Run accessibility tests
+      run: |
+        if command -v axe &> /dev/null; then
+          axe http://localhost:3000 --tags color-contrast --exit
+        else
+          echo "Axe CLI not available, skipping accessibility tests"
+        fi 

@@ -1,0 +1,90 @@
+import React from 'react';
+import { HeartIcon, PencilIcon, PaperAirplaneIcon, Cog6ToothIcon, UserGroupIcon } from '@heroicons/react/24/solid';
+
+const benefits = [
+  {
+    icon: HeartIcon, bg: 'bg-blue-500',
+    title: "Coach, Don't Just Chat",
+    desc: 'Support real learner growth through structured guidance, goal-setting, and mentorship — not just small talk. Be the coach who changes lives.'
+  },
+  {
+    icon: PencilIcon, bg: 'bg-fuchsia-500',
+    title: 'AI as Your Teaching Assistant',
+    desc: 'From personalized topic suggestions to tracking student progress, our AI helps you teach smarter — and frees up your energy for what matters most.'
+  },
+  {
+    icon: PaperAirplaneIcon, bg: 'bg-green-500',
+    title: 'Teach From Anywhere, Anytime',
+    desc: 'Whether you\'re on a laptop in Lisbon or a café in Cape Town, your schedule is yours. Teach students around the globe, on your terms.'
+  },
+  {
+    icon: Cog6ToothIcon, bg: 'bg-orange-500',
+    title: 'Built-In Tools, Less Admin',
+    desc: 'Say goodbye to juggling spreadsheets. With Xpeak, scheduling, payments, and feedback are all in one seamless platform.'
+  },
+];
+
+const avatars = [
+  'https://randomuser.me/api/portraits/women/44.jpg',
+  'https://randomuser.me/api/portraits/men/32.jpg',
+  'https://randomuser.me/api/portraits/men/45.jpg',
+  'https://randomuser.me/api/portraits/men/11.jpg',
+  'https://randomuser.me/api/portraits/women/65.jpg',
+];
+
+export default function WhyTeachSection() {
+  return (
+    <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto text-center mb-8">
+        <h2 className="text-3xl md:text-4xl font-bold text-text mb-2">
+          Why Teach on Xpeak?
+        </h2>
+        <p className="text-text-muted">
+          Join a movement of passionate educators who are changing lives, one conversation at a time.
+        </p>
+      </div>
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+        {benefits.map((b, i) => {
+          const Icon = b.icon;
+          return (
+            <div
+              key={i}
+              className="bg-white rounded-2xl shadow p-6 flex flex-col sm:flex-row items-start gap-4 relative overflow-hidden"
+            >
+              <div className={`flex items-center justify-center w-12 h-12 rounded-xl ${b.bg} mb-2 sm:mb-0`}>
+                <Icon className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-text mb-1">{b.title}</h3>
+                <p className="text-text-muted text-sm leading-relaxed">{b.desc}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {/* Community Card */}
+      <div className="max-w-5xl mx-auto mt-8">
+        <div className="rounded-2xl bg-gradient-to-r from-violet-600 to-purple-500 text-white px-8 py-10 text-center shadow-lg flex flex-col items-center">
+          <div className="flex items-center justify-center w-14 h-14 rounded-full bg-white/20 mb-4 mx-auto">
+            <UserGroupIcon className="w-8 h-8 text-white" />
+          </div>
+          <h3 className="text-2xl md:text-3xl font-bold mb-2">A Coaching Community, Not Just a Platform</h3>
+          <p className="mb-6 text-white/90 max-w-2xl mx-auto">
+            Join a global circle of passionate educators. Swap insights, celebrate wins, and grow together as part of something bigger.
+          </p>
+          <div className="flex justify-center gap-2 mb-2">
+            {avatars.map((src, i) => (
+              <img
+                key={i}
+                src={src}
+                alt="Coach avatar"
+                className="w-10 h-10 rounded-full border-2 border-white object-cover"
+              />
+            ))}
+            <span className="flex items-center justify-center w-10 h-10 rounded-full bg-white/20 text-white font-semibold text-sm border-2 border-white ml-2">+100</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+} 

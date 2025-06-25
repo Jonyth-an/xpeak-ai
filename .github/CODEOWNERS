@@ -1,0 +1,8 @@
+# UI components ownership
+/components/ @your-org/frontend-team
+/app/home/ @your-org/frontend-team
+/app/tutors/ @your-org/frontend-team
+/app/ai-topics/ @your-org/frontend-team
+/app/word-maze/ @your-org/frontend-team
+/app/pricing/ @your-org/frontend-team
+/app/become-a-tutor/ @your-org/frontend-team 
