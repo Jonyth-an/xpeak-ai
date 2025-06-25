@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from "next/link";
+import { Button } from '@/app/components/ui';
 
 export default function FinalCTASection() {
   return (
@@ -12,18 +13,25 @@ export default function FinalCTASection() {
           Join a new kind of learning journey — where AI meets human connection, and progress feels personal.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            href="/signup"
-            className="bg-white text-blue-600 hover:bg-blue-100 font-semibold py-3 px-6 rounded-xl shadow-md transition duration-200"
+          <Button
+            asChild
+            variant="secondary"
+            size="lg"
           >
-            🔵 Start Learning
-          </Link>
-          <Link
-            href="/tutors"
-            className="bg-transparent border-2 border-white text-text-inverse hover:bg-surface-muted hover:text-blue-600 font-semibold py-3 px-6 rounded-xl shadow-md transition duration-200"
+            <Link href="/signup">
+              🔵 Start Learning
+            </Link>
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="border-white text-white hover:bg-white hover:text-blue-600"
           >
-            ⚪ Explore Tutors
-          </Link>
+            <Link href="/tutors">
+              ⚪ Explore Tutors
+            </Link>
+          </Button>
         </div>
       </div>
     </section>

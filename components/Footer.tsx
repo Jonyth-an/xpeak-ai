@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { Button, Input } from '@/app/components/ui';
 
 export default function Footer() {
   return (
@@ -52,12 +53,14 @@ export default function Footer() {
             <div className="font-semibold mb-2">Stay Updated</div>
             <div className="text-sm text-text-secondary mb-3">Get language tips & product updates<br />— no spam, promise.</div>
             <form className="flex">
-              <input
+              <Input
                 type="email"
                 placeholder="Enter your email"
-                className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-surface-muted"
+                className="rounded-r-none"
               />
-              <button type="submit" className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 text-sm font-semibold rounded-r-md transition">Subscribe</button>
+              <Button type="submit" variant="primary" size="sm" className="rounded-l-none">
+                Subscribe
+              </Button>
             </form>
           </div>
         </div>

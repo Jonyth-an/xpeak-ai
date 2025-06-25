@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '@/app/components/ui';
 
 export default function TutorHeroSection() {
   return (
@@ -14,12 +15,12 @@ export default function TutorHeroSection() {
               They're more than fluent — they're here to coach, motivate, and guide you every step of the way.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="px-8 py-4 text-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl">
+              <Button variant="primary" size="lg">
                 Browse English Tutors
-              </button>
-              <button className="px-8 py-4 text-lg font-semibold text-indigo-600 border-2 border-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-200">
+              </Button>
+              <Button variant="outline" size="lg">
                 Book a Trial Lesson
-              </button>
+              </Button>
             </div>
           </div>
           {/* Right Side: Visual */}

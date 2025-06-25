@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '@/app/components/ui';
 
 export default function FinalCTASection() {
   return (
@@ -10,18 +11,25 @@ export default function FinalCTASection() {
         Join a new kind of learning journey — where AI meets human connection.
       </p>
       <div className="flex justify-center gap-8">
-        <a
-          href="/signup"
-          className="px-10 py-4 bg-white text-primary-600 text-lg font-semibold rounded-xl shadow transition hover:bg-gray-100 focus:outline-none"
+        <Button
+          asChild
+          variant="secondary"
+          size="lg"
         >
-          Start Learning
-        </a>
-        <a
-          href="/tutors"
-          className="px-10 py-4 border-2 border-white text-white text-lg font-semibold rounded-xl transition hover:bg-white hover:text-primary-600 focus:outline-none"
+          <a href="/signup">
+            Start Learning
+          </a>
+        </Button>
+        <Button
+          asChild
+          variant="outline"
+          size="lg"
+          className="border-white text-white hover:bg-white hover:text-primary-600"
         >
-          Explore Tutors
-        </a>
+          <a href="/tutors">
+            Explore Tutors
+          </a>
+        </Button>
       </div>
     </section>
   );

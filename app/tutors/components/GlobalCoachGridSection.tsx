@@ -1,4 +1,5 @@
 import React from 'react';
+import { Card } from '@/app/components/ui';
 
 const tutors = [
   {
@@ -65,9 +66,11 @@ export default function GlobalCoachGridSection() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {tutors.map((tutor, idx) => (
-            <div
+            <Card
               key={idx}
-              className="bg-white rounded-2xl shadow-md p-8 flex flex-col items-center text-center hover:shadow-lg transition-shadow duration-200"
+              variant="default"
+              padding="lg"
+              className="flex flex-col items-center text-center hover:shadow-lg transition-shadow duration-200"
             >
               <div className="w-20 h-20 mb-4 rounded-full overflow-hidden border-4 border-indigo-100 shadow">
                 <img src={tutor.avatar} alt={tutor.name} className="w-full h-full object-cover" />
@@ -77,8 +80,8 @@ export default function GlobalCoachGridSection() {
                 <span className="text-lg font-bold text-text">{tutor.name}</span>
               </div>
               <div className="text-sm text-text-secondary mb-2">{tutor.background}</div>
-              <div className="italic text-indigo-700 text-base">“{tutor.quote}”</div>
-            </div>
+              <div className="italic text-indigo-700 text-base">"{tutor.quote}"</div>
+            </Card>
           ))}
         </div>
       </div>

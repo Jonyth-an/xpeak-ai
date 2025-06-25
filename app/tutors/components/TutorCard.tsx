@@ -1,50 +1,69 @@
+'use client';
 import React from 'react';
+import { Button, Badge } from '@/app/components/ui';
 
 interface TutorCardProps {
-  avatar: string;
-  name: string;
-  flag: string;
-  location: string;
-  background: string;
-  tags: string[];
-  rating: number;
-  reviews: number;
+  tutor: {
+    id: string;
+    name: string;
+    avatar: string;
+    language: string;
+    rating: number;
+    students: number;
+    price: number;
+    tags: string[];
+    description: string;
+  };
 }
 
-export default function TutorCard({
-  avatar,
-  name,
-  flag,
-  location,
-  background,
-  tags,
-  rating,
-  reviews,
-}: TutorCardProps) {
+export default function TutorCard({ tutor }: TutorCardProps) {
   return (
-    <div className="bg-token-surface rounded-token shadow-token-md p-6 flex flex-col items-center text-center hover:shadow-token-lg transition-shadow duration-200">
-      <img src={avatar} alt={name} className="w-20 h-20 rounded-full border-2 border-indigo-100 shadow mb-3" />
-      <div className="flex items-center gap-2 mb-1">
-        <span className="text-lg">{flag}</span>
-        <span className="font-bold text-token-text">{name}</span>
-        <span className="text-sm text-token-text-secondary">{location}</span>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+      {/* Header */}
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center space-x-3">
+          <img
+            src={tutor.avatar}
+            alt={tutor.name}
+            className="w-12 h-12 rounded-full object-cover"
+          />
+          <div>
+            <h3 className="font-semibold text-gray-900">{tutor.name}</h3>
+            <p className="text-sm text-gray-600">{tutor.language} Tutor</p>
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="flex items-center text-yellow-400 text-sm">
+            {'★'.repeat(Math.floor(tutor.rating))}
+            <span className="text-gray-600 ml-1">({tutor.rating})</span>
+          </div>
+          <p className="text-xs text-gray-500">{tutor.students} students</p>
+        </div>
       </div>
-      <div className="text-xs mb-2 text-token-text-secondary">{background}</div>
-      <div className="flex flex-wrap gap-1 mb-2">
-        {tags.map((tag, i) => (
-          <span key={i} className="bg-token-accent-soft text-token-text-accent px-2 py-0.5 rounded-full text-xs font-medium">
+
+      {/* Tags */}
+      <div className="flex flex-wrap gap-1 mb-4">
+        {tutor.tags.slice(0, 3).map((tag, i) => (
+          <Badge key={i} variant="accent" size="sm">
             {tag}
-          </span>
+          </Badge>
         ))}
       </div>
-      <div className="flex items-center gap-1 text-yellow-500 text-base mb-2">
-        <span>★</span>
-        <span>{rating}</span>
-        <span className="text-xs text-token-text-secondary">({reviews})</span>
+
+      {/* Description */}
+      <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+        {tutor.description}
+      </p>
+
+      {/* Footer */}
+      <div className="flex items-center justify-between">
+        <div className="text-lg font-bold text-gray-900">
+          ${tutor.price}/hr
+        </div>
+        <Button variant="accent" size="sm">
+          Book Session
+        </Button>
       </div>
-      <button className="mt-auto px-5 py-2 font-semibold rounded-lg shadow transition bg-token-accent text-token-text-on-accent hover:bg-token-accent-dark">
-        View Profile
-      </button>
     </div>
   );
 } 

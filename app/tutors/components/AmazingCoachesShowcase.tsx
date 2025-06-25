@@ -1,4 +1,6 @@
+'use client';
 import React from 'react';
+import { Button, Badge } from '@/app/components/ui';
 import TutorCard from './TutorCard';
 
 const filterTabs = [
@@ -54,96 +56,141 @@ const moreCoaches = [
 ];
 
 export default function AmazingCoachesShowcase() {
+  const coaches = [
+    {
+      id: 1,
+      name: 'Maria Santos',
+      flag: '🇪🇸',
+      location: 'Madrid, Spain',
+      background: 'Certified Spanish Teacher',
+      tags: ['Supportive', 'Goal-Oriented', 'Business Expert'],
+      rating: 4.9,
+      reviews: 127,
+      avatar: '/images/tutors/maria.jpg'
+    },
+    {
+      id: 2,
+      name: 'Jean-Pierre Dubois',
+      flag: '🇫🇷',
+      location: 'Paris, France',
+      background: 'French Literature Professor',
+      tags: ['Patient', 'Cultural Expert', 'Conversation Focused'],
+      rating: 4.8,
+      reviews: 89,
+      avatar: '/images/tutors/jean.jpg'
+    },
+    {
+      id: 3,
+      name: 'Yuki Tanaka',
+      flag: '🇯🇵',
+      location: 'Tokyo, Japan',
+      background: 'Japanese Language Specialist',
+      tags: ['Structured', 'Grammar Expert', 'Patient'],
+      rating: 4.9,
+      reviews: 156,
+      avatar: '/images/tutors/yuki.jpg'
+    },
+    {
+      id: 4,
+      name: 'Alessandro Rossi',
+      flag: '🇮🇹',
+      location: 'Rome, Italy',
+      background: 'Italian Culture Expert',
+      tags: ['Enthusiastic', 'Cultural Expert', 'Conversation Focused'],
+      rating: 4.7,
+      reviews: 94,
+      avatar: '/images/tutors/alessandro.jpg'
+    },
+    {
+      id: 5,
+      name: 'Hans Mueller',
+      flag: '🇩🇪',
+      location: 'Berlin, Germany',
+      background: 'German Business Language Coach',
+      tags: ['Professional', 'Business Expert', 'Structured'],
+      rating: 4.8,
+      reviews: 112,
+      avatar: '/images/tutors/hans.jpg'
+    },
+    {
+      id: 6,
+      name: 'Li Wei',
+      flag: '🇨🇳',
+      location: 'Beijing, China',
+      background: 'Mandarin Language Instructor',
+      tags: ['Patient', 'Grammar Expert', 'Cultural Expert'],
+      rating: 4.9,
+      reviews: 203,
+      avatar: '/images/tutors/liwei.jpg'
+    }
+  ];
+
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-text mb-4">
-            Meet Some of Our Amazing Coaches
+    <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Amazing Coaches from Around the World
           </h2>
-          <p className="text-lg text-text-muted max-w-2xl mx-auto">
-            Xpeak tutors aren't just fluent — they're mentors, motivators, and fellow learners in their own journeys. Get to know a few of our standout coaches.
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Learn from native speakers who are passionate about teaching and helping you achieve your language goals.
           </p>
         </div>
-        {/* Filter Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-12">
-          {filterTabs.map((tab, idx) => (
-            <button
-              key={tab}
-              className={`px-5 py-2 rounded-full font-semibold border transition-colors duration-150 ${idx === 0 ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50'}`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-        {/* Featured Coach Card */}
-        <div className="bg-indigo-50 rounded-2xl shadow-xl p-8 md:p-12 flex flex-col md:flex-row items-center md:items-stretch gap-8 mb-16">
-          {/* Avatar */}
-          <div className="flex-shrink-0 flex flex-col items-center justify-center md:w-1/4">
-            <img src="https://randomuser.me/api/portraits/women/50.jpg" alt="Emma Thompson" className="w-32 h-32 rounded-full border-4 border-indigo-200 shadow mb-4" />
-            <div className="text-lg font-bold text-text flex items-center gap-2 mb-1">Emma Thompson <span className="text-2xl">🇬🇧</span></div>
-            <div className="text-sm text-text-secondary mb-1">United Kingdom</div>
-            <div className="text-xs text-text-muted mb-2">Former Marketing Manager</div>
-            <div className="flex items-center gap-1 text-yellow-500 text-lg mb-1">
-              <span>★</span><span>4.9</span>
-              <span className="text-text-muted text-sm">(127 reviews)</span>
-            </div>
-            <div className="flex flex-wrap gap-2 mb-2">
-              <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold">Supportive</span>
-              <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold">Goal-Oriented</span>
-              <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold">Business Expert</span>
-            </div>
-          </div>
-          {/* Details */}
-          <div className="flex-1 flex flex-col justify-between">
-            <div className="mb-4">
-              <div className="font-semibold text-text-muted mb-2">Specializations:</div>
-              <ul className="flex flex-wrap gap-2 mb-4">
-                <li className="bg-white border border-indigo-200 px-3 py-1 rounded-full text-sm">Business English</li>
-                <li className="bg-white border border-indigo-200 px-3 py-1 rounded-full text-sm">Job Interviews</li>
-                <li className="bg-white border border-indigo-200 px-3 py-1 rounded-full text-sm">Presentation Skills</li>
-                <li className="bg-white border border-indigo-200 px-3 py-1 rounded-full text-sm">Professional Writing</li>
-              </ul>
-              <div className="bg-indigo-100 rounded-lg p-4 mb-4">
-                <div className="font-semibold text-indigo-700 mb-1">Availability</div>
-                <div className="text-sm text-text-secondary">Timezone: GMT (London)</div>
-                <div className="text-sm text-text-secondary">Peak Hours: 9AM – 6PM</div>
-                <div className="text-sm text-text-secondary">Weekend: <span className="text-green-600 font-bold">Available ✅</span></div>
+
+        {/* Coaches Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {coaches.map((coach) => (
+            <div key={coach.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+              {/* Header */}
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <img
+                    src={coach.avatar}
+                    alt={coach.name}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                  <div>
+                    <h3 className="font-semibold text-gray-900">{coach.name}</h3>
+                    <p className="text-sm text-gray-600">{coach.background}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center text-yellow-400 text-sm">
+                    {'★'.repeat(Math.floor(coach.rating))}
+                    <span className="text-gray-600 ml-1">({coach.rating})</span>
+                  </div>
+                  <p className="text-xs text-gray-500">{coach.reviews} reviews</p>
+                </div>
               </div>
-              <blockquote className="italic text-indigo-800 border-l-4 border-indigo-400 pl-4 mb-2">
-                "Emma helped me prepare for my job interview at a multinational company. Her business English coaching was spot-on, and I got the job!"
-                <br />
-                <span className="not-italic text-text-muted">— Sarah M., Marketing Professional</span>
-              </blockquote>
+
+              {/* Tags */}
+              <div className="flex flex-wrap gap-1 mb-4">
+                {coach.tags.map((tag, i) => (
+                  <Badge key={i} variant="accent" size="sm">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+
+              {/* Location */}
+              <p className="text-sm text-gray-600 mb-4">
+                📍 {coach.location}
+              </p>
+
+              {/* CTA */}
+              <Button variant="accent" size="sm" className="w-full">
+                View Profile
+              </Button>
             </div>
-            <button className="mt-2 px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow hover:bg-indigo-700 transition">Book with Emma</button>
-          </div>
-        </div>
-        {/* More Amazing Coaches Grid */}
-        <div className="mb-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {moreCoaches.map((coach, idx) => (
-            <TutorCard
-              key={idx}
-              avatar={coach.avatar}
-              name={coach.name}
-              flag={coach.flag}
-              location={coach.location}
-              background={coach.background}
-              tags={coach.tags}
-              rating={coach.rating}
-              reviews={coach.reviews}
-            />
           ))}
         </div>
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-          <button className="px-8 py-4 text-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl">
-            Browse All English Tutors
-          </button>
-          <button className="px-8 py-4 text-lg font-semibold text-indigo-600 border-2 border-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-200">
-            Book a Trial Lesson
-          </button>
+
+        {/* CTA Section */}
+        <div className="text-center">
+          <Button variant="accent" size="lg">
+            Browse All Coaches
+          </Button>
         </div>
       </div>
     </section>

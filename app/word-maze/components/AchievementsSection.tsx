@@ -1,10 +1,11 @@
-import React from 'react'
+import React from 'react';
+import { Button, Card } from '@/app/components/ui';
 
 const badges = [
   { title: 'First Word Saved!', desc: "You've started building your personal vocabulary.", status: 'Completed', icon: '✅' },
   { title: 'Word Collector', desc: 'Add 10 words to your maze to unlock this badge.', progress: '7/10', icon: '🔢' },
   { title: 'Review Master', desc: 'Complete 3 review sessions in one day.', locked: true, icon: '🔒' },
-]
+];
 
 export default function AchievementsSection() {
   return (
@@ -17,16 +18,16 @@ export default function AchievementsSection() {
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
         {badges.map((b) => (
-          <div key={b.title} className="bg-white rounded-2xl shadow-lg p-8 mt-12 text-left">
+          <Card key={b.title} variant="elevated" padding="lg" className="mt-12 text-left">
             <div className="flex items-center mb-2">
               <span className="text-2xl mr-2">{b.icon}</span>
               <h3 className="font-semibold text-text">{b.title}</h3>
             </div>
             <p className="text-text-muted text-sm mb-4">{b.desc}</p>
             {b.locked ? (
-              <button className="bg-gray-200 text-text-muted rounded-lg py-2 px-4" disabled>
+              <Button variant="ghost" disabled>
                 Locked
-              </button>
+              </Button>
             ) : b.progress ? (
               <div className="flex items-center justify-between text-sm">
                 <span>{b.progress}</span>
@@ -35,13 +36,13 @@ export default function AchievementsSection() {
                 </div>
               </div>
             ) : (
-              <button className="bg-primary-600 text-white rounded-lg py-2 px-4">
+              <Button variant="primary">
                 {b.status}
-              </button>
+              </Button>
             )}
-          </div>
+          </Card>
         ))}
       </div>
     </section>
-  )
+  );
 } 

@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { Button, Select, Text } from '@/app/components/ui';
+import LanguageSelectorMenu from '@/app/components/molecules/LanguageSelectorMenu';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -24,7 +26,9 @@ export default function Header() {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center">
-              <span className="text-2xl font-bold text-primary-600">Xpeak AI</span>
+              <Text variant="h2" as="span" className="text-primary-600">
+                Xpeak AI
+              </Text>
             </Link>
           </div>
 
@@ -54,32 +58,35 @@ export default function Header() {
               Become a Tutor
             </Link>
 
-            {/* Language Selector - Hidden on mobile */}
+            {/* Language Selector */}
             <div className="hidden md:block">
-              <select className="bg-transparent border border-border rounded-md px-3 py-1 text-sm text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary-500">
-                <option>English</option>
-                <option>Spanish</option>
-                <option>French</option>
-                <option>German</option>
-              </select>
+              <LanguageSelectorMenu
+                options={[
+                  { label: 'English', code: 'EN', flag: '🇺🇸' },
+                  { label: 'Español', code: 'ES', flag: '🇪🇸' },
+                  { label: '中文', code: 'ZH', flag: '🇨🇳' },
+                  { label: '日本語', code: 'JA', flag: '🇯🇵' }
+                ]}
+                onSelect={lang => console.log('language selected:', lang)}
+              />
             </div>
 
             {/* Auth Buttons */}
             <div className="flex items-center space-x-2">
-              <Link href="/login" className="text-text-secondary hover:text-primary-600 px-4 py-2 text-sm font-medium border border-border rounded-md hover:border-primary-300 transition-colors">
-                Log In
+              <Link href="/login">
+                <Button variant="outline" size="sm">Log In</Button>
               </Link>
-              <Link href="/signup" className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 text-sm font-medium rounded-md transition-colors">
-                Sign Up
+              <Link href="/signup">
+                <Button variant="primary" size="sm">Sign Up</Button>
               </Link>
             </div>
 
             {/* Mobile Menu Button */}
-            <button className="md:hidden p-2 rounded-md text-text-secondary hover:text-primary-600 hover:bg-gray-100">
+            <Button variant="ghost" size="sm" className="md:hidden">
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
-            </button>
+            </Button>
           </div>
         </div>
       </div>

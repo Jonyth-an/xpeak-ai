@@ -1,4 +1,5 @@
 import React from 'react';
+import { Card } from '@/app/components/ui';
 
 const features = [
   {
@@ -30,16 +31,18 @@ export default function SmartMatchingSection() {
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
           {features.map((f, idx) => (
-            <div
+            <Card
               key={idx}
-              className="bg-white rounded-2xl shadow-md p-8 flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-200 group"
+              variant="default"
+              padding="lg"
+              className="flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-200 group"
             >
               <div className="text-5xl mb-4 group-hover:animate-bounce">
                 {f.icon}
               </div>
               <h3 className="text-xl font-bold text-text mb-2">{f.title}</h3>
               <p className="text-text-muted text-base">{f.text}</p>
-            </div>
+            </Card>
           ))}
         </div>
         <div className="italic text-center text-text-muted text-lg">

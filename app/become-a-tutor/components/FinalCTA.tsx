@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '@/app/components/ui';
 
 const avatars = [
   'https://randomuser.me/api/portraits/women/44.jpg',
@@ -28,12 +29,15 @@ export default function FinalCTA() {
           />
         ))}
       </div>
-      <a
-        href="/become-a-tutor"
-        className="px-10 py-4 bg-white text-primary-600 text-lg font-semibold rounded-xl shadow transition hover:bg-gray-100 focus:outline-none"
+      <Button
+        asChild
+        variant="secondary"
+        size="lg"
       >
-        Become a Tutor
-      </a>
+        <a href="/become-a-tutor">
+          Become a Tutor
+        </a>
+      </Button>
     </section>
   );
 } 

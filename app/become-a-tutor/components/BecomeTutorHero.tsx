@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '@/app/components/ui';
 
 export default function BecomeTutorHero() {
   return (
@@ -18,12 +19,15 @@ export default function BecomeTutorHero() {
           <p className="text-base text-text-muted mb-8 max-w-xl">
             We're building a global community of mentors who empower learners to truly speak with confidence.
           </p>
-          <a
-            href="/become-a-tutor"
-            className="inline-block px-8 py-4 bg-blue-600 text-white font-bold text-lg rounded-xl shadow hover:bg-blue-700 transition"
+          <Button
+            asChild
+            variant="primary"
+            size="lg"
           >
-            Become a Tutor
-          </a>
+            <a href="/become-a-tutor">
+              Become a Tutor
+            </a>
+          </Button>
         </div>
         {/* Right: Image */}
         <div className="flex-1 flex justify-center">

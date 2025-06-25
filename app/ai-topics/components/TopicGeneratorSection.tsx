@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button, Card } from '@/app/components/ui';
 
 const cards = [
   {
@@ -6,28 +7,32 @@ const cards = [
     title: 'Upload a File',
     subtitle: <><span className="text-lg">🖼️</span> <span className="font-bold">Upload a File</span></>,
     desc: 'Menu, homework, guide — turn it into a conversation.',
-    button: <button className="w-full bg-[#7ec3e6] hover:bg-[#5bb3e0] text-white font-semibold py-2 rounded-lg mt-4 transition">Upload File</button>,
+    variant: 'secondary' as const,
+    buttonText: 'Upload File',
   },
   {
     icon: <span className="text-4xl">🔗</span>,
     title: 'Add a Website Link',
     subtitle: <><span className="text-lg">🔗</span> <span className="font-bold">Add a Website Link</span></>,
     desc: 'Paste any URL — we\'ll build a speaking session around it.',
-    button: <button className="w-full bg-[#19c37d] hover:bg-[#13a76a] text-white font-semibold py-2 rounded-lg mt-4 transition">Paste Link</button>,
+    variant: 'secondary' as const,
+    buttonText: 'Paste Link',
   },
   {
     icon: <span className="text-4xl">🎤</span>,
     title: 'Speak About Your Day',
     subtitle: <><span className="text-lg">🎤</span> <span className="font-bold">Speak About Your Day</span></>,
     desc: 'Use your voice or type it out. We\'ll help you express it naturally.',
-    button: <button className="w-full bg-[#a259e6] hover:bg-[#8d3fd1] text-white font-semibold py-2 rounded-lg mt-4 transition">Start Recording</button>,
+    variant: 'secondary' as const,
+    buttonText: 'Start Recording',
   },
   {
     icon: <span className="text-4xl">✏️</span>,
     title: 'Write a Prompt',
     subtitle: <><span className="text-lg">✏️</span> <span className="font-bold">Write a Prompt</span></>,
     desc: 'Want to talk about a news story or hobby? Type and go.',
-    button: <button className="w-full bg-gradient-to-r from-[#ff9900] to-[#ff5e62] hover:from-[#ff7c00] hover:to-[#ff3c3c] text-white font-semibold py-2 rounded-lg mt-4 transition">Write Prompt</button>,
+    variant: 'accent' as const,
+    buttonText: 'Write Prompt',
   },
 ];
 
@@ -44,12 +49,19 @@ export default function TopicGeneratorSection() {
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {cards.map((card, idx) => (
-            <div key={idx} className="bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center text-center min-h-[320px]">
+            <Card
+              key={idx}
+              variant="elevated"
+              padding="lg"
+              className="flex flex-col items-center text-center min-h-[320px]"
+            >
               <div className="mb-4">{card.icon}</div>
               <div className="mb-2 text-lg font-bold text-[#14213d] flex items-center justify-center gap-2">{card.subtitle}</div>
               <div className="text-[#22304a] text-base mb-4">{card.desc}</div>
-              {card.button}
-            </div>
+              <Button variant={card.variant} className="w-full mt-4">
+                {card.buttonText}
+              </Button>
+            </Card>
           ))}
         </div>
       </div>

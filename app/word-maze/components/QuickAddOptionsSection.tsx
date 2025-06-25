@@ -1,4 +1,5 @@
 import React from 'react'
+import { Card } from '@/app/components/ui'
 
 export default function QuickAddOptionsSection() {
   return (
@@ -8,14 +9,14 @@ export default function QuickAddOptionsSection() {
           { icon: '📸', title: 'Add from Photo', subtitle: 'Snap menus, books—Xpeak AI pulls out suggested vocab.', badge: 'Coming Soon' },
           { icon: '📄', title: 'Upload Lesson Notes', subtitle: 'Copy-paste or upload—AI extracts top new words for you.', badge: 'Coming Soon' },
         ].map((opt) => (
-          <div key={opt.title} className="bg-white rounded-2xl shadow transition-shadow p-6 space-y-2">
+          <Card key={opt.title} variant="default" padding="md" className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 rounded-full bg-primary-50 flex items-center justify-center text-2xl">{opt.icon}</div>
               <span className="text-xs bg-muted rounded-full px-2 py-1">{opt.badge}</span>
             </div>
             <h3 className="font-semibold text-text">{opt.title}</h3>
             <p className="text-text-muted text-sm">{opt.subtitle}</p>
-          </div>
+          </Card>
         ))}
       </div>
     </section>

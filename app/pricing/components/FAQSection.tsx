@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Button, Card } from '@/app/components/ui';
 
 const faqs = [
   {
@@ -49,13 +50,16 @@ export default function FAQSection() {
         {/* Accordion */}
         <div className="space-y-4">
           {faqs.map((faq, idx) => (
-            <div
+            <Card
               key={idx}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
+              variant="default"
+              padding="none"
+              className="overflow-hidden"
             >
-              <button
+              <Button
                 onClick={() => toggle(idx)}
-                className="w-full flex justify-between items-center px-6 py-4 text-left"
+                variant="ghost"
+                className="w-full flex justify-between items-center px-6 py-4 text-left h-auto"
               >
                 <span className="font-semibold text-text">
                   {faq.question}
@@ -63,11 +67,11 @@ export default function FAQSection() {
                 <span className="text-primary-600 text-2xl">
                   {openIndex === idx ? '−' : '+'}
                 </span>
-              </button>
+              </Button>
               {openIndex === idx && (
                 <div className="px-6 pb-4 text-text-secondary">{faq.answer}</div>
               )}
-            </div>
+            </Card>
           ))}
         </div>
       </div>

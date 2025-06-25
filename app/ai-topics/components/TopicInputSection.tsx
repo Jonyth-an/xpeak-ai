@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button, Textarea } from '@/app/components/ui';
 
 export default function TopicInputSection() {
   return (
@@ -18,14 +19,18 @@ export default function TopicInputSection() {
         {/* 1. Chat & Generate (full width) */}
         <div className="bg-white rounded-token shadow-token p-6">
           <h3 className="font-semibold text-text mb-4">💬 Chat & Generate</h3>
-          <textarea
-            rows={5}
+          <Textarea
             placeholder="Type or chat here to co-create your lesson topic…"
-            className="w-full bg-white border border-border rounded-lg p-4 focus:outline-none focus:ring focus:border-primary mb-4"
+            className="mb-4"
+            autoResize
+            minRows={3}
+            maxRows={8}
+            showCharacterCount
+            maxLength={1000}
           />
-          <button className="px-5 py-2 bg-primary text-white rounded-lg shadow-token w-full">
+          <Button variant="primary" className="w-full">
             🔍 Generate Topic
-          </button>
+          </Button>
         </div>
 
         {/* 3. Option Cards (upload, link, speak) */}
@@ -39,9 +44,9 @@ export default function TopicInputSection() {
             <p className="text-text-muted text-sm mb-6">
               Menu, homework, guide — turn it into a conversation.
             </p>
-            <button className="w-full py-2 bg-blue-400 hover:bg-blue-500 text-white rounded-lg font-semibold transition">
+            <Button variant="secondary" className="w-full">
               Upload File
-            </button>
+            </Button>
           </div>
 
           {/* Add a Website Link */}
@@ -53,9 +58,9 @@ export default function TopicInputSection() {
             <p className="text-text-muted text-sm mb-6">
               Paste any URL — we'll build a speaking session around it.
             </p>
-            <button className="w-full py-2 bg-green-400 hover:bg-green-500 text-white rounded-lg font-semibold transition">
+            <Button variant="secondary" className="w-full">
               Paste Link
-            </button>
+            </Button>
           </div>
 
           {/* Speak About Your Day */}
@@ -67,9 +72,9 @@ export default function TopicInputSection() {
             <p className="text-text-muted text-sm mb-6">
               Use your voice or type it out. We'll help you express it naturally.
             </p>
-            <button className="w-full py-2 bg-purple-400 hover:bg-purple-500 text-white rounded-lg font-semibold transition">
+            <Button variant="secondary" className="w-full">
               Start Recording
-            </button>
+            </Button>
           </div>
         </div>
       </div>

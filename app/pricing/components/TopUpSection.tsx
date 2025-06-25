@@ -1,116 +1,116 @@
+'use client';
 import React from 'react';
-
-const packs = [
-  {
-    lessons: '10 Lessons',
-    price: '$199',
-    subtitle: 'Perfect for consistent learners',
-    expires: 'Expires in 3 months',
-    popular: false,
-  },
-  {
-    lessons: '20 Lessons',
-    price: '$369',
-    subtitle: 'Most popular choice for serious learners',
-    expires: 'Expires in 6 months',
-    popular: true,
-  },
-  {
-    lessons: '50 Lessons',
-    price: '$899',
-    subtitle: 'Ultimate package for dedicated learners',
-    expires: 'Expires in 12 months',
-    popular: false,
-  },
-];
+import { Button, Badge } from '@/app/components/ui';
 
 export default function TopUpSection() {
+  const topUpOptions = [
+    {
+      id: 1,
+      name: 'Quick Top-Up',
+      lessons: 3,
+      price: 45,
+      savings: null,
+      popular: false
+    },
+    {
+      id: 2,
+      name: 'Value Pack',
+      lessons: 6,
+      price: 80,
+      savings: 'Save 11%',
+      popular: true
+    },
+    {
+      id: 3,
+      name: 'Bulk Pack',
+      lessons: 12,
+      price: 150,
+      savings: 'Save 17%',
+      popular: false
+    }
+  ];
+
   return (
-    <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto">
-        {/* Heading */}
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-text mb-2">
-            ➕ Top-Up Lesson Packs <span className="text-text-secondary">(Coming Soon)</span>
+    <section className="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Need More Lessons?
           </h2>
-          <p className="text-text-muted">
-            Flexible learning on your terms. Buy lessons in advance and use them whenever you're ready to learn.
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Top up your account with additional lessons whenever you need them. Perfect for when you want extra practice.
           </p>
         </div>
 
-        {/* Packs Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {packs.map((pack) => (
+        {/* Top-Up Options */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          {topUpOptions.map((option) => (
             <div
-              key={pack.lessons}
-              className={`relative bg-white rounded-2xl shadow-md p-6 flex flex-col ${
-                pack.popular ? 'border-2 border-primary-600' : 'border border-border'
+              key={option.id}
+              className={`relative bg-white rounded-xl shadow-sm border p-8 text-center ${
+                option.popular 
+                  ? 'border-primary-500 shadow-lg ring-2 ring-primary-100' 
+                  : 'border-gray-200'
               }`}
             >
-              {pack.popular && (
-                <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+              {option.popular && (
+                <Badge variant="accent" className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   Best Value
-                </span>
+                </Badge>
               )}
-              <div className="flex-1">
-                <h3 className="text-xl font-semibold text-text mb-2">{pack.lessons}</h3>
-                <div className="text-2xl font-bold text-primary-600 mb-2">{pack.price}</div>
-                <p className="text-sm text-text-muted mb-4">{pack.subtitle}</p>
-                <p className="text-xs text-text-secondary mb-6">{pack.expires}</p>
+
+              {/* Option Header */}
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">{option.name}</h3>
+              <div className="text-3xl font-bold text-gray-900 mb-2">
+                ${option.price}
               </div>
-              <button
-                className="mt-auto py-2 px-4 font-semibold rounded-lg bg-white text-gray-400 border border-gray-300 cursor-not-allowed"
-                disabled
+              <p className="text-gray-600 mb-4">{option.lessons} lessons</p>
+
+              {/* Savings Badge */}
+              {option.savings && (
+                <div className="mb-6">
+                  <Badge variant="success" size="sm">
+                    {option.savings}
+                  </Badge>
+                </div>
+              )}
+
+              {/* Features */}
+              <ul className="text-left space-y-2 mb-8 text-sm text-gray-600">
+                <li className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Valid for 6 months
+                </li>
+                <li className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Use with any tutor
+                </li>
+                <li className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  No expiration fees
+                </li>
+              </ul>
+
+              {/* CTA Button */}
+              <Button
+                variant={option.popular ? 'accent' : 'outline'}
+                className="w-full"
               >
-                Coming Soon
-              </button>
+                Purchase Top-Up
+              </Button>
             </div>
           ))}
         </div>
 
-        {/* Benefits Panel */}
-        <div className="bg-blue-50 rounded-2xl shadow-sm p-8">
-          <div className="text-center mb-6">
-            <span className="inline-block bg-primary-100 rounded-full p-4">
-              <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3" /></svg>
-            </span>
-            <h4 className="text-xl font-semibold text-text mt-2">Flexible Learning, Your Way</h4>
-          </div>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-text-secondary mb-6">
-            <li className="flex items-center">
-              <span className="inline-block bg-primary-100 rounded-full p-2 mr-2">
-                <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636a9 9 0 11-12.728 0M12 2v10" /></svg>
-              </span>
-              Use anytime before expiry
-            </li>
-            <li className="flex items-center">
-              <span className="inline-block bg-primary-100 rounded-full p-2 mr-2">
-                <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-              </span>
-              Choose any tutor for each lesson
-            </li>
-            <li className="flex items-center">
-              <span className="inline-block bg-primary-100 rounded-full p-2 mr-2">
-                <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-              </span>
-              Book lessons at your convenience
-            </li>
-            <li className="flex items-center">
-              <span className="inline-block bg-primary-100 rounded-full p-2 mr-2">
-                <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M20 12v1a8 8 0 11-16 0v-1m16 0a8 8 0 01-16 0m16 0V7a2 2 0 00-2-2H6a2 2 0 00-2 2v5" /></svg>
-              </span>
-              Bonus lessons with larger packs
-            </li>
-          </ul>
-          <div className="bg-white rounded-lg p-4 border border-border text-center">
-            <span className="text-lg">🚀</span>{' '}
-            <span className="font-semibold text-text">
-              This feature will be available post-MVP
-            </span>
-            <p className="text-sm text-text-muted mt-1">
-              Join our waitlist to be notified when top-up packs launch!
-            </p>
-          </div>
+        {/* Additional Info */}
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">
+            Top-up lessons are valid for 6 months and can be used with any tutor on the platform.
+          </p>
+          <p className="text-sm text-gray-500">
+            Questions about top-ups? <a href="#" className="text-primary-600 hover:text-primary-700">Contact support</a>
+          </p>
         </div>
       </div>
     </section>

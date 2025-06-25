@@ -1,60 +1,63 @@
 import React from 'react';
+import { Card, Text } from '@/app/components/ui';
+
+const features = [
+  {
+    icon: '🤖',
+    title: 'AI-Powered Learning',
+    description: 'Personalized learning paths adapted to your pace and style with advanced AI algorithms.'
+  },
+  {
+    icon: '👥',
+    title: 'Expert Tutors',
+    description: 'Connect with native speakers and certified language teachers from around the world.'
+  },
+  {
+    icon: '🎯',
+    title: 'Smart Practice',
+    description: 'Intelligent exercises that focus on your weak areas and reinforce your strengths.'
+  },
+  {
+    icon: '📊',
+    title: 'Progress Tracking',
+    description: 'Detailed analytics and insights to monitor your learning journey and celebrate milestones.'
+  },
+  {
+    icon: '🌍',
+    title: 'Cultural Immersion',
+    description: 'Learn not just the language, but also the culture and context behind the words.'
+  },
+  {
+    icon: '⚡',
+    title: 'Flexible Learning',
+    description: 'Study anytime, anywhere with our mobile-first approach and offline capabilities.'
+  }
+];
 
 export default function FeaturesSection() {
-  const features = [
-    {
-      icon: "🎯",
-      title: "Smart Learning Paths",
-      description: "AI-powered curriculum that adapts to your learning style and pace"
-    },
-    {
-      icon: "👥",
-      title: "Real Human Tutors",
-      description: "Connect with native speakers and certified language instructors"
-    },
-    {
-      icon: "🎮",
-      title: "Interactive Games",
-      description: "Learn through fun, engaging games and challenges"
-    },
-    {
-      icon: "📊",
-      title: "Progress Tracking",
-      description: "Monitor your improvement with detailed analytics and insights"
-    },
-    {
-      icon: "🌍",
-      title: "Cultural Immersion",
-      description: "Experience real-world contexts and cultural nuances"
-    }
-  ];
-
   return (
-    <section className="py-20 bg-surface">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-text mb-4">
-            Why Choose Xpeak?
-          </h2>
-          <p className="text-xl text-text-muted max-w-3xl mx-auto">
-            Discover the unique features that set us apart from traditional language learning platforms
-          </p>
+    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <Text variant="h2" className="mb-4">
+            Why Choose Xpeak AI?
+          </Text>
+          <Text variant="lead" className="max-w-3xl mx-auto">
+            Our platform combines cutting-edge AI technology with human expertise to create the most effective language learning experience.
+          </Text>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300"
-            >
+            <Card key={index} variant="elevated" padding="lg" className="text-center">
               <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-lg font-bold text-text mb-2">
+              <Text variant="h3" className="mb-2">
                 {feature.title}
-              </h3>
-              <p className="text-text-muted text-sm leading-relaxed">
+              </Text>
+              <Text variant="body" className="text-text-muted">
                 {feature.description}
-              </p>
-            </div>
+              </Text>
+            </Card>
           ))}
         </div>
       </div>

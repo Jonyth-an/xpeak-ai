@@ -1,5 +1,6 @@
 import React from 'react';
 import { HeartIcon, PencilIcon, PaperAirplaneIcon, Cog6ToothIcon, UserGroupIcon } from '@heroicons/react/24/solid';
+import { Card } from '@/app/components/ui';
 
 const benefits = [
   {
@@ -47,9 +48,11 @@ export default function WhyTeachSection() {
         {benefits.map((b, i) => {
           const Icon = b.icon;
           return (
-            <div
+            <Card
               key={i}
-              className="bg-white rounded-2xl shadow p-6 flex flex-col sm:flex-row items-start gap-4 relative overflow-hidden"
+              variant="default"
+              padding="md"
+              className="flex flex-col sm:flex-row items-start gap-4 relative overflow-hidden"
             >
               <div className={`flex items-center justify-center w-12 h-12 rounded-xl ${b.bg} mb-2 sm:mb-0`}>
                 <Icon className="w-8 h-8 text-white" />
@@ -58,13 +61,13 @@ export default function WhyTeachSection() {
                 <h3 className="text-lg font-bold text-text mb-1">{b.title}</h3>
                 <p className="text-text-muted text-sm leading-relaxed">{b.desc}</p>
               </div>
-            </div>
+            </Card>
           );
         })}
       </div>
       {/* Community Card */}
       <div className="max-w-5xl mx-auto mt-8">
-        <div className="rounded-2xl bg-gradient-to-r from-violet-600 to-purple-500 text-white px-8 py-10 text-center shadow-lg flex flex-col items-center">
+        <Card variant="elevated" padding="lg" className="bg-gradient-to-r from-violet-600 to-purple-500 text-white text-center shadow-lg flex flex-col items-center">
           <div className="flex items-center justify-center w-14 h-14 rounded-full bg-white/20 mb-4 mx-auto">
             <UserGroupIcon className="w-8 h-8 text-white" />
           </div>
@@ -83,7 +86,7 @@ export default function WhyTeachSection() {
             ))}
             <span className="flex items-center justify-center w-10 h-10 rounded-full bg-white/20 text-white font-semibold text-sm border-2 border-white ml-2">+100</span>
           </div>
-        </div>
+        </Card>
       </div>
     </section>
   );

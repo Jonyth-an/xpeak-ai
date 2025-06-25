@@ -1,10 +1,11 @@
 'use client';
 import React from 'react';
+import { Button, Card, Badge } from '@/app/components/ui';
 
 export default function TopicSampleSection() {
   return (
     <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
-      <div className="bg-white shadow-token rounded-token px-6 py-10 text-center max-w-3xl mx-auto">
+      <Card variant="elevated" padding="lg" className="text-center max-w-3xl mx-auto">
         {/* Icon */}
         <div className="flex justify-center mb-4">
           <div className="w-12 h-12 rounded-full bg-token-accent/10 flex items-center justify-center text-token-accent text-xl">
@@ -20,8 +21,8 @@ export default function TopicSampleSection() {
 
         {/* Tags */}
         <div className="flex justify-center gap-2 mb-3">
-          <span className="bg-token-accent-soft text-token-text-accent px-3 py-1 rounded-full text-xs font-medium">Travel</span>
-          <span className="bg-token-accent-soft text-token-text-accent px-3 py-1 rounded-full text-xs font-medium">Culture</span>
+          <Badge variant="accent" size="sm">Travel</Badge>
+          <Badge variant="accent" size="sm">Culture</Badge>
         </div>
 
         {/* Vocabulary & Level */}
@@ -34,17 +35,17 @@ export default function TopicSampleSection() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row justify-center gap-3">
-          <button className="px-5 py-2 rounded-token font-semibold bg-white border border-token-border text-token-text hover:bg-token-muted transition-colors duration-200">
+          <Button variant="outline">
             Practice with AI
-          </button>
-          <button className="px-5 py-2 rounded-token font-semibold bg-token-accent text-token-text hover:bg-token-accent-dark transition-colors duration-200">
+          </Button>
+          <Button variant="accent">
             Book Tutor for This Topic
-          </button>
-          <button className="px-5 py-2 rounded-token font-semibold bg-token-muted text-token-text-secondary hover:bg-token-border transition-colors duration-200">
+          </Button>
+          <Button variant="ghost">
             Save for Later
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
     </section>
   );
 } 

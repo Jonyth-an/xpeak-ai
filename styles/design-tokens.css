@@ -22,6 +22,9 @@
   --color-surface: #ffffff; /* white */
   --color-surface-alt: #f3f4f6; /* gray-100 */
   
+  /* Border Colors */
+  --color-border: #E5E7EB; /* gray-200 */
+  
   /* Status Colors */
   --color-success: #10b981; /* emerald-500 */
   --color-warning: #f59e0b; /* amber-500 */

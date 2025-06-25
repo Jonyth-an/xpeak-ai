@@ -1,4 +1,5 @@
 import React from 'react'
+import { Button, Card } from '@/app/components/ui'
 
 export default function ReviewSection() {
   return (
@@ -9,16 +10,16 @@ export default function ReviewSection() {
       <p className="text-text-muted text-sm mb-6">
         Review your words through quizzes and light games—smart timing, smart learning.
       </p>
-      <div className="max-w-md mx-auto bg-white rounded-2xl shadow-lg p-8 mt-12">
+      <Card variant="elevated" padding="lg" className="max-w-md mx-auto mt-12">
         <div className="text-3xl mb-4">🚀</div>
         <h3 className="font-semibold text-text mb-2">Smart Review is Coming Soon!</h3>
         <p className="text-text-muted text-sm mb-4">
           Personalized quizzes, memory games, and spaced repetition just for you.
         </p>
-        <button className="bg-gray-200 text-text-muted rounded-lg py-2 px-4" disabled>
+        <Button variant="ghost" disabled>
           Coming Soon
-        </button>
-      </div>
+        </Button>
+      </Card>
     </section>
   )
 } 
