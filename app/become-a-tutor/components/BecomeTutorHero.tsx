@@ -7,7 +7,7 @@ export default function BecomeTutorHero() {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
         {/* Left: Text */}
         <div className="flex-1 text-left">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-text mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-text mb-6 leading-tight">
             Be More Than a Tutor —<br />
             Be a Coach, a<br />
             Cheerleader, a<br />

@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { Button, Badge } from '@/app/components/ui';
-import TutorCard from './TutorCard';
+import TutorCard from '@/app/components/molecules/TutorCard';
 
 const filterTabs = [
   'All Coaches',
@@ -139,50 +139,19 @@ export default function AmazingCoachesShowcase() {
         </div>
 
         {/* Coaches Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {coaches.map((coach) => (
-            <div key={coach.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
-              {/* Header */}
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  <img
-                    src={coach.avatar}
-                    alt={coach.name}
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{coach.name}</h3>
-                    <p className="text-sm text-gray-600">{coach.background}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="flex items-center text-yellow-400 text-sm">
-                    {'★'.repeat(Math.floor(coach.rating))}
-                    <span className="text-gray-600 ml-1">({coach.rating})</span>
-                  </div>
-                  <p className="text-xs text-gray-500">{coach.reviews} reviews</p>
-                </div>
-              </div>
-
-              {/* Tags */}
-              <div className="flex flex-wrap gap-1 mb-4">
-                {coach.tags.map((tag, i) => (
-                  <Badge key={i} variant="accent" size="sm">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-
-              {/* Location */}
-              <p className="text-sm text-gray-600 mb-4">
-                📍 {coach.location}
-              </p>
-
-              {/* CTA */}
-              <Button variant="accent" size="sm" className="w-full">
-                View Profile
-              </Button>
-            </div>
+        <div className="mb-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {coaches.map((coach, idx) => (
+            <TutorCard 
+              key={idx}
+              avatar={coach.avatar}
+              name={coach.name}
+              flag={coach.flag}
+              location={coach.location}
+              background={coach.background}
+              tags={coach.tags}
+              rating={coach.rating}
+              reviews={coach.reviews}
+            />
           ))}
         </div>
 

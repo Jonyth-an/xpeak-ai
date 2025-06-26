@@ -52,7 +52,7 @@ export default function WhyTeachSection() {
               key={i}
               variant="default"
               padding="md"
-              className="flex flex-col sm:flex-row items-start gap-4 relative overflow-hidden"
+              className="flex flex-col sm:flex-row items-start gap-4 relative overflow-hidden rounded-token-lg"
             >
               <div className={`flex items-center justify-center w-12 h-12 rounded-xl ${b.bg} mb-2 sm:mb-0`}>
                 <Icon className="w-8 h-8 text-white" />
@@ -67,7 +67,7 @@ export default function WhyTeachSection() {
       </div>
       {/* Community Card */}
       <div className="max-w-5xl mx-auto mt-8">
-        <Card variant="elevated" padding="lg" className="bg-gradient-to-r from-violet-600 to-purple-500 text-white text-center shadow-lg flex flex-col items-center">
+        <Card variant="elevated" padding="lg" className="bg-gradient-to-r from-violet-600 to-purple-500 text-white text-center shadow-lg flex flex-col items-center rounded-token-lg">
           <div className="flex items-center justify-center w-14 h-14 rounded-full bg-white/20 mb-4 mx-auto">
             <UserGroupIcon className="w-8 h-8 text-white" />
           </div>

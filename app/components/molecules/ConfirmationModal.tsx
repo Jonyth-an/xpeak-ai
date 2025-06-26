@@ -1,11 +1,11 @@
 import React from 'react';
-import { Card } from '../ui';
-import { Button } from '../ui';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Card, Button } from '../ui';
 
 export interface ConfirmationModalProps {
   open: boolean;
   title: string;
-  description?: string;
+  description: string;
   confirmLabel?: string;
   cancelLabel?: string;
   onConfirm: () => void;
@@ -21,35 +21,62 @@ export default function ConfirmationModal({
   onConfirm,
   onCancel,
 }: ConfirmationModalProps) {
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-modal-backdrop">
-      {/* Overlay */}
-      <div
-        className="absolute inset-0 bg-black/50"
-        onClick={onCancel}
-      />
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-modal p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            transition={{ 
+              type: "spring", 
+              damping: 25, 
+              stiffness: 300,
+              duration: 0.3 
+            }}
+            className="w-full max-w-md"
+          >
+            <Card className="p-6 rounded-token-lg">
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">{title}</h2>
+                <p className="text-gray-600 mb-6">{description}</p>
+              </motion.div>
 
-      {/* Modal Content */}
-      <Card className="relative z-modal max-w-md w-full p-6 space-y-6">
-        <h2 className="text-2xl font-semibold text-text-primary">
-          {title}
-        </h2>
-        {description && (
-          <p className="text-text-secondary">
-            {description}
-          </p>
-        )}
-        <div className="flex justify-end space-x-4">
-          <Button variant="secondary" onClick={onCancel}>
-            {cancelLabel}
-          </Button>
-          <Button variant="primary" onClick={onConfirm}>
-            {confirmLabel}
-          </Button>
-        </div>
-      </Card>
-    </div>
+              <motion.div 
+                className="flex gap-3"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Button
+                  variant="outline"
+                  onClick={onCancel}
+                  className="flex-1"
+                >
+                  {cancelLabel}
+                </Button>
+                <Button
+                  onClick={onConfirm}
+                  className="flex-1"
+                >
+                  {confirmLabel}
+                </Button>
+              </motion.div>
+            </Card>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 } 

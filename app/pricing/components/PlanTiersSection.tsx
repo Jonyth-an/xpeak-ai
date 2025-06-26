@@ -1,13 +1,16 @@
 'use client';
 import React from 'react';
-import { Button, Badge } from '@/app/components/ui';
+import { Button, Badge, ToggleGroup, ToggleGroupOption } from '@/app/components/ui';
+import PlanCard from '../../components/molecules/PlanCard';
+import { useState } from 'react';
 
 export default function PlanTiersSection() {
   const plans = [
     {
+      id: 1,
       name: 'Starter',
       price: '$9',
-      period: '/month',
+      billingCycle: '/month',
       description: 'Perfect for beginners',
       features: [
         '5 AI-generated topics per month',
@@ -16,12 +19,13 @@ export default function PlanTiersSection() {
         'Mobile app access'
       ],
       buttonText: 'Start Free Trial',
-      popular: false
+      isPopular: false
     },
     {
+      id: 2,
       name: 'Pro',
       price: '$19',
-      period: '/month',
+      billingCycle: '/month',
       description: 'Most popular choice',
       features: [
         'Unlimited AI-generated topics',
@@ -32,12 +36,13 @@ export default function PlanTiersSection() {
         'Custom learning paths'
       ],
       buttonText: 'Start Pro Trial',
-      popular: true
+      isPopular: true
     },
     {
+      id: 3,
       name: 'Premium',
       price: '$39',
-      period: '/month',
+      billingCycle: '/month',
       description: 'For serious learners',
       features: [
         'Everything in Pro',
@@ -48,15 +53,27 @@ export default function PlanTiersSection() {
         'Priority booking'
       ],
       buttonText: 'Start Premium Trial',
-      popular: false
+      isPopular: false
     }
   ];
+
+  const billingOptions: ToggleGroupOption[] = [
+    { label: 'Monthly', value: 'month' },
+    { label: <><span>Quarterly</span><span className="text-green-600 font-semibold ml-1">Save 10%</span></>, value: 'quarter' },
+    { label: <><span>Yearly</span><span className="text-green-600 font-semibold ml-1">Save 20%</span></>, value: 'year' },
+  ];
+  const [billing, setBilling] = useState<string>('month');
+
+  const handleSelectPlan = (planId: number) => {
+    console.log(`Selected plan ${planId}`);
+    // Add your plan selection logic here
+  };
 
   return (
     <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Choose Your Learning Plan
           </h2>
@@ -64,52 +81,31 @@ export default function PlanTiersSection() {
             Start with our free trial and upgrade as you progress. All plans include our core AI-powered features.
           </p>
         </div>
-
+        {/* Billing Period Selector */}
+        <div className="flex justify-center mb-12">
+          <ToggleGroup
+            options={billingOptions}
+            value={billing}
+            onChange={setBilling}
+          />
+        </div>
         {/* Plans Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {plans.map((plan, index) => (
-            <div
-              key={index}
-              className={`relative bg-white rounded-xl shadow-sm border p-8 ${
-                plan.popular 
-                  ? 'border-primary-500 shadow-lg ring-2 ring-primary-100' 
-                  : 'border-gray-200'
-              }`}
-            >
-              {plan.popular && (
-                <Badge variant="accent" className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  Most Popular
-                </Badge>
-              )}
-
-              {/* Plan Header */}
-              <div className="text-center mb-8">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{plan.name}</h3>
-                <p className="text-gray-600 mb-4">{plan.description}</p>
-                <div className="text-3xl font-bold text-gray-900">
-                  {plan.price}
-                  <span className="text-lg font-normal text-gray-600">{plan.period}</span>
-                </div>
-              </div>
-
-              {/* Features */}
-              <ul className="space-y-3 mb-8">
-                {plan.features.map((feature, featureIndex) => (
-                  <li key={featureIndex} className="flex items-start">
-                    <span className="text-green-500 mr-3 mt-0.5">✓</span>
-                    <span className="text-gray-600">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA Button */}
-              <Button
-                variant={plan.popular ? 'accent' : 'outline'}
-                className="w-full"
-              >
-                {plan.buttonText}
-              </Button>
-            </div>
+          {plans.map((plan) => (
+            <PlanCard
+              key={plan.id}
+              name={plan.name}
+              price={plan.price}
+              billingCycle={
+                billing === 'month' ? '/month' :
+                billing === 'quarter' ? '/quarter' :
+                billing === 'year' ? '/year' :
+                plan.billingCycle
+              }
+              features={plan.features}
+              isPopular={plan.isPopular}
+              onSelect={() => handleSelectPlan(plan.id)}
+            />
           ))}
         </div>
 

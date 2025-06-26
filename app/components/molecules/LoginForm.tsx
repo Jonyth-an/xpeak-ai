@@ -13,7 +13,7 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
   };
 
   return (
-    <Card className="max-w-md mx-auto">
+    <Card className="max-w-md mx-auto rounded-token-lg">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-text-secondary">

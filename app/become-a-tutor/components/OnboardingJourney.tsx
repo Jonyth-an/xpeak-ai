@@ -56,7 +56,7 @@ export default function OnboardingJourney() {
         {steps.slice(0, 3).map((step) => {
           const Icon = step.icon;
           return (
-            <Card key={step.number} variant="elevated" padding="lg" className="relative flex flex-col items-center text-center min-h-[320px]">
+            <Card key={step.number} variant="elevated" padding="lg" className="relative flex flex-col items-center text-center min-h-[320px] rounded-token-lg">
               {/* Numbered Badge */}
               <div className={`absolute -top-4 right-6 w-8 h-8 flex items-center justify-center text-white rounded-full text-base font-bold shadow ${step.badgeBg}`}>{step.number}</div>
               {/* Icon */}
@@ -71,7 +71,7 @@ export default function OnboardingJourney() {
       </div>
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
         {/* Row 2: Step 4 and Final Card */}
-        <Card variant="elevated" padding="lg" className="relative flex flex-col items-center text-center min-h-[320px]">
+        <Card variant="elevated" padding="lg" className="relative flex flex-col items-center text-center min-h-[320px] rounded-token-lg">
           {/* Special Badge */}
           <div className="absolute -top-4 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-white text-orange-500 text-base font-bold shadow">
             <span>🎯</span>
@@ -88,7 +88,7 @@ export default function OnboardingJourney() {
             <span className="ml-2 text-text-muted text-sm">Your journey starts here</span>
           </div>
         </Card>
-        <Card variant="elevated" padding="lg" className="relative bg-gradient-to-br from-orange-400 to-red-500 text-white flex flex-col items-center text-center min-h-[320px] md:col-span-2">
+        <Card variant="elevated" padding="lg" className="relative bg-gradient-to-br from-orange-400 to-red-500 text-white flex flex-col items-center text-center min-h-[320px] md:col-span-2 rounded-token-lg">
           <div className="absolute -top-4 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-white text-orange-500 text-base font-bold shadow">
             <StarIcon className="w-5 h-5" />
           </div>

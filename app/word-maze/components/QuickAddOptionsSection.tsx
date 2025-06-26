@@ -9,7 +9,7 @@ export default function QuickAddOptionsSection() {
           { icon: '📸', title: 'Add from Photo', subtitle: 'Snap menus, books—Xpeak AI pulls out suggested vocab.', badge: 'Coming Soon' },
           { icon: '📄', title: 'Upload Lesson Notes', subtitle: 'Copy-paste or upload—AI extracts top new words for you.', badge: 'Coming Soon' },
         ].map((opt) => (
-          <Card key={opt.title} variant="default" padding="md" className="space-y-2">
+          <Card key={opt.title} variant="default" padding="md" className="space-y-2 rounded-token-lg">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 rounded-full bg-primary-50 flex items-center justify-center text-2xl">{opt.icon}</div>
               <span className="text-xs bg-muted rounded-full px-2 py-1">{opt.badge}</span>

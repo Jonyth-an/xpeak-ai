@@ -16,7 +16,7 @@ export default function Button({
   children, 
   ...props 
 }: ButtonProps) {
-  const baseClasses = 'inline-flex items-center justify-center font-medium transition-all duration-token-base focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'inline-flex items-center justify-center font-medium transition-all duration-token-base focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed rounded-token-lg';
   
   const variants = {
     primary: 'bg-token-primary text-token-text-inverse hover:bg-token-primary-dark focus:ring-token-primary shadow-token-sm hover:shadow-token-md',

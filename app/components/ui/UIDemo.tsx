@@ -196,7 +196,7 @@ export default function UIDemo() {
               <Button variant="secondary">Secondary</Button>
               <Button variant="outline">Outline</Button>
               <Button variant="ghost">Ghost</Button>
-              <Button variant="destructive">Destructive</Button>
+              <Button variant="accent">Accent</Button>
             </div>
           </div>
 
@@ -241,9 +241,9 @@ export default function UIDemo() {
               <Text variant="body">This is an elevated card with large padding and shadow.</Text>
             </Card>
             
-            <Card variant="filled" padding="lg">
-              <Text variant="h4" className="mb-2">Filled Card</Text>
-              <Text variant="body">This is a filled card with background color.</Text>
+            <Card variant="outlined" padding="lg">
+              <Text variant="h4" className="mb-2">Outlined Card</Text>
+              <Text variant="body">This is an outlined card with background color.</Text>
             </Card>
           </div>
         </Card>

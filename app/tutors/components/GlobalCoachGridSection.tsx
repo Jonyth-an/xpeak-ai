@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card } from '@/app/components/ui';
+import TutorCard from '@/app/components/molecules/TutorCard';
 
 const tutors = [
   {
@@ -66,22 +67,16 @@ export default function GlobalCoachGridSection() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {tutors.map((tutor, idx) => (
-            <Card
+            <TutorCard
               key={idx}
-              variant="default"
-              padding="lg"
-              className="flex flex-col items-center text-center hover:shadow-lg transition-shadow duration-200"
-            >
-              <div className="w-20 h-20 mb-4 rounded-full overflow-hidden border-4 border-indigo-100 shadow">
-                <img src={tutor.avatar} alt={tutor.name} className="w-full h-full object-cover" />
-              </div>
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <span className="text-2xl">{tutor.flag}</span>
-                <span className="text-lg font-bold text-text">{tutor.name}</span>
-              </div>
-              <div className="text-sm text-text-secondary mb-2">{tutor.background}</div>
-              <div className="italic text-indigo-700 text-base">"{tutor.quote}"</div>
-            </Card>
+              avatar={tutor.avatar}
+              name={tutor.name}
+              flag={tutor.flag}
+              background={tutor.background}
+              quote={tutor.quote}
+              className="h-full"
+              hideButton
+            />
           ))}
         </div>
       </div>

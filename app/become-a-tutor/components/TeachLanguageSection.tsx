@@ -15,7 +15,7 @@ export default function TeachLanguageSection() {
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Link
             href="/become-a-tutor?lang=en"
-            className="inline-block px-6 py-3 bg-primary-600 text-white font-semibold rounded-lg shadow hover:bg-primary-700 transition"
+            className="inline-block px-6 py-3 bg-token-accent text-token-text-on-accent font-semibold rounded-lg shadow hover:bg-token-accent-dark focus:ring-2 focus:ring-token-accent transition border-2 border-token-accent"
           >
             Apply for English Tutor
           </Link>

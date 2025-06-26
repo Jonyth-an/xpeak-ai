@@ -17,7 +17,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
   };
 
   return (
-    <Card className="max-w-md mx-auto">
+    <Card className="max-w-md mx-auto rounded-token-lg">
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Name */}
         <div>

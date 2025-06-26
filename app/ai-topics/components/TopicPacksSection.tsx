@@ -14,9 +14,9 @@ export default function TopicPacksSection() {
     <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto text-center">
         {/* Heading */}
-        <h2 className="text-2xl font-bold text-primary mb-2">📦 Special Topic Packs</h2>
-        <p className="text-muted mb-6">Explore Special Editions</p>
-        <p className="text-sm text-foreground/80 mb-10 max-w-lg mx-auto">
+        <h2 className="text-2xl font-bold text-token-text mb-2">📦 Special Topic Packs</h2>
+        <p className="text-token-text-secondary mb-6">Explore Special Editions</p>
+        <p className="text-sm text-token-text-secondary mb-10 max-w-lg mx-auto">
           Dive into curated series around global events, holidays, or cultural themes — from the World Cup to Lunar New Year.
         </p>
 

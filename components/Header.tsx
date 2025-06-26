@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Button, Select, Text } from '@/app/components/ui';
+import { Button, Select, Text, Card } from '@/app/components/ui';
 import LanguageSelectorMenu from '@/app/components/molecules/LanguageSelectorMenu';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState({ label: 'English', code: 'EN', flag: '🇺🇸' });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,51 +34,51 @@ export default function Header() {
           </div>
 
           {/* Navigation Tabs - Hidden on mobile */}
-          <nav className="hidden md:flex space-x-8">
-            <Link href="/" className="text-text-secondary hover:text-primary-600 px-3 py-2 text-sm font-medium transition-colors">
+          <nav className="hidden md:flex gap-x-4">
+            <Link href="/" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
               Home
             </Link>
-            <Link href="/tutors" className="text-text-secondary hover:text-primary-600 px-3 py-2 text-sm font-medium transition-colors">
+            <Link href="/tutors" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
               Tutors
             </Link>
-            <Link href="/ai-topics" className="text-text-secondary hover:text-primary-600 px-3 py-2 text-sm font-medium transition-colors">
+            <Link href="/ai-topics" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
               AI Topics
             </Link>
-            <Link href="/word-maze" className="text-text-secondary hover:text-primary-600 px-3 py-2 text-sm font-medium transition-colors">
+            <Link href="/word-maze" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
               Word Maze
             </Link>
-            <Link href="/pricing" className="text-text-secondary hover:text-primary-600 px-3 py-2 text-sm font-medium transition-colors">
+            <Link href="/pricing" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
               Pricing
+            </Link>
+            <Link href="/become-a-tutor" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+              Become a Tutor
             </Link>
           </nav>
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
-            {/* Become a Tutor Link - Hidden on mobile */}
-            <Link href="/become-a-tutor" className="hidden lg:block text-text-secondary hover:text-primary-600 text-sm font-medium transition-colors">
-              Become a Tutor
-            </Link>
-
             {/* Language Selector */}
             <div className="hidden md:block">
               <LanguageSelectorMenu
+                className="h-10 px-4 text-base font-medium rounded-lg border border-token-border bg-white"
                 options={[
                   { label: 'English', code: 'EN', flag: '🇺🇸' },
                   { label: 'Español', code: 'ES', flag: '🇪🇸' },
                   { label: '中文', code: 'ZH', flag: '🇨🇳' },
                   { label: '日本語', code: 'JA', flag: '🇯🇵' }
                 ]}
-                onSelect={lang => console.log('language selected:', lang)}
+                value={selectedLanguage.code}
+                onSelect={setSelectedLanguage}
               />
             </div>
 
             {/* Auth Buttons */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-x-2">
               <Link href="/login">
-                <Button variant="outline" size="sm">Log In</Button>
+                <Button variant="outline" className="h-10 px-4 text-base font-medium rounded-lg">Log In</Button>
               </Link>
               <Link href="/signup">
-                <Button variant="primary" size="sm">Sign Up</Button>
+                <Button variant="primary" className="h-10 px-4 text-base font-medium rounded-lg">Sign Up</Button>
               </Link>
             </div>
 

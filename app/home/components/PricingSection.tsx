@@ -147,21 +147,6 @@ export default function PricingSection() {
           </div>
         </div>
 
-        {/* Billing Toggle */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center bg-gray-100 rounded-full p-1">
-            <Button variant="accent" size="sm" className="rounded-full">
-              Monthly
-            </Button>
-            <Button variant="ghost" size="sm" className="rounded-full">
-              Quarterly <span className="text-green-600 font-semibold">Save 10%</span>
-            </Button>
-            <Button variant="ghost" size="sm" className="rounded-full">
-              Yearly <span className="text-green-600 font-semibold">Save 20%</span>
-            </Button>
-          </div>
-        </div>
-
         {/* CTA */}
         <div className="text-center">
           <p className="text-gray-600 mb-4">
