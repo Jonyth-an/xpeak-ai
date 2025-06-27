@@ -104,6 +104,14 @@ export default function Header() {
                     <span className="text-sm text-text-secondary">
                       Hi, {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
                     </span>
+                    <Link href="/profile">
+                      <Button 
+                        variant="ghost" 
+                        className="h-10 px-4 text-base font-medium rounded-lg text-text-secondary hover:text-primary-600"
+                      >
+                        Profile
+                      </Button>
+                    </Link>
                   </div>
                   <Button 
                     variant="outline" 

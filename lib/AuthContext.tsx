@@ -8,6 +8,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  isEmailVerified: boolean;
   signOut: () => Promise<void>;
 }
 
@@ -18,12 +19,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Check if user's email is verified
+  const isEmailVerified = user?.email_confirmed_at !== null;
+
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         console.log('Initial session:', session?.user?.email);
+        console.log('Email verified:', session?.user?.email_confirmed_at);
         setSession(session);
         setUser(session?.user ?? null);
       } catch (error) {
@@ -39,6 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
+        console.log('Email verified:', session?.user?.email_confirmed_at);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -70,6 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     session,
     loading,
+    isEmailVerified,
     signOut,
   };
 

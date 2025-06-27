@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { Card, Input, Button } from '../ui';
 
@@ -11,9 +12,9 @@ export interface SignupFormProps {
 }
 
 export default function SignupForm({ onSubmit, onSuccess, onError }: SignupFormProps) {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,10 +50,11 @@ export default function SignupForm({ onSubmit, onSuccess, onError }: SignupFormP
       }
 
       if (data.user) {
-        setSuccess(true);
         if (onSuccess) {
           onSuccess(data.user);
         }
+        // Redirect to email verification page
+        router.push('/verify-email');
       }
     } catch (err: any) {
       const errorMessage = err.message || 'An error occurred during sign up';
@@ -64,24 +66,6 @@ export default function SignupForm({ onSubmit, onSuccess, onError }: SignupFormP
       setIsLoading(false);
     }
   };
-
-  if (success) {
-    return (
-      <Card className="max-w-md mx-auto rounded-token-lg">
-        <div className="text-center p-6">
-          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Check your email</h3>
-          <p className="text-gray-600">
-            We've sent you a confirmation link. Please check your email and click the link to verify your account.
-          </p>
-        </div>
-      </Card>
-    );
-  }
 
   return (
     <Card className="max-w-md mx-auto rounded-token-lg">
