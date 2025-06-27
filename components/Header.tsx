@@ -4,10 +4,13 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button, Select, Text, Card } from '@/app/components/ui';
 import LanguageSelectorMenu from '@/app/components/molecules/LanguageSelectorMenu';
+import { useAuth } from '@/lib/AuthContext';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState({ label: 'English', code: 'EN', flag: '🇺🇸' });
+  const { user, loading, signOut } = useAuth();
+  const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +20,20 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleSignOut = async () => {
+    try {
+      setSigningOut(true);
+      console.log('Header: Starting sign out...');
+      await signOut();
+      console.log('Header: Sign out completed');
+    } catch (error) {
+      console.error('Header: Sign out error:', error);
+      alert('Failed to sign out. Please try again.');
+    } finally {
+      setSigningOut(false);
+    }
+  };
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -74,12 +91,47 @@ export default function Header() {
 
             {/* Auth Buttons */}
             <div className="flex items-center gap-x-2">
-              <Link href="/login">
-                <Button variant="outline" className="h-10 px-4 text-base font-medium rounded-lg">Log In</Button>
-              </Link>
-              <Link href="/signup">
-                <Button variant="primary" className="h-10 px-4 text-base font-medium rounded-lg">Sign Up</Button>
-              </Link>
+              {loading ? (
+                // Loading state
+                <div className="flex items-center gap-x-2">
+                  <div className="animate-pulse bg-gray-200 h-10 w-16 rounded-lg"></div>
+                  <div className="animate-pulse bg-gray-200 h-10 w-20 rounded-lg"></div>
+                </div>
+              ) : user ? (
+                // Logged in state
+                <div className="flex items-center gap-x-2">
+                  <div className="hidden md:flex items-center gap-x-2">
+                    <span className="text-sm text-text-secondary">
+                      Hi, {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
+                    </span>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="h-10 px-4 text-base font-medium rounded-lg"
+                    onClick={handleSignOut}
+                    disabled={signingOut}
+                  >
+                    {signingOut ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                        Signing Out...
+                      </div>
+                    ) : (
+                      'Sign Out'
+                    )}
+                  </Button>
+                </div>
+              ) : (
+                // Logged out state
+                <div className="flex items-center gap-x-2">
+                  <Link href="/login">
+                    <Button variant="outline" className="h-10 px-4 text-base font-medium rounded-lg">Log In</Button>
+                  </Link>
+                  <Link href="/signup">
+                    <Button variant="primary" className="h-10 px-4 text-base font-medium rounded-lg">Sign Up</Button>
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Mobile Menu Button */}

@@ -1,16 +1,42 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Layout from '../../components/Layout';
 import LoginForm from '@/app/components/molecules/LoginForm';
 import { Text } from '@/app/components/ui';
+import { useAuth } from '@/lib/AuthContext';
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { user } = useAuth();
+  const [pageError, setPageError] = useState<string | null>(null);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
+
   const handleLogin = (data: { email: string; password: string }) => {
-    console.log('login', data);
-    // Here you would typically handle authentication
-    alert(`Login attempt for: ${data.email}`);
+    console.log('login attempt:', data);
   };
+
+  const handleLoginSuccess = (user: any) => {
+    console.log('login successful:', user);
+    // The AuthContext will handle the state update and redirect
+  };
+
+  const handleLoginError = (error: string) => {
+    console.error('login error:', error);
+    setPageError(error);
+  };
+
+  // Show loading or redirect if user is already logged in
+  if (user) {
+    return null; // Will redirect via useEffect
+  }
 
   return (
     <Layout>
@@ -24,7 +50,19 @@ export default function LoginPage() {
               Sign in to continue your language learning journey with Xpeak AI.
             </Text>
           </div>
-          <LoginForm onSubmit={handleLogin} />
+          
+          {pageError && (
+            <div className="max-w-md mx-auto mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              {pageError}
+            </div>
+          )}
+          
+          <LoginForm 
+            onSubmit={handleLogin}
+            onSuccess={handleLoginSuccess}
+            onError={handleLoginError}
+          />
+          
           <div className="text-center mt-8">
             <Text variant="body" className="text-gray-600">
               Don&apos;t have an account?{' '}

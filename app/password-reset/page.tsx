@@ -1,15 +1,25 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '../../components/Layout';
 import PasswordResetForm from '@/app/components/molecules/PasswordResetForm';
 import { Text } from '@/app/components/ui';
 
 export default function PasswordResetPage() {
+  const [pageError, setPageError] = useState<string | null>(null);
+
   const handlePasswordReset = (data: { email: string }) => {
-    console.log('reset link for', data.email);
-    // Here you would typically trigger a password reset email
-    alert(`Password reset link sent to: ${data.email}`);
+    console.log('password reset attempt for:', data.email);
+  };
+
+  const handlePasswordResetSuccess = (email: string) => {
+    console.log('password reset email sent to:', email);
+    // The form component will show the success message
+  };
+
+  const handlePasswordResetError = (error: string) => {
+    console.error('password reset error:', error);
+    setPageError(error);
   };
 
   return (
@@ -24,7 +34,18 @@ export default function PasswordResetPage() {
               Enter your email address and we'll send you a link to reset your password.
             </Text>
           </div>
-          <PasswordResetForm onSubmit={handlePasswordReset} />
+          
+          {pageError && (
+            <div className="max-w-md mx-auto mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              {pageError}
+            </div>
+          )}
+          
+          <PasswordResetForm 
+            onSubmit={handlePasswordReset}
+            onSuccess={handlePasswordResetSuccess}
+            onError={handlePasswordResetError}
+          />
         </div>
       </section>
     </Layout>
