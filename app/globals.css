@@ -1,21 +1,20 @@
-@import '../styles/design-tokens.css';
+@import "../styles/design-tokens.css";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-rgb: 255, 255, 255;
   /* Design-token custom properties */
-  --color-surface: #F9FAFB;
-  --color-background: #FFFFFF;
-  --color-text-primary: #1F2937;
-  --color-text-secondary: #4B5563;
-  --color-text-muted: #6B7280;
-  --color-border: #E5E7EB;
+  --color-surface: #f9fafb;
+  --color-background: #ffffff;
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #4b5563;
+  --color-text-muted: #6b7280;
+  --color-border: #e5e7eb;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,11 +22,11 @@
     --foreground-rgb: 255, 255, 255;
     --background-rgb: 0, 0, 0;
     /* Dark-mode overrides for design tokens */
-    --color-surface: #1F2937;
+    --color-surface: #1f2937;
     --color-background: #000000;
-    --color-text-primary: #F9FAFB;
-    --color-text-secondary: #D1D5DB;
-    --color-text-muted: #9CA3AF;
+    --color-text-primary: #f9fafb;
+    --color-text-secondary: #d1d5db;
+    --color-text-muted: #9ca3af;
     --color-border: #374151;
   }
 }
@@ -42,8 +41,8 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -81,8 +80,6 @@ a {
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
-
-
 
 @layer base {
   :root {
@@ -140,8 +137,6 @@ a {
   }
 }
 
-
-
 @layer base {
   * {
     @apply border-border;
@@ -149,4 +144,4 @@ a {
   body {
     @apply bg-background text-foreground;
   }
-} 
+}

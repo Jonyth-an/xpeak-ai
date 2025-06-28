@@ -40,8 +40,8 @@ export default function Button({
   );
   
   if (asChild) {
-    return React.cloneElement(children as React.ReactElement, {
-      className: cn(classes, (children as React.ReactElement).props.className),
+    return React.cloneElement(children as React.ReactElement<any>, {
+      className: cn(classes, (children as React.ReactElement<any>).props.className),
       ...props
     });
   }
