@@ -83,13 +83,32 @@ export default function PlanTiersSection() {
     return plan.priceSuffix;
   };
 
+  // Handler for Stripe checkout (to be implemented)
+  const handleCheckout = async (planId: string) => {
+    try {
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ planId, interval: billing }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || 'Failed to start checkout.');
+      }
+    } catch (err) {
+      alert('Failed to start checkout.');
+    }
+  };
+
   return (
     <section className="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Xpeak AI Pricing Tiers</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Choose Your Learning Plan</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Choose the perfect plan to start your language adventure. Upgrade, downgrade, or cancel anytime.
+            Choose the perfect plan to start your language adventure with Xpeak AI. Upgrade, downgrade, or cancel anytime.
           </p>
         </div>
         <div className="flex justify-center mb-12">
@@ -129,7 +148,11 @@ export default function PlanTiersSection() {
                     </li>
                   ))}
                 </ul>
-                <Button variant={plan.highlight ? "primary" : "outline"} className="w-full mt-auto">
+                <Button
+                  variant={plan.highlight ? "primary" : "outline"}
+                  className="w-full mt-auto"
+                  onClick={() => handleCheckout(plan.id)}
+                >
                   {plan.cta}
                 </Button>
               </div>
