@@ -1,73 +1,40 @@
 'use client';
 import React from 'react';
-import { Button, Badge } from '@/app/components/ui';
-import TopUpPackCard from '../../components/molecules/TopUpPackCard';
+import { Card, Badge, Button, Text } from '@/app/components/ui';
 
 export default function TopUpSection() {
-  const packs = [
-    { 
-      id: 'p20', 
-      lessons: 20, 
-      description: 'Top up 20 lessons anytime', 
-      buttonLabel: 'Top Up 20', 
-      comingSoon: false 
-    },
-    { 
-      id: 'p50', 
-      lessons: 50, 
-      description: 'Top up 50 lessons anytime', 
-      buttonLabel: 'Top Up 50', 
-      comingSoon: false 
-    },
-    { 
-      id: 'p100', 
-      lessons: 100, 
-      description: 'Top up 100 lessons anytime', 
-      buttonLabel: 'Top Up 100', 
-      comingSoon: true 
-    },
-  ];
-
-  function handlePurchase(id: string) {
-    console.log(`Purchase top-up pack: ${id}`);
-    // Add your purchase logic here
-  }
-
   return (
-    <section className="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Need More Lessons?
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Top up your account with additional lessons whenever you need them. Perfect for when you want extra practice.
+    <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Top-Up Packs</h2>
+          <p className="text-gray-600 text-base">
+            Need more hours? Add on anytime. Available for all Plus and Pro users.
           </p>
         </div>
-
-        {/* Top-Up Options */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {packs.map((pack) => (
-            <TopUpPackCard
-              key={pack.lessons}
-              lessons={pack.lessons}
-              description={pack.description}
-              buttonLabel={pack.buttonLabel}
-              onPurchase={() => handlePurchase(pack.id)}
-              isComingSoon={pack.comingSoon}
-            />
-          ))}
+        <div className="flex flex-col md:flex-row gap-6 mb-6">
+          <Card className="flex-1 flex flex-col items-center p-6">
+            <div className="text-lg font-medium mb-2">1 Extra Hour</div>
+            <div className="text-gray-500 mb-4 text-sm">of AI tutoring</div>
+            <div className="text-2xl font-bold mb-4">$5</div>
+            <Button variant="primary" className="w-full">Add 1 Hour</Button>
+          </Card>
+          <Card className="flex-1 flex flex-col items-center p-6">
+            <div className="text-lg font-medium mb-2">5 Extra Hours <Badge className='ml-2 bg-gray-200 text-gray-700 text-xs font-semibold'>Save 20%</Badge></div>
+            <div className="text-gray-500 mb-4 text-sm">of AI tutoring</div>
+            <div className="text-2xl font-bold mb-4">$20</div>
+            <Button variant="primary" className="w-full">Add 5 Hours</Button>
+          </Card>
         </div>
-
-        {/* Additional Info */}
-        <div className="text-center">
-          <p className="text-gray-600 mb-4">
-            Top-up lessons are valid for 6 months and can be used with any tutor on the platform.
-          </p>
-          <p className="text-sm text-gray-500">
-            Questions about top-ups? <a href="#" className="text-primary-600 hover:text-primary-700">Contact support</a>
-          </p>
+        <div className="flex flex-col md:flex-row gap-4 text-gray-500 text-sm mb-2">
+          <div className="flex items-center gap-2">
+            <span role="img" aria-label="clock">⏲️</span>
+            Sessions expire in 3 months
+          </div>
+          <div className="flex items-center gap-2">
+            <span role="img" aria-label="bell">🔔</span>
+            Auto-reminder when you run low
+          </div>
         </div>
       </div>
     </section>

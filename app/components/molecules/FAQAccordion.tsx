@@ -27,7 +27,7 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
           <Button
             variant="ghost"
             onClick={() => toggle(idx)}
-            className="w-full flex justify-between items-center p-token-4"
+            className="w-full flex justify-between items-center py-1 px-2 min-h-0 focus:outline-none focus:ring-0 ring-0 outline-none"
           >
             <span className="text-text-primary">{item.question}</span>
             <span className="text-text-secondary">
@@ -35,7 +35,7 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
             </span>
           </Button>
           {openIndex === idx && (
-            <div className="pt-token-2 pb-token-4 px-token-4 text-text-secondary">
+            <div className="pt-0.5 pb-2 px-2 text-text-secondary text-sm leading-tight">
               {item.answer}
             </div>
           )}

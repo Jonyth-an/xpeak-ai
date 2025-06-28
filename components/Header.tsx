@@ -5,6 +5,13 @@ import Link from 'next/link';
 import { Button, Select, Text, Card } from '@/app/components/ui';
 import LanguageSelectorMenu from '@/app/components/molecules/LanguageSelectorMenu';
 import { useAuth } from '@/lib/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -43,7 +50,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center">
+            <Link href={user ? "/dashboard" : "/"} className="flex items-center">
               <Text variant="h2" as="span" className="text-primary-600">
                 Xpeak AI
               </Text>
@@ -52,24 +59,54 @@ export default function Header() {
 
           {/* Navigation Tabs - Hidden on mobile */}
           <nav className="hidden md:flex gap-x-4">
-            <Link href="/" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-              Home
-            </Link>
-            <Link href="/tutors" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-              Tutors
-            </Link>
-            <Link href="/ai-topics" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-              AI Topics
-            </Link>
-            <Link href="/word-maze" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-              Word Maze
-            </Link>
-            <Link href="/pricing" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-              Pricing
-            </Link>
-            <Link href="/become-a-tutor" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-              Become a Tutor
-            </Link>
+            {user ? (
+              // Logged-in navigation
+              <>
+                <Link href="/dashboard" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  Dashboard
+                </Link>
+                <Link href="/tutors" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  Tutors
+                </Link>
+                <Link href="/ai-topics" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  AI Topics
+                </Link>
+                <Link href="/word-maze" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  Word Maze
+                </Link>
+                <Link href="/pricing" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  Pricing
+                </Link>
+                <Link href="/community" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  Community
+                </Link>
+              </>
+            ) : (
+              // Logged-out navigation
+              <>
+                <Link href="/" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  Home
+                </Link>
+                <Link href="/tutors" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  Tutors
+                </Link>
+                <Link href="/ai-topics" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  AI Topics
+                </Link>
+                <Link href="/word-maze" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  Word Maze
+                </Link>
+                <Link href="/pricing" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  Pricing
+                </Link>
+                <Link href="/community" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  Community
+                </Link>
+                <Link href="/become-a-tutor" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  Become a Tutor
+                </Link>
+              </>
+            )}
           </nav>
 
           {/* Right Side Actions */}
@@ -91,8 +128,8 @@ export default function Header() {
 
             {/* Auth Buttons */}
             <div className="flex items-center gap-x-2">
+              {/* Loading state */}
               {loading ? (
-                // Loading state
                 <div className="flex items-center gap-x-2">
                   <div className="animate-pulse bg-gray-200 h-10 w-16 rounded-lg"></div>
                   <div className="animate-pulse bg-gray-200 h-10 w-20 rounded-lg"></div>
@@ -101,33 +138,41 @@ export default function Header() {
                 // Logged in state
                 <div className="flex items-center gap-x-2">
                   <div className="hidden md:flex items-center gap-x-2">
-                    <span className="text-sm text-text-secondary">
-                      Hi, {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
-                    </span>
-                    <Link href="/profile">
-                      <Button 
-                        variant="ghost" 
-                        className="h-10 px-4 text-base font-medium rounded-lg text-text-secondary hover:text-primary-600"
-                      >
-                        Profile
-                      </Button>
-                    </Link>
+                    {/* User Avatar with Dropdown */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="relative focus:outline-none">
+                          <img
+                            src={user.user_metadata?.avatar_url || '/images/default-avatar.svg'}
+                            alt="User avatar"
+                            className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 cursor-pointer hover:ring-2 hover:ring-primary-500 transition"
+                            onError={(e) => {
+                              e.currentTarget.src = '/images/default-avatar.svg';
+                            }}
+                          />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem asChild>
+                          <Link href="/dashboard">Dashboard</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/profile">Profile</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleSignOut} disabled={signingOut} className="text-red-600">
+                          {signingOut ? (
+                            <div className="flex items-center">
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                              Signing Out...
+                            </div>
+                          ) : (
+                            'Sign Out'
+                          )}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    className="h-10 px-4 text-base font-medium rounded-lg"
-                    onClick={handleSignOut}
-                    disabled={signingOut}
-                  >
-                    {signingOut ? (
-                      <div className="flex items-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
-                        Signing Out...
-                      </div>
-                    ) : (
-                      'Sign Out'
-                    )}
-                  </Button>
                 </div>
               ) : (
                 // Logged out state

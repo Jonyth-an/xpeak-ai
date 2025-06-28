@@ -1,39 +1,47 @@
 'use client';
 
-import { useState } from 'react';
-import { Button, Card } from '@/app/components/ui';
+import React from 'react';
+import FAQAccordion, { FAQItem } from '@/app/components/molecules/FAQAccordion';
 
-const faqs = [
+const faqs: FAQItem[] = [
   {
-    question: 'What happens if I miss a lesson?',
+    question: "Is Xpeak AI free to use?",
     answer:
-      'No worries — you can reschedule as long as you cancel in advance, or carry forward unused credits within the billing cycle.',
+      "Yes! Xpeak AI offers a Free Plan that includes limited weekly access to our AI tutors. It's a great way to explore the experience before committing to a subscription.",
   },
   {
-    question: 'Can I switch tutors?',
-    answer: 'Absolutely! Try different tutors to find your best fit.',
-  },
-  {
-    question: 'Can I cancel anytime?',
-    answer: 'Yes. You can cancel your subscription from your account settings at any time.',
-  },
-  {
-    question: 'How many times can I purchase a trial pack?',
-    answer: 'Up to 3 times per account — to help you explore and find your perfect coach.',
-  },
-  {
-    question: 'Do all plans include AI features?',
+    question: "What's included in the subscription plan?",
     answer:
-      'Yes. Every plan comes with full access to our AI suite, including Word Maze and Progress Tracker.',
+      "The Pro Plan includes:\n\nUnlimited AI tutor conversations (fair-use limits apply)\n\nFull access to co-create custom topics and Word Maze\n\nPriority access to new features\n\nLonger session duration and more memory per session",
+  },
+  {
+    question: "What happens when I run out of AI tutor minutes?",
+    answer:
+      "You can either:\n\nWait until your next billing cycle resets, or\n\nTop up with a one-time pack of additional minutes. These credits stay in your account for 6 months.",
+  },
+  {
+    question: "Can I pause or cancel my subscription?",
+    answer:
+      "Yes. You can cancel anytime, and your plan will remain active until the end of your billing cycle. Pause functionality will be available in the future.",
+  },
+  {
+    question: "Will I lose my Word Maze progress or saved topics if I cancel?",
+    answer:
+      "No. Your progress, saved vocabulary, and co-created topics will stay saved. When you return or upgrade again, you can pick up right where you left off.",
+  },
+  {
+    question: "Can I use Xpeak AI on mobile and desktop?",
+    answer:
+      "Yes! Your account works seamlessly across desktop and mobile (with some mobile-exclusive features like 'Add Words from Photos').",
+  },
+  {
+    question: "How do I know how many minutes I've used or have left?",
+    answer:
+      "Your dashboard shows your usage stats, including:\n\nMinutes used this month\n\nMinutes remaining\n\nNext renewal date\n\nWe'll also send friendly reminders as you approach your limits.",
   },
 ];
 
 export default function FAQSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const toggle = (idx: number) => {
-    setOpenIndex(openIndex === idx ? null : idx);
-  };
-
   return (
     <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
@@ -47,32 +55,9 @@ export default function FAQSection() {
           </p>
         </div>
 
-        {/* Accordion */}
-        <div className="space-y-4">
-          {faqs.map((faq, idx) => (
-            <Card
-              key={idx}
-              variant="default"
-              padding="none"
-              className="overflow-hidden"
-            >
-              <Button
-                onClick={() => toggle(idx)}
-                variant="ghost"
-                className="w-full flex justify-between items-center px-6 py-4 text-left h-auto"
-              >
-                <span className="font-semibold text-text">
-                  {faq.question}
-                </span>
-                <span className="text-primary-600 text-2xl">
-                  {openIndex === idx ? '−' : '+'}
-                </span>
-              </Button>
-              {openIndex === idx && (
-                <div className="px-6 pb-4 text-text-secondary">{faq.answer}</div>
-              )}
-            </Card>
-          ))}
+        {/* FAQ Accordion */}
+        <div className="space-y-3">
+          <FAQAccordion items={faqs} />
         </div>
       </div>
     </section>

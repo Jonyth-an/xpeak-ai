@@ -23,6 +23,7 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
     isBlocked: boolean;
     retryAfter?: number;
   } | null>(null);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -192,9 +193,50 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
     return isLoading || (rateLimitStatus?.isBlocked ?? false);
   };
 
+  const handleGoogleLogin = async () => {
+    setIsGoogleLoading(true);
+    setError(null);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+      if (error) {
+        setError(error.message || 'Google sign-in failed');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Google sign-in failed');
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
   return (
     <Card className="max-w-md mx-auto rounded-token-lg">
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Google Login Button */}
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full flex items-center justify-center gap-2"
+          onClick={handleGoogleLogin}
+          disabled={isGoogleLoading || isLoading}
+        >
+          {isGoogleLoading ? (
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
+              Signing in with Google...
+            </div>
+          ) : (
+            <>
+              <svg width="20" height="20" viewBox="0 0 48 48" className="mr-2" aria-hidden="true"><g><path fill="#4285F4" d="M43.611 20.083H42V20H24v8h11.303C33.972 32.833 29.418 36 24 36c-6.627 0-12-5.373-12-12s5.373-12 12-12c2.803 0 5.377.99 7.409 2.626l6.591-6.591C34.583 5.14 29.617 3 24 3 12.954 3 4 11.954 4 23s8.954 20 20 20c11.045 0 19.799-7.954 19.799-19 0-1.27-.138-2.507-.377-3.717z"/><path fill="#34A853" d="M6.306 14.691l6.571 4.819C14.655 16.104 19.001 13 24 13c2.803 0 5.377.99 7.409 2.626l6.591-6.591C34.583 5.14 29.617 3 24 3c-7.732 0-14.41 4.41-17.694 10.691z"/><path fill="#FBBC05" d="M24 43c5.356 0 9.86-1.797 13.146-4.888l-6.066-4.966C29.418 36 24 36 24 36c-5.418 0-9.972-3.167-11.303-8.083l-6.591 6.591C9.59 40.59 16.268 45 24 45z"/><path fill="#EA4335" d="M43.611 20.083H42V20H24v8h11.303C34.418 32.833 29.418 36 24 36c-5.418 0-9.972-3.167-11.303-8.083l-6.591 6.591C9.59 40.59 16.268 45 24 45c7.732 0 14.41-4.41 17.694-10.691z"/></g></svg>
+              Continue with Google
+            </>
+          )}
+        </Button>
+        {/* Divider */}
+        <div className="flex items-center my-2">
+          <div className="flex-grow border-t border-gray-200"></div>
+          <span className="mx-2 text-gray-400 text-xs">or</span>
+          <div className="flex-grow border-t border-gray-200"></div>
+        </div>
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
             {error}

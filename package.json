@@ -11,7 +11,9 @@
     "lint:fix": "stylelint \"**/*.{css,scss}\" --fix",
     "test:profile": "node test-profile-functionality.js",
     "test:email-verification": "node test-email-verification.js",
-    "test:rate-limiting": "node test-rate-limiting.js"
+    "test:rate-limiting": "node test-rate-limiting.js",
+    "test:avatar-features": "node test-avatar-features.js",
+    "screenshots": "node scripts/screenshot-generator.js"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -24,6 +26,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@shadcn/ui": "^0.0.4",
     "@supabase/supabase-js": "^2.50.2",
+    "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.19.1",
@@ -31,7 +34,9 @@
     "next": "14.0.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-easy-crop": "^5.4.2",
     "react-hook-form": "^7.58.1",
+    "react-image-crop": "^11.0.10",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.25.67"
