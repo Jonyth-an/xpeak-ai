@@ -10,13 +10,16 @@ import {
 } from '@/lib/storage';
 import { Button, Text } from '@/app/components/ui';
 import ImageCropper from './ImageCropper';
+import { Avatar } from '@/app/components/ui';
+import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 interface AvatarUploadProps {
   onAvatarUpdate?: (avatarUrl: string) => void;
   className?: string;
+  compact?: boolean;
 }
 
-export default function AvatarUpload({ onAvatarUpdate, className = '' }: AvatarUploadProps) {
+export default function AvatarUpload({ onAvatarUpdate, className = '', compact = true }: AvatarUploadProps) {
   const { user } = useAuth();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -32,6 +35,9 @@ export default function AvatarUpload({ onAvatarUpdate, className = '' }: AvatarU
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // New: show upload area only when uploading
+  const [showUpload, setShowUpload] = useState(false);
+
   const handleFileSelect = useCallback((file: File) => {
     setError(null);
     setCompressionInfo(null);
@@ -42,6 +48,9 @@ export default function AvatarUpload({ onAvatarUpdate, className = '' }: AvatarU
       setError(validationError);
       return;
     }
+
+    // Close the upload dialog before opening cropper
+    setShowUpload(false);
 
     // Show cropper for the selected file
     setSelectedFile(file);
@@ -167,6 +176,73 @@ export default function AvatarUpload({ onAvatarUpdate, className = '' }: AvatarU
 
   const currentAvatarUrl = user?.user_metadata?.avatar_url || '/images/default-avatar.svg';
 
+  // New compact layout
+  if (compact) {
+    return (
+      <>
+        <div className={`flex flex-col items-center justify-center gap-4 py-8 ${className}`}>
+          {/* Section Title */}
+          <div className="font-semibold text-lg mb-1">Profile Photo</div>
+          {/* Avatar */}
+          <Avatar
+            src={currentAvatarUrl}
+            alt="Current avatar"
+            className="w-20 h-20 rounded-full object-cover border-2 border-gray-200 mb-2"
+          />
+          {/* Buttons */}
+          <div className="flex gap-2 mt-2">
+            <Dialog open={showUpload} onOpenChange={setShowUpload}>
+              <DialogTrigger asChild>
+                <Button type="button" variant="primary">
+                  Upload New
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogTitle>Upload Profile Photo</DialogTitle>
+                <DialogDescription>
+                  Choose a square image for best results. PNG, JPG, WebP up to 5MB.
+                </DialogDescription>
+                {/* --- Upload UI below --- */}
+                <div className="mt-4">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    className="hidden"
+                    onChange={handleFileInputChange}
+                  />
+                  <div
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 transition"
+                    onClick={() => fileInputRef.current?.click()}
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                  >
+                    <span className="text-4xl mb-2">📤</span>
+                    <span className="text-gray-600 text-sm">Click to upload or drag and drop</span>
+                    <span className="text-gray-400 text-xs mt-1">PNG, JPG, WebP up to 5MB</span>
+                  </div>
+                </div>
+                {/* --- End Upload UI --- */}
+              </DialogContent>
+            </Dialog>
+            <Button type="button" variant="outline" onClick={handleRemoveAvatar}>
+              Remove
+            </Button>
+          </div>
+        </div>
+        {/* Cropper modal for both layouts */}
+        {showCropper && selectedFile && (
+          <ImageCropper
+            imageFile={selectedFile}
+            onCropComplete={handleCropComplete}
+            onCancel={handleCropCancel}
+            aspectRatio={1}
+          />
+        )}
+      </>
+    );
+  }
+
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Current Avatar Display */}
@@ -275,16 +351,6 @@ export default function AvatarUpload({ onAvatarUpdate, className = '' }: AvatarU
         onChange={handleFileInputChange}
         className="hidden"
       />
-
-      {/* Image Cropper Modal */}
-      {showCropper && selectedFile && (
-        <ImageCropper
-          imageFile={selectedFile}
-          onCropComplete={handleCropComplete}
-          onCancel={handleCropCancel}
-          aspectRatio={1} // Square aspect ratio
-        />
-      )}
     </div>
   );
 } 

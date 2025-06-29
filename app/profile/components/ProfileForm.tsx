@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../lib/AuthContext';
 import { supabase } from '../../../lib/supabaseClient';
+import AvatarUpload from './AvatarUpload';
 
 interface ProfileData {
   full_name: string;

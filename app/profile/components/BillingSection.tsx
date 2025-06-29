@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/AuthContext';
 import { supabase } from '../../../lib/supabaseClient';
 import { useSearchParams } from 'next/navigation';
 import BillingInformationForm from './BillingInformationForm';
+import InvoiceHistory from './InvoiceHistory';
 
 interface Subscription {
   id: string;
@@ -864,6 +865,11 @@ export default function BillingSection() {
                   </p>
                 </div>
               </div>
+              {/* Security Notice */}
+              <div className="text-sm text-gray-500 mt-2">
+                🔒 Your payment information is securely processed by Stripe. 
+                We only store the last 4 digits and expiry date for display purposes.
+              </div>
             </div>
           ) : (
             <div className="bg-yellow-50 rounded-lg p-4">
@@ -879,48 +885,7 @@ export default function BillingSection() {
 
         {/* Invoice History Section */}
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Invoice History</h2>
-          
-          {invoices?.length > 0 ? (
-            <div className="space-y-3">
-              {invoices.map((invoice) => (
-                <div key={invoice.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">
-                      {formatCurrency(invoice.amount_paid, invoice.currency)}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {formatDate(invoice.created)} • {invoice.status}
-                    </p>
-                  </div>
-                  <div className="flex space-x-2">
-                    {invoice.hosted_invoice_url && (
-                      <Button
-                        onClick={() => window.open(invoice.hosted_invoice_url, '_blank')}
-                        variant="secondary"
-                        size="sm"
-                      >
-                        View
-                      </Button>
-                    )}
-                    {invoice.invoice_pdf && (
-                      <Button
-                        onClick={() => window.open(invoice.invoice_pdf, '_blank')}
-                        variant="secondary"
-                        size="sm"
-                      >
-                        Download PDF
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-gray-500">No invoices found.</p>
-            </div>
-          )}
+          <InvoiceHistory />
         </section>
       </div>
 

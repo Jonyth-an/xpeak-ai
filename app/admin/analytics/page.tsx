@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Layout from '../../../components/Layout';
+import AdminLayout from '../AdminLayout';
 import { useAuth } from '@/lib/AuthContext';
 import { isAdminEmail } from '@/lib/adminAuth';
 import { createClient } from '@supabase/supabase-js';
@@ -83,17 +83,17 @@ export default function AdminAnalyticsPage() {
 
   if (loading) {
     return (
-      <Layout>
+      <AdminLayout>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
         </div>
-      </Layout>
+      </AdminLayout>
     );
   }
 
   if (!isAdmin) {
     return (
-      <Layout>
+      <AdminLayout>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <Text variant="h1" as="h1" className="mb-4 text-red-600">
@@ -104,12 +104,12 @@ export default function AdminAnalyticsPage() {
             </Text>
           </div>
         </div>
-      </Layout>
+      </AdminLayout>
     );
   }
 
   return (
-    <Layout>
+    <AdminLayout>
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
@@ -312,6 +312,6 @@ export default function AdminAnalyticsPage() {
           )}
         </div>
       </div>
-    </Layout>
+    </AdminLayout>
   );
 } 

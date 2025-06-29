@@ -11,6 +11,7 @@ import PasswordChangeForm from './components/PasswordChangeForm';
 import LanguagePreferences from './components/LanguagePreferences';
 import TimezonePreferences from './components/TimezonePreferences';
 import AvatarUpload from './components/AvatarUpload';
+import ProfileSidebar from './components/ProfileSidebar';
 import { useAuth } from '@/lib/AuthContext';
 import BillingSection from './components/BillingSection';
 
@@ -152,43 +153,25 @@ export default function ProfilePage() {
     <ProtectedRoute>
       <RequireEmailVerification>
         <Layout>
-          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
-            <div className="max-w-4xl mx-auto">
-              {/* Header */}
-              <div className="text-center mb-12">
-                <Text variant="h1" as="h1" className="mb-4">
-                  Profile & Settings
-                </Text>
-                <Text variant="lead" className="text-gray-600">
-                  Manage your account and preferences
-                </Text>
-              </div>
-
-              {/* Tab Navigation */}
-              <div className="mb-8">
-                <div className="flex flex-wrap justify-center gap-2">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => handleTabChange(tab.id)}
-                      className={`
-                        flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all duration-200
-                        ${activeTab === tab.id
-                          ? 'bg-blue-600 text-white shadow-md'
-                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-                        }
-                      `}
-                    >
-                      <span className="text-lg">{tab.icon}</span>
-                      <span>{tab.label}</span>
-                    </button>
-                  ))}
+          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 min-h-screen">
+            <div className="max-w-7xl mx-auto">
+              {/* Main Content with Sidebar */}
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                {/* Sidebar */}
+                <div className="lg:col-span-1">
+                  <ProfileSidebar 
+                    activeTab={activeTab}
+                    onTabChange={handleTabChange}
+                    userEmail={user?.email}
+                  />
                 </div>
-              </div>
 
-              {/* Tab Content */}
-              <div className="min-h-[600px]">
-                {renderTabContent()}
+                {/* Main Content */}
+                <div className="lg:col-span-3">
+                  <div className="min-h-[600px]">
+                    {renderTabContent()}
+                  </div>
+                </div>
               </div>
             </div>
           </section>
