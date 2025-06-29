@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button, Select, Text, Card } from '@/app/components/ui';
 import LanguageSelectorMenu from '@/app/components/molecules/LanguageSelectorMenu';
 import { useAuth } from '@/lib/AuthContext';
+import { isAdminEmail } from '@/lib/adminAuth';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -41,6 +42,9 @@ export default function Header() {
       setSigningOut(false);
     }
   };
+
+  // Check if current user is an admin
+  const isAdmin = user ? isAdminEmail(user.email) : false;
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -159,6 +163,16 @@ export default function Header() {
                         <DropdownMenuItem asChild>
                           <Link href="/profile">Profile</Link>
                         </DropdownMenuItem>
+                        {isAdmin && (
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem asChild>
+                              <Link href="/admin/dashboard" className="text-purple-600 font-medium">
+                                Admin Dashboard
+                              </Link>
+                            </DropdownMenuItem>
+                          </>
+                        )}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleSignOut} disabled={signingOut} className="text-red-600">
                           {signingOut ? (

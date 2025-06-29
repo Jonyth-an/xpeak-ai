@@ -4,7 +4,7 @@ export default function RoadmapSection() {
   return (
     <section id="roadmap" className="py-12 bg-gray-50">
       <div className="max-w-4xl mx-auto px-4">
-        <h2 className="text-2xl font-semibold mb-3 text-gray-900">🛣️ Our Roadmap</h2>
+        <h2 className="text-2xl font-semibold mb-3 text-gray-900">🛣️ Contribute to the Xpeak AI Roadmap</h2>
         <p className="mb-4 text-gray-600">
           Transparency is everything. See what's in development, what's next in research, and what we're planning—straight from our product team.
         </p>

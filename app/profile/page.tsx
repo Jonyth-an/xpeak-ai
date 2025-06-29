@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Layout from '../../components/Layout';
 import ProtectedRoute from '../../components/ProtectedRoute';
 import RequireEmailVerification from '../components/RequireEmailVerification';
@@ -11,9 +12,12 @@ import LanguagePreferences from './components/LanguagePreferences';
 import TimezonePreferences from './components/TimezonePreferences';
 import AvatarUpload from './components/AvatarUpload';
 import { useAuth } from '@/lib/AuthContext';
+import BillingSection from './components/BillingSection';
 
 export default function ProfilePage() {
   const { user } = useAuth();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('profile');
   const [avatarUpdated, setAvatarUpdated] = useState(false);
 
@@ -21,7 +25,23 @@ export default function ProfilePage() {
     { id: 'profile', label: 'Profile', icon: '👤' },
     { id: 'security', label: 'Security', icon: '🔒' },
     { id: 'preferences', label: 'Preferences', icon: '⚙️' },
+    { id: 'billing', label: 'Billing', icon: '💳' },
   ];
+
+  // Handle URL query parameter for tab
+  useEffect(() => {
+    const tabFromUrl = searchParams.get('tab');
+    if (tabFromUrl && tabs.some(tab => tab.id === tabFromUrl)) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    // Update URL without page reload
+    const newUrl = tabId === 'profile' ? '/profile' : `/profile?tab=${tabId}`;
+    router.replace(newUrl, { scroll: false });
+  };
 
   const handleAvatarUpdate = (avatarUrl: string) => {
     setAvatarUpdated(true);
@@ -120,6 +140,9 @@ export default function ProfilePage() {
           </div>
         );
 
+      case 'billing':
+        return <BillingSection />;
+
       default:
         return null;
     }
@@ -147,7 +170,7 @@ export default function ProfilePage() {
                   {tabs.map((tab) => (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={() => handleTabChange(tab.id)}
                       className={`
                         flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all duration-200
                         ${activeTab === tab.id
