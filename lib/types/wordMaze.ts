@@ -5,10 +5,12 @@
 // CORE VOCABULARY TYPES
 // ========================================
 
+export type VocabularyType = 'word' | 'slang' | 'idiom' | 'phrase' | 'collocation' | 'phrasal_verb';
+
 export interface WordEntry {
   id: string;
   word_text: string;
-  type: 'word' | 'idiom' | 'phrase' | 'slang';
+  type: VocabularyType;
   difficulty_level?: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
   difficulty_score?: number; // 1.0-10.0
   created_at: string;
@@ -16,6 +18,52 @@ export interface WordEntry {
   is_verified: boolean;
   verification_source?: string;
   metadata: Record<string, any>;
+}
+
+// Type-specific metadata interfaces
+export interface SlangMetadata {
+  origin?: 'internet' | 'social_media' | 'youth_culture' | 'regional' | 'subculture';
+  generation?: 'gen-z' | 'millennial' | 'gen-x' | 'boomer';
+  formality?: 'very_informal' | 'informal' | 'neutral';
+  context?: 'online' | 'casual' | 'friends' | 'work';
+}
+
+export interface IdiomMetadata {
+  origin?: 'biblical' | 'literary' | 'cultural' | 'historical' | 'modern';
+  literal_meaning?: string;
+  cultural_context?: 'western' | 'eastern' | 'universal';
+  usage_context?: 'formal' | 'informal' | 'both';
+}
+
+export interface WordMetadata {
+  etymology?: string;
+  frequency?: 'common' | 'uncommon' | 'rare';
+  domain?: 'academic' | 'business' | 'technical' | 'everyday';
+}
+
+export interface PhraseMetadata {
+  word_count: number;
+  structure_type?: 'noun_phrase' | 'verb_phrase' | 'prepositional_phrase' | 'adjective_phrase';
+  formality?: 'formal' | 'informal' | 'neutral';
+  usage_context?: 'spoken' | 'written' | 'both';
+  cultural_origin?: 'british' | 'american' | 'australian' | 'international';
+}
+
+export interface CollocationMetadata {
+  collocation_type?: 'adjective_noun' | 'verb_noun' | 'adverb_adjective' | 'noun_noun';
+  strength?: 'strong' | 'medium' | 'weak';
+  frequency_rating?: number; // 1-10 scale
+  register?: 'academic' | 'business' | 'casual' | 'formal';
+  domain_specific?: boolean;
+}
+
+export interface PhrasalVerbMetadata {
+  particle?: string; // up, down, out, in, etc.
+  separability?: 'separable' | 'inseparable' | 'optional';
+  transitivity?: 'transitive' | 'intransitive' | 'both';
+  formality_level?: 'very_formal' | 'formal' | 'neutral' | 'informal' | 'very_informal';
+  british_usage?: boolean;
+  american_usage?: boolean;
 }
 
 export interface WordDefinition {
@@ -247,7 +295,7 @@ export interface UrbanDictionaryAPIResponse {
 
 export interface UnifiedWordData {
   word: string;
-  type: 'word' | 'idiom' | 'phrase' | 'slang';
+  type: VocabularyType;
   definitions: Array<{
     text: string;
     source: string;
@@ -276,6 +324,15 @@ export interface UnifiedWordData {
     score?: number;
   };
   metadata: Record<string, any>;
+}
+
+// Extended type that includes basic word entry fields
+export interface CompleteWordData extends UnifiedWordData {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  is_verified: boolean;
+  verification_source?: string;
 }
 
 // ========================================
@@ -343,7 +400,6 @@ export interface APICacheEntry {
 // UTILITY TYPES
 // ========================================
 
-export type WordType = 'word' | 'idiom' | 'phrase' | 'slang';
 export type DifficultyLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 export type ChallengeType = 'definition' | 'example' | 'synonym' | 'story' | 'emoji';
 export type APISource = 'oxford' | 'wordnik' | 'urban' | 'ai' | 'twinword';

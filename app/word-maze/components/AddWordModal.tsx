@@ -1,212 +1,181 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Button, Input, Textarea } from '@/app/components/ui';
+'use client';
 
-interface WordModalProps {
-  open: boolean;
-  mode: 'add' | 'edit';
+import { useState } from 'react';
+import Button from '@/app/components/ui/Button';
+import Input from '@/app/components/ui/Input';
+import Textarea from '@/app/components/ui/Textarea';
+import Card from '@/app/components/ui/Card';
+
+interface AddWordModalProps {
+  isOpen: boolean;
   onClose: () => void;
-  onAddWord: (word: any) => void;
-  onEditWord?: (word: any) => void;
-  smartCheck: boolean;
-  initialWord?: any;
+  onAddWords: (words: string[]) => Promise<void>;
 }
 
-export default function WordModal({ 
-  open, 
-  mode, 
-  onClose, 
-  onAddWord, 
-  onEditWord, 
-  smartCheck, 
-  initialWord 
-}: WordModalProps) {
-  const [word, setWord] = useState('');
-  const [definition, setDefinition] = useState('');
-  const [pronUS, setPronUS] = useState('');
-  const [pronUK, setPronUK] = useState('');
-  const [pronAU, setPronAU] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+export default function AddWordModal({ isOpen, onClose, onAddWords }: AddWordModalProps) {
+  const [mode, setMode] = useState<'single' | 'bulk'>('single');
+  const [singleWord, setSingleWord] = useState('');
+  const [bulkWords, setBulkWords] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  // Reset form when modal opens/closes or initialWord changes
-  useEffect(() => {
-    if (open) {
-      if (mode === 'edit' && initialWord) {
-        setWord(initialWord.word || '');
-        setDefinition(initialWord.definition || '');
-        setPronUS(initialWord.pronunciationUrls?.us || '');
-        setPronUK(initialWord.pronunciationUrls?.uk || '');
-        setPronAU(initialWord.pronunciationUrls?.au || '');
-        setImageUrl(initialWord.imageUrl || '');
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
+    try {
+      let words: string[] = [];
+
+      if (mode === 'single') {
+        if (!singleWord.trim()) {
+          throw new Error('Please enter a word');
+        }
+        words = [singleWord.trim()];
       } else {
-        // Reset form for add mode
-        setWord('');
-        setDefinition('');
-        setPronUS('');
-        setPronUK('');
-        setPronAU('');
-        setImageUrl('');
+        if (!bulkWords.trim()) {
+          throw new Error('Please enter some words');
+        }
+        // Parse bulk words - split by newlines, commas, or spaces
+        words = bulkWords
+          .split(/[\n,]+/)
+          .map(word => word.trim())
+          .filter(word => word.length > 0);
+        
+        if (words.length === 0) {
+          throw new Error('No valid words found');
+        }
       }
-      setErrors({});
+
+      await onAddWords(words);
+      
+      // Reset form
+      setSingleWord('');
+      setBulkWords('');
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to add words');
+    } finally {
+      setIsLoading(false);
     }
-  }, [open, mode, initialWord]);
+  };
 
-  function handleSubmit() {
-    const newErrors: {[key: string]: string} = {};
-    
-    if (!word.trim()) {
-      newErrors.word = 'Word is required';
+  const handleClose = () => {
+    if (!isLoading) {
+      setSingleWord('');
+      setBulkWords('');
+      setError('');
+      onClose();
     }
-    if (!definition.trim()) {
-      newErrors.definition = 'Definition is required';
-    }
+  };
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    const wordData = {
-      word: word.trim(),
-      definition: definition.trim(),
-      pronunciationUrls: {
-        ...(pronUS && { us: pronUS }),
-        ...(pronUK && { uk: pronUK }),
-        ...(pronAU && { au: pronAU }),
-      },
-      ...(imageUrl && { imageUrl: imageUrl.trim() }),
-    };
-
-    if (mode === 'edit' && onEditWord && initialWord) {
-      onEditWord({
-        ...initialWord,
-        ...wordData,
-      });
-    } else {
-      onAddWord(wordData);
-    }
-
-    onClose();
-  }
-
-  if (!open) return null;
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-modal p-4">
-      <Card className="w-full max-w-md p-6 rounded-token-lg">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">
-            {mode === 'edit' ? 'Edit Word' : 'Add New Word'}
-          </h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
-          >
-            ✕
-          </Button>
-        </div>
-
-        {smartCheck && (
-          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-700">
-              🤖 Smart Check (Beta): AI-powered validation enabled
-            </p>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <Card className="w-full max-w-md">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">Add Words to Your Bank</h2>
+            <button
+              onClick={handleClose}
+              className="text-gray-500 hover:text-gray-700 text-xl"
+              disabled={isLoading}
+            >
+              ×
+            </button>
           </div>
-        )}
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Word *
-            </label>
-            <Input
-              value={word}
-              onChange={(e) => setWord(e.target.value)}
-              placeholder="Enter the word"
-              className={errors.word ? 'border-red-500' : ''}
-            />
-            {errors.word && (
-              <p className="text-red-500 text-sm mt-1">{errors.word}</p>
+          {/* Mode Toggle */}
+          <div className="flex gap-2 mb-6">
+            <Button
+              variant={mode === 'single' ? 'primary' : 'outline'}
+              size="sm"
+              onClick={() => setMode('single')}
+              disabled={isLoading}
+            >
+              Single Word
+            </Button>
+            <Button
+              variant={mode === 'bulk' ? 'primary' : 'outline'}
+              size="sm"
+              onClick={() => setMode('bulk')}
+              disabled={isLoading}
+            >
+              Bulk Import
+            </Button>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+            {mode === 'single' ? (
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="singleWord" className="block text-sm font-medium mb-2">
+                    Word
+                  </label>
+                  <Input
+                    id="singleWord"
+                    type="text"
+                    value={singleWord}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSingleWord(e.target.value)}
+                    placeholder="Enter a word..."
+                    disabled={isLoading}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="bulkWords" className="block text-sm font-medium mb-2">
+                    Words (one per line or comma-separated)
+                  </label>
+                  <Textarea
+                    id="bulkWords"
+                    value={bulkWords}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setBulkWords(e.target.value)}
+                    placeholder="Enter words, one per line or separated by commas..."
+                    rows={6}
+                    disabled={isLoading}
+                    className="w-full"
+                  />
+                </div>
+                <div className="text-sm text-gray-600">
+                  <p>You can enter words:</p>
+                  <ul className="list-disc list-inside mt-1 space-y-1">
+                    <li>One per line</li>
+                    <li>Separated by commas</li>
+                    <li>Mixed format</li>
+                  </ul>
+                </div>
+              </div>
             )}
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Definition *
-            </label>
-            <Textarea
-              value={definition}
-              onChange={(e) => setDefinition(e.target.value)}
-              placeholder="Enter the definition"
-              rows={3}
-              className={errors.definition ? 'border-red-500' : ''}
-            />
-            {errors.definition && (
-              <p className="text-red-500 text-sm mt-1">{errors.definition}</p>
+            {error && (
+              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-red-600 text-sm">{error}</p>
+              </div>
             )}
-          </div>
 
-          <div className="grid grid-cols-3 gap-2">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                US Pronunciation
-              </label>
-              <Input
-                value={pronUS}
-                onChange={(e) => setPronUS(e.target.value)}
-                placeholder="URL"
-              />
+            <div className="flex gap-3 mt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClose}
+                disabled={isLoading}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="flex-1"
+              >
+                {isLoading ? 'Adding...' : 'Add Words'}
+              </Button>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                UK Pronunciation
-              </label>
-              <Input
-                value={pronUK}
-                onChange={(e) => setPronUK(e.target.value)}
-                placeholder="URL"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                AU Pronunciation
-              </label>
-              <Input
-                value={pronAU}
-                onChange={(e) => setPronAU(e.target.value)}
-                placeholder="URL"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Image URL
-            </label>
-            <Input
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://example.com/image.jpg"
-            />
-          </div>
-        </div>
-
-        <div className="flex gap-3 mt-6">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            className="flex-1"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            className="flex-1"
-          >
-            {mode === 'edit' ? 'Save Changes' : 'Add Word'}
-          </Button>
+          </form>
         </div>
       </Card>
     </div>

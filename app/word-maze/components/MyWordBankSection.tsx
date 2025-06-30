@@ -109,7 +109,15 @@ export default function MyWordBankSection() {
       showFeedback('error', 'Word and definition are required.');
       return;
     }
-    setWords(prev => [...prev, { ...newWord, id: Date.now().toString(), dateAdded: new Date().toISOString().slice(0, 10) }]);
+    
+    // Generate stable ID based on word content
+    const hash = newWord.word.split('').reduce((a: number, b: string) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    const stableId = `word-${Math.abs(hash)}-${Date.now()}`;
+    
+    setWords(prev => [...prev, { ...newWord, id: stableId, dateAdded: new Date().toISOString().slice(0, 10) }]);
     showFeedback('success', '1 word added!');
     setAddModalOpen(false);
   }

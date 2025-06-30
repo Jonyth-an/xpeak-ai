@@ -97,14 +97,23 @@ export default function BulkImportModal({
 
     // Simulate AI processing delay
     setTimeout(() => {
-      const wordsToImport = selectedWords.map(word => ({
-        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-        word: word.word,
-        definition: word.definition || `Definition for ${word.word}`,
-        pronunciationUrls: word.pronunciationUrls || {},
-        imageUrl: word.imageUrl,
-        dateAdded: new Date().toISOString().slice(0, 10)
-      }));
+      const wordsToImport = selectedWords.map((word, index) => {
+        // Generate stable ID based on word content and index
+        const hash = word.word.split('').reduce((a, b) => {
+          a = ((a << 5) - a) + b.charCodeAt(0);
+          return a & a;
+        }, 0);
+        const stableId = `bulk-${Math.abs(hash)}-${index}`;
+        
+        return {
+          id: stableId,
+          word: word.word,
+          definition: word.definition || `Definition for ${word.word}`,
+          pronunciationUrls: word.pronunciationUrls || {},
+          imageUrl: word.imageUrl,
+          dateAdded: new Date().toISOString().slice(0, 10)
+        };
+      });
 
       onImportWords(wordsToImport);
       setIsProcessing(false);

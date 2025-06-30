@@ -1,0 +1,1 @@
+// Word Details Cache Service

@@ -6,7 +6,8 @@ import {
   WordTag, 
   WordRelationship,
   UnifiedWordData,
-  UserWordMastery
+  UserWordMastery,
+  VocabularyType
 } from '../types/wordMaze';
 import { apiAggregator } from './apiAggregator';
 
@@ -104,6 +105,13 @@ export class VocabularyManager {
     if (wordData.difficulty?.level) updateData.difficulty_level = wordData.difficulty.level;
     if (wordData.difficulty?.score) updateData.difficulty_score = wordData.difficulty.score;
     if (wordData.metadata) updateData.metadata = wordData.metadata;
+
+    // When updating tags, truncate tag_value
+    if (wordData.tags && wordData.tags.length > 0) {
+      for (const tag of wordData.tags) {
+        tag.value = this.truncateTagValue(tag.value);
+      }
+    }
 
     const { data, error } = await supabase
       .from('word_entries')
@@ -206,24 +214,46 @@ export class VocabularyManager {
   // TAG OPERATIONS
   // ========================================
 
+  // Helper to safely truncate tag values
+  private truncateTagValue(value: string): string {
+    if (value.length > 10) {
+      console.warn(`[WordMaze] Truncating tag_value to 10 chars:`, value);
+    }
+    return value.substring(0, 10);
+  }
+
   async createWordTags(wordId: string, tags: UnifiedWordData['tags']): Promise<void> {
     if (!tags || tags.length === 0) return;
 
-    const tagData = tags.map(tag => ({
-      word_id: wordId,
-      tag_type: tag.type,
-      tag_value: tag.value,
-      confidence_score: tag.confidence,
-      source: tag.source
-    }));
-
-    const { error } = await supabase
-      .from('word_tags')
-      .insert(tagData);
-
-    if (error) {
-      console.error('Error creating word tags:', error);
-      throw new Error(`Failed to create word tags: ${error.message}`);
+    for (const tag of tags) {
+      const tagData = {
+        word_id: wordId,
+        tag_type: tag.type,
+        tag_value: this.truncateTagValue(tag.value),
+        confidence_score: Math.min(Math.max(tag.confidence, 0), 9.99),
+        source: tag.source
+      };
+      try {
+        const { error } = await supabase
+          .from('word_tags')
+          .insert([tagData]);
+        if (error) {
+          // If duplicate key, skip and log
+          if (error.code === '23505') {
+            console.warn(`[WordMaze] Skipping duplicate tag:`, tagData);
+            continue;
+          }
+          console.error('Error creating word tag:', error);
+          throw new Error(`Failed to create word tag: ${error.message}`);
+        }
+      } catch (err) {
+        // Log and continue on duplicate
+        if (err instanceof Error && err.message.includes('duplicate key')) {
+          console.warn(`[WordMaze] Skipping duplicate tag (catch):`, tagData);
+          continue;
+        }
+        throw err;
+      }
     }
   }
 
@@ -249,35 +279,31 @@ export class VocabularyManager {
   async createWordRelationships(wordId: string, relationships: UnifiedWordData['relationships']): Promise<void> {
     if (!relationships || relationships.length === 0) return;
 
-    // Get or create related words first
-    const relationshipPromises = relationships.map(async (rel) => {
-      // Check if related word exists
-      let relatedWord = await this.getWordByText(rel.related_word);
-      
-      if (!relatedWord) {
-        // Fetch data for related word
-        const relatedWordData = await apiAggregator.getWordData(rel.related_word);
-        relatedWord = await this.createWordEntry(relatedWordData);
+    // Get the related word IDs first
+    const relationshipData = [];
+    
+    for (const rel of relationships) {
+      const relatedWord = await this.getWordByText(rel.related_word);
+      if (relatedWord) {
+        relationshipData.push({
+          from_word_id: wordId,
+          to_word_id: relatedWord.id,
+          relationship_type: rel.type,
+          strength_score: rel.strength,
+          source: rel.source
+        });
       }
+    }
 
-      return {
-        from_word_id: wordId,
-        to_word_id: relatedWord.id,
-        relationship_type: rel.type,
-        strength_score: rel.strength,
-        source: rel.source
-      };
-    });
+    if (relationshipData.length > 0) {
+      const { error } = await supabase
+        .from('word_relationships')
+        .insert(relationshipData);
 
-    const relationshipData = await Promise.all(relationshipPromises);
-
-    const { error } = await supabase
-      .from('word_relationships')
-      .insert(relationshipData);
-
-    if (error) {
-      console.error('Error creating word relationships:', error);
-      throw new Error(`Failed to create word relationships: ${error.message}`);
+      if (error) {
+        console.error('Error creating word relationships:', error);
+        throw new Error(`Failed to create word relationships: ${error.message}`);
+      }
     }
   }
 
@@ -285,7 +311,7 @@ export class VocabularyManager {
     const { data, error } = await supabase
       .from('word_relationships')
       .select('*')
-      .eq('from_word_id', wordId)
+      .or(`from_word_id.eq.${wordId},to_word_id.eq.${wordId}`)
       .order('strength_score', { ascending: false });
 
     if (error) {
@@ -322,17 +348,40 @@ export class VocabularyManager {
     isCorrect: boolean, 
     timeTaken?: number
   ): Promise<UserWordMastery> {
-    // Get existing mastery or create new one
-    let mastery = await this.getUserWordMastery(userId, wordId);
+    const existingMastery = await this.getUserWordMastery(userId, wordId);
     
-    if (!mastery) {
+    if (existingMastery) {
+      // Update existing mastery
+      const newAttempts = existingMastery.attempts_count + 1;
+      const newCorrectAttempts = existingMastery.correct_attempts + (isCorrect ? 1 : 0);
+      const newMasteryScore = newCorrectAttempts / newAttempts;
+
+      const { data, error } = await supabase
+        .from('user_word_mastery')
+        .update({
+          mastery_score: newMasteryScore,
+          attempts_count: newAttempts,
+          correct_attempts: newCorrectAttempts,
+          last_attempted_at: new Date().toISOString()
+        })
+        .eq('id', existingMastery.id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating user word mastery:', error);
+        throw new Error(`Failed to update mastery: ${error.message}`);
+      }
+
+      return data;
+    } else {
       // Create new mastery record
       const { data, error } = await supabase
         .from('user_word_mastery')
         .insert({
           user_id: userId,
           word_id: wordId,
-          mastery_score: isCorrect ? 0.1 : 0.0,
+          mastery_score: isCorrect ? 1.0 : 0.0,
           attempts_count: 1,
           correct_attempts: isCorrect ? 1 : 0,
           last_attempted_at: new Date().toISOString()
@@ -342,37 +391,11 @@ export class VocabularyManager {
 
       if (error) {
         console.error('Error creating user word mastery:', error);
-        throw new Error(`Failed to create user word mastery: ${error.message}`);
+        throw new Error(`Failed to create mastery: ${error.message}`);
       }
 
       return data;
     }
-
-    // Update existing mastery
-    const newAttempts = mastery.attempts_count + 1;
-    const newCorrectAttempts = mastery.correct_attempts + (isCorrect ? 1 : 0);
-    
-    // Calculate new mastery score (simple algorithm - can be improved)
-    const newMasteryScore = Math.min(1.0, newCorrectAttempts / newAttempts);
-
-    const { data, error } = await supabase
-      .from('user_word_mastery')
-      .update({
-        mastery_score: newMasteryScore,
-        attempts_count: newAttempts,
-        correct_attempts: newCorrectAttempts,
-        last_attempted_at: new Date().toISOString()
-      })
-      .eq('id', mastery.id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error updating user word mastery:', error);
-      throw new Error(`Failed to update user word mastery: ${error.message}`);
-    }
-
-    return data;
   }
 
   // ========================================
@@ -411,7 +434,11 @@ export class VocabularyManager {
     return data || [];
   }
 
-  async getWordsByType(type: string, limit: number = 20): Promise<WordEntry[]> {
+  // ========================================
+  // TYPE-SPECIFIC OPERATIONS
+  // ========================================
+
+  async getWordsByType(type: VocabularyType, limit: number = 20): Promise<WordEntry[]> {
     const { data, error } = await supabase
       .from('word_entries')
       .select('*')
@@ -425,6 +452,78 @@ export class VocabularyManager {
     }
 
     return data || [];
+  }
+
+  async getSlangWords(limit: number = 20): Promise<WordEntry[]> {
+    return this.getWordsByType('slang', limit);
+  }
+
+  async getIdioms(limit: number = 20): Promise<WordEntry[]> {
+    return this.getWordsByType('idiom', limit);
+  }
+
+  async getRegularWords(limit: number = 20): Promise<WordEntry[]> {
+    return this.getWordsByType('word', limit);
+  }
+
+  async getPhrases(limit: number = 20): Promise<WordEntry[]> {
+    return this.getWordsByType('phrase', limit);
+  }
+
+  async getCollocations(limit: number = 20): Promise<WordEntry[]> {
+    return this.getWordsByType('collocation', limit);
+  }
+
+  async getPhrasalVerbs(limit: number = 20): Promise<WordEntry[]> {
+    return this.getWordsByType('phrasal_verb', limit);
+  }
+
+  // Helper method to add type-specific metadata
+  async addTypeSpecificMetadata(wordId: string, type: VocabularyType, metadata: any): Promise<void> {
+    const { error } = await supabase
+      .from('word_entries')
+      .update({
+        metadata: metadata
+      })
+      .eq('id', wordId)
+      .eq('type', type);
+
+    if (error) {
+      console.error('Error updating type-specific metadata:', error);
+      throw new Error(`Failed to update metadata: ${error.message}`);
+    }
+  }
+
+  // Helper method to get vocabulary statistics by type
+  async getVocabularyStats(): Promise<Record<VocabularyType, number>> {
+    const { data, error } = await supabase
+      .from('word_entries')
+      .select('type');
+
+    if (error) {
+      console.error('Error fetching vocabulary stats:', error);
+      return {
+        word: 0,
+        slang: 0,
+        idiom: 0,
+        phrase: 0,
+        collocation: 0,
+        phrasal_verb: 0
+      };
+    }
+
+    const stats = data?.reduce((acc, entry) => {
+      acc[entry.type as VocabularyType] = (acc[entry.type as VocabularyType] || 0) + 1;
+      return acc;
+    }, {} as Record<VocabularyType, number>) || {};
+
+    // Ensure all types are present
+    const allTypes: VocabularyType[] = ['word', 'slang', 'idiom', 'phrase', 'collocation', 'phrasal_verb'];
+    allTypes.forEach(type => {
+      if (!stats[type]) stats[type] = 0;
+    });
+
+    return stats;
   }
 
   // ========================================
@@ -483,11 +582,42 @@ export class VocabularyManager {
   async addWordFromAPI(word: string): Promise<WordEntry> {
     console.log(`Adding word from API: ${word}`);
     
-    // Fetch data from APIs
-    const wordData = await apiAggregator.getWordData(word);
-    
-    // Create word entry in database
-    return await this.createWordEntry(wordData);
+    try {
+      // Fetch data from APIs
+      const wordData = await apiAggregator.getWordData(word);
+      
+      // Create word entry in database
+      return await this.createWordEntry(wordData);
+    } catch (error) {
+      console.error(`Error adding word "${word}" from API:`, error);
+      
+      // Fallback: Create basic word entry if API fails
+      console.log(`Creating fallback word entry for: ${word}`);
+      const fallbackData: UnifiedWordData = {
+        word,
+        type: 'word',
+        definitions: [{
+          text: `A word or term: ${word}`,
+          source: 'fallback',
+          confidence: 0.1
+        }],
+        examples: [],
+        tags: [],
+        relationships: [],
+        difficulty: {
+          level: 'intermediate',
+          score: 0.5
+        },
+        metadata: {}
+      };
+      
+      try {
+        return await this.createWordEntry(fallbackData);
+      } catch (fallbackError) {
+        console.error(`Failed to create fallback word entry for "${word}":`, fallbackError);
+        throw new Error(`Failed to add word "${word}": ${fallbackError instanceof Error ? fallbackError.message : 'Unknown error'}`);
+      }
+    }
   }
 
   async addWordsFromList(words: string[]): Promise<WordEntry[]> {
