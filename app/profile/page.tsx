@@ -155,22 +155,20 @@ export default function ProfilePage() {
         <Layout>
           <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 min-h-screen">
             <div className="max-w-7xl mx-auto">
-              {/* Main Content with Sidebar */}
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Main Content with Sidebar - Use flex for large screens */}
+              <div className="relative lg:flex lg:min-h-[600px]">
                 {/* Sidebar */}
-                <div className="lg:col-span-1">
-                  <ProfileSidebar 
-                    activeTab={activeTab}
-                    onTabChange={handleTabChange}
-                    userEmail={user?.email}
-                  />
-                </div>
-
-                {/* Main Content */}
-                <div className="lg:col-span-3">
-                  <div className="min-h-[600px]">
-                    {renderTabContent()}
+                <div className="hidden lg:block lg:w-64 lg:shrink-0">
+                  <div className="sticky top-24">
+                    <ProfileSidebar 
+                      activeTab={activeTab}
+                      onTabChange={handleTabChange}
+                    />
                   </div>
+                </div>
+                {/* Main Content */}
+                <div className="lg:ml-64 flex-1">
+                  {renderTabContent()}
                 </div>
               </div>
             </div>

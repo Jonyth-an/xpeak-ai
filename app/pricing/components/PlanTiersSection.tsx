@@ -174,7 +174,7 @@ export default function PlanTiersSection() {
   };
 
   // Get current plan's price for comparison
-  const getCurrentPlanPrice = () => {
+  const getCurrentPlanPrice = (): number => {
     if (!currentPlan || currentPlan === 'free') return 0;
     
     const plan = plans.find(p => p.id === currentPlan);
@@ -182,13 +182,13 @@ export default function PlanTiersSection() {
 
     switch (currentBillingCycle) {
       case 'monthly':
-        return plan.monthlyPrice;
+        return plan.monthlyPrice || 0;
       case 'quarterly':
-        return plan.quarterlyPrice;
+        return plan.quarterlyPrice || 0;
       case 'yearly':
-        return plan.yearlyPrice;
+        return plan.yearlyPrice || 0;
       default:
-        return plan.monthlyPrice;
+        return plan.monthlyPrice || 0;
     }
   };
 

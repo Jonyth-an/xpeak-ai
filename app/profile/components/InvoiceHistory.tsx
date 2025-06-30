@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, Text, Button, Badge } from '@/app/components/ui';
+import { Text, Button, Badge } from '@/app/components/ui';
 import { useAuth } from '@/lib/AuthContext';
 import { ChevronLeft, ChevronRight, Download, ExternalLink, Filter, Calendar, DollarSign } from 'lucide-react';
 
@@ -142,7 +142,7 @@ export default function InvoiceHistory() {
 
   if (loading && invoices.length === 0) {
     return (
-      <Card className="p-6">
+      <div className="space-y-4">
         <div className="animate-pulse space-y-4">
           <div className="h-4 bg-gray-200 rounded w-1/4"></div>
           <div className="space-y-3">
@@ -151,27 +151,25 @@ export default function InvoiceHistory() {
             ))}
           </div>
         </div>
-      </Card>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Card className="p-6">
-        <div className="text-center">
-          <Text className="text-red-600 mb-4">{error}</Text>
-          <Button onClick={() => fetchInvoices()} variant="primary">
-            Try Again
-          </Button>
-        </div>
-      </Card>
+      <div className="text-center py-8">
+        <Text className="text-red-600 mb-4">{error}</Text>
+        <Button onClick={() => fetchInvoices()} variant="primary">
+          Try Again
+        </Button>
+      </div>
     );
   }
 
   return (
-    <Card className="p-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between">
         <div>
           <Text variant="h5" className="mb-1">Invoice History</Text>
           <Text variant="body" className="text-gray-600">
@@ -194,7 +192,7 @@ export default function InvoiceHistory() {
 
       {/* Filters */}
       {showFilters && (
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <span className="text-sm font-medium text-gray-700">Status:</span>
@@ -214,91 +212,93 @@ export default function InvoiceHistory() {
         </div>
       )}
 
-      {/* Invoice List */}
+      {/* Invoice Table */}
       {invoices.length > 0 ? (
-        <div className="space-y-4">
-          {invoices.map((invoice) => (
-            <div
-              key={invoice.id}
-              className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
+        <div className="overflow-hidden border border-gray-200 rounded-lg">
+          {/* Table Header */}
+          <div className="bg-gray-50 px-6 py-3 border-b border-gray-200">
+            <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-700">
+              <div className="col-span-3">Invoice</div>
+              <div className="col-span-2">Date</div>
+              <div className="col-span-2">Amount</div>
+              <div className="col-span-2">Status</div>
+              <div className="col-span-3">Actions</div>
+            </div>
+          </div>
+
+          {/* Table Body */}
+          <div className="divide-y divide-gray-200">
+            {invoices.map((invoice) => (
+              <div
+                key={invoice.id}
+                className="px-6 py-4 hover:bg-gray-50 transition-colors"
+              >
+                <div className="grid grid-cols-12 gap-4 items-center">
+                  {/* Invoice Number */}
+                  <div className="col-span-3">
                     <Text className="font-medium text-gray-900">
-                      Invoice #{invoice.number}
+                      #{invoice.number}
                     </Text>
-                    {getStatusBadge(invoice.status)}
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
-                    <div className="flex items-center space-x-1">
-                      <DollarSign size={14} />
-                      <span>{formatCurrency(invoice.amount_paid, invoice.currency)}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Calendar size={14} />
-                      <span>{getPeriodText(invoice)}</span>
-                    </div>
                     {invoice.description && (
-                      <div className="text-gray-500 truncate">
+                      <Text className="text-sm text-gray-500 truncate">
                         {invoice.description}
-                      </div>
+                      </Text>
                     )}
                   </div>
-                </div>
-                
-                <div className="flex items-center space-x-2 ml-4">
-                  {invoice.hosted_invoice_url && (
-                    <Button
-                      onClick={() => window.open(invoice.hosted_invoice_url, '_blank')}
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center space-x-1"
-                    >
-                      <ExternalLink size={14} />
-                      <span>View</span>
-                    </Button>
-                  )}
-                  {invoice.invoice_pdf && (
-                    <Button
-                      onClick={() => window.open(invoice.invoice_pdf, '_blank')}
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center space-x-1"
-                    >
-                      <Download size={14} />
-                      <span>PDF</span>
-                    </Button>
-                  )}
+
+                  {/* Date */}
+                  <div className="col-span-2">
+                    <Text className="text-sm text-gray-600">
+                      {getPeriodText(invoice)}
+                    </Text>
+                  </div>
+
+                  {/* Amount */}
+                  <div className="col-span-2">
+                    <Text className="font-medium text-gray-900">
+                      {formatCurrency(invoice.amount_paid, invoice.currency)}
+                    </Text>
+                  </div>
+
+                  {/* Status */}
+                  <div className="col-span-2">
+                    {getStatusBadge(invoice.status)}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="col-span-3">
+                    <div className="flex items-center space-x-2">
+                      {invoice.hosted_invoice_url && (
+                        <Button
+                          onClick={() => window.open(invoice.hosted_invoice_url, '_blank')}
+                          variant="outline"
+                          size="sm"
+                          className="flex items-center space-x-1"
+                        >
+                          <ExternalLink size={14} />
+                          <span>View</span>
+                        </Button>
+                      )}
+                      {invoice.invoice_pdf && (
+                        <Button
+                          onClick={() => window.open(invoice.invoice_pdf, '_blank')}
+                          variant="outline"
+                          size="sm"
+                          className="flex items-center space-x-1"
+                        >
+                          <Download size={14} />
+                          <span>PDF</span>
+                        </Button>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-          
-          {/* Load More Button */}
-          {hasMore && (
-            <div className="text-center pt-4">
-              <Button
-                onClick={handleLoadMore}
-                variant="outline"
-                disabled={loading}
-                className="flex items-center space-x-2"
-              >
-                {loading ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
-                ) : (
-                  <>
-                    <span>Load More</span>
-                    <ChevronRight size={16} />
-                  </>
-                )}
-              </Button>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       ) : (
-        <div className="text-center py-12">
+        <div className="text-center py-12 border border-gray-200 rounded-lg bg-gray-50">
           <div className="text-gray-400 text-6xl mb-4">📄</div>
           <Text className="text-gray-500 mb-2">No invoices found</Text>
           <Text className="text-gray-400 text-sm">
@@ -306,6 +306,27 @@ export default function InvoiceHistory() {
           </Text>
         </div>
       )}
-    </Card>
+
+      {/* Load More Button */}
+      {hasMore && (
+        <div className="text-center pt-4">
+          <Button
+            onClick={handleLoadMore}
+            variant="outline"
+            disabled={loading}
+            className="flex items-center space-x-2"
+          >
+            {loading ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
+            ) : (
+              <>
+                <span>Load More</span>
+                <ChevronRight size={16} />
+              </>
+            )}
+          </Button>
+        </div>
+      )}
+    </div>
   );
 } 

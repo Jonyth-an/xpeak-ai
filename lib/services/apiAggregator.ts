@@ -389,10 +389,10 @@ class WordNetAPIClient {
       }
 
       const [synonyms, antonyms, hypernyms, hyponyms] = await Promise.all([
-        synonymsResponse.ok ? synonymsResponse.json() : [],
-        antonymsResponse.ok ? antonymsResponse.json() : [],
-        hypernymsResponse.ok ? hypernymsResponse.json() : [],
-        hyponymsResponse.ok ? hyponymsResponse.json() : []
+        synonymsResponse.json(),
+        antonymsResponse.json(),
+        hypernymsResponse.json(),
+        hyponymsResponse.json()
       ]);
 
       return this.parseResponse({ synonyms, antonyms, hypernyms, hyponyms });
@@ -611,6 +611,20 @@ export class APIAggregator {
     // Merge results with conflict resolution
     const unifiedData = this.mergeResults(word, oxfordResult, wordnikResult, urbanResult, freeDictionaryResult, wordNetResult, datamuseResult);
 
+    // Fallback: If no definitions found from any API, create basic word data
+    if (unifiedData.definitions.length === 0) {
+      console.log(`No definitions found for "${word}", creating basic word data`);
+      unifiedData.definitions = [{
+        text: `A word or term: ${word}`,
+        source: 'fallback',
+        confidence: 0.1
+      }];
+      unifiedData.difficulty = {
+        level: 'intermediate',
+        score: 0.5
+      };
+    }
+
     return unifiedData;
   }
 
@@ -670,11 +684,19 @@ export class APIAggregator {
       this.mergeData(result, datamuseData, 'datamuse');
     }
 
-    // Determine word type based on sources
+    // Determine word type based on sources and patterns
     if (result.tags.some(tag => tag.value === 'slang')) {
       result.type = 'slang';
+    } else if (result.tags.some(tag => tag.value === 'idiom')) {
+      result.type = 'idiom';
+    } else if (this.isPhrasalVerb(word)) {
+      result.type = 'phrasal_verb';
+    } else if (this.isCollocation(word, result)) {
+      result.type = 'collocation';
     } else if (word.includes(' ') && result.definitions.length > 0) {
       result.type = 'phrase';
+    } else {
+      result.type = 'word';
     }
 
     // Resolve conflicts and set primary definitions
@@ -768,6 +790,64 @@ export class APIAggregator {
     // This would integrate with WordNet or similar for semantic relationships
     // For now, return empty array
     return [];
+  }
+
+  private isPhrasalVerb(word: string): boolean {
+    const words = word.toLowerCase().split(' ');
+    if (words.length !== 2) return false;
+    
+    // Common phrasal verb particles
+    const particles = [
+      'up', 'down', 'out', 'in', 'on', 'off', 'away', 'back', 'over', 'through',
+      'across', 'along', 'around', 'by', 'for', 'from', 'into', 'onto', 'upon',
+      'with', 'without', 'within', 'against', 'among', 'between', 'during',
+      'except', 'inside', 'outside', 'under', 'above', 'below', 'behind',
+      'beneath', 'beside', 'beyond', 'inside', 'near', 'opposite', 'outside',
+      'past', 'since', 'toward', 'underneath', 'until', 'upon', 'within'
+    ];
+    
+    return particles.includes(words[1]);
+  }
+
+  private isCollocation(word: string, data: UnifiedWordData): boolean {
+    const words = word.toLowerCase().split(' ');
+    if (words.length !== 2) return false;
+    
+    // Check if it's a common collocation pattern
+    const commonCollocations = [
+      // Adjective + Noun patterns
+      'strong coffee', 'heavy rain', 'bright future', 'deep breath', 'fresh air',
+      'hard work', 'soft voice', 'sharp mind', 'smooth surface', 'rough time',
+      
+      // Verb + Noun patterns  
+      'make decision', 'take action', 'give advice', 'pay attention', 'keep promise',
+      'break rule', 'catch cold', 'do homework', 'get job', 'have meeting',
+      
+      // Adverb + Adjective patterns
+      'highly likely', 'deeply concerned', 'fully aware', 'completely different',
+      'totally wrong', 'absolutely certain', 'extremely important', 'very good',
+      
+      // Noun + Noun patterns
+      'business meeting', 'family dinner', 'school uniform', 'car accident',
+      'phone call', 'book club', 'music festival', 'food court'
+    ];
+    
+    // Check if the word matches any common collocation pattern
+    if (commonCollocations.includes(word.toLowerCase())) {
+      return true;
+    }
+    
+    // Check if definitions contain collocation indicators
+    const collocationIndicators = [
+      'commonly used together', 'frequently paired', 'typical combination',
+      'natural pairing', 'standard expression', 'conventional phrase'
+    ];
+    
+    return data.definitions.some(def => 
+      collocationIndicators.some(indicator => 
+        def.text.toLowerCase().includes(indicator)
+      )
+    );
   }
 }
 

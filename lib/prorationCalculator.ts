@@ -24,9 +24,10 @@ export function calculateProration(
   newPrice: Stripe.Price,
   currentDate: number = Math.floor(Date.now() / 1000)
 ): ProrationCalculation {
-  const currentPeriodStart = currentSubscription.current_period_start;
-  const currentPeriodEnd = currentSubscription.current_period_end;
-  const currentPrice = currentSubscription.items.data[0]?.price;
+  const subscription = currentSubscription as Stripe.Subscription & { current_period_start: number, current_period_end: number };
+  const currentPeriodStart = subscription.current_period_start;
+  const currentPeriodEnd = subscription.current_period_end;
+  const currentPrice = subscription.items.data[0]?.price;
   
   if (!currentPrice) {
     throw new Error('Current price not found in subscription');

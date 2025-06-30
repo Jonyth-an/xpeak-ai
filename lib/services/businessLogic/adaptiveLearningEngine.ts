@@ -573,7 +573,7 @@ export class AdaptiveLearningEngine {
     const topicScores: Record<string, number> = {};
     
     topicPerformance.forEach(record => {
-      const tags = record.word_entries?.tags || [];
+      const tags = record.word_entries?.[0]?.tags || [];
       tags.forEach((tag: string) => {
         if (!topicScores[tag]) topicScores[tag] = 0;
         topicScores[tag] += record.accuracy;
@@ -663,8 +663,9 @@ export class AdaptiveLearningEngine {
     }
     
     // Boost confidence for preferred topics
-    if (word.tags && profile.preferredTopics.some(topic => 
-      word.tags.includes(topic)
+    const tags: string[] = Array.isArray(word.tags) ? word.tags : [];
+    if (tags.length && profile.preferredTopics.some(topic => 
+      tags.includes(topic)
     )) {
       confidence += 15;
     }
@@ -684,7 +685,8 @@ export class AdaptiveLearningEngine {
       reasons.push('matches your current level');
     }
     
-    if (word.tags && profile.preferredTopics.some(topic => word.tags.includes(topic))) {
+    const tags: string[] = Array.isArray(word.tags) ? word.tags : [];
+    if (tags.length && profile.preferredTopics.some(topic => tags.includes(topic))) {
       reasons.push('in your preferred topic area');
     }
     
@@ -817,5 +819,30 @@ export class AdaptiveLearningEngine {
       .from('word_entries')
       .update({ difficulty_score: newDifficulty })
       .eq('id', wordId);
+  }
+
+  // ========================================
+  // WORD PREFERENCE SCORING
+  // ========================================
+  private calculateWordPreferenceScore(word: any, profile: UserPerformanceProfile): number {
+    let score = 0;
+    const tags: string[] = Array.isArray(word.tags) ? word.tags : [];
+    // Score for preferred topics
+    if (profile.preferredTopics && tags.some(tag => profile.preferredTopics.includes(tag))) {
+      score += 50;
+    }
+    // Score for matching difficulty
+    if (word.difficulty_level && word.difficulty_level === profile.currentLevel) {
+      score += 20;
+    }
+    // Penalty for weaknesses
+    if (profile.weaknesses && tags.some(tag => profile.weaknesses.includes(tag))) {
+      score -= 20;
+    }
+    // Bonus for strengths
+    if (profile.strengths && tags.some(tag => profile.strengths.includes(tag))) {
+      score += 10;
+    }
+    return score;
   }
 } 

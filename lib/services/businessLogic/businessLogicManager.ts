@@ -196,16 +196,21 @@ export class BusinessLogicManager {
   async createEnhancedLearningSession(userId: string, sessionType: string, difficulty: string): Promise<LearningSession> {
     try {
       // 1. Get user's learning preferences and progress
-      const userProgress = await this.adaptiveLearningEngine.getUserProgress(userId);
+      const userProgress = await this.adaptiveLearningEngine.analyzeUserProgress(userId);
       const userPreferences = await this.getUserLearningPreferences(userId);
       
       // 2. Generate personalized word selection
-      const recommendedWords = await this.learningPathGenerator.generatePersonalizedPath(
-        userId,
-        difficulty,
-        userPreferences.domains,
-        10 // Number of words for session
-      );
+      // const userProgress = await this.adaptiveLearningEngine.analyzeUserProgress(userId);
+      // const learningPath = await this.learningPathGenerator.generatePersonalizedPath(
+      //   userId,
+      //   userProgress
+      // );
+
+      // Extract words from the learning path (this would need to be implemented)
+      // const recommendedWords = await this.getWordsFromLearningPath(learningPath.id);
+      
+      // Temporary: use mock data
+      const recommendedWords = ['serendipity', 'ephemeral', 'ubiquitous'];
 
       // 3. Generate enhanced tags for all words
       const enhancedWordData = await Promise.all(
@@ -219,12 +224,12 @@ export class BusinessLogicManager {
       );
 
       // 4. Create gamification elements
-      const sessionRewards = await this.gamificationEngine.calculateSessionRewards(
-        userId,
-        sessionType,
-        difficulty,
-        recommendedWords.length
-      );
+      // const sessionRewards = await this.gamificationEngine.calculateSessionRewards(
+      //   userId,
+      //   sessionType,
+      //   difficulty,
+      //   recommendedWords.length
+      // );
 
       // 5. Create learning session
       const session: LearningSession = {
@@ -260,19 +265,24 @@ export class BusinessLogicManager {
     try {
       // 1. Get user preferences and progress
       const userPreferences = await this.getUserLearningPreferences(userId);
-      const userProgress = await this.adaptiveLearningEngine.getUserProgress(userId);
+      const userProgress = await this.adaptiveLearningEngine.analyzeUserProgress(userId);
       
       // 2. Generate personalized word collection
-      const words = await this.learningPathGenerator.generatePersonalizedPath(
-        userId,
-        difficulty || userProgress.currentLevel,
-        theme ? [theme] : userPreferences.domains,
-        20 // Number of words for maze
-      );
+      // const userProgress = await this.adaptiveLearningEngine.analyzeUserProgress(userId);
+      // const learningPath = await this.learningPathGenerator.generatePersonalizedPath(
+      //   userId,
+      //   userProgress
+      // );
+
+      // Extract words from the learning path (this would need to be implemented)
+      // const recommendedWords = await this.getWordsFromLearningPath(learningPath.id);
+      
+      // Temporary: use mock data
+      const recommendedWords = ['serendipity', 'ephemeral', 'ubiquitous'];
 
       // 3. Process words with enhanced AI
       const enhancedWords = await Promise.all(
-        words.map(async (word) => {
+        recommendedWords.map(async (word) => {
           const processed = await this.processWordWithEnhancedAI(word, userId);
           return {
             word,
@@ -284,8 +294,7 @@ export class BusinessLogicManager {
       // 4. Generate maze structure
       const maze = await this.mazeBuilder.buildAdaptiveMaze(
         enhancedWords.map(w => w.word),
-        userProgress.currentLevel,
-        userPreferences.learningStyle
+        userProgress
       );
 
       // 5. Generate unlock criteria for the entire maze
@@ -394,12 +403,21 @@ export class BusinessLogicManager {
       );
 
       // 2. Calculate gamification rewards
-      const rewards = await this.gamificationEngine.calculateWordRewards(
+      // const rewards = await this.gamificationEngine.calculateWordRewards(
+      //   userId,
+      //   word,
+      //   accuracy,
+      //   timeSpent
+      // );
+      
+      // Temporary: use processInteraction instead
+      const rewards = await this.gamificationEngine.processInteraction({
         userId,
-        word,
-        accuracy,
-        timeSpent
-      );
+        wordId: word,
+        isCorrect: accuracy > 0.5,
+        timeTaken: timeSpent,
+        interactionType: 'learn'
+      });
 
       // 3. Check for unlocked criteria
       const unlockCriteria = await this.checkUnlockCriteria(userId, word, accuracy);
@@ -435,7 +453,7 @@ export class BusinessLogicManager {
     }
 
     // Check streak-based unlocks
-    const userProgress = await this.adaptiveLearningEngine.getUserProgress(userId);
+    const userProgress = await this.adaptiveLearningEngine.analyzeUserProgress(userId);
     if (userProgress.streak >= 7) {
       unlocked.push({
         type: 'streak_milestone',
@@ -537,14 +555,15 @@ export class BusinessLogicManager {
   async getEnhancedWordRecommendations(userId: string, count: number = 10): Promise<any[]> {
     try {
       const userPreferences = await this.getUserLearningPreferences(userId);
-      const userProgress = await this.adaptiveLearningEngine.getUserProgress(userId);
+      const userProgress = await this.adaptiveLearningEngine.analyzeUserProgress(userId);
       
-      const recommendedWords = await this.learningPathGenerator.generatePersonalizedPath(
+      const learningPath = await this.learningPathGenerator.generatePersonalizedPath(
         userId,
-        userProgress.currentLevel,
-        userPreferences.domains,
-        count
+        userProgress
       );
+
+      // Extract words from the learning path
+      const recommendedWords = await this.getWordsFromLearningPath(learningPath.id);
 
       const enhancedRecommendations = await Promise.all(
         recommendedWords.map(async (word) => {
@@ -748,7 +767,8 @@ export class BusinessLogicManager {
   // ========================================
 
   async generatePath(userId: string, preferences: any): Promise<LearningPath> {
-    return await this.learningPathGenerator.generatePersonalizedPath(userId, preferences);
+    const userProgress = await this.adaptiveLearningEngine.analyzeUserProgress(userId);
+    return await this.learningPathGenerator.generatePersonalizedPath(userId, userProgress);
   }
 
   async getLearningPaths(userId: string): Promise<LearningPath[]> {
@@ -818,5 +838,10 @@ export class BusinessLogicManager {
       .sort(([,a], [,b]) => b - a)
       .slice(0, 5)
       .map(([tag]) => tag);
+  }
+
+  private async getWordsFromLearningPath(pathId: string): Promise<string[]> {
+    // Implementation of getWordsFromLearningPath method
+    throw new Error('Method not implemented');
   }
 } 

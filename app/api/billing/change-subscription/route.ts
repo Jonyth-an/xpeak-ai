@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
           last_change: new Date().toISOString(),
           change_type: 'upgrade_downgrade',
           previous_subscription_id: currentSubscription.stripe_subscription_id,
-          user_email: user.email,
+          user_email: user.email || '',
           is_downgrade: isDowngrade.toString(),
           proration_amount: proration.prorationAmount.toString(),
           credit_amount: credit.creditAmount.toString()

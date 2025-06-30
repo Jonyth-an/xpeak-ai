@@ -842,7 +842,7 @@ Create 3-5 personalized tags that connect this word to the user's interests and 
     const tags: SemanticTag[] = [];
     const difficulty = wordData.difficulty;
 
-    if (difficulty) {
+    if (difficulty && typeof difficulty.level === 'string') {
       tags.push({
         tag: difficulty.level,
         confidence: 0.9,

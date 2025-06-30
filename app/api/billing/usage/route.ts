@@ -225,7 +225,7 @@ function calculateUsageStats(usageData: any[]) {
       return acc;
     }, {} as Record<string, { email: string; apiCalls: number; storageUsed: number }>);
 
-    stats.topUsers = Object.values(userStats)
+    stats.topUsers = (Object.values(userStats) as { email: string; apiCalls: number; storageUsed: number }[])
       .sort((a, b) => b.apiCalls - a.apiCalls)
       .slice(0, 10);
 

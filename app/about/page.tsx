@@ -119,14 +119,14 @@ export default function AboutPage() {
               <div className="font-semibold mb-2">Shape the Roadmap</div>
               <div className="text-gray-600 text-sm mb-4">Suggest features, upvote others, or just poke around and see what's next. Yes, I actually read it.</div>
               <Button asChild variant="primary">
-                <Link href="/community">Join the Discussion</Link>
+                <a href="https://xpeakai.featurebase.app/roadmap" target="_blank" rel="nofollow noreferrer">Join the Discussion</a>
               </Button>
             </Card>
             <Card className="p-6 flex flex-col items-center">
               <div className="font-semibold mb-2">See What I Broke Today</div>
               <div className="text-gray-600 text-sm mb-4">Read the Daily Changelog for raw, unfiltered build-in-public energy. No fluff. Just commits, crashes, and caffeine.</div>
               <Button asChild variant="outline">
-                <Link href="/community">View Changelog</Link>
+                <a href="https://xpeakai.featurebase.app/changelog" target="_blank" rel="nofollow noreferrer">View Changelog</a>
               </Button>
             </Card>
           </div>
