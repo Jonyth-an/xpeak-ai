@@ -89,31 +89,31 @@ export default function ProfileSidebar({
               key={tab.id}
               onClick={() => handleTabClick(tab.id)}
               className={`
-                w-full flex items-center justify-between p-4 rounded-lg transition-all duration-200 group
+                w-full flex items-center justify-between p-4 rounded-lg transition-all duration-300 ease-in-out group
                 ${isActive 
-                  ? 'bg-blue-50 border border-blue-200 text-blue-700' 
-                  : 'hover:bg-gray-50 text-gray-700 hover:text-gray-900'
+                  ? 'bg-blue-50 border border-blue-200 text-blue-700 shadow-sm scale-[1.02]' 
+                  : 'hover:bg-gray-50 text-gray-700 hover:text-gray-900 hover:shadow-sm hover:scale-[1.01]'
                 }
               `}
             >
               <div className="flex items-center space-x-3">
                 <div className={`
-                  p-2 rounded-lg transition-colors duration-200
+                  p-2 rounded-lg transition-all duration-300 ease-in-out
                   ${isActive 
-                    ? 'bg-blue-100 text-blue-600' 
-                    : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200 group-hover:text-gray-600'
+                    ? 'bg-blue-100 text-blue-600 shadow-sm' 
+                    : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200 group-hover:text-gray-600 group-hover:shadow-sm'
                   }
                 `}>
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                 </div>
                 <div className="text-left">
                   <Text 
                     variant="body" 
-                    className={`font-medium ${isActive ? 'text-blue-700' : 'text-gray-700'}`}
+                    className={`font-medium transition-colors duration-300 ${isActive ? 'text-blue-700' : 'text-gray-700'}`}
                   >
                     {tab.label}
                   </Text>
-                  <Text variant="body" className="text-xs text-gray-500 mt-0.5">
+                  <Text variant="body" className="text-xs text-gray-500 mt-0.5 transition-colors duration-300">
                     {tab.description}
                   </Text>
                 </div>
@@ -121,8 +121,8 @@ export default function ProfileSidebar({
               
               <ChevronRight 
                 className={`
-                  w-4 h-4 transition-transform duration-200
-                  ${isActive ? 'text-blue-600 rotate-90' : 'text-gray-400 group-hover:text-gray-600'}
+                  w-4 h-4 transition-all duration-300 ease-in-out
+                  ${isActive ? 'text-blue-600 rotate-90 scale-110' : 'text-gray-400 group-hover:text-gray-600 group-hover:scale-110'}
                 `} 
               />
             </button>

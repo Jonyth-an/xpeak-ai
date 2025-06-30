@@ -6,6 +6,7 @@ import SmartMatchFeature, { SmartMatchFeatureItem } from '@/app/components/molec
 import HeroSection from './components/HeroSection';
 import QuickAddOptionsSection from './components/QuickAddOptionsSection';
 import MyWordBankSection from './components/MyWordBankSection';
+import LearningSessionSection from './components/LearningSessionSection';
 
 const wordMazeFeatures: SmartMatchFeatureItem[] = [
   {
@@ -22,6 +23,11 @@ const wordMazeFeatures: SmartMatchFeatureItem[] = [
     icon: '📊',
     title: 'Progress Tracking',
     text: 'See your vocabulary growth with detailed analytics and personalized insights.'
+  },
+  {
+    icon: '🎯',
+    title: 'Adaptive Learning',
+    text: 'AI-powered recommendations that adjust to your performance and learning goals.'
   }
 ];
 
@@ -29,6 +35,7 @@ export default function WordMazePage() {
   return (
     <Layout>
       <HeroSection />
+      <LearningSessionSection />
       <QuickAddOptionsSection />
       <MyWordBankSection />
       <SmartMatchFeature

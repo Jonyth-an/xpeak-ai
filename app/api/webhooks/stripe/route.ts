@@ -149,14 +149,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   // Update the subscription record with current status and metadata
   const updateData: any = {
     status: subscription.status,
-    updated_at: new Date().toISOString(),
-    metadata: {
-      ...existingSubscription.metadata,
-      last_webhook_update: new Date().toISOString(),
-      stripe_status: subscription.status,
-      current_period_end: subscription.current_period_end,
-      current_period_start: subscription.current_period_start
-    }
+    updated_at: new Date().toISOString()
   };
 
   // Handle pause collection updates
@@ -208,11 +201,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     .from('user_subscriptions')
     .update({
       status: 'canceled',
-      updated_at: new Date().toISOString(),
-      metadata: {
-        deleted_at: new Date().toISOString(),
-        stripe_status: subscription.status
-      }
+      updated_at: new Date().toISOString()
     })
     .eq('stripe_subscription_id', subscription.id);
 
@@ -224,25 +213,23 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 }
 
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
+  const subscriptionId = (invoice as any).subscription;
+  
   console.log('Processing invoice.payment_succeeded:', {
     invoice_id: invoice.id,
-    subscription_id: invoice.subscription,
+    subscription_id: subscriptionId,
     amount_paid: invoice.amount_paid
   });
 
   // This event is useful for tracking successful payments
   // You could store payment history or trigger notifications here
-  if (invoice.subscription) {
+  if (subscriptionId) {
     const { error: updateError } = await supabase
       .from('user_subscriptions')
       .update({
-        metadata: {
-          last_payment: new Date().toISOString(),
-          last_payment_amount: invoice.amount_paid,
-          last_payment_currency: invoice.currency
-        }
+        updated_at: new Date().toISOString()
       })
-      .eq('stripe_subscription_id', invoice.subscription as string);
+      .eq('stripe_subscription_id', subscriptionId);
 
     if (updateError) {
       console.error('Error updating payment info:', updateError);

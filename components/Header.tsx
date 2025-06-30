@@ -106,9 +106,6 @@ export default function Header() {
                 <Link href="/community" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
                   Community
                 </Link>
-                <Link href="/become-a-tutor" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-                  Become a Tutor
-                </Link>
               </>
             )}
           </nav>
