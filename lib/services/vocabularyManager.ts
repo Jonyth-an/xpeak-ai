@@ -75,8 +75,11 @@ export class VocabularyManager {
       .eq('word_text', wordText.toLowerCase())
       .single();
 
-    if (error && error.code !== 'PGRST116') {
-      console.error('Error fetching word:', error);
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null; // No word found
+      }
+      console.error('Error fetching word by text:', error);
       return null;
     }
 
@@ -126,6 +129,19 @@ export class VocabularyManager {
     }
 
     return data;
+  }
+
+  async updateWordPosition(wordId: string): Promise<void> {
+    // Update the word's updated_at timestamp to move it to the top of the list
+    const { error } = await supabase
+      .from('word_entries')
+      .update({ updated_at: new Date().toISOString() })
+      .eq('id', wordId);
+
+    if (error) {
+      console.error('Error updating word position:', error);
+      throw new Error(`Failed to update word position: ${error.message}`);
+    }
   }
 
   // ========================================

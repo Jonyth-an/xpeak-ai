@@ -19,6 +19,8 @@ interface WordMazeState {
   words: Word[];
   isLoading: boolean;
   error: string | null;
+  // Notification state
+  notification: { type: 'success' | 'error'; message: string } | null;
   
   // Actions
   addWordOptimistically: (word: string) => void;
@@ -29,6 +31,9 @@ interface WordMazeState {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   clearError: () => void;
+  // Notification actions
+  setNotification: (notification: { type: 'success' | 'error'; message: string } | null) => void;
+  clearNotification: () => void;
   
   // Computed
   getPendingWords: () => Word[];
@@ -44,6 +49,7 @@ export const useWordMazeStore = create<WordMazeState>()(
       words: [],
       isLoading: false,
       error: null,
+      notification: null,
 
       // Actions
       addWordOptimistically: (word: string) => {
@@ -110,6 +116,14 @@ export const useWordMazeStore = create<WordMazeState>()(
 
       clearError: () => {
         set({ error: null });
+      },
+
+      setNotification: (notification) => {
+        set({ notification });
+      },
+
+      clearNotification: () => {
+        set({ notification: null });
       },
 
       // Computed getters

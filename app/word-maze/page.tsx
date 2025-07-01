@@ -5,6 +5,10 @@ import { Card, Button, Text, Badge } from '@/app/components/ui';
 import AddWordModal from './components/AddWordModal';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { CompleteWordData } from '../../lib/types/wordMaze';
+import { useWordMazeStore } from '../../lib/stores/wordMazeStore';
+import { useWordMazeService } from '../../lib/services/wordMazeService';
+import WordModal from './components/WordModal';
+import WordCard from '../components/molecules/WordCard';
 
 // Mock data for demonstration
 const mockUserStats = {
@@ -32,9 +36,11 @@ export default function WordMazePage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [isLoading, setIsLoading] = useState(false);
   const [showAddWordModal, setShowAddWordModal] = useState(false);
-  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [recentWords, setRecentWords] = useState<CompleteWordData[]>([]);
   const [loadingWords, setLoadingWords] = useState(true);
+  const { notification, clearNotification, setNotification } = useWordMazeStore();
+  const { addWordWithOptimisticUpdate } = useWordMazeService();
+  const [selectedWord, setSelectedWord] = useState<CompleteWordData | null>(null);
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: '📊' },
@@ -106,79 +112,40 @@ export default function WordMazePage() {
   const handleAddWords = async (words: string[]) => {
     try {
       console.log('Adding words:', words);
-      // Call API to add words to user's word bank
-      const response = await fetch('/api/word-maze/words', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ words }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${response.status}: Failed to add words`);
-      }
-
-      const result = await response.json();
-      console.log('API response:', result);
       
-      // Handle the new response format
-      let successCount = 0;
-      let existsCount = 0;
-      let errorCount = 0;
-
-      if (result.results) {
-        result.results.forEach((item: any) => {
-          if (item.status === 'added') successCount++;
-          else if (item.status === 'exists') existsCount++;
-        });
+      // Use the service for each word to get optimistic updates and reordering
+      for (const word of words) {
+        await addWordWithOptimisticUpdate(word);
       }
-
-      if (result.errors) {
-        errorCount = result.errors.length;
-      }
-
-      // Build notification message
-      let message = '';
-      if (successCount > 0) {
-        message += `Successfully added ${successCount} word${successCount > 1 ? 's' : ''}`;
-      }
-      if (existsCount > 0) {
-        message += `${message ? '; ' : ''}${existsCount} word${existsCount > 1 ? 's' : ''} already existed`;
-      }
-      if (errorCount > 0) {
-        message += `${message ? '; ' : ''}${errorCount} word${errorCount > 1 ? 's' : ''} failed to add`;
-      }
-      if (!message) message = 'Words processed (no details)';
-      console.log('Setting notification:', { type: errorCount === 0 ? 'success' : 'error', message });
-      setNotification({
-        type: errorCount === 0 ? 'success' : 'error',
-        message
-      });
 
       // Refresh the recent words list
       fetchRecentWords();
 
-      // Clear notification after 5 seconds
-      setTimeout(() => {
-        console.log('Clearing notification');
-        setNotification(null);
-      }, 5000);
-
     } catch (error) {
       console.error('Error adding words:', error);
-      setNotification({
-        type: 'error',
-        message: error instanceof Error ? error.message : 'Failed to add words'
-      });
-      // Clear notification after 5 seconds
-      setTimeout(() => setNotification(null), 5000);
     }
   };
 
-  // Before rendering notification
-  console.log('Notification state:', notification);
+  const handleDeleteWord = async (wordId: string) => {
+    try {
+      const response = await fetch(`/api/word-maze/words/${wordId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // Remove the word from the local state
+        setRecentWords(prev => prev.filter(word => word.id !== wordId));
+        // Show success notification
+        setNotification({ type: 'success', message: 'Word deleted successfully!' });
+      } else {
+        console.error('Failed to delete word');
+        setNotification({ type: 'error', message: 'Failed to delete word' });
+      }
+    } catch (error) {
+      console.error('Error deleting word:', error);
+      setNotification({ type: 'error', message: 'Error deleting word' });
+    }
+  };
 
   return (
     <Layout>
@@ -196,7 +163,7 @@ export default function WordMazePage() {
               </span>
               <span>{notification.message}</span>
               <button 
-                onClick={() => setNotification(null)}
+                onClick={clearNotification}
                 className="ml-2 text-white hover:text-gray-200"
               >
                 ×
@@ -317,22 +284,19 @@ export default function WordMazePage() {
                   No words in your bank yet. Add your first word to get started!
                 </div>
               ) : (
-                recentWords.map(word => {
-                  const masteryStatus = getMasteryStatus(word);
-                  return (
-                    <div key={word.id} className="bg-white rounded-lg p-4 shadow flex flex-col gap-2">
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold">{word.word}</span>
-                        <span className={`rounded-full px-2 py-1 text-xs ${masteryStatus.color}`}>
-                          {masteryStatus.status}
-                        </span>
-                      </div>
-                      <div className="text-gray-500 text-sm">
-                        {getPrimaryDefinition(word)}
-                      </div>
-                    </div>
-                  );
-                })
+                recentWords.map(word => (
+                  <WordCard
+                    key={word.id}
+                    id={word.id}
+                    word={word.word}
+                    definition={getPrimaryDefinition(word)}
+                    dateAdded={word.created_at}
+                    onDelete={() => handleDeleteWord(word.id)}
+                    showModal={false}
+                    setShowModalId={(id: string | null) => setSelectedWord(recentWords.find(w => w.id === id) || null)}
+                    cardClassName=""
+                  />
+                ))
               )}
             </div>
             <div className="text-center">
@@ -408,6 +372,16 @@ export default function WordMazePage() {
           isOpen={showAddWordModal}
           onClose={() => setShowAddWordModal(false)}
           onAddWords={handleAddWords}
+        />
+
+        {/* Word Details Modal */}
+        <WordModal
+          open={!!selectedWord}
+          mode="edit"
+          onClose={() => setSelectedWord(null)}
+          onAddWord={() => {}}
+          smartCheck={false}
+          initialWord={selectedWord}
         />
       </div>
     </Layout>

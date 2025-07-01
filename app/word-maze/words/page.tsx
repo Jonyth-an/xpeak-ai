@@ -5,6 +5,8 @@ import Button from '../../components/ui/Button';
 import WordCard from '../../components/molecules/WordCard';
 import AddWordModal from '../components/AddWordModal';
 import { CompleteWordData } from '../../../lib/types/wordMaze';
+import { useWordMazeStore } from '../../../lib/stores/wordMazeStore';
+import { useWordMazeService } from '../../../lib/services/wordMazeService';
 
 const PAGE_SIZE = 12;
 
@@ -15,6 +17,8 @@ export default function WordMazeWordsPage() {
   const [loading, setLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showModalId, setShowModalId] = useState<string | null>(null);
+  const { notification, clearNotification } = useWordMazeStore();
+  const { addWordWithOptimisticUpdate } = useWordMazeService();
 
   useEffect(() => {
     fetchWords();
@@ -42,13 +46,17 @@ export default function WordMazeWordsPage() {
   }
 
   async function handleAddWords(words: string[]) {
-    await fetch('/api/word-maze/words', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ words }),
-    });
-    setShowAddModal(false);
-    fetchWords();
+    try {
+      // Use the service for each word to get optimistic updates and reordering
+      for (const word of words) {
+        await addWordWithOptimisticUpdate(word);
+      }
+      
+      setShowAddModal(false);
+      fetchWords(); // Refresh the list to show updated order
+    } catch (error) {
+      console.error('Error adding words:', error);
+    }
   }
 
   // Helper function to get the primary definition
@@ -78,6 +86,27 @@ export default function WordMazeWordsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Shared Notification UI */}
+      {notification && (
+        <div className={`fixed top-4 right-4 z-[9999] p-4 rounded-lg shadow-xl border-2 ${
+          notification.type === 'success'
+            ? 'bg-green-500 text-white border-green-600'
+            : 'bg-red-500 text-white border-red-600'
+        }`}>
+          <div className="flex items-center gap-2">
+            <span className="font-semibold">
+              {notification.type === 'success' ? '✅' : '❌'}
+            </span>
+            <span>{notification.message}</span>
+            <button
+              onClick={clearNotification}
+              className="ml-2 text-white hover:text-gray-200"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
       <div className="max-w-4xl mx-auto py-10 px-4">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold">My Word Maze Words</h1>
@@ -105,7 +134,7 @@ export default function WordMazeWordsPage() {
                 onDelete={() => handleDelete(word.id)}
                 showModal={false}
                 setShowModalId={setShowModalId}
-                cardClassName={duplicateIds.includes(word.id) ? 'border-red-500 border-2' : ''}
+                cardClassName={`h-64 p-6 ${duplicateIds.includes(word.id) ? 'border-red-500 border-2' : ''}`}
               />
             ))
           )}
@@ -135,7 +164,7 @@ export default function WordMazeWordsPage() {
                   onDelete={() => handleDelete(word.id)}
                   showModal={true}
                   setShowModalId={setShowModalId}
-                  cardClassName={duplicateIds.includes(word.id) ? 'border-red-500 border-2' : ''}
+                  cardClassName={`h-64 p-6 ${duplicateIds.includes(word.id) ? 'border-red-500 border-2' : ''}`}
                   {...(pronunciationUrls ? { pronunciationUrls } : {})}
                   {...(imageUrl ? { imageUrl } : {})}
                 />

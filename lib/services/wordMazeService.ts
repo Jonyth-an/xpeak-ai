@@ -95,8 +95,10 @@ export const useWordMazeService = () => {
             id: result.data?.id || tempWordId,
             status: 'synced',
           });
+          // Notification: success
+          store.setNotification({ type: 'success', message: `Word "${word}" added!` });
         } else if (result.status === 'exists') {
-          // Word already exists, update with existing data
+          // Word already exists, update with existing data and move to top
           store.updateWordDetails(tempWordId, {
             id: result.data?.id || tempWordId,
             status: 'synced',
@@ -105,6 +107,17 @@ export const useWordMazeService = () => {
             synonyms: result.data?.synonyms,
             usage_tip: result.data?.usage_tip,
           });
+          
+          // Move the word to the top of the list by reordering
+          const currentWords = store.words;
+          const wordToMove = currentWords.find(w => w.id === tempWordId);
+          if (wordToMove) {
+            const otherWords = currentWords.filter(w => w.id !== tempWordId);
+            store.setWords([wordToMove, ...otherWords]);
+          }
+          
+          // Notification: exists
+          store.setNotification({ type: 'error', message: `Word "${word}" already exists.` });
         }
       }
 
@@ -124,9 +137,14 @@ export const useWordMazeService = () => {
         }
       }
 
+      // Clear notification after 5 seconds
+      setTimeout(() => store.clearNotification(), 5000);
+
     } catch (error) {
       console.error('Failed to add word:', error);
       store.updateWordStatus(tempWordId, 'error', error instanceof Error ? error.message : 'Unknown error');
+      store.setNotification({ type: 'error', message: error instanceof Error ? error.message : 'Failed to add word' });
+      setTimeout(() => store.clearNotification(), 5000);
     }
   };
 
