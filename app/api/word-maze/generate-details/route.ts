@@ -5,209 +5,125 @@ import { supabase } from '../../../../lib/supabaseClient';
 
 // We'll instantiate OpenAI client as needed below
 
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
 export async function POST(request: NextRequest) {
   try {
-    const { word, openaiApiKey } = await request.json();
+    const { word, prompt } = await request.json();
+
     if (!word) {
-      return NextResponse.json({ error: 'Word is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Word is required' },
+        { status: 400 }
+      );
     }
 
-    // Step 1: Check cache first
-    const { data: cachedData, error: cacheError } = await supabase
-      .from('word_details_cache')
-      .select('definition, example, synonyms, usage_tip')
-      .eq('word', word.toLowerCase())
-      .single();
+    console.log(`Generating AI content for word: ${word}`);
 
-    if (cachedData && !cacheError) {
-      console.log(`Cache hit for word: ${word}`);
-      return NextResponse.json({
-        definition: cachedData.definition || '',
-        example: cachedData.example || '',
-        synonyms: cachedData.synonyms || [],
-        usageTip: cachedData.usage_tip || '',
-        cached: true
-      });
+    const systemPrompt = `You are a helpful language learning assistant. Generate comprehensive, accurate, and educational content for vocabulary words. Always respond with valid JSON that matches the requested structure exactly.`;
+
+    const userPrompt = prompt || `Generate comprehensive information for the word "${word}". Return a JSON object with the following structure:
+
+{
+  "definitions": [
+    {
+      "text": "Clear, concise definition",
+      "source": "ai",
+      "confidence": 0.9
     }
-
-    console.log(`Cache miss for word: ${word}, generating details...`);
-
-    // Step 2: Get word entry and complete data
-    const wordEntry = await vocabularyManager.getWordByText(word);
-    if (!wordEntry) {
-      return NextResponse.json({ error: 'Word not found in vocabulary' }, { status: 404 });
+  ],
+  "examples": [
+    {
+      "text": "Example sentence using the word",
+      "source": "ai",
+      "context": "formal"
     }
-
-    const completeData = await vocabularyManager.getCompleteWordData(wordEntry.id);
-    let definition = '';
-    let example = '';
-    let synonyms: string[] = [];
-    
-    if (completeData) {
-      if (completeData.definitions && completeData.definitions.length > 0) {
-        definition = completeData.definitions[0].text;
-      }
-      if (completeData.examples && completeData.examples.length > 0) {
-        example = completeData.examples[0].text;
-      }
-      if (completeData.relationships) {
-        synonyms = completeData.relationships
-          .filter(r => r.type === 'synonym')
-          .map(r => r.related_word)
-          .filter(Boolean);
-      }
+  ],
+  "synonyms": ["synonym1", "synonym2", "synonym3"],
+  "usage_tip": "Helpful tip for using this word correctly",
+  "difficulty_level": "beginner|intermediate|advanced",
+  "difficulty_score": 0.0-1.0,
+  "tags": [
+    {
+      "type": "part_of_speech",
+      "value": "noun|verb|adjective|adverb",
+      "confidence": 0.9,
+      "source": "ai"
+    },
+    {
+      "type": "formality",
+      "value": "formal|informal|casual",
+      "confidence": 0.8,
+      "source": "ai"
     }
+  ]
+}
 
-    // Step 3: Generate missing content with OpenAI
-    let usageTip = '';
-    const apiKey = openaiApiKey || process.env.OPENAI_API_KEY;
-    
-    if (!apiKey) {
-      return NextResponse.json({ error: 'OpenAI API key is required' }, { status: 400 });
-    }
+Make the content educational, accurate, and suitable for language learners. Keep definitions clear and examples practical.`;
 
-    const openai = new OpenAI({ apiKey });
-
-    // Generate usage tip if missing
-    if (!usageTip) {
-      try {
-        const completion = await openai.chat.completions.create({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a helpful language learning assistant. Provide concise, practical usage tips for English words. Keep tips under 100 words and focus on practical advice.'
-            },
-            {
-              role: 'user',
-              content: `Provide a brief usage tip for the word "${word}". Include context about when and how to use it appropriately.`
-            }
-          ],
-          max_tokens: 150,
-          temperature: 0.7
-        });
-
-        usageTip = completion.choices[0]?.message?.content?.trim() || '';
-      } catch (openaiError) {
-        console.error('OpenAI API error:', openaiError);
-        usageTip = 'Usage tip not available at this time.';
-      }
-    }
-
-    // Generate missing definition if needed
-    if (!definition) {
-      try {
-        const completion = await openai.chat.completions.create({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a helpful language learning assistant. Provide clear, concise definitions for English words.'
-            },
-            {
-              role: 'user',
-              content: `Provide a clear definition for the word "${word}".`
-            }
-          ],
-          max_tokens: 100,
-          temperature: 0.3
-        });
-
-        definition = completion.choices[0]?.message?.content?.trim() || '';
-      } catch (openaiError) {
-        console.error('OpenAI API error for definition:', openaiError);
-        definition = 'Definition not available at this time.';
-      }
-    }
-
-    // Generate missing example if needed
-    if (!example) {
-      try {
-        const completion = await openai.chat.completions.create({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a helpful language learning assistant. Provide natural example sentences for English words.'
-            },
-            {
-              role: 'user',
-              content: `Provide a natural example sentence using the word "${word}".`
-            }
-          ],
-          max_tokens: 100,
-          temperature: 0.7
-        });
-
-        example = completion.choices[0]?.message?.content?.trim() || '';
-      } catch (openaiError) {
-        console.error('OpenAI API error for example:', openaiError);
-        example = 'Example not available at this time.';
-      }
-    }
-
-    // Generate missing synonyms if needed
-    if (synonyms.length === 0) {
-      try {
-        const completion = await openai.chat.completions.create({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a helpful language learning assistant. Provide 3-5 synonyms for English words. Return only the synonyms separated by commas, no explanations.'
-            },
-            {
-              role: 'user',
-              content: `Provide 3-5 synonyms for the word "${word}". Return only the synonyms separated by commas.`
-            }
-          ],
-          max_tokens: 50,
-          temperature: 0.3
-        });
-
-        const synonymsText = completion.choices[0]?.message?.content?.trim() || '';
-        synonyms = synonymsText.split(',').map(s => s.trim()).filter(Boolean);
-      } catch (openaiError) {
-        console.error('OpenAI API error for synonyms:', openaiError);
-        synonyms = [];
-      }
-    }
-
-    // Step 4: Store in cache
-    try {
-      const { error: insertError } = await supabase
-        .from('word_details_cache')
-        .insert({
-          word: word.toLowerCase(),
-          definition,
-          example,
-          synonyms,
-          usage_tip: usageTip
-        });
-
-      if (insertError) {
-        console.error('Error inserting into cache:', insertError);
-        // Continue even if cache insert fails
-      } else {
-        console.log(`Cached details for word: ${word}`);
-      }
-    } catch (cacheInsertError) {
-      console.error('Cache insert error:', cacheInsertError);
-      // Continue even if cache insert fails
-    }
-
-    return NextResponse.json({
-      definition,
-      example,
-      synonyms,
-      usageTip,
-      cached: false
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: systemPrompt
+        },
+        {
+          role: "user",
+          content: userPrompt
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 1000,
     });
 
+    const responseText = completion.choices[0]?.message?.content;
+    
+    if (!responseText) {
+      throw new Error('No response from OpenAI');
+    }
+
+    // Try to parse the JSON response
+    let parsedResponse;
+    try {
+      parsedResponse = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('Failed to parse OpenAI response as JSON:', responseText);
+      // Return fallback data if JSON parsing fails
+      parsedResponse = {
+        definitions: [{
+          text: `A word or term: ${word}`,
+          source: 'ai',
+          confidence: 0.5
+        }],
+        examples: [],
+        synonyms: [],
+        usage_tip: '',
+        difficulty_level: 'intermediate',
+        difficulty_score: 0.5,
+        tags: [{
+          type: 'part_of_speech',
+          value: 'unknown',
+          confidence: 0.5,
+          source: 'ai'
+        }]
+      };
+    }
+
+    console.log(`Successfully generated content for word: ${word}`);
+
+    return NextResponse.json(parsedResponse);
+
   } catch (error) {
-    console.error('Error in generate-details:', error);
+    console.error('Error generating word details:', error);
+    
     return NextResponse.json(
-      { error: 'Failed to generate word details' },
+      { 
+        error: 'Failed to generate word details',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }

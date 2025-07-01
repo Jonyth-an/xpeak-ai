@@ -726,8 +726,8 @@ export class BusinessLogicManager {
   // VOCABULARY MANAGEMENT DELEGATION
   // ========================================
 
-  async addWordToVocabulary(word: string, source?: string): Promise<any> {
-    return await this.vocabularyManager.addWordFromAPI(word);
+  async addWordToVocabulary(word: string, userEmail: string = 'unknown'): Promise<WordEntry> {
+    return await this.vocabularyManager.addWordFromAPI(word, userEmail);
   }
 
   async getWordDetails(wordId: string): Promise<any> {

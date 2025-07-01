@@ -38,6 +38,7 @@ interface WordMazeState {
   // Computed
   getPendingWords: () => Word[];
   getSyncedWords: () => Word[];
+  getErrorWords: () => Word[];
   getWordById: (wordId: string) => Word | undefined;
   getWordByText: (wordText: string) => Word | undefined;
 }
@@ -145,6 +146,10 @@ export const useWordMazeStore = create<WordMazeState>()(
         return get().words.find((word) => 
           word.word.toLowerCase() === wordText.toLowerCase()
         );
+      },
+
+      getErrorWords: () => {
+        return get().words.filter((word) => word.status === 'error');
       },
     }),
     {

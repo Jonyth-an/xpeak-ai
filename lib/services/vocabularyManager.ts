@@ -595,19 +595,19 @@ export class VocabularyManager {
   // BULK OPERATIONS
   // ========================================
 
-  async addWordFromAPI(word: string): Promise<WordEntry> {
-    console.log(`Adding word from API: ${word}`);
+  async addWordFromAPI(word: string, userEmail: string = 'unknown'): Promise<WordEntry> {
+    console.log(`Adding word with AI generation: ${word}`);
     
     try {
-      // Fetch data from APIs
-      const wordData = await apiAggregator.getWordData(word);
+      // Generate word data using AI
+      const wordData = await apiAggregator.getWordData(word, userEmail);
       
       // Create word entry in database
       return await this.createWordEntry(wordData);
     } catch (error) {
-      console.error(`Error adding word "${word}" from API:`, error);
+      console.error(`Error adding word "${word}" with AI:`, error);
       
-      // Fallback: Create basic word entry if API fails
+      // Fallback: Create basic word entry if AI generation fails
       console.log(`Creating fallback word entry for: ${word}`);
       const fallbackData: UnifiedWordData = {
         word,
@@ -624,7 +624,10 @@ export class VocabularyManager {
           level: 'intermediate',
           score: 0.5
         },
-        metadata: {}
+        metadata: {
+          generated_by: 'fallback',
+          generated_at: new Date().toISOString()
+        }
       };
       
       try {
@@ -636,14 +639,14 @@ export class VocabularyManager {
     }
   }
 
-  async addWordsFromList(words: string[]): Promise<WordEntry[]> {
+  async addWordsFromList(words: string[], userEmail: string = 'unknown'): Promise<WordEntry[]> {
     console.log(`Adding ${words.length} words from list`);
     
     const results: WordEntry[] = [];
     
     for (const word of words) {
       try {
-        const wordEntry = await this.addWordFromAPI(word);
+        const wordEntry = await this.addWordFromAPI(word, userEmail);
         results.push(wordEntry);
         console.log(`Successfully added: ${word}`);
       } catch (error) {

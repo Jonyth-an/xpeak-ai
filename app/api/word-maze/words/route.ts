@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { vocabularyManager } from '../../../../lib/services/vocabularyManager';
 import { apiAggregator } from '../../../../lib/services/apiAggregator';
 import { createClient } from '@supabase/supabase-js';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { VocabularyType } from '../../../../lib/types/wordMaze';
 
@@ -14,6 +13,97 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
+
+// ========================================
+// AUTHENTICATION HELPER
+// ========================================
+
+async function getAuthenticatedUser(request: NextRequest) {
+  console.log('=== AUTHENTICATION DEBUG ===');
+  
+  // Check for test mode header
+  const bypassAuth = request.headers.get('X-Bypass-Auth') === 'true';
+  console.log('Bypass auth header:', bypassAuth);
+  
+  if (bypassAuth) {
+    // Test mode: use a hardcoded test user ID (proper UUID format)
+    const user = { id: '00000000-0000-0000-0000-000000000001' };
+    console.log('Test mode enabled - using test user ID:', user.id);
+    return user;
+  }
+
+  // Try to get token from Authorization header first
+  const authHeader = request.headers.get('Authorization');
+  console.log('Authorization header:', authHeader ? 'Present' : 'Missing');
+  
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+    console.log('Bearer token found, length:', token.length);
+    
+    try {
+      // Use the token to get user session
+      const { data: { user }, error } = await supabase.auth.getUser(token);
+      
+      if (error || !user) {
+        console.error('Error getting user from token:', error);
+        return null;
+      }
+      
+      console.log('User authenticated via token:', user.id);
+      return user;
+    } catch (error) {
+      console.error('Error validating token:', error);
+      return null;
+    }
+  }
+
+  // Fallback to cookies (for backward compatibility)
+  console.log('No Bearer token found, trying cookies...');
+  try {
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get('sb-bmzoowznbwxkqwxbcvjy-auth-token')?.value;
+    const authToken0 = cookieStore.get('sb-bmzoowznbwxkqwxbcvjy-auth-token.0')?.value;
+    
+    if (!authToken && !authToken0) {
+      console.log('No auth tokens found in cookies');
+      return null;
+    }
+
+    // Parse the auth token
+    const token = authToken || authToken0;
+    if (!token) {
+      console.log('No valid auth token found');
+      return null;
+    }
+
+    try {
+      const parsedToken = JSON.parse(token);
+      const accessToken = parsedToken.access_token;
+      
+      if (!accessToken) {
+        console.log('No access token in parsed auth data');
+        return null;
+      }
+
+      // Use the access token to get user info
+      const { data: { user }, error } = await supabase.auth.getUser(accessToken);
+      
+      if (error || !user) {
+        console.log('Error getting user from access token:', error);
+        return null;
+      }
+      
+      console.log('User authenticated via cookies:', user.id);
+      return user;
+    } catch (parseError) {
+      console.error('Error parsing auth token:', parseError);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error getting session from cookies:', error);
+    return null;
+  }
+}
 
 // ========================================
 // GET - SEARCH AND RETRIEVE WORDS
@@ -29,28 +119,14 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    // Check for test mode header
-    const bypassAuth = request.headers.get('X-Bypass-Auth') === 'true';
+    // Get authenticated user
+    const user = await getAuthenticatedUser(request);
     
-    let user = null;
-    
-    if (bypassAuth) {
-      // Test mode: use a hardcoded test user ID (proper UUID format)
-      user = { id: '00000000-0000-0000-0000-000000000001' };
-      console.log('Test mode enabled - using test user ID:', user.id);
-    } else {
-      // Normal mode: get the current user
-      const cookieStore = await cookies();
-      const supabaseAuth = createRouteHandlerClient({ cookies: () => cookieStore });
-      const { data: { user: authUser }, error: authError } = await supabaseAuth.getUser();
-
-      if (authError || !authUser) {
-        return NextResponse.json(
-          { error: 'Unauthorized' },
-          { status: 401 }
-        );
-      }
-      user = authUser;
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
     }
 
     // Get word by ID
@@ -102,7 +178,7 @@ export async function GET(request: NextRequest) {
     if (countError) {
       console.error('Error fetching total count:', countError);
       // For test mode, return empty result instead of error
-      if (bypassAuth) {
+      if (request.headers.get('X-Bypass-Auth') === 'true') {
         return NextResponse.json({ 
           words: [],
           total: 0,
@@ -139,7 +215,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       console.error('Error fetching user word collections:', error);
       // For test mode, return empty result instead of error
-      if (bypassAuth) {
+      if (request.headers.get('X-Bypass-Auth') === 'true') {
         return NextResponse.json({ 
           words: [],
           total: 0,
@@ -206,27 +282,30 @@ export async function GET(request: NextRequest) {
       })
     );
 
-    // Filter out null values
+    // Filter out null values and format response
     const validWords = wordsWithCompleteData.filter(word => word !== null);
+    
+    const totalPages = Math.ceil((totalCount || 0) / limit);
+    const currentPage = Math.floor(offset / limit) + 1;
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       words: validWords,
       total: totalCount || 0,
-      page: Math.floor(offset / limit) + 1,
-      totalPages: Math.ceil((totalCount || 0) / limit)
+      page: currentPage,
+      totalPages: totalPages
     });
 
   } catch (error) {
     console.error('Error in GET /api/word-maze/words:', error);
     return NextResponse.json(
-      { error: 'Internal server error' }, 
+      { error: 'Failed to fetch words' }, 
       { status: 500 }
     );
   }
 }
 
 // ========================================
-// POST - ADD NEW WORD
+// POST - ADD WORDS
 // ========================================
 
 export async function POST(request: NextRequest) {
@@ -236,28 +315,14 @@ export async function POST(request: NextRequest) {
 
     console.log('POST request body:', body);
 
-    // Check for test mode header
-    const bypassAuth = request.headers.get('X-Bypass-Auth') === 'true';
+    // Get authenticated user
+    const user = await getAuthenticatedUser(request);
     
-    let user = null;
-    
-    if (bypassAuth) {
-      // Test mode: use a hardcoded test user ID (proper UUID format)
-      user = { id: '00000000-0000-0000-0000-000000000001' };
-      console.log('Test mode enabled - using test user ID:', user.id);
-    } else {
-      // Normal mode: get the current user
-      const cookieStore = await cookies();
-      const supabaseAuth = createRouteHandlerClient({ cookies: () => cookieStore });
-      const { data: { user: authUser }, error: authError } = await supabaseAuth.getUser();
-
-      if (authError || !authUser) {
-        return NextResponse.json(
-          { error: 'Unauthorized' },
-          { status: 401 }
-        );
-      }
-      user = authUser;
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
     }
 
     // Handle both single word and bulk word requests
@@ -296,7 +361,8 @@ export async function POST(request: NextRequest) {
         
         if (!wordEntry) {
           // Add word to shared word bank first
-          wordEntry = await vocabularyManager.addWordFromAPI(wordText);
+          const userEmail = 'email' in user ? (user.email as string) : 'test@example.com';
+          wordEntry = await vocabularyManager.addWordFromAPI(wordText, userEmail);
         }
 
         // Check if user already has this word in their collection
@@ -345,7 +411,7 @@ export async function POST(request: NextRequest) {
         const completeData = await vocabularyManager.getCompleteWordData(wordEntry.id);
         results.push({ 
           word: wordText, 
-          status: 'added', 
+          status: 'new', 
           data: completeData 
         });
 
@@ -439,17 +505,14 @@ export async function DELETE(request: NextRequest) {
       console.log('Test mode enabled - using test user ID:', user.id);
     } else {
       // Normal mode: get the current user
-      const cookieStore = await cookies();
-      const supabaseAuth = createRouteHandlerClient({ cookies: () => cookieStore });
-      const { data: { user: authUser }, error: authError } = await supabaseAuth.getUser();
-
-      if (authError || !authUser) {
+      user = await getAuthenticatedUser(request);
+      
+      if (!user) {
         return NextResponse.json(
           { error: 'Unauthorized' },
           { status: 401 }
         );
       }
-      user = authUser;
     }
 
     // Remove the word from the user's personal collection (soft delete)

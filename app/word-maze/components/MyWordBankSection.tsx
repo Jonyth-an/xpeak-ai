@@ -1,56 +1,19 @@
 'use client';
 import React from 'react';
 import { Button } from '@/app/components/ui';
-import WordCard from '../../components/molecules/WordCard';
+import WordCardOptimistic from '../../components/molecules/WordCardOptimistic';
 import ConfirmationModal from '@/app/components/molecules/ConfirmationModal';
 import WordModal from './WordModal';
 import BulkImportModal from './BulkImportModal';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useWordMazeStore } from '../../../lib/stores/wordMazeStore';
+import { useWordMazeService } from '../../../lib/services/wordMazeService';
 
 export default function MyWordBankSection() {
-  const initialWords = [
-    {
-      id: '1',
-      word: 'Serendipity',
-      pronunciationUrls: {
-        us: '/audio/serendipity-us.mp3',
-        uk: '/audio/serendipity-uk.mp3'
-      },
-      definition: 'The occurrence of events by chance in a happy way.',
-      imageUrl: '/images/words/serendipity.jpg',
-      dateAdded: '2024-01-15'
-    },
-    {
-      id: '2',
-      word: 'Ubiquitous',
-      pronunciationUrls: {
-        us: '/audio/ubiquitous-us.mp3',
-        uk: '/audio/ubiquitous-uk.mp3',
-        au: '/audio/ubiquitous-au.mp3'
-      },
-      definition: 'Present, appearing, or found everywhere.',
-      imageUrl: '/images/words/ubiquitous.jpg',
-      dateAdded: '2024-01-10'
-    },
-    {
-      id: '3',
-      word: 'Ephemeral',
-      pronunciationUrls: {
-        us: '/audio/ephemeral-us.mp3',
-        uk: '/audio/ephemeral-uk.mp3'
-      },
-      definition: 'Lasting for a very short time.',
-      imageUrl: '/images/words/ephemeral.jpg',
-      dateAdded: '2024-01-05'
-    }
-  ];
-  const [words, setWords] = React.useState(initialWords);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [pendingDeleteId, setPendingDeleteId] = React.useState<string|null>(null);
   // Smart Check toggle (beta)
   const [smartCheck, setSmartCheck] = React.useState(false);
-  // Feedback state for toast/snackbar
-  const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
   // Add Word Modal state
   const [addModalOpen, setAddModalOpen] = React.useState(false);
   // Edit Word Modal state
@@ -58,10 +21,26 @@ export default function MyWordBankSection() {
   const [editingWord, setEditingWord] = React.useState<any>(null);
   // Bulk Import Modal state
   const [bulkImportModalOpen, setBulkImportModalOpen] = React.useState(false);
+  const [selectedWordId, setSelectedWordId] = React.useState<string | null>(null);
 
-  // Always restore the sample words on mount for demo/testing
+  // Optimistic UI integration
+  const { 
+    words, 
+    notification, 
+    clearNotification, 
+    setNotification,
+    getPendingWords,
+    getSyncedWords,
+    isLoading: storeLoading,
+    error: storeError,
+    removeWord
+  } = useWordMazeStore();
+  
+  const { addWordWithOptimisticUpdate, addWordsBulkWithOptimisticUpdate, deleteWordWithOptimisticUpdate, loadWords } = useWordMazeService();
+
+  // Load words on component mount
   React.useEffect(() => {
-    setWords(initialWords);
+    loadWords(50, 0); // Load more words for the word bank
   }, []);
 
   function requestDelete(id: string) {
@@ -74,7 +53,9 @@ export default function MyWordBankSection() {
   function confirmDelete() {
     console.log('Confirming delete for word ID:', pendingDeleteId);
     if (pendingDeleteId) {
-      setWords(words => words.filter(w => w.id !== pendingDeleteId));
+      // Use optimistic deletion with rollback on error
+      deleteWordWithOptimisticUpdate(pendingDeleteId);
+      
       setPendingDeleteId(null);
       setModalOpen(false);
       console.log('Word deleted, modal closed');
@@ -89,8 +70,8 @@ export default function MyWordBankSection() {
 
   // Handler to show feedback
   function showFeedback(type: 'success' | 'error', message: string) {
-    setFeedback({ type, message });
-    setTimeout(() => setFeedback(null), 3000);
+    setNotification({ type, message });
+    setTimeout(() => clearNotification(), 3000);
   }
 
   // Placeholder for add word handler
@@ -110,15 +91,8 @@ export default function MyWordBankSection() {
       return;
     }
     
-    // Generate stable ID based on word content
-    const hash = newWord.word.split('').reduce((a: number, b: string) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-    const stableId = `word-${Math.abs(hash)}-${Date.now()}`;
-    
-    setWords(prev => [...prev, { ...newWord, id: stableId, dateAdded: new Date().toISOString().slice(0, 10) }]);
-    showFeedback('success', '1 word added!');
+    // Use optimistic UI to add word
+    addWordWithOptimisticUpdate(newWord.word);
     setAddModalOpen(false);
   }
 
@@ -128,7 +102,7 @@ export default function MyWordBankSection() {
       showFeedback('error', 'Word and definition are required.');
       return;
     }
-    setWords(prev => prev.map(w => w.id === updatedWord.id ? updatedWord : w));
+    // TODO: Implement optimistic update for editing
     showFeedback('success', 'Word updated!');
     setEditModalOpen(false);
     setEditingWord(null);
@@ -140,9 +114,15 @@ export default function MyWordBankSection() {
   }
 
   function handleBulkImportWords(newWords: any[]) {
-    setWords(prev => [...prev, ...newWords]);
-    showFeedback('success', `${newWords.length} words imported!`);
+    // Use optimistic UI for bulk import
+    const wordsToAdd = newWords.map(word => word.word).filter(Boolean);
+    addWordsBulkWithOptimisticUpdate(wordsToAdd);
   }
+
+  // Get display words (synced + pending)
+  const displayWords = words;
+  const pendingCount = getPendingWords().length;
+  const syncedCount = getSyncedWords().length;
 
   return (
     <section className="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
@@ -174,7 +154,14 @@ export default function MyWordBankSection() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">My Word Bank</h2>
-            <p className="text-gray-600">Manage and review your vocabulary collection</p>
+            <p className="text-gray-600">
+              Manage and review your vocabulary collection
+              {pendingCount > 0 && (
+                <span className="ml-2 text-orange-600 text-sm">
+                  ({pendingCount} syncing...)
+                </span>
+              )}
+            </p>
           </div>
           <div className="flex gap-3">
             <Button
@@ -190,87 +177,137 @@ export default function MyWordBankSection() {
         </div>
 
         {/* Word Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {words.map((word) => (
-            <WordCard
-              key={word.id}
-              id={word.id}
-              word={word.word}
-              pronunciationUrls={word.pronunciationUrls}
-              definition={word.definition}
-              imageUrl={word.imageUrl}
-              dateAdded={word.dateAdded}
-              onDelete={() => requestDelete(word.id)}
-              onClick={() => handleEditWord(word)}
-            />
-          ))}
-        </div>
+        {storeLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-64 bg-white rounded-lg shadow-md p-6 animate-pulse">
+                <div className="h-6 bg-gray-200 rounded mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              </div>
+            ))}
+          </div>
+        ) : displayWords.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {displayWords.map((word) => (
+              <WordCardOptimistic
+                key={word.id}
+                word={word}
+                showModal={selectedWordId === word.id}
+                setShowModalId={setSelectedWordId}
+                cardClassName="h-64"
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">📚</div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              No words in your bank yet
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Start building your vocabulary by adding your first word!
+            </p>
+            <Button
+              onClick={() => setAddModalOpen(true)}
+              className="bg-blue-600 text-white hover:bg-blue-700"
+            >
+              Add Your First Word
+            </Button>
+          </div>
+        )}
 
-        {/* CTA Section */}
-        <div className="text-center">
-          <Button variant="accent" size="lg" onClick={() => setAddModalOpen(true)}>
-            Add More Words
-          </Button>
-        </div>
-        <WordModal
-          open={addModalOpen}
-          mode="add"
-          onClose={() => setAddModalOpen(false)}
-          onAddWord={handleAddWordModal}
-          smartCheck={smartCheck}
-        />
-        <WordModal
-          open={editModalOpen}
-          mode="edit"
-          onClose={() => {
-            setEditModalOpen(false);
-            setEditingWord(null);
-          }}
-          onAddWord={() => {}} // Not used in edit mode
-          onEditWord={handleEditWordModal}
-          smartCheck={smartCheck}
-          initialWord={editingWord}
-        />
-        <BulkImportModal
-          open={bulkImportModalOpen}
-          onClose={() => setBulkImportModalOpen(false)}
-          onImportWords={handleBulkImportWords}
-          smartCheck={smartCheck}
-        />
+        {/* Stats Summary */}
+        {displayWords.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-white rounded-lg p-6 text-center shadow-sm">
+              <div className="text-2xl font-bold text-blue-600 mb-2">
+                {syncedCount + pendingCount}
+              </div>
+              <div className="text-gray-600">Total Words</div>
+            </div>
+            <div className="bg-white rounded-lg p-6 text-center shadow-sm">
+              <div className="text-2xl font-bold text-green-600 mb-2">
+                {syncedCount}
+              </div>
+              <div className="text-gray-600">Synced Words</div>
+            </div>
+            <div className="bg-white rounded-lg p-6 text-center shadow-sm">
+              <div className="text-2xl font-bold text-orange-600 mb-2">
+                {pendingCount}
+              </div>
+              <div className="text-gray-600">Pending Sync</div>
+            </div>
+          </div>
+        )}
+
+        {/* Notification */}
+        {notification && (
+          <div className={`fixed top-4 right-4 z-[9999] p-4 rounded-lg shadow-xl border-2 ${
+            notification.type === 'success' 
+              ? 'bg-green-500 text-white border-green-600' 
+              : 'bg-red-500 text-white border-red-600'
+          }`}>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold">
+                {notification.type === 'success' ? '✅' : '❌'}
+              </span>
+              <span>{notification.message}</span>
+              <button 
+                onClick={clearNotification}
+                className="ml-2 text-white hover:text-gray-200"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Confirmation Modal */}
         <ConfirmationModal
           open={modalOpen}
-          title="Delete Word?"
-          description="Are you sure you want to delete this word? This action cannot be undone."
-          onConfirm={confirmDelete}
           onCancel={cancelDelete}
+          onConfirm={confirmDelete}
+          title="Delete Word"
+          description="Are you sure you want to delete this word? This action cannot be undone."
+          confirmLabel="Delete"
+          cancelLabel="Cancel"
         />
 
-        {/* Feedback Toast */}
-        <AnimatePresence>
-          {feedback && (
-            <motion.div 
-              className={`fixed bottom-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 ${
-                feedback.type === 'success' 
-                  ? 'bg-green-500 text-white' 
-                  : 'bg-red-500 text-white'
-              }`}
-              initial={{ opacity: 0, x: 100, scale: 0.9 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: 100, scale: 0.9 }}
-              transition={{ 
-                type: "spring", 
-                damping: 25, 
-                stiffness: 300,
-                duration: 0.3 
-              }}
-            >
-              <div className="flex items-center gap-2">
-                {feedback.type === 'success' ? '✅' : '❌'}
-                <span className="font-medium">{feedback.message}</span>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Add Word Modal */}
+        {addModalOpen && (
+          <WordModal
+            open={addModalOpen}
+            mode="add"
+            onClose={() => setAddModalOpen(false)}
+            onAddWord={handleAddWordModal}
+            smartCheck={smartCheck}
+            initialWord={null}
+          />
+        )}
+
+        {/* Edit Word Modal */}
+        {editModalOpen && editingWord && (
+          <WordModal
+            open={editModalOpen}
+            mode="edit"
+            onClose={() => setEditModalOpen(false)}
+            onAddWord={handleEditWordModal}
+            smartCheck={smartCheck}
+            initialWord={editingWord}
+          />
+        )}
+
+        {/* Bulk Import Modal */}
+        {bulkImportModalOpen && (
+          <BulkImportModal
+            open={bulkImportModalOpen}
+            onClose={() => setBulkImportModalOpen(false)}
+            onImportWords={handleBulkImportWords}
+            smartCheck={smartCheck}
+          />
+        )}
       </div>
     </section>
   );

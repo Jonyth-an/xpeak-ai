@@ -158,7 +158,7 @@ export default function ProfilePage() {
               {/* Main Content with Sidebar - Use flex for large screens */}
               <div className="relative lg:flex lg:min-h-[600px]">
                 {/* Sidebar */}
-                <div className="hidden lg:block lg:w-64 lg:shrink-0">
+                <div className="hidden lg:block lg:w-40 lg:shrink-0">
                   <div className="sticky top-24">
                     <ProfileSidebar 
                       activeTab={activeTab}
@@ -167,7 +167,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 {/* Main Content */}
-                <div className="lg:ml-64 flex-1">
+                <div className="lg:ml-40 flex-1">
                   {renderTabContent()}
                 </div>
               </div>

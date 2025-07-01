@@ -113,9 +113,6 @@ export default function ProfileSidebar({
                   >
                     {tab.label}
                   </Text>
-                  <Text variant="body" className="text-xs text-gray-500 mt-0.5 transition-colors duration-300">
-                    {tab.description}
-                  </Text>
                 </div>
               </div>
               
@@ -163,9 +160,6 @@ export default function ProfileSidebar({
               <Text variant="body" className="font-medium text-gray-700">
                 {tabs.find(tab => tab.id === activeTab)?.label || 'Account Settings'}
               </Text>
-              <Text variant="body" className="text-xs text-gray-500">
-                {tabs.find(tab => tab.id === activeTab)?.description || 'Manage your account'}
-              </Text>
             </div>
           </div>
           {isMobileMenuOpen ? (
@@ -184,7 +178,7 @@ export default function ProfileSidebar({
       )}
 
       {/* Desktop Sidebar */}
-      <div className="hidden lg:block">
+      <div className="hidden lg:block lg:w-56 lg:shrink-0">
         {sidebarContent}
       </div>
     </>

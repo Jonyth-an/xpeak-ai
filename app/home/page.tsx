@@ -4,7 +4,7 @@ import React from 'react';
 import Layout from '../../components/Layout';
 import FeaturesSection from "./components/FeaturesSection";
 import MasterySection from "./components/MasterySection";
-import PricingSection from "./components/PricingSection";
+import PlanTiersSection from "../pricing/components/PlanTiersSection";
 import TestimonialsSection from "./components/TestimonialsSection";
 import FinalCTASection from "./components/FinalCTASection";
 import Link from 'next/link';
@@ -63,7 +63,7 @@ export default function HomePage() {
       <MasterySection />
 
       {/* Pricing Section */}
-      <PricingSection />    
+      <PlanTiersSection />    
 
       {/* Testimonials Section */}
       <TestimonialsSection />  

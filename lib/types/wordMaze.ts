@@ -373,14 +373,6 @@ export interface APIConfig {
     api_key: string;
     base_url: string;
   };
-  urban: {
-    base_url: string;
-    rate_limit: number;
-  };
-  twinword: {
-    api_key: string;
-    base_url: string;
-  };
 }
 
 // ========================================

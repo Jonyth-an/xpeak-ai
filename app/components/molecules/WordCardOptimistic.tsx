@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '../ui';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Word, useWordMazeStore } from '../../../lib/stores/wordMazeStore';
-import { WordStatusIndicator } from './WordStatusIndicator';
+import { WordStatusIndicator, CompactWordStatusIndicator } from './WordStatusIndicator';
 import { useWordMazeService } from '../../../lib/services/wordMazeService';
 
 export interface WordCardOptimisticProps {

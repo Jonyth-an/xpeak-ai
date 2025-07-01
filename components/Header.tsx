@@ -75,7 +75,7 @@ export default function Header() {
                 <Link href="/ai-topics" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
                   AI Topics
                 </Link>
-                <Link href="/word-maze" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                <Link href="/word-maze/learn" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
                   Word Maze
                 </Link>
                 <Link href="/pricing" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">

@@ -856,17 +856,17 @@ export class VocabularyManager {
     };
   }
 
-  async addWordFromAPI(word: string): Promise<WordEntry> {
-    const wordData = await apiAggregator.getWordData(word);
+  async addWordFromAPI(word: string, userEmail: string = 'unknown'): Promise<WordEntry> {
+    const wordData = await apiAggregator.getWordData(word, userEmail);
     if (!wordData) {
       throw new Error(`Could not fetch data for word: ${word}`);
     }
     return await this.createWordEntry(wordData);
   }
 
-  async addWordsFromList(words: string[]): Promise<WordEntry[]> {
+  async addWordsFromList(words: string[], userEmail: string = 'unknown'): Promise<WordEntry[]> {
     const results = await Promise.allSettled(
-      words.map(word => this.addWordFromAPI(word))
+      words.map(word => this.addWordFromAPI(word, userEmail))
     );
     
     return results
