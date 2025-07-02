@@ -1,18 +1,24 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
-import { rateLimiter, RATE_LIMIT_CONFIGS } from '@/lib/rateLimiter';
-import { Card, Input, Button, Text } from '../ui';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+// import { supabase } from '@/lib/supabaseClient';
+import { rateLimiter, RATE_LIMIT_CONFIGS } from "@/lib/rateLimiter";
+import { Card, Input, Button, Text } from "../ui";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export interface LoginFormProps {
   onSubmit?: (data: { email: string; password: string }) => void;
   onSuccess?: (user: any) => void;
   onError?: (error: string) => void;
 }
+const supabase = createClientComponentClient();
 
-export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormProps) {
+export default function LoginForm({
+  onSubmit,
+  onSuccess,
+  onError,
+}: LoginFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,17 +49,20 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
       }
 
       // Sign in with Supabase
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data, error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
       if (signInError) {
         // Check if the error is due to unverified email
-        if (signInError.message.includes('Email not confirmed') || 
-            signInError.message.includes('Email not verified')) {
+        if (
+          signInError.message.includes("Email not confirmed") ||
+          signInError.message.includes("Email not verified")
+        ) {
           setUnverifiedEmail(email);
-          setError('Please verify your email address before signing in.');
+          setError("Please verify your email address before signing in.");
           // Load rate limit status for this email
           await loadRateLimitStatus(email);
         } else {
@@ -65,7 +74,7 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
       // Check if user's email is verified
       if (data.user && !data.user.email_confirmed_at) {
         setUnverifiedEmail(email);
-        setError('Please verify your email address before signing in.');
+        setError("Please verify your email address before signing in.");
         // Load rate limit status for this email
         await loadRateLimitStatus(email);
         return;
@@ -77,18 +86,17 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
       }
 
       // Redirect to home page
-      router.push('/');
-      console.log('Login successful:', data.user);
-
+      router.push("/");
+      console.log("Login successful:", data.user);
     } catch (err: any) {
-      const errorMessage = err.message || 'Failed to sign in';
+      const errorMessage = err.message || "Failed to sign in";
       setError(errorMessage);
-      
+
       if (onError) {
         onError(errorMessage);
       }
-      
-      console.error('Login error:', err);
+
+      console.error("Login error:", err);
     } finally {
       setIsLoading(false);
     }
@@ -98,12 +106,12 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
     try {
       const status = await rateLimiter.getRateLimitStatus(
         email,
-        'email_resend',
+        "email_resend",
         RATE_LIMIT_CONFIGS.emailResend
       );
       setRateLimitStatus(status);
     } catch (error) {
-      console.error('Error loading rate limit status:', error);
+      console.error("Error loading rate limit status:", error);
     }
   };
 
@@ -117,12 +125,15 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
       // Check rate limit before sending
       const rateLimitResult = await rateLimiter.checkRateLimit(
         unverifiedEmail,
-        'email_resend',
+        "email_resend",
         RATE_LIMIT_CONFIGS.emailResend
       );
 
       if (!rateLimitResult.allowed) {
-        setError(rateLimitResult.message || 'Rate limit exceeded. Please try again later.');
+        setError(
+          rateLimitResult.message ||
+            "Rate limit exceeded. Please try again later."
+        );
         setRateLimitStatus({
           remaining: 0,
           resetTime: rateLimitResult.resetTime,
@@ -135,18 +146,18 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
       // Also check per-minute limit
       const minuteLimitResult = await rateLimiter.checkRateLimit(
         unverifiedEmail,
-        'email_resend_per_minute',
+        "email_resend_per_minute",
         RATE_LIMIT_CONFIGS.emailResendPerMinute
       );
 
       if (!minuteLimitResult.allowed) {
-        setError('Please wait 1 minute before requesting another email.');
+        setError("Please wait 1 minute before requesting another email.");
         return;
       }
 
       // Send the email
       const { error } = await supabase.auth.resend({
-        type: 'signup',
+        type: "signup",
         email: unverifiedEmail,
       });
 
@@ -155,35 +166,40 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
       }
 
       // Record successful attempt
-      await rateLimiter.recordAttempt(unverifiedEmail, 'email_resend');
-      await rateLimiter.recordAttempt(unverifiedEmail, 'email_resend_per_minute');
+      await rateLimiter.recordAttempt(unverifiedEmail, "email_resend");
+      await rateLimiter.recordAttempt(
+        unverifiedEmail,
+        "email_resend_per_minute"
+      );
 
-      setError('Verification email sent! Please check your inbox.');
+      setError("Verification email sent! Please check your inbox.");
       setUnverifiedEmail(null);
       setRateLimitStatus(null);
     } catch (err: any) {
-      setError(err.message || 'Failed to resend verification email');
+      setError(err.message || "Failed to resend verification email");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGoToVerification = () => {
-    router.push('/verify-email');
+    router.push("/verify-email");
   };
 
   const getRateLimitMessage = () => {
     if (!rateLimitStatus) return null;
 
     if (rateLimitStatus.isBlocked) {
-      const minutes = rateLimitStatus.retryAfter 
+      const minutes = rateLimitStatus.retryAfter
         ? Math.ceil(rateLimitStatus.retryAfter / 60)
         : 15;
       return `Rate limit exceeded. Try again in ${minutes} minutes.`;
     }
 
     if (rateLimitStatus.remaining <= 2) {
-      return `${rateLimitStatus.remaining} resend${rateLimitStatus.remaining === 1 ? '' : 's'} remaining this hour.`;
+      return `${rateLimitStatus.remaining} resend${
+        rateLimitStatus.remaining === 1 ? "" : "s"
+      } remaining this hour.`;
     }
 
     return null;
@@ -197,12 +213,14 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
     setIsGoogleLoading(true);
     setError(null);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+      });
       if (error) {
-        setError(error.message || 'Google sign-in failed');
+        setError(error.message || "Google sign-in failed");
       }
     } catch (err: any) {
-      setError(err.message || 'Google sign-in failed');
+      setError(err.message || "Google sign-in failed");
     } finally {
       setIsGoogleLoading(false);
     }
@@ -226,7 +244,32 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
             </div>
           ) : (
             <>
-              <svg width="20" height="20" viewBox="0 0 48 48" className="mr-2" aria-hidden="true"><g><path fill="#4285F4" d="M43.611 20.083H42V20H24v8h11.303C33.972 32.833 29.418 36 24 36c-6.627 0-12-5.373-12-12s5.373-12 12-12c2.803 0 5.377.99 7.409 2.626l6.591-6.591C34.583 5.14 29.617 3 24 3 12.954 3 4 11.954 4 23s8.954 20 20 20c11.045 0 19.799-7.954 19.799-19 0-1.27-.138-2.507-.377-3.717z"/><path fill="#34A853" d="M6.306 14.691l6.571 4.819C14.655 16.104 19.001 13 24 13c2.803 0 5.377.99 7.409 2.626l6.591-6.591C34.583 5.14 29.617 3 24 3c-7.732 0-14.41 4.41-17.694 10.691z"/><path fill="#FBBC05" d="M24 43c5.356 0 9.86-1.797 13.146-4.888l-6.066-4.966C29.418 36 24 36 24 36c-5.418 0-9.972-3.167-11.303-8.083l-6.591 6.591C9.59 40.59 16.268 45 24 45z"/><path fill="#EA4335" d="M43.611 20.083H42V20H24v8h11.303C34.418 32.833 29.418 36 24 36c-5.418 0-9.972-3.167-11.303-8.083l-6.591 6.591C9.59 40.59 16.268 45 24 45c7.732 0 14.41-4.41 17.694-10.691z"/></g></svg>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 48 48"
+                className="mr-2"
+                aria-hidden="true"
+              >
+                <g>
+                  <path
+                    fill="#4285F4"
+                    d="M43.611 20.083H42V20H24v8h11.303C33.972 32.833 29.418 36 24 36c-6.627 0-12-5.373-12-12s5.373-12 12-12c2.803 0 5.377.99 7.409 2.626l6.591-6.591C34.583 5.14 29.617 3 24 3 12.954 3 4 11.954 4 23s8.954 20 20 20c11.045 0 19.799-7.954 19.799-19 0-1.27-.138-2.507-.377-3.717z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M6.306 14.691l6.571 4.819C14.655 16.104 19.001 13 24 13c2.803 0 5.377.99 7.409 2.626l6.591-6.591C34.583 5.14 29.617 3 24 3c-7.732 0-14.41 4.41-17.694 10.691z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M24 43c5.356 0 9.86-1.797 13.146-4.888l-6.066-4.966C29.418 36 24 36 24 36c-5.418 0-9.972-3.167-11.303-8.083l-6.591 6.591C9.59 40.59 16.268 45 24 45z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M43.611 20.083H42V20H24v8h11.303C34.418 32.833 29.418 36 24 36c-5.418 0-9.972-3.167-11.303-8.083l-6.591 6.591C9.59 40.59 16.268 45 24 45c7.732 0 14.41-4.41 17.694-10.691z"
+                  />
+                </g>
+              </svg>
               Continue with Google
             </>
           )}
@@ -242,23 +285,29 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
             {error}
           </div>
         )}
-        
+
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-text-secondary">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-text-secondary"
+          >
             Email
           </label>
-          <Input 
-            id="email" 
-            name="email" 
-            type="email" 
-            required 
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            required
             placeholder="you@example.com"
             disabled={isLoading}
           />
         </div>
-        
+
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-text-secondary">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-text-secondary"
+          >
             Password
           </label>
           <Input
@@ -270,10 +319,10 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
             disabled={isLoading}
           />
         </div>
-        
-        <Button 
-          variant="primary" 
-          type="submit" 
+
+        <Button
+          variant="primary"
+          type="submit"
           className="w-full"
           disabled={isLoading}
         >
@@ -283,23 +332,23 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
               Signing In...
             </div>
           ) : (
-            'Log In'
+            "Log In"
           )}
         </Button>
-        
+
         {/* Unverified email actions */}
         {unverifiedEmail && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-3">
             <Text variant="small" className="text-yellow-800 font-medium">
               Email verification required
             </Text>
-            
+
             {getRateLimitMessage() && (
               <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-3 py-2 rounded text-sm">
                 {getRateLimitMessage()}
               </div>
             )}
-            
+
             <div className="flex flex-col space-y-2">
               <Button
                 variant="secondary"
@@ -308,7 +357,7 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
                 disabled={isResendDisabled()}
                 className="w-full"
               >
-                {isLoading ? 'Sending...' : 'Resend Verification Email'}
+                {isLoading ? "Sending..." : "Resend Verification Email"}
               </Button>
               <Button
                 variant="primary"
@@ -321,13 +370,16 @@ export default function LoginForm({ onSubmit, onSuccess, onError }: LoginFormPro
             </div>
           </div>
         )}
-        
+
         <div className="text-center mt-2">
-          <a href="/password-reset" className="text-sm text-text-secondary hover:text-primary-600 underline transition-colors">
+          <a
+            href="/password-reset"
+            className="text-sm text-text-secondary hover:text-primary-600 underline transition-colors"
+          >
             Forgot your password?
           </a>
         </div>
       </form>
     </Card>
   );
-} 
+}
