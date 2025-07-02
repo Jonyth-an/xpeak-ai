@@ -50,7 +50,7 @@ async function main() {
   // Step 2: Test billing API
   console.log('\nStep 2: Test Billing API');
   console.log('🌐 Open your browser and navigate to:');
-  console.log('   http://localhost:3000/profile?tab=billing');
+  console.log('   http://localhost:3000/profile/billing');
   console.log('   (Make sure you\'re logged in)');
   console.log('\nExpected behavior:');
   console.log('   - Should show current subscription details');
@@ -77,7 +77,7 @@ async function main() {
   // Step 4: Test upgrade/downgrade
   console.log('\nStep 4: Test Upgrade/Downgrade');
   console.log('🌐 Navigate to:');
-  console.log('   http://localhost:3000/profile?tab=billing');
+  console.log('   http://localhost:3000/profile/billing');
   console.log('   Click "Change Plan" button');
   console.log('\nExpected behavior:');
   console.log('   - Should redirect to pricing page with current plan pre-selected');
@@ -90,7 +90,7 @@ async function main() {
   // Step 5: Test cancellation
   console.log('\nStep 5: Test Subscription Cancellation');
   console.log('🌐 Navigate to:');
-  console.log('   http://localhost:3000/profile?tab=billing');
+  console.log('   http://localhost:3000/profile/billing');
   console.log('   Click "Cancel Subscription" button');
   console.log('\nExpected behavior:');
   console.log('   - Should show confirmation modal');

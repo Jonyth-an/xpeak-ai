@@ -4,7 +4,7 @@ import { serverSupabase } from '@/lib/serverSupabaseClient';
 export async function GET() {
   try {
     // Test basic Supabase connection
-    const { data, error } = await supabase
+    const { data, error } = await serverSupabase
       .from('word_entries')
       .select('count', { count: 'exact', head: true });
 

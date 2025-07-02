@@ -54,8 +54,8 @@ export default function CheckoutSuccess() {
     
     // Redirect to billing tab with appropriate success message
     const redirectUrl = isPlanChange 
-      ? '/profile?tab=billing&success=true&planChange=true'
-      : '/profile?tab=billing&success=true';
+      ? '/profile/billing?success=true&planChange=true'
+      : '/profile/billing?success=true';
     
     window.location.href = redirectUrl;
   };

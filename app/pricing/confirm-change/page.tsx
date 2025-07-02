@@ -156,7 +156,7 @@ export default function ConfirmPlanChangePage() {
       const result = await response.json();
       
       // Redirect to billing page with success message
-      const redirectUrl = `/profile?tab=billing&success=true&planChange=true`;
+      const redirectUrl = `/profile/billing?success=true&planChange=true`;
       window.location.href = redirectUrl;
     } catch (error) {
       console.error('Error changing subscription:', error);
@@ -167,7 +167,7 @@ export default function ConfirmPlanChangePage() {
   };
 
   const handleCancel = () => {
-    router.push('/profile?tab=billing');
+    router.push('/profile/billing');
   };
 
   if (loading && !changeDetails) {
@@ -189,7 +189,7 @@ export default function ConfirmPlanChangePage() {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <Text className="text-red-600 mb-4">{error}</Text>
-            <Button onClick={() => router.push('/profile?tab=billing')}>
+            <Button onClick={() => router.push('/profile/billing')}>
               Back to Billing
             </Button>
           </div>

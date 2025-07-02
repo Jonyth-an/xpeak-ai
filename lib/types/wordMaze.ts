@@ -396,4 +396,44 @@ export type DifficultyLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 export type ChallengeType = 'definition' | 'example' | 'synonym' | 'story' | 'emoji';
 export type APISource = 'oxford' | 'wordnik' | 'urban' | 'ai' | 'twinword';
 export type TagType = 'topic' | 'tone' | 'usage' | 'emotion' | 'game';
-export type RelationshipType = 'synonym' | 'antonym' | 'hypernym' | 'hyponym' | 'related'; 
+export type RelationshipType = 'synonym' | 'antonym' | 'hypernym' | 'hyponym' | 'related';
+
+// Enhanced CEFR difficulty analysis
+export interface CEFRDifficultyAnalysis {
+  level: DifficultyLevel;
+  confidence: number; // 0-1
+  score: number; // 0-100
+  factors: {
+    frequency: number; // Based on corpus data
+    length: number;
+    complexity: number;
+    etymology: number;
+    contextDependency: number;
+    grammaticalComplexity: number;
+    register: number; // formal/informal
+  };
+  reasoning: string; // Why this level was assigned
+  sources: string[]; // Data sources used
+}
+
+// CEFR validation result
+export interface CEFRValidationResult {
+  found: boolean;
+  level?: DifficultyLevel;
+  source?: string;
+  confidence?: number;
+  alternativeLevels?: Array<{
+    level: DifficultyLevel;
+    confidence: number;
+    source: string;
+  }>;
+}
+
+// CEFR word bank organization
+export interface CEFRWordBank {
+  level: DifficultyLevel;
+  words: WordEntry[];
+  count: number;
+  estimatedLearningTime: number; // in hours
+  prerequisites: DifficultyLevel[];
+} 

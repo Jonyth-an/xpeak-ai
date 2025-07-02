@@ -70,12 +70,11 @@ export async function getUserFromAuthHeader(authHeader: string | null) {
  */
 export async function isUserAdmin(userId: string) {
   try {
-    const { data: user, error } = await serverSupabase.auth.admin.getUserById(userId);
-    
+    const { data, error } = await serverSupabase.auth.admin.getUserById(userId);
+    const user = data?.user;
     if (error || !user) {
       return false;
     }
-    
     // Check if user has admin role in user_metadata
     return user.user_metadata?.role === 'admin';
   } catch (error) {

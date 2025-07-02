@@ -31,17 +31,23 @@ export class VocabularyManager {
       return await this.updateWordEntry(existingWord.id, wordData);
     }
 
+    // Map descriptive difficulty level to CEFR format
+    const cefrLevel = this.mapDifficultyToCEFR(wordData.difficulty.level || 'intermediate');
+
     // Create new word entry
     const { data: wordEntry, error } = await supabase
       .from('word_entries')
       .insert({
         word_text: wordData.word,
         type: wordData.type,
-        difficulty_level: wordData.difficulty.level,
+        difficulty_level: cefrLevel,
         difficulty_score: wordData.difficulty.score,
         is_verified: wordData.definitions.some(d => d.source === 'oxford'),
         verification_source: wordData.definitions.find(d => d.source === 'oxford')?.source || 'wordnik',
-        metadata: wordData.metadata
+        metadata: {
+          ...wordData.metadata,
+          descriptiveDifficulty: wordData.difficulty.level // Store the descriptive level in metadata
+        }
       })
       .select()
       .single();
@@ -227,6 +233,20 @@ export class VocabularyManager {
       console.warn(`[WordMaze] Truncating tag_value to 10 chars:`, value);
     }
     return value.substring(0, 10);
+  }
+
+  // Map descriptive difficulty levels to CEFR format
+  private mapDifficultyToCEFR(descriptiveLevel: string): 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2' {
+    switch (descriptiveLevel?.toLowerCase()) {
+      case 'beginner':
+        return 'A1';
+      case 'intermediate':
+        return 'B1';
+      case 'advanced':
+        return 'C1';
+      default:
+        return 'B1'; // Default to intermediate
+    }
   }
 
   async createWordTags(wordId: string, tags: UnifiedWordData['tags']): Promise<void> {

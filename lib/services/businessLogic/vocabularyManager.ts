@@ -6,9 +6,11 @@ import {
   WordTag, 
   WordRelationship,
   UnifiedWordData,
-  UserWordMastery
+  UserWordMastery,
+  CEFRDifficultyAnalysis
 } from '../../types/wordMaze';
 import { apiAggregator } from '../apiAggregator';
+import { CEFRValidationService } from '../cefrValidationService';
 
 export interface WordDifficultyAnalysis {
   level: 'beginner' | 'intermediate' | 'advanced';
@@ -48,27 +50,9 @@ export class VocabularyManager {
   // ENHANCED WORD ANALYSIS
   // ========================================
 
-  async analyzeWordDifficulty(wordData: UnifiedWordData): Promise<WordDifficultyAnalysis> {
-    const factors = {
-      length: this.calculateLengthFactor(wordData.word),
-      frequency: await this.calculateFrequencyFactor(wordData.word),
-      complexity: this.calculateComplexityFactor(wordData),
-      etymology: this.calculateEtymologyFactor(wordData),
-      contextDependency: this.calculateContextDependencyFactor(wordData)
-    };
-
-    const totalScore = Object.values(factors).reduce((sum, factor) => sum + factor, 0) / 5;
-    
-    let level: 'beginner' | 'intermediate' | 'advanced';
-    if (totalScore < 30) level = 'beginner';
-    else if (totalScore < 70) level = 'intermediate';
-    else level = 'advanced';
-
-    return {
-      level,
-      score: totalScore,
-      factors
-    };
+  async analyzeWordDifficulty(wordData: UnifiedWordData): Promise<CEFRDifficultyAnalysis> {
+    const cefrService = new CEFRValidationService();
+    return await cefrService.analyzeWordDifficulty(wordData.word);
   }
 
   private calculateLengthFactor(word: string): number {
@@ -370,16 +354,30 @@ export class VocabularyManager {
     return Math.round(baseTime * difficultyMultiplier);
   }
 
+  // Map descriptive difficulty levels to CEFR format (legacy support)
+  private mapDifficultyToCEFR(descriptiveLevel: 'beginner' | 'intermediate' | 'advanced'): 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2' {
+    switch (descriptiveLevel) {
+      case 'beginner':
+        return 'A1';
+      case 'intermediate':
+        return 'B1';
+      case 'advanced':
+        return 'C1';
+      default:
+        return 'B1'; // Default to intermediate
+    }
+  }
+
   // ========================================
   // INHERIT FROM ORIGINAL VOCABULARY MANAGER
   // ========================================
 
   // Include all the original methods from the base VocabularyManager
   async createWordEntry(wordData: UnifiedWordData): Promise<WordEntry> {
-    // Enhanced with difficulty analysis
+    // Enhanced with CEFR difficulty analysis
     const difficultyAnalysis = await this.analyzeWordDifficulty(wordData);
     
-    console.log(`Creating word entry for: ${wordData.word} with difficulty: ${difficultyAnalysis.level}`);
+    console.log(`Creating word entry for: ${wordData.word} with CEFR level: ${difficultyAnalysis.level}`);
 
     // Check if word already exists
     const existingWord = await this.getWordByText(wordData.word);
@@ -388,7 +386,7 @@ export class VocabularyManager {
       return await this.updateWordEntry(existingWord.id, wordData);
     }
 
-    // Create new word entry with enhanced difficulty data
+    // Create new word entry with CEFR difficulty data
     const { data: wordEntry, error } = await supabase
       .from('word_entries')
       .insert({
@@ -400,7 +398,12 @@ export class VocabularyManager {
         verification_source: wordData.definitions.find(d => d.source === 'oxford')?.source || 'wordnik',
         metadata: {
           ...wordData.metadata,
-          difficultyFactors: difficultyAnalysis.factors
+          cefr_analysis: {
+            confidence: difficultyAnalysis.confidence,
+            reasoning: difficultyAnalysis.reasoning,
+            sources: difficultyAnalysis.sources,
+            factors: difficultyAnalysis.factors
+          }
         }
       })
       .select()

@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get active credits for the user
-    const { data: credits, error: creditsError } = await supabase
+    const { data: credits, error: creditsError } = await serverSupabase
       .from('user_credits')
       .select('*')
       .eq('user_email', user.email)
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get available credits
-    const { data: credits, error: creditsError } = await supabase
+    const { data: credits, error: creditsError } = await serverSupabase
       .from('user_credits')
       .select('*')
       .eq('user_email', user.email)
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
       const appliedAmount = Math.min(credit.amount, remainingAmount);
       
       // Update credit record
-      const { error: updateError } = await supabase
+      const { error: updateError } = await serverSupabase
         .from('user_credits')
         .update({
           amount: credit.amount - appliedAmount,
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Record credit application
-      const { error: applicationError } = await supabase
+      const { error: applicationError } = await serverSupabase
         .from('credit_applications')
         .insert({
           user_email: user.email,

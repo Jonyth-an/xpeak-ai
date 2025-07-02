@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { serverSupabase } from '@/lib/serverSupabaseClient';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
     // Create a Stripe Customer Portal session
     const session = await stripe.billingPortal.sessions.create({
       customer: subscriptionData.stripe_customer_id,
-      return_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/profile?tab=billing`,
+      return_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/profile/billing`,
       ...(process.env.STRIPE_PORTAL_CONFIGURATION_ID
         ? { configuration: process.env.STRIPE_PORTAL_CONFIGURATION_ID }
         : {}),

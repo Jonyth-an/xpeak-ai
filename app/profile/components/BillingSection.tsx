@@ -6,7 +6,7 @@ import { useAuth } from '@/lib/AuthContext';
 import { supabase } from '../../../lib/supabaseClient';
 import { useSearchParams } from 'next/navigation';
 import BillingInformationForm from './BillingInformationForm';
-import InvoiceHistory from './InvoiceHistory';
+import TransactionHistory from './TransactionHistory';
 
 // Loading Skeleton Component
 const BillingSkeleton = () => (
@@ -926,7 +926,7 @@ export default function BillingSection() {
 
         {/* Invoice History Section */}
         <section>
-          <InvoiceHistory />
+                          <TransactionHistory />
         </section>
       </div>
 

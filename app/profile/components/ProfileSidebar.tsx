@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Card, Text } from '@/app/components/ui';
 import { 
   User, 
@@ -14,7 +16,7 @@ import {
 
 interface ProfileSidebarProps {
   activeTab: string;
-  onTabChange: (tabId: string) => void;
+  onTabChange?: (tabId: string) => void; // Make optional for new routing
   userEmail?: string;
 }
 
@@ -23,25 +25,29 @@ const tabs = [
     id: 'profile', 
     label: 'Profile', 
     icon: User,
-    description: 'Personal information and avatar'
+    description: 'Personal information and avatar',
+    href: '/profile'
   },
   { 
     id: 'security', 
     label: 'Security', 
     icon: Shield,
-    description: 'Password and account security'
+    description: 'Password and account security',
+    href: '/profile/security'
   },
   { 
     id: 'preferences', 
     label: 'Preferences', 
     icon: Settings,
-    description: 'Language and timezone settings'
+    description: 'Language and timezone settings',
+    href: '/profile/preferences'
   },
   { 
     id: 'billing', 
     label: 'Billing', 
     icon: CreditCard,
-    description: 'Subscription and payment history'
+    description: 'Subscription and payment history',
+    href: '/profile/billing'
   },
 ];
 
@@ -51,9 +57,12 @@ export default function ProfileSidebar({
   userEmail 
 }: ProfileSidebarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   const handleTabClick = (tabId: string) => {
-    onTabChange(tabId);
+    if (onTabChange) {
+      onTabChange(tabId);
+    }
     setIsMobileMenuOpen(false); // Close mobile menu when tab is selected
   };
 
@@ -82,12 +91,10 @@ export default function ProfileSidebar({
       <nav className="space-y-2">
         {tabs.map((tab) => {
           const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
+          const isActive = pathname === tab.href || (pathname === '/profile' && tab.id === 'profile');
           
-          return (
-            <button
-              key={tab.id}
-              onClick={() => handleTabClick(tab.id)}
+          const TabContent = (
+            <div
               className={`
                 w-full flex items-center justify-between p-4 rounded-lg transition-all duration-300 ease-in-out group
                 ${isActive 
@@ -122,7 +129,13 @@ export default function ProfileSidebar({
                   ${isActive ? 'text-blue-600 rotate-90 scale-110' : 'text-gray-400 group-hover:text-gray-600 group-hover:scale-110'}
                 `} 
               />
-            </button>
+            </div>
+          );
+
+          return (
+            <Link key={tab.id} href={tab.href} onClick={() => handleTabClick(tab.id)}>
+              {TabContent}
+            </Link>
           );
         })}
       </nav>
@@ -158,7 +171,7 @@ export default function ProfileSidebar({
             </div>
             <div className="text-left">
               <Text variant="body" className="font-medium text-gray-700">
-                {tabs.find(tab => tab.id === activeTab)?.label || 'Account Settings'}
+                {tabs.find(tab => pathname === tab.href || (pathname === '/profile' && tab.id === 'profile'))?.label || 'Account Settings'}
               </Text>
             </div>
           </div>
