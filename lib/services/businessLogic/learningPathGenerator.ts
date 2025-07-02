@@ -2,17 +2,12 @@
 // LEARNING PATH GENERATOR
 // ========================================
 
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../../supabaseClient';
 import { 
   LearningPath, 
   UserProgress, 
   BusinessLogicConfig 
 } from './index';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export interface LearningObjective {
   id: string;

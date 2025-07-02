@@ -24,7 +24,7 @@ async function getAuthenticatedUser(request: NextRequest) {
     
     try {
       // Use the token to get user session
-      const { data: { user }, error } = await supabase.auth.getUser(token);
+      const { data: { user }, error } = await serverSupabase.auth.getUser(token);
       
       if (error || !user) {
         console.error('Error getting user from token:', error);

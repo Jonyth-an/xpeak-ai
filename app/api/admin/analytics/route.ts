@@ -180,7 +180,7 @@ async function getRevenueData(start: Date, end: Date) {
 
 async function getUserStats(start: Date, end: Date) {
   // Get user statistics
-  const { data: users, error } = await supabase.auth.admin.listUsers();
+  const { data: users, error } = await serverSupabase.auth.admin.listUsers();
   
   if (error) {
     console.error('Error fetching users:', error);

@@ -29,6 +29,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { data: { session } } = await supabase.auth.getSession();
         console.log('Initial session:', session?.user?.email);
         console.log('Email verified:', session?.user?.email_confirmed_at);
+        console.log('Session expires at:', session?.expires_at);
         setSession(session);
         setUser(session?.user ?? null);
       } catch (error) {
@@ -45,6 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         console.log('Email verified:', session?.user?.email_confirmed_at);
+        console.log('Session expires at:', session?.expires_at);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);

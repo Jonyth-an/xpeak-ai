@@ -1,18 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { vocabularyManager } from '../../../../lib/services/vocabularyManager';
 import { apiAggregator } from '../../../../lib/services/apiAggregator';
-import { createClient } from '@supabase/supabase-js';
+import { serverSupabase, getUserFromAuthHeader } from '../../../../lib/serverSupabaseClient';
 import { cookies } from 'next/headers';
 import { VocabularyType } from '../../../../lib/types/wordMaze';
-
-// ========================================
-// SUPABASE CLIENT
-// ========================================
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 // ========================================
 // AUTHENTICATION HELPER
@@ -41,11 +32,16 @@ async function getAuthenticatedUser(request: NextRequest) {
     console.log('Bearer token found, length:', token.length);
     
     try {
-      // Use the token to get user session
-      const { data: { user }, error } = await supabase.auth.getUser(token);
+      // Use the shared helper function
+      const { user, error } = await getUserFromAuthHeader(authHeader);
       
-      if (error || !user) {
+      if (error) {
         console.error('Error getting user from token:', error);
+        return null;
+      }
+      
+      if (!user) {
+        console.log('No user found from token');
         return null;
       }
       
@@ -85,11 +81,16 @@ async function getAuthenticatedUser(request: NextRequest) {
         return null;
       }
 
-      // Use the access token to get user info
-      const { data: { user }, error } = await supabase.auth.getUser(accessToken);
+      // Use the shared client to get user info
+      const { data: { user }, error } = await serverSupabase.auth.getUser(accessToken);
       
-      if (error || !user) {
+      if (error) {
         console.log('Error getting user from access token:', error);
+        return null;
+      }
+      
+      if (!user) {
+        console.log('No user found from access token');
         return null;
       }
       
@@ -169,7 +170,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get total count for pagination (only user's collection)
-    const { count: totalCount, error: countError } = await supabase
+    const { count: totalCount, error: countError } = await serverSupabase
       .from('user_word_collections')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', user.id)
@@ -190,7 +191,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user's word collection (with pagination)
-    const { data: userCollections, error } = await supabase
+    const { data: userCollections, error } = await serverSupabase
       .from('user_word_collections')
       .select(`
         *,
@@ -366,7 +367,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Check if user already has this word in their collection
-        const { data: existingCollection } = await supabase
+        const { data: existingCollection } = await serverSupabase
           .from('user_word_collections')
           .select('*')
           .eq('user_id', user.id)
@@ -376,7 +377,7 @@ export async function POST(request: NextRequest) {
 
         if (existingCollection) {
           // Word already in user's collection, update position
-          await supabase
+          await serverSupabase
             .from('user_word_collections')
             .update({ updated_at: new Date().toISOString() })
             .eq('id', existingCollection.id);
@@ -391,7 +392,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Add word to user's collection
-        const { error: collectionError } = await supabase
+        const { error: collectionError } = await serverSupabase
           .from('user_word_collections')
           .insert({
             user_id: user.id,
@@ -516,7 +517,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Remove the word from the user's personal collection (soft delete)
-    const { error } = await supabase
+    const { error } = await serverSupabase
       .from('user_word_collections')
       .update({ is_active: false })
       .eq('user_id', user.id)

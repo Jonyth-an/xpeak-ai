@@ -2,14 +2,9 @@
 // AI TAGGING ENGINE - ENHANCED WITH OPENAI
 // ========================================
 
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../../supabaseClient';
 import { UnifiedWordData } from '../../types/wordMaze';
 import OpenAI from 'openai';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 // Initialize OpenAI client
 const openai = new OpenAI({

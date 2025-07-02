@@ -72,13 +72,21 @@ export default function SignupForm({ onSubmit, onSuccess, onError }: SignupFormP
     setIsGoogleLoading(true);
     setError(null);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+      const { error } = await supabase.auth.signInWithOAuth({ 
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
       if (error) {
         setError(error.message || 'Google sign-up failed');
+        setIsGoogleLoading(false);
       }
+      // Note: If successful, the user will be redirected to Google
+      // and then back to /auth/callback, so we don't need to handle
+      // the success case here
     } catch (err: any) {
       setError(err.message || 'Google sign-up failed');
-    } finally {
       setIsGoogleLoading(false);
     }
   };

@@ -12,6 +12,17 @@ export default function LoginPage() {
   const { user } = useAuth();
   const [pageError, setPageError] = useState<string | null>(null);
 
+  // Check for error parameters from OAuth callback
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    if (error === 'auth_callback_failed') {
+      setPageError('Authentication failed. Please try again.');
+      // Clean up the URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
   // Redirect if already logged in
   useEffect(() => {
     if (user) {

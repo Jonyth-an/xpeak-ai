@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     const token = authHeader.substring(7);
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    const { data: { user }, error: authError } = await serverSupabase.auth.getUser(token);
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     });
 
     // (Optional) Store billing address in your DB for redundancy
-    // await supabase.from('user_billing_info').upsert({ ... })
+    // await serverSupabase.from('user_billing_info').upsert({ ... })
 
     return NextResponse.json({ success: true });
   } catch (err: any) {

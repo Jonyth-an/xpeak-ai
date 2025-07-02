@@ -2,17 +2,15 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-// import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseClient';
 import { rateLimiter, RATE_LIMIT_CONFIGS } from "@/lib/rateLimiter";
 import { Card, Input, Button, Text } from "../ui";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export interface LoginFormProps {
   onSubmit?: (data: { email: string; password: string }) => void;
   onSuccess?: (user: any) => void;
   onError?: (error: string) => void;
 }
-const supabase = createClientComponentClient();
 
 export default function LoginForm({
   onSubmit,
@@ -215,13 +213,19 @@ export default function LoginForm({
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
       if (error) {
         setError(error.message || "Google sign-in failed");
+        setIsGoogleLoading(false);
       }
+      // Note: If successful, the user will be redirected to Google
+      // and then back to /auth/callback, so we don't need to handle
+      // the success case here
     } catch (err: any) {
       setError(err.message || "Google sign-in failed");
-    } finally {
       setIsGoogleLoading(false);
     }
   };

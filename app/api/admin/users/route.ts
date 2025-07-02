@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     // If id param is present, return single user and their subscription
     if (userId) {
       // Fetch user from Supabase Auth
-      const { data: users, error: usersError } = await supabase.auth.admin.listUsers();
+      const { data: users, error: usersError } = await serverSupabase.auth.admin.listUsers();
       if (usersError) {
         return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
       }
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status') || 'all';
     const from = (page - 1) * limit;
     const to = from + limit - 1;
-    const { data: users, error: usersError } = await supabase.auth.admin.listUsers();
+    const { data: users, error: usersError } = await serverSupabase.auth.admin.listUsers();
     if (usersError) {
       return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
     }

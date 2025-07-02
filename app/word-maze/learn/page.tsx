@@ -295,14 +295,23 @@ export default function WordMazeLearnPage() {
                 <div>
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-gray-900">Recent Words</h2>
-                    <Button
-                      variant="outline"
-                      onClick={() => setShowAddWordModal(true)}
-                      className="flex items-center gap-2"
-                    >
-                      <PlusIcon className="w-4 h-4" />
-                      Add Word
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowAddWordModal(true)}
+                        className="flex items-center gap-2"
+                      >
+                        <PlusIcon className="w-4 h-4" />
+                        Add Word
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => router.push('/word-maze/learn/all')}
+                        className="flex items-center gap-2"
+                      >
+                        <span>View All</span>
+                      </Button>
+                    </div>
                   </div>
 
                   {storeLoading ? (

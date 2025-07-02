@@ -35,10 +35,15 @@ class WordMazeService {
     
     console.log('=== FRONTEND AUTH DEBUG ===');
     console.log('Session exists:', !!session);
+    console.log('Session object:', session);
     console.log('Access token exists:', !!accessToken);
     console.log('Token length:', accessToken?.length || 0);
+    console.log('Token preview:', accessToken ? `${accessToken.substring(0, 20)}...` : 'None');
     console.log('User ID:', session?.user?.id);
     console.log('User email:', session?.user?.email);
+    console.log('Session expires at:', session?.expires_at);
+    console.log('Current time:', new Date().toISOString());
+    console.log('Token expired:', session?.expires_at ? new Date(session.expires_at * 1000) < new Date() : 'No expiry');
 
     const headers = {
       'Content-Type': 'application/json',
@@ -46,6 +51,8 @@ class WordMazeService {
     };
     
     console.log('Request headers:', headers);
+    console.log('Request URL:', `${this.baseUrl}/words`);
+    console.log('Request body:', JSON.stringify({ words: [word] }));
 
     const response = await fetch(`${this.baseUrl}/words`, {
       method: 'POST',
@@ -53,7 +60,12 @@ class WordMazeService {
       body: JSON.stringify({ words: [word] }),
     });
 
+    console.log('Response status:', response.status);
+    console.log('Response status text:', response.statusText);
+
     if (!response.ok) {
+      const errorText = await response.text();
+      console.log('Error response body:', errorText);
       throw new Error(`Failed to add word: ${response.statusText}`);
     }
 

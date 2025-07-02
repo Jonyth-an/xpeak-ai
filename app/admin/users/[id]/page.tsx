@@ -5,13 +5,8 @@ import { useRouter, useParams } from 'next/navigation';
 import Layout from '../../../../components/Layout';
 import { Card, Button, Text } from '@/app/components/ui';
 import Link from 'next/link';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabaseClient';
 import AdminLayout from '../../AdminLayout';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 const LANGUAGE_MAP: Record<string, string> = {
   EN: 'English',

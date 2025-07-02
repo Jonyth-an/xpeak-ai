@@ -4,15 +4,10 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../../../components/Layout';
 import { useAuth } from '@/lib/AuthContext';
 import { isAdminEmail } from '@/lib/adminAuth';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabaseClient';
 import { Card, Button, Text, Input } from '@/app/components/ui';
 import Link from 'next/link';
 import AdminLayout from '../AdminLayout';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 interface UsageData {
   user_email: string;
