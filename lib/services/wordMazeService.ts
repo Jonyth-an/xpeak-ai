@@ -1,5 +1,5 @@
 import { useWordMazeStore, Word } from '../stores/wordMazeStore';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { supabase } from '../supabaseClient';
 
 export interface AddWordResponse {
   message: string;
@@ -30,7 +30,6 @@ class WordMazeService {
   private baseUrl = '/api/word-maze';
 
   async addWord(word: string): Promise<AddWordResponse> {
-    const supabase = createClientComponentClient();
     const { data: { session } } = await supabase.auth.getSession();
     const accessToken = session?.access_token;
     
@@ -62,7 +61,6 @@ class WordMazeService {
   }
 
   async addWordsBulk(words: string[]): Promise<BulkOperationResult> {
-    const supabase = createClientComponentClient();
     const { data: { session } } = await supabase.auth.getSession();
     const accessToken = session?.access_token;
     
@@ -95,7 +93,6 @@ class WordMazeService {
   }
 
   async deleteWord(wordId: string): Promise<boolean> {
-    const supabase = createClientComponentClient();
     const { data: { session } } = await supabase.auth.getSession();
     const accessToken = session?.access_token;
 
@@ -114,7 +111,6 @@ class WordMazeService {
   }
 
   async deleteWordsBulk(wordIds: string[]): Promise<BulkOperationResult> {
-    const supabase = createClientComponentClient();
     const { data: { session } } = await supabase.auth.getSession();
     const accessToken = session?.access_token;
 
@@ -141,7 +137,6 @@ class WordMazeService {
   }
 
   async getWordDetails(word: string): Promise<WordDetailsResponse> {
-    const supabase = createClientComponentClient();
     const { data: { session } } = await supabase.auth.getSession();
     const accessToken = session?.access_token;
 
@@ -162,7 +157,6 @@ class WordMazeService {
   }
 
   async getWords(limit = 12, offset = 0): Promise<Word[]> {
-    const supabase = createClientComponentClient();
     const { data: { session } } = await supabase.auth.getSession();
     const accessToken = session?.access_token;
 
