@@ -214,31 +214,19 @@ negative: { color: '#EF4444', emoji: '😔', category: 'emotion' }
 joyful: { color: '#F59E0B', emoji: '😄', category: 'emotion' }
 ```
 
-## 🔄 Integration with Business Logic
+## 🔄 Integration with Core Services
 
-### **Enhanced Business Logic Manager**
+### **Enhanced Service Integration**
 
 ```typescript
 // Process word with enhanced AI
-const enhancedData = await businessLogicManager.processWordWithEnhancedAI(
-  word, 
-  userId
-);
+const enhancedData = await aiTaggingEngineEnhanced.generateTags(wordData);
 
-// Generate enhanced maze
-const enhancedMaze = await businessLogicManager.generateEnhancedMaze(
-  userId, 
-  theme, 
-  difficulty
-);
+// Generate maze unlock criteria
+const unlockCriteria = await aiTaggingEngineEnhanced.generateMazeUnlockCriteria(wordData);
 
-// Track enhanced progress
-const progress = await businessLogicManager.trackEnhancedProgress(
-  userId, 
-  word, 
-  accuracy, 
-  timeSpent
-);
+// Generate personalized tags
+const personalizedTags = await aiTaggingEngineEnhanced.generatePersonalizedTags(userId, wordData);
 ```
 
 ## 🧪 Testing & Demo
@@ -290,10 +278,10 @@ import EnhancedTagsDemo from './enhanced-tags-demo';
    - Progress-based difficulty adjustment
    - Interest-based recommendations
 
-3. **Gamification Integration**
-   - Achievement system integration
-   - Leaderboard features
-   - Social learning elements
+3. **Enhanced Tagging Features**
+   - Visual tag styling with colors and emojis
+   - Category-based organization
+   - Confidence score analysis
 
 4. **Analytics & Insights**
    - Tag usage analytics
@@ -389,8 +377,8 @@ http://localhost:3000/word-maze-test
 ### **For Learners**
 - **More engaging** vocabulary learning experience
 - **Visual feedback** with colorful, emoji-rich tags
-- **Personalized** learning paths and recommendations
-- **Gamified progression** with unlock criteria
+- **Personalized** tag recommendations
+- **Enhanced understanding** with detailed word analysis
 
 ### **For Educators**
 - **AI-powered insights** into word characteristics
