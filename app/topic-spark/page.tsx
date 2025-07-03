@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Card, Button, Text } from '@/app/components/ui';
 import SparkToTrekAnimation from './SparkToTrekAnimation';
+import ConstellationSparks from './ConstellationSparks';
 
 export default function TopicSparkPage() {
   const { user } = useAuth();
@@ -53,62 +54,13 @@ export default function TopicSparkPage() {
                 </Button>
               </div>
 
-              {/* Visual Metaphor Section - Constellation/Sparks */}
-              <div className="relative">
-                {/* Constellation Illustration */}
-                <div className="relative mx-auto w-96 h-64 bg-gradient-to-br from-orange-100/50 to-red-100/50 rounded-2xl border-2 border-orange-200/50 backdrop-blur-sm">
-                  {/* Animated constellation pattern */}
-                  <div className="absolute inset-4">
-                    <div className="grid grid-cols-12 grid-rows-8 gap-1">
-                      {Array.from({ length: 96 }).map((_, i) => (
-                        <div
-                          key={i}
-                          className={`w-full h-full rounded-sm transition-all duration-1000 ${
-                            Math.random() > 0.8 
-                              ? 'bg-gradient-to-br from-yellow-400/80 to-orange-400/80 animate-pulse' 
-                              : Math.random() > 0.6
-                              ? 'bg-gradient-to-br from-orange-300/40 to-red-300/40 animate-pulse'
-                              : 'bg-gradient-to-br from-orange-200/20 to-red-200/20'
-                          }`}
-                          style={{
-                            animationDelay: `${i * 50}ms`,
-                            animationDuration: `${1500 + Math.random() * 1500}ms`
-                          }}
-                        ></div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  {/* Connecting lines for constellation effect */}
-                  <svg className="absolute inset-0 w-full h-full" viewBox="0 0 384 256">
-                    {Array.from({ length: 8 }).map((_, i) => (
-                      <line
-                        key={i}
-                        x1={`${20 + Math.random() * 60}%`}
-                        y1={`${20 + Math.random() * 60}%`}
-                        x2={`${40 + Math.random() * 60}%`}
-                        y2={`${40 + Math.random() * 60}%`}
-                        stroke="rgba(251, 146, 60, 0.3)"
-                        strokeWidth="1"
-                        className="animate-pulse"
-                        style={{
-                          animationDelay: `${i * 200}ms`,
-                          animationDuration: `${2000 + Math.random() * 1000}ms`
-                        }}
-                      />
-                    ))}
-                  </svg>
-                  
-                  {/* Central spark */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full shadow-lg animate-pulse"></div>
-                </div>
+              <ConstellationSparks />
 
-                {/* Caption */}
-                <div className="mt-8 text-center">
-                  <p className="text-lg text-gray-700 font-medium">
-                    🔥 Watch your sparks form constellations — as your fluency path lights up with Treks uniquely tailored to you.
-                  </p>
-                </div>
+              {/* Caption below the new animation */}
+              <div className="mt-8 text-center">
+                <p className="text-lg text-gray-700 font-medium">
+                  🔥 Watch your sparks form constellations — as your fluency path lights up with Treks uniquely tailored to you.
+                </p>
               </div>
             </div>
           </div>

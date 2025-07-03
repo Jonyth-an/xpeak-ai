@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Node {
@@ -54,6 +54,19 @@ export default function SparkToTrekAnimation() {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  // Generate background stars only once to avoid hydration errors
+  const backgroundStars = useMemo(() => {
+    return Array.from({ length: 50 }).map(() => ({
+      width: 2 + Math.random() * 3,
+      height: 2 + Math.random() * 3,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      animationDelay: Math.random() * 3,
+      animationDuration: 2 + Math.random() * 2,
+      boxShadow: `0 0 ${4 + Math.random() * 8}px rgba(255, 255, 255, 0.8), 0 0 ${8 + Math.random() * 16}px rgba(147, 197, 253, 0.4)`
+    }));
+  }, []);
+
   const startAnimation = () => {
     setIsPlaying(true);
     setAnimationStage(-1); // Start with -1 to clear everything
@@ -77,18 +90,18 @@ export default function SparkToTrekAnimation() {
     <div className="w-full max-w-6xl mx-auto p-8 bg-gradient-to-br from-blue-100 via-purple-100 to-indigo-200 rounded-2xl overflow-hidden relative my-20 shadow-xl">
       {/* Background stars */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(50)].map((_, i) => (
+        {backgroundStars.map((star, i) => (
           <div
             key={i}
             className="absolute bg-white rounded-full opacity-70 animate-pulse shadow-lg"
             style={{
-              width: `${2 + Math.random() * 3}px`,
-              height: `${2 + Math.random() * 3}px`,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 2}s`,
-              boxShadow: `0 0 ${4 + Math.random() * 8}px rgba(255, 255, 255, 0.8), 0 0 ${8 + Math.random() * 16}px rgba(147, 197, 253, 0.4)`,
+              width: `${star.width}px`,
+              height: `${star.height}px`,
+              left: `${star.left}%`,
+              top: `${star.top}%`,
+              animationDelay: `${star.animationDelay}s`,
+              animationDuration: `${star.animationDuration}s`,
+              boxShadow: star.boxShadow,
             }}
           />
         ))}

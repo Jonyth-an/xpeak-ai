@@ -1,16 +1,24 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import Layout from '../../components/Layout';
 import { useAuth } from '@/lib/AuthContext';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { Card, Button, Text } from '@/app/components/ui';
 import WordToMazeAnimation from './WordToMazeAnimation';
 
 export default function WordMazePublicPage() {
   const { user } = useAuth();
   const router = useRouter();
+
+  // Generate maze pattern data once to avoid hydration errors
+  const mazePattern = useMemo(() => {
+    return Array.from({ length: 40 }).map(() => ({
+      isActive: Math.random() > 0.7,
+      animationDelay: Math.random() * 2000,
+      animationDuration: 2000 + Math.random() * 2000
+    }));
+  }, []);
 
   // Redirect logged-in users to the authenticated Word Maze page
   useEffect(() => {
@@ -60,17 +68,17 @@ export default function WordMazePublicPage() {
                   {/* Animated maze pattern */}
                   <div className="absolute inset-4">
                     <div className="grid grid-cols-8 grid-rows-5 gap-1">
-                      {Array.from({ length: 40 }).map((_, i) => (
+                      {mazePattern.map((cell, i) => (
                         <div
                           key={i}
                           className={`w-full h-full rounded-sm transition-all duration-1000 ${
-                            Math.random() > 0.7 
+                            cell.isActive
                               ? 'bg-gradient-to-br from-blue-400/60 to-purple-400/60 animate-pulse' 
                               : 'bg-gradient-to-br from-blue-200/30 to-purple-200/30'
                           }`}
                           style={{
                             animationDelay: `${i * 100}ms`,
-                            animationDuration: `${2000 + Math.random() * 2000}ms`
+                            animationDuration: `${cell.animationDuration}ms`
                           }}
                         ></div>
                       ))}

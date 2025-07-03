@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button, Card } from "@/app/components/ui";
 import { Lightbulb, Rocket, Link as LinkIcon, PenTool, Gamepad2, Sparkles } from "lucide-react";
@@ -73,6 +73,16 @@ export default function WordToMazeAnimation() {
   const [wordNodes, setWordNodes] = useState<WordNode[]>([]);
   const [showConnections, setShowConnections] = useState(false);
   const [showEnhancements, setShowEnhancements] = useState(false);
+
+  // Memoize random positions, durations, and delays for the background dots
+  const backgroundDots = useMemo(() => {
+    return Array.from({ length: 20 }).map(() => ({
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      duration: 2 + Math.random() * 2,
+      delay: Math.random() * 2,
+    }));
+  }, []);
 
   useEffect(() => {
     if (isPlaying) {
@@ -165,22 +175,22 @@ export default function WordToMazeAnimation() {
             <div className="bg-white rounded-2xl shadow-2xl p-8 min-h-[500px] relative overflow-hidden">
               {/* Background constellation effect */}
               <div className="absolute inset-0 opacity-10">
-                {[...Array(20)].map((_, i) => (
+                {backgroundDots.map((dot, i) => (
                   <motion.div
                     key={i}
                     className="absolute w-1 h-1 bg-blue-500 rounded-full"
                     style={{
-                      left: `${Math.random() * 100}%`,
-                      top: `${Math.random() * 100}%`,
+                      left: `${dot.left}%`,
+                      top: `${dot.top}%`,
                     }}
                     animate={{
                       opacity: [0.3, 1, 0.3],
                       scale: [1, 1.5, 1],
                     }}
                     transition={{
-                      duration: 2 + Math.random() * 2,
+                      duration: dot.duration,
                       repeat: Number.POSITIVE_INFINITY,
-                      delay: Math.random() * 2,
+                      delay: dot.delay,
                     }}
                   />
                 ))}
