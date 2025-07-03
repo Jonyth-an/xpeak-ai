@@ -69,11 +69,11 @@ export default function Header() {
                 <Link href="/dashboard" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
                   Dashboard
                 </Link>
-                <Link href="/tutors" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-                  Tutors
+                <Link href="/meet-sagea" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  Meet Sagea
                 </Link>
-                <Link href="/ai-topics" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-                  AI Topics
+                <Link href="/topic-spark" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  Topic Spark
                 </Link>
                 <Link href="/word-maze/learn" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
                   Word Maze
@@ -91,11 +91,11 @@ export default function Header() {
                 <Link href="/" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
                   Home
                 </Link>
-                <Link href="/tutors" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-                  Tutors
+                <Link href="/meet-sagea" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  Meet Sagea
                 </Link>
-                <Link href="/ai-topics" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-                  AI Topics
+                <Link href="/topic-spark" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
+                  Topic Spark
                 </Link>
                 <Link href="/word-maze" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
                   Word Maze

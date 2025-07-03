@@ -30,10 +30,10 @@ export default function Footer() {
           <div>
             <div className="font-semibold mb-2">Product</div>
             <ul className="space-y-1 text-sm">
-              <li><Link href="#" className="hover:text-indigo-500 font-normal">Features</Link></li>
+              <li><Link href="/meet-sagea" className="hover:text-indigo-500 font-normal">Meet Sagea</Link></li>
+              <li><Link href="/topic-spark" className="hover:text-indigo-500 font-normal">Topic Spark</Link></li>
+              <li><Link href="/word-maze" className="hover:text-indigo-500 font-normal">Word Maze</Link></li>
               <li><Link href="/pricing" className="hover:text-indigo-500 font-normal">Pricing</Link></li>
-              <li><Link href="#" className="hover:text-indigo-500 font-normal">AI Learning</Link></li>
-              <li><Link href="/tutors" className="hover:text-indigo-500 font-normal">Tutors</Link></li>
             </ul>
           </div>
 
@@ -41,7 +41,7 @@ export default function Footer() {
           <div>
             <div className="font-semibold mb-2">Company</div>
             <ul className="space-y-1 text-sm">
-              <li><Link href="/about" className="hover:text-indigo-500 font-normal">About</Link></li>
+              <li><Link href="/xpeakai" className="hover:text-indigo-500 font-normal">Xpeak AI</Link></li>
               <li><Link href="/become-a-tutor" className="hover:text-indigo-500 font-normal">Become a Tutor</Link></li>
               <li><Link href="/community" className="hover:text-indigo-500 font-normal">Community</Link></li>
               <li><Link href="#" className="hover:text-indigo-500 font-normal">Careers</Link></li>
