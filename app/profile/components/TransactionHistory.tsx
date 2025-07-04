@@ -21,22 +21,88 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
+import Link from 'next/link';
 
-interface Transaction {
+// Use the same enhanced Invoice interface as InvoiceHistory
+interface Invoice {
   id: string;
-  amount: number;
+  number: string;
+  amount_paid: number;
+  amount_due: number;
   currency: string;
   status: string;
   created: number;
+  due_date?: number;
+  invoice_pdf?: string;
+  hosted_invoice_url?: string;
   description?: string;
-  product: string;
-  interval: string;
-  receipt_url?: string;
+  customer_email?: string;
+  line_items_count: number;
+  period_start?: number;
+  period_end?: number;
+  paid_at?: number;
+  product?: string;
+  interval?: string;
+  payment_method?: {
+    type: string;
+    brand?: string;
+    last4?: string;
+    exp_month?: number;
+    exp_year?: number;
+  };
+  refunds?: Array<{
+    id: string;
+    amount: number;
+    reason?: string;
+    created: number;
+    status: string;
+  }>;
+  line_items: Array<{
+    description: string;
+    amount: number;
+    quantity: number;
+    product_name?: string;
+    interval?: string;
+    unit_amount?: number;
+  }>;
+  tax_amount?: number;
+  discount_amount?: number;
+  subtotal?: number;
+  payment_intent?: {
+    id: string;
+    status: string;
+    created: number;
+    amount: number;
+    currency: string;
+  };
+  charge?: {
+    id: string;
+    status: string;
+    created: number;
+    receipt_url?: string;
+    failure_reason?: string;
+    outcome?: {
+      type: string;
+      seller_message: string;
+    };
+  };
+  subscription?: {
+    id: string;
+    status: string;
+    current_period_start: number;
+    current_period_end: number;
+  };
 }
 
-interface TransactionResponse {
-  charges: Transaction[];
-  has_more: boolean;
+interface InvoiceResponse {
+  invoices: Invoice[];
+  hasMore: boolean;
+  totalCount: number;
+  pagination: {
+    limit: number;
+    startingAfter: string | null;
+    hasMore: boolean;
+  };
 }
 
 interface TransactionStats {
@@ -48,7 +114,7 @@ interface TransactionStats {
 
 export default function TransactionHistory() {
   const { session } = useAuth();
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactions, setTransactions] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(false);
@@ -57,7 +123,7 @@ export default function TransactionHistory() {
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
-  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [selectedTransaction, setSelectedTransaction] = useState<Invoice | null>(null);
   const [showTransactionModal, setShowTransactionModal] = useState(false);
   const [stats, setStats] = useState<TransactionStats | null>(null);
 
@@ -71,9 +137,14 @@ export default function TransactionHistory() {
       const params = new URLSearchParams({
         limit: '10',
         ...(startingAfter && { starting_after: startingAfter }),
+        ...(status && status !== 'all' && { status }),
+        ...(search && { search }),
+        ...(dateStart && { created_after: new Date(dateStart).getTime().toString() }),
+        ...(dateEnd && { created_before: new Date(dateEnd).getTime().toString() }),
       });
 
-      const response = await fetch(`/api/billing/charges?${params}`, {
+      // Use the enhanced invoices endpoint instead of charges
+      const response = await fetch(`/api/billing/enhanced-invoices?${params}`, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
         },
@@ -83,44 +154,20 @@ export default function TransactionHistory() {
         throw new Error('Failed to fetch transactions');
       }
 
-      const data: TransactionResponse = await response.json();
-      
-      // Filter transactions based on status, search, and date range
-      let filteredTransactions = data.charges;
-      
-      if (status && status !== 'all') {
-        filteredTransactions = filteredTransactions.filter(t => t.status === status);
-      }
-      
-      if (search) {
-        filteredTransactions = filteredTransactions.filter(t => 
-          t.description?.toLowerCase().includes(search.toLowerCase()) ||
-          t.product.toLowerCase().includes(search.toLowerCase())
-        );
-      }
-      
-      if (dateStart) {
-        const startTime = new Date(dateStart).getTime() / 1000;
-        filteredTransactions = filteredTransactions.filter(t => t.created >= startTime);
-      }
-      
-      if (dateEnd) {
-        const endTime = new Date(dateEnd).getTime() / 1000;
-        filteredTransactions = filteredTransactions.filter(t => t.created <= endTime);
-      }
+      const data: InvoiceResponse = await response.json();
       
       if (startingAfter) {
         // Append to existing transactions for pagination
-        setTransactions(prev => [...prev, ...filteredTransactions]);
+        setTransactions(prev => [...prev, ...data.invoices]);
       } else {
         // Replace transactions for new search/filter
-        setTransactions(filteredTransactions);
+        setTransactions(data.invoices);
       }
       
-      setHasMore(data.has_more);
+      setHasMore(data.hasMore);
       
       // Calculate stats
-      calculateStats(filteredTransactions);
+      calculateStats(data.invoices);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load transactions');
     } finally {
@@ -128,16 +175,16 @@ export default function TransactionHistory() {
     }
   };
 
-  const calculateStats = (transactionList: Transaction[]) => {
+  const calculateStats = (transactionList: Invoice[]) => {
     const totalTransactions = transactionList.length;
     const totalPaid = transactionList
-      .filter(t => t.status === 'succeeded')
-      .reduce((sum, t) => sum + t.amount, 0);
+      .filter(t => t.status === 'paid')
+      .reduce((sum, t) => sum + t.amount_paid, 0);
     const totalFailed = transactionList
-      .filter(t => t.status === 'failed')
-      .reduce((sum, t) => sum + t.amount, 0);
+      .filter(t => t.status === 'failed' || t.status === 'void' || t.status === 'uncollectible')
+      .reduce((sum, t) => sum + t.amount_due, 0);
     const averageAmount = totalTransactions > 0 
-      ? transactionList.reduce((sum, t) => sum + t.amount, 0) / totalTransactions 
+      ? transactionList.reduce((sum, t) => sum + t.amount_paid, 0) / totalTransactions 
       : 0;
 
     setStats({
@@ -211,29 +258,39 @@ export default function TransactionHistory() {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      succeeded: { 
+      paid: { 
         color: 'bg-green-100 text-green-800 border-green-200', 
-        label: 'Succeeded',
+        label: 'Paid',
         icon: CheckCircle
       },
-      pending: { 
+      open: { 
         color: 'bg-yellow-100 text-yellow-800 border-yellow-200', 
-        label: 'Pending',
+        label: 'Open',
         icon: Clock
+      },
+      draft: { 
+        color: 'bg-gray-100 text-gray-800 border-gray-200', 
+        label: 'Draft',
+        icon: FileText
+      },
+      void: { 
+        color: 'bg-red-100 text-red-800 border-red-200', 
+        label: 'Void',
+        icon: AlertCircle
+      },
+      uncollectible: { 
+        color: 'bg-red-100 text-red-800 border-red-200', 
+        label: 'Uncollectible',
+        icon: AlertCircle
       },
       failed: { 
         color: 'bg-red-100 text-red-800 border-red-200', 
         label: 'Failed',
         icon: AlertCircle
       },
-      canceled: { 
-        color: 'bg-gray-100 text-gray-800 border-gray-200', 
-        label: 'Canceled',
-        icon: AlertCircle
-      },
     };
 
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.draft;
     const IconComponent = config.icon;
     
     return (
@@ -244,7 +301,7 @@ export default function TransactionHistory() {
     );
   };
 
-  const openTransactionModal = (transaction: Transaction) => {
+  const openTransactionModal = (transaction: Invoice) => {
     setSelectedTransaction(transaction);
     setShowTransactionModal(true);
   };
@@ -256,14 +313,15 @@ export default function TransactionHistory() {
 
   const exportTransactions = () => {
     const csvContent = [
-      ['Payment Date', 'Amount', 'Product', 'Interval', 'Description', 'Status'],
+      ['Payment Date', 'Amount', 'Product', 'Interval', 'Description', 'Status', 'Payment Method'],
       ...transactions.map(transaction => [
         formatDate(transaction.created),
-        formatCurrency(transaction.amount, transaction.currency),
-        transaction.product,
-        transaction.interval,
+        formatCurrency(transaction.amount_paid, transaction.currency),
+        transaction.product || 'Unknown Product',
+        transaction.interval || 'N/A',
         transaction.description || '',
-        transaction.status
+        transaction.status,
+        transaction.payment_method ? `${transaction.payment_method.brand?.toUpperCase() || transaction.payment_method.type}${transaction.payment_method.last4 ? ' •••• ' + transaction.payment_method.last4 : ''}` : ''
       ])
     ].map(row => row.join(',')).join('\n');
 
@@ -312,82 +370,9 @@ export default function TransactionHistory() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <Text variant="h5" className="mb-1">Transaction History</Text>
-          <Text variant="body" className="text-gray-600">
-            {transactions.length > 0 ? `${transactions.length} transaction${transactions.length !== 1 ? 's' : ''} found` : 'No transactions found'}
-          </Text>
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <Button
-            onClick={exportTransactions}
-            variant="outline"
-            size="sm"
-            className="flex items-center space-x-1"
-            disabled={transactions.length === 0}
-          >
-            <Download size={16} />
-            <span>Export</span>
-          </Button>
-          <Button
-            onClick={() => setShowFilters(!showFilters)}
-            variant="outline"
-            size="sm"
-            className="flex items-center space-x-1"
-          >
-            <Filter size={16} />
-            <span>Filter</span>
-          </Button>
+          <h2 className="text-lg font-semibold text-gray-900">Invoices</h2>
         </div>
       </div>
-
-      {/* Stats Cards */}
-      {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Text className="text-sm text-gray-600">Total Transactions</Text>
-                <Text className="text-2xl font-bold">{stats.totalTransactions}</Text>
-              </div>
-              <FileText className="text-blue-500" size={24} />
-            </div>
-          </Card>
-          <Card className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Text className="text-sm text-gray-600">Total Paid</Text>
-                <Text className="text-2xl font-bold text-green-600">
-                  {formatCurrency(stats.totalPaid, 'usd')}
-                </Text>
-              </div>
-              <TrendingUp className="text-green-500" size={24} />
-            </div>
-          </Card>
-          <Card className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Text className="text-sm text-gray-600">Failed</Text>
-                <Text className="text-2xl font-bold text-red-600">
-                  {formatCurrency(stats.totalFailed, 'usd')}
-                </Text>
-              </div>
-              <TrendingDown className="text-red-500" size={24} />
-            </div>
-          </Card>
-          <Card className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Text className="text-sm text-gray-600">Average Amount</Text>
-                <Text className="text-2xl font-bold">
-                  {formatCurrency(stats.averageAmount, 'usd')}
-                </Text>
-              </div>
-              <DollarSign className="text-gray-500" size={24} />
-            </div>
-          </Card>
-        </div>
-      )}
 
       {/* Filters */}
       {showFilters && (
@@ -432,10 +417,12 @@ export default function TransactionHistory() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="all">All Statuses</option>
-                  <option value="succeeded">Succeeded</option>
-                  <option value="pending">Pending</option>
+                  <option value="paid">Paid</option>
+                  <option value="open">Open</option>
+                  <option value="draft">Draft</option>
+                  <option value="void">Void</option>
+                  <option value="uncollectible">Uncollectible</option>
                   <option value="failed">Failed</option>
-                  <option value="canceled">Canceled</option>
                 </select>
               </div>
 
@@ -476,9 +463,6 @@ export default function TransactionHistory() {
             <div className="grid grid-cols-6 gap-4 text-sm font-medium text-gray-700">
               <div className="col-span-1">Payment Date</div>
               <div className="col-span-1">Amount</div>
-              <div className="col-span-1">Product</div>
-              <div className="col-span-1">Interval</div>
-              <div className="col-span-1">Status</div>
               <div className="col-span-1">Actions</div>
             </div>
           </div>
@@ -501,55 +485,23 @@ export default function TransactionHistory() {
                   {/* Amount */}
                   <div className="col-span-1">
                     <Text className="font-medium text-gray-900">
-                      {formatCurrency(transaction.amount, transaction.currency)}
+                      {formatCurrency(transaction.amount_paid, transaction.currency)}
                     </Text>
-                  </div>
-                  {/* Product */}
-                  <div className="col-span-1">
-                    <Text className="text-sm text-gray-700">
-                      {transaction.product}
-                    </Text>
-                  </div>
-                  {/* Interval */}
-                  <div className="col-span-1">
-                    <Text className="text-sm text-gray-700">
-                      {transaction.interval}
-                    </Text>
-                  </div>
-                  {/* Status */}
-                  <div className="col-span-1">
-                    {getStatusBadge(transaction.status)}
                   </div>
                   {/* Actions */}
                   <div className="col-span-1">
-                    <div className="flex items-center space-x-1">
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openTransactionModal(transaction);
-                        }}
-                        variant="ghost"
-                        size="sm"
-                        className="p-1"
-                        title="View Details"
+                    {transaction.hosted_invoice_url ? (
+                      <a
+                        href={transaction.hosted_invoice_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 transition text-sm font-medium"
                       >
-                        <Eye size={14} />
-                      </Button>
-                      {transaction.receipt_url && (
-                        <Button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            window.open(transaction.receipt_url, '_blank');
-                          }}
-                          variant="ghost"
-                          size="sm"
-                          className="p-1"
-                          title="View Receipt"
-                        >
-                          <ExternalLink size={14} />
-                        </Button>
-                      )}
-                    </div>
+                        View Invoice
+                      </a>
+                    ) : (
+                      <span className="text-gray-400 text-sm">No invoice available</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -614,7 +566,7 @@ export default function TransactionHistory() {
               <div>
                 <Text className="text-sm text-gray-600">Amount</Text>
                 <Text className="text-lg font-bold">
-                  {formatCurrency(selectedTransaction.amount, selectedTransaction.currency)}
+                  {formatCurrency(selectedTransaction.amount_paid, selectedTransaction.currency)}
                 </Text>
               </div>
               
@@ -638,6 +590,16 @@ export default function TransactionHistory() {
                 <Text>{formatDateTime(selectedTransaction.created)}</Text>
               </div>
               
+              {selectedTransaction.payment_method && (
+                <div>
+                  <Text className="text-sm text-gray-600">Payment Method</Text>
+                  <Text>
+                    {selectedTransaction.payment_method.brand?.toUpperCase() || selectedTransaction.payment_method.type}
+                    {selectedTransaction.payment_method.last4 ? ` •••• ${selectedTransaction.payment_method.last4}` : ''}
+                  </Text>
+                </div>
+              )}
+              
               {selectedTransaction.description && (
                 <div>
                   <Text className="text-sm text-gray-600">Description</Text>
@@ -645,10 +607,10 @@ export default function TransactionHistory() {
                 </div>
               )}
               
-              {selectedTransaction.receipt_url && (
+              {selectedTransaction.charge?.receipt_url && (
                 <div className="pt-4">
                   <Button
-                    onClick={() => window.open(selectedTransaction.receipt_url, '_blank')}
+                    onClick={() => window.open(selectedTransaction.charge?.receipt_url, '_blank')}
                     variant="primary"
                     className="w-full flex items-center justify-center space-x-2"
                   >

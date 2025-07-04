@@ -1,5 +1,5 @@
 import React from 'react';
-import FeatureCard from '../../components/ui/FeatureCard';
+import FeatureCard from '../../../app/components/ui/FeatureCard';
 import SmartMatchFeature, { SmartMatchFeatureItem } from '@/app/components/molecules/SmartMatchFeature';
 
 const features: SmartMatchFeatureItem[] = [

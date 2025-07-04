@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { Card, Button, Input, Text } from '@/app/components/ui';
-import Layout from '../../components/Layout';
-import { UnifiedWordData, WordEntry } from '../../lib/types/wordMaze';
+import { Card, Button, Input, Text, Badge } from '@/app/components/ui';
+import Layout from '../../../components/Layout';
+import { UnifiedWordData, WordEntry } from '../../../lib/types/wordMaze';
 import { useAuth } from '@/lib/AuthContext';
 import EnhancedTagsDemo from './enhanced-tags-demo';
 import clsx from 'clsx';

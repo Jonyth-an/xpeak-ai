@@ -34,6 +34,7 @@ export default function Footer() {
               <li><Link href="/topic-spark" className="hover:text-indigo-500 font-normal">Topic Spark</Link></li>
               <li><Link href="/word-maze" className="hover:text-indigo-500 font-normal">Word Maze</Link></li>
               <li><Link href="/pricing" className="hover:text-indigo-500 font-normal">Pricing</Link></li>
+              <li><Link href="/test/sagea-animation" className="hover:text-indigo-500 font-normal">Sagea Animation</Link></li>
             </ul>
           </div>
 
@@ -46,6 +47,7 @@ export default function Footer() {
               <li><Link href="/community" className="hover:text-indigo-500 font-normal">Community</Link></li>
               <li><Link href="#" className="hover:text-indigo-500 font-normal">Careers</Link></li>
               <li><Link href="#" className="hover:text-indigo-500 font-normal">Contact</Link></li>
+              <li><Link href="/test" className="hover:text-indigo-500 font-normal text-blue-600">🧪 Test Pages</Link></li>
             </ul>
           </div>
 

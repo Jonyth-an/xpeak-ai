@@ -9,26 +9,45 @@ export default function TutorHeroSection() {
           {/* Left Side: Text & Buttons */}
           <div className="space-y-8">
             <h1 className="text-4xl md:text-5xl font-extrabold text-text leading-tight">
-              Meet the Coaches Behind Your Language Breakthrough
+              Meet Sagea
+              <br />
+              <span className="text-blue-600">Your Lifelong Learning Companion</span>
             </h1>
             <p className="text-xl text-text-secondary leading-relaxed">
-              They're more than fluent — they're here to coach, motivate, and guide you every step of the way.
+              More than a tutor. Sagea is your ever-present coach and companion, listener, motivator, and learning architect — built from both human warmth and AI intelligence.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button variant="primary" size="lg">
-                Browse English Tutors
-              </Button>
-              <Button variant="outline" size="lg">
-                Book a Trial Lesson
+                → Start with Sagea
               </Button>
             </div>
           </div>
-          {/* Right Side: Visual */}
+          {/* Right Side: Visual Metaphor */}
           <div className="flex justify-center md:justify-end mt-10 md:mt-0">
-            <div className="w-64 h-64 bg-white rounded-2xl shadow-xl flex items-center justify-center text-6xl">
-              <span role="img" aria-label="graduation cap">🎓</span>
+            <div className="relative w-80 h-80">
+              {/* Glowing figure in center */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-4xl text-white shadow-2xl animate-pulse">
+                  🧠
+                </div>
+              </div>
+              {/* Swirling connections */}
+              <div className="absolute inset-0">
+                <div className="w-full h-full border-2 border-blue-200 rounded-full animate-spin-slow"></div>
+                <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-blue-300 rounded-full"></div>
+                <div className="absolute top-3/4 right-1/4 w-4 h-4 bg-purple-300 rounded-full"></div>
+                <div className="absolute bottom-1/4 left-1/3 w-4 h-4 bg-indigo-300 rounded-full"></div>
+                <div className="absolute top-1/2 right-1/3 w-4 h-4 bg-cyan-300 rounded-full"></div>
+              </div>
             </div>
           </div>
+        </div>
+        
+        {/* Visual Metaphor Caption */}
+        <div className="text-center mt-16">
+          <p className="text-lg text-text-secondary italic max-w-3xl mx-auto">
+            Sagea weaves together every word you learn, every spark of curiosity, and every interaction — shaping a journey that's uniquely yours.
+          </p>
         </div>
       </div>
     </section>

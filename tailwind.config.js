@@ -155,6 +155,9 @@ module.exports = {
   			'token-modal': 'var(--z-modal)',
   			'token-popover': 'var(--z-popover)',
   			'token-tooltip': 'var(--z-tooltip)'
+  		},
+  		animation: {
+  			'spin-slow': 'spin-slow 20s linear infinite',
   		}
   	}
   },

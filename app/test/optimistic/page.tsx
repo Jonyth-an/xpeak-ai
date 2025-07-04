@@ -1,11 +1,11 @@
 'use client';
 import React, { useState } from 'react';
-import Layout from '../../components/Layout';
+import Layout from '../../../components/Layout';
 import { Card, Button, Text, Badge } from '@/app/components/ui';
-import { useWordMazeStore } from '../../lib/stores/wordMazeStore';
-import { useWordMazeService } from '../../lib/services/wordMazeService';
-import WordCardOptimistic from '../components/molecules/WordCardOptimistic';
-import { WordStatusIndicator, BulkOperationProgress } from '../components/molecules/WordStatusIndicator';
+import { useWordMazeStore } from '../../../lib/stores/wordMazeStore';
+import { useWordMazeService } from '../../../lib/services/wordMazeService';
+import WordCardOptimistic from '../../../app/components/molecules/WordCardOptimistic';
+import { WordStatusIndicator, BulkOperationProgress } from '../../../app/components/molecules/WordStatusIndicator';
 
 export default function OptimisticUIDemo() {
   const [newWord, setNewWord] = useState('');
@@ -25,7 +25,7 @@ export default function OptimisticUIDemo() {
   } = useWordMazeStore();
   
   const { 
-    addWordWithOptimisticUpdate, 
+    addWordWithOptimisticUpdate,
     addWordsBulkWithOptimisticUpdate,
     deleteWordWithOptimisticUpdate,
     loadWords 

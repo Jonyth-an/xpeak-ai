@@ -66,11 +66,81 @@ xpeak-ai/
 │   ├── Layout.tsx         # Shared layout with header/footer
 │   ├── Header.tsx         # Sticky header component
 │   └── Footer.tsx         # Footer component
+├── tests/                 # Test files and scripts
+│   ├── api/              # API and service tests
+│   ├── integration/      # Integration and end-to-end tests
+│   ├── migration/        # Database migration scripts
+│   ├── setup/            # Setup and configuration tests
+│   └── utils/            # Utility and cleanup scripts
+├── docs/                  # Documentation
+│   ├── features/         # Feature-specific documentation
+│   ├── architecture/     # System architecture and design
+│   ├── setup/            # Setup and configuration guides
+│   ├── development/      # Development guidelines and processes
+│   └── api/              # API documentation and guides
+├── database/              # Database migrations
+│   └── migrations/       # SQL migration files
+├── scripts/              # Build and deployment scripts
 ├── public/                # Static assets
 ├── tailwind.config.js     # Tailwind CSS configuration
 ├── next.config.js         # Next.js configuration
 ├── package.json           # Dependencies and scripts
 └── README.md             # Project documentation
+```
+
+## Documentation
+
+The project includes comprehensive documentation organized in the `/docs` directory:
+
+- **Features** (`/docs/features/`): Feature-specific documentation and UI components
+- **Architecture** (`/docs/architecture/`): System architecture and design decisions
+- **Setup** (`/docs/setup/`): Configuration and setup guides
+- **Development** (`/docs/development/`): Development guidelines and processes
+- **API** (`/docs/api/`): API documentation and guides
+
+For detailed documentation, see [docs/README.md](docs/README.md).
+
+## Database
+
+The project includes database migrations organized in the `/database` directory:
+
+- **Migrations** (`/database/migrations/`): SQL migration files for database schema changes
+
+For detailed information about database migrations, see [database/README.md](database/README.md).
+
+### Running Migrations
+
+```bash
+# Run a specific migration
+psql -d your_database -f database/migrations/migration_name.sql
+
+# Check migration status
+node tests/migration/check_migration_status.js
+```
+
+## Testing
+
+The project includes comprehensive test files organized in the `/tests` directory:
+
+- **API Tests** (`/tests/api/`): Individual API and service tests
+- **Integration Tests** (`/tests/integration/`): End-to-end and integration tests
+- **Migration Scripts** (`/tests/migration/`): Database migration and setup scripts
+- **Setup Tests** (`/tests/setup/`): Configuration and setup verification tests
+- **Utility Scripts** (`/tests/utils/`): Utility and cleanup scripts
+
+For detailed information about running tests, see [tests/README.md](tests/README.md).
+
+### Quick Test Examples
+
+```bash
+# Run API tests
+node tests/api/test-basic-api.js
+
+# Run integration tests
+node tests/integration/test-oauth-flow.js
+
+# Run migration scripts
+node tests/migration/check_migration_status.js
 ```
 
 ## Pages
