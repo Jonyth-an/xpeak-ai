@@ -6,6 +6,11 @@ import TestimonialSection from './components/TestimonialSection';
 import FinalCTASection from './components/FinalCTASection';
 import SageaAnimation from '../components/molecules/SageaAnimation';
 import PlanTiersSection from '../pricing/components/PlanTiersSection';
+import XpeakIntelligenceSection from './components/XpeakIntelligenceSection';
+import WordMazeSection from './components/WordMazeSection';
+import TopicSparksSection from './components/TopicSparksSection';
+import LearningTreksSection from './components/LearningTreksSection';
+import TutorsCrewSection from './components/TutorsCrewSection';
 
 export default function MeetSageaPage() {
   return (
@@ -37,7 +42,12 @@ export default function MeetSageaPage() {
         </div>
       </section>
       <TutorValueCardsSection />
+      <WordMazeSection />
+      <TopicSparksSection />
+      <LearningTreksSection />
+      <TutorsCrewSection />
       <TestimonialSection />
+      <XpeakIntelligenceSection />
       {/* Pricing Section - match home page */}
       <PlanTiersSection />
       <FinalCTASection />
