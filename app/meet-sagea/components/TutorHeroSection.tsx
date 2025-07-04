@@ -8,17 +8,17 @@ export default function TutorHeroSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           {/* Left Side: Text & Buttons */}
           <div className="space-y-8">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-text leading-tight">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-text leading-tight mb-8">
               Meet Sagea
               <br />
-              <span className="text-blue-600">Your Lifelong Learning Companion</span>
+              <span className="text-blue-600">Your Lifelong Learning Coach and Partner</span>
             </h1>
             <p className="text-xl text-text-secondary leading-relaxed">
-              More than a tutor. Sagea is your ever-present coach and companion, listener, motivator, and learning architect — built from both human warmth and AI intelligence.
+              Sagea is your ever-present coach, listener and motivator — built from both human warmth and AI intelligence.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button variant="primary" size="lg">
-                → Start with Sagea
+                → Start Learning with Sagea
               </Button>
             </div>
           </div>
@@ -41,13 +41,6 @@ export default function TutorHeroSection() {
               </div>
             </div>
           </div>
-        </div>
-        
-        {/* Visual Metaphor Caption */}
-        <div className="text-center mt-16">
-          <p className="text-lg text-text-secondary italic max-w-3xl mx-auto">
-            Sagea weaves together every word you learn, every spark of curiosity, and every interaction — shaping a journey that's uniquely yours.
-          </p>
         </div>
       </div>
     </section>

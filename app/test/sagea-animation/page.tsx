@@ -17,8 +17,8 @@ interface AnimationStep {
 
 // Calculate exact positions using 72° intervals (360° ÷ 5 steps)
 // Starting from top (0°) and going clockwise
-// Center is at (400, 300), radius is 170 (adjusted from 180)
-const calculatePosition = (angle: number, radius: number = 170) => {
+// Center is at (400, 300), radius is 137.5 (increased by 5% from 131)
+const calculatePosition = (angle: number, radius: number = 137.5) => {
   const centerX = 400
   const centerY = 300
   const radians = (angle * Math.PI) / 180
@@ -73,11 +73,11 @@ const animationSteps: AnimationStep[] = [
 
 // Add per-icon offset support for fine-tuning
 const iconOffsets = [
-  { x: -30, y: -40 }, // Word Unlocked
-  { x: -18, y: -20 }, // Maze Connection
-  { x: -30, y: -20 }, // Spark Ignition
-  { x: -40, y: -20 }, // Trek Formed
-  { x: -45, y: -30 }, // Tutor Touchpoint
+  { x: -25, y: -35 }, // Word Unlocked
+  { x: -25, y: -18 }, // Maze Connection
+  { x: -38, y: -25 }, // Spark Ignition
+  { x: -38, y: -25 }, // Trek Formed
+  { x: -38, y: -22 }, // Tutor Touchpoint
 ];
 
 export default function SageaAnimation() {
@@ -171,8 +171,8 @@ export default function SageaAnimation() {
           </div>
 
           {/* Main Animation Container */}
-          <div className="flex justify-center mb-16">
-            <div className="relative w-[800px] h-[600px] bg-white/80 backdrop-blur-sm rounded-3xl border border-slate-200 shadow-2xl overflow-hidden">
+          <div className="flex justify-center mb-0">
+            <div className="relative w-[800px] h-[600px] rounded-3xl overflow-hidden">
               {/* Central Sagea */}
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <motion.div
@@ -208,7 +208,7 @@ export default function SageaAnimation() {
                 <circle
                   cx="400"
                   cy="300"
-                  r="180"
+                  r="137.5"
                   fill="none"
                   stroke="url(#orbitGradient)"
                   strokeWidth="3"
@@ -260,7 +260,7 @@ export default function SageaAnimation() {
 
                     {/* Step label */}
                     <div className="absolute top-20 left-1/2 transform -translate-x-1/2 text-center">
-                      <div className="bg-white px-3 py-1 rounded-full shadow-md border border-slate-200 whitespace-nowrap">
+                      <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-md border border-slate-200/50 whitespace-nowrap">
                         <span className="text-sm font-semibold text-slate-700">{step.title}</span>
                       </div>
                     </div>
@@ -284,13 +284,13 @@ export default function SageaAnimation() {
                   transformOrigin: "0 0",
                 }}
               >
-                <div
-                  className="absolute"
-                  style={{
-                    left: "0px",
-                    top: "-180px", // radius distance from center
-                  }}
-                >
+                                  <div
+                    className="absolute"
+                    style={{
+                      left: "0px",
+                      top: "-137.5px", // radius distance from center
+                    }}
+                  >
                   <div className="w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full shadow-lg border-2 border-white relative">
                     <motion.div
                       className="absolute inset-0 rounded-full bg-yellow-300/50"
@@ -324,11 +324,25 @@ export default function SageaAnimation() {
                   />
                 ))}
               </div>
+
+              {/* Center Sagea icon and label inside SVG */}
+              <g>
+                <foreignObject x="360" y="260" width="80" height="100">
+                  <div className="flex flex-col items-center justify-center w-full h-full">
+                    <div className="w-16 h-16 rounded-full flex items-center justify-center">
+                      <Brain className="w-10 h-10 text-white" />
+                    </div>
+                    <span className="mt-20 bg-white px-5 py-2 rounded-full shadow text-base font-bold text-slate-700 drop-shadow-sm whitespace-nowrap">
+                      Sagea
+                    </span>
+                  </div>
+                </foreignObject>
+              </g>
             </div>
           </div>
 
           {/* Current Step Description */}
-          <div className="text-center mb-12">
+          <div className="text-center mt-[-64px]">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentStep}
@@ -338,58 +352,23 @@ export default function SageaAnimation() {
                 transition={{ duration: 0.5 }}
                 className="max-w-2xl mx-auto"
               >
-                <Card className="p-8 bg-white/90 backdrop-blur-sm border-2 border-blue-100 shadow-lg">
-                  <div className="flex items-center justify-center gap-4 mb-4">
+                <Card className="p-4">
+                  <div className="flex items-center justify-center gap-3 mb-2">
                     <div
-                      className={`w-12 h-12 bg-gradient-to-r ${animationSteps[currentStep].color} rounded-full flex items-center justify-center text-white`}
+                      className={`w-8 h-8 bg-gradient-to-r ${animationSteps[currentStep].color} rounded-full flex items-center justify-center text-white`}
                     >
                       {animationSteps[currentStep].icon}
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-800">{animationSteps[currentStep].title}</h3>
+                    <h3 className="text-lg font-bold text-slate-800 drop-shadow-sm">
+                      {animationSteps[currentStep].title}
+                    </h3>
                   </div>
-                  <p className="text-lg text-slate-600">{animationSteps[currentStep].caption}</p>
+                  <p className="text-base text-slate-600 drop-shadow-sm leading-relaxed">
+                    {animationSteps[currentStep].caption}
+                  </p>
                 </Card>
               </motion.div>
             </AnimatePresence>
-          </div>
-
-          {/* Controls */}
-          <div className="text-center space-y-6">
-            <div className="flex justify-center gap-4">
-              <Button
-                onClick={toggleAnimation}
-                className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                {isPlaying ? (
-                  <>
-                    <Pause className="mr-2 w-5 h-5" />
-                    Pause Journey
-                  </>
-                ) : (
-                  <>
-                    <Play className="mr-2 w-5 h-5" />
-                    Resume Journey
-                  </>
-                )}
-              </Button>
-
-              <Button
-                onClick={restartAnimation}
-                variant="outline"
-                className="px-8 py-3 rounded-full text-lg font-semibold border-2 border-blue-500 text-blue-600 hover:bg-blue-50 transition-all duration-300 bg-transparent"
-              >
-                🔄 Restart Journey
-              </Button>
-            </div>
-
-            <div className="flex justify-center gap-6">
-              <Button variant="ghost" className="text-blue-600 hover:text-blue-700 font-medium hover:bg-blue-50">
-                🎮 Start Your Journey
-              </Button>
-              <Button variant="ghost" className="text-purple-600 hover:text-purple-700 font-medium hover:bg-purple-50">
-                🔍 Learn More About Sagea
-              </Button>
-            </div>
           </div>
         </div>
       </section>

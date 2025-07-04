@@ -41,11 +41,10 @@ export default function WordMazePublicPage() {
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
             <div className="text-center">
-              <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+              <h1 className="text-4xl md:text-5xl font-extrabold text-text leading-tight mb-8">
                 Word Maze
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
-                  Where Words Become Worlds
-                </span>
+                <br />
+                <span className="text-blue-600">Where Words Become Worlds</span>
               </h1>
               <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
                 Turn every word into a stepping stone. Word Maze helps you connect, practice, and remember vocabulary — like never before.

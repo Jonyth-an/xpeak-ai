@@ -5,11 +5,11 @@ export default function FinalCTASection() {
   return (
     <section className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 py-20">
       <div className="max-w-3xl mx-auto px-4 text-center">
-        <h2 className="text-white text-3xl md:text-4xl font-bold">
-          Ready to meet your lifelong learning companion?
+        <h2 className="text-slate-900 text-4xl md:text-5xl font-extrabold text-center mb-4">
+          "You don't just learn words. You explore a world."
         </h2>
         <p className="text-white text-opacity-80 text-lg max-w-xl mx-auto mt-4 mb-8">
-          Start your journey with Sagea and experience personalized learning that grows with you.
+        "Sagea will be with you — every word, every spark, every step."
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
           <Link href="/signup" legacyBehavior>
