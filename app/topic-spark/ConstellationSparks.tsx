@@ -11,20 +11,22 @@ interface Spark {
   color: string;
 }
 
-const sparks: Spark[] = [
-  { id: "coffee", position: { x: 15, y: 25 }, delay: 0, topic: "Coffee Culture", color: "#8B5CF6" },
-  { id: "travel", position: { x: 35, y: 15 }, delay: 0.8, topic: "Travel Planning", color: "#06B6D4" },
-  { id: "business", position: { x: 25, y: 45 }, delay: 1.6, topic: "Business Meetings", color: "#10B981" },
-  { id: "cooking", position: { x: 55, y: 20 }, delay: 2.4, topic: "Cooking Basics", color: "#F59E0B" },
-  { id: "sports", position: { x: 45, y: 50 }, delay: 3.2, topic: "Sports Discussion", color: "#EF4444" },
-  { id: "tech", position: { x: 75, y: 30 }, delay: 4.0, topic: "Technology", color: "#8B5CF6" },
-  { id: "culture", position: { x: 65, y: 60 }, delay: 4.8, topic: "Cultural Events", color: "#06B6D4" },
-  { id: "health", position: { x: 85, y: 45 }, delay: 5.6, topic: "Health & Wellness", color: "#10B981" },
-  { id: "music", position: { x: 20, y: 65 }, delay: 6.4, topic: "Music & Arts", color: "#F59E0B" },
-  { id: "shopping", position: { x: 40, y: 35 }, delay: 7.2, topic: "Shopping", color: "#EF4444" },
-  { id: "weather", position: { x: 60, y: 10 }, delay: 8.0, topic: "Weather Talk", color: "#8B5CF6" },
-  { id: "family", position: { x: 80, y: 65 }, delay: 8.8, topic: "Family Life", color: "#06B6D4" },
+// Set each spark's delay to index * 1 (1 second per spark)
+const baseSparks: Omit<Spark, 'delay'>[] = [
+  { id: "coffee", position: { x: 15, y: 25 }, topic: "Coffee Culture", color: "#8B5CF6" },
+  { id: "travel", position: { x: 35, y: 15 }, topic: "Travel Planning", color: "#06B6D4" },
+  { id: "business", position: { x: 25, y: 45 }, topic: "Business Meetings", color: "#10B981" },
+  { id: "cooking", position: { x: 55, y: 20 }, topic: "Cooking Basics", color: "#F59E0B" },
+  { id: "sports", position: { x: 45, y: 50 }, topic: "Sports Discussion", color: "#EF4444" },
+  { id: "tech", position: { x: 75, y: 30 }, topic: "Technology", color: "#8B5CF6" },
+  { id: "culture", position: { x: 65, y: 60 }, topic: "Cultural Events", color: "#06B6D4" },
+  { id: "health", position: { x: 85, y: 45 }, topic: "Health & Wellness", color: "#10B981" },
+  { id: "music", position: { x: 20, y: 65 }, topic: "Music & Arts", color: "#F59E0B" },
+  { id: "shopping", position: { x: 40, y: 35 }, topic: "Shopping", color: "#EF4444" },
+  { id: "weather", position: { x: 60, y: 10 }, topic: "Weather Talk", color: "#8B5CF6" },
+  { id: "family", position: { x: 80, y: 65 }, topic: "Family Life", color: "#06B6D4" },
 ];
+const sparks: Spark[] = baseSparks.map((spark, i) => ({ ...spark, delay: i }));
 
 const connections = [
   { from: "coffee", to: "travel" },
@@ -48,11 +50,32 @@ export default function ConstellationSparks() {
   const [animationStage, setAnimationStage] = useState(0);
   const [hoveredSpark, setHoveredSpark] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [activeSparkIndex, setActiveSparkIndex] = useState<number>(-1);
+
+  // Sequentially activate sparks and show only one label at a time
+  useEffect(() => {
+    if (!isPlaying) return;
+    let timeouts: NodeJS.Timeout[] = [];
+    sparks.forEach((spark, i) => {
+      timeouts.push(
+        setTimeout(() => {
+          setActiveSparkIndex(i);
+        }, i * 1500)
+      );
+    });
+    // Optionally hide label after last spark
+    timeouts.push(
+      setTimeout(() => {
+        setActiveSparkIndex(-1);
+      }, (sparks.length) * 1500 + 100)
+    );
+    return () => timeouts.forEach(clearTimeout);
+  }, [isPlaying]);
 
   const startAnimation = () => {
     setIsPlaying(true);
     setAnimationStage(-1);
-
+    setActiveSparkIndex(-1);
     setTimeout(() => setAnimationStage(0), 100);
     setTimeout(() => setAnimationStage(1), 500); // Show sparks
     setTimeout(() => setAnimationStage(2), 10000); // Show connections
@@ -188,9 +211,9 @@ export default function ConstellationSparks() {
                   style={{ backgroundColor: spark.color }}
                 />
 
-                {/* Tooltip */}
+                {/* Label: Only show for the currently active spark */}
                 <AnimatePresence>
-                  {hoveredSpark === spark.id && (
+                  {activeSparkIndex === index && (
                     <motion.div
                       className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-2 py-1 rounded text-xs whitespace-nowrap backdrop-blur-sm border border-white/20"
                       initial={{ opacity: 0, y: -5, scale: 0.8 }}
