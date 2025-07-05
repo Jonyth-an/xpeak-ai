@@ -414,62 +414,6 @@ export default function HomePage() {
         {/* Plans & Pricing Section */}
         <PlanTiersSection />
 
-        {/* Works Wherever You Learn */}
-        <section className="py-20">
-          <div className="container mx-auto px-4">
-            <div className="max-w-6xl mx-auto">
-              <motion.h2
-                className="text-4xl md:text-5xl font-bold text-center mb-16 text-slate-800"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-              >
-                Works Wherever You Learn
-              </motion.h2>
-
-              <div className="grid md:grid-cols-3 gap-8">
-                {[
-                  {
-                    icon: <Monitor className="w-12 h-12" />,
-                    title: "Desktop and Mobile Web",
-                    description: "Seamless experience across all your devices",
-                    color: "from-blue-500 to-indigo-600",
-                  },
-                  {
-                    icon: <Video className="w-12 h-12" />,
-                    title: "Tutors via Video or Chat",
-                    description: "Connect with human tutors in real-time",
-                    color: "from-emerald-500 to-teal-600",
-                  },
-                  {
-                    icon: <Globe className="w-12 h-12" />,
-                    title: "Syncs Across Time Zones",
-                    description: "Learn at your pace, anywhere in the world",
-                    color: "from-purple-500 to-violet-600",
-                  },
-                ].map((item, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.2 }}
-                  >
-                    <Card className="p-8 text-center hover:shadow-lg transition-all duration-300 border-2 border-slate-200 hover:border-blue-200">
-                      <div
-                        className={`w-20 h-20 bg-gradient-to-r ${item.color} rounded-2xl flex items-center justify-center mx-auto mb-6 text-white`}
-                      >
-                        {item.icon}
-                      </div>
-                      <h3 className="text-xl font-bold text-slate-800 mb-4">{item.title}</h3>
-                      <p className="text-slate-600 leading-relaxed">{item.description}</p>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Final CTA Section */}
         <section className="py-20 bg-gradient-to-r from-slate-800 to-slate-900">
           <div className="container mx-auto px-4 text-center">
