@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { Button, Input } from '@/app/components/ui';
+import { Button } from '@/app/components/ui';
+import NewsletterSubscription from './NewsletterSubscription';
 
 export default function Footer() {
   return (
@@ -44,7 +45,7 @@ export default function Footer() {
               <li><Link href="/xpeakai" className="hover:text-indigo-500 font-normal">Xpeak AI</Link></li>
               <li><Link href="/become-a-tutor" className="hover:text-indigo-500 font-normal">Become a Tutor</Link></li>
               <li><Link href="/community" className="hover:text-indigo-500 font-normal">Community</Link></li>
-              <li><Link href="#" className="hover:text-indigo-500 font-normal">Careers</Link></li>
+              <li><Link href="/career" className="hover:text-indigo-500 font-normal">Careers</Link></li>
               <li><Link href="#" className="hover:text-indigo-500 font-normal">Contact</Link></li>
             </ul>
           </div>
@@ -53,16 +54,11 @@ export default function Footer() {
           <div>
             <div className="font-semibold mb-2">Stay Updated</div>
             <div className="text-sm text-text-secondary mb-3">Get language tips & product updates<br />— no spam, promise.</div>
-            <form className="flex">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                className="rounded-r-none"
-              />
-              <Button type="submit" variant="primary" size="sm" className="rounded-l-none">
-                Subscribe
-              </Button>
-            </form>
+            <NewsletterSubscription 
+              source="footer"
+              placeholder="Enter your email"
+              buttonText="Subscribe"
+            />
           </div>
         </div>
         <hr className="my-8 border-border" />
