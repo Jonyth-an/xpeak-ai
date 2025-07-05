@@ -104,21 +104,28 @@ export default function SignupForm({ onSubmit, onSuccess, onError }: SignupFormP
         >
           {isGoogleLoading ? (
             <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-text-muted mr-2"></div>
               Signing up with Google...
             </div>
           ) : (
             <>
-              <svg width="20" height="20" viewBox="0 0 48 48" className="mr-2" aria-hidden="true"><g><path fill="#4285F4" d="M43.611 20.083H42V20H24v8h11.303C33.972 32.833 29.418 36 24 36c-6.627 0-12-5.373-12-12s5.373-12 12-12c2.803 0 5.377.99 7.409 2.626l6.591-6.591C34.583 5.14 29.617 3 24 3 12.954 3 4 11.954 4 23s8.954 20 20 20c11.045 0 19.799-7.954 19.799-19 0-1.27-.138-2.507-.377-3.717z"/><path fill="#34A853" d="M6.306 14.691l6.571 4.819C14.655 16.104 19.001 13 24 13c2.803 0 5.377.99 7.409 2.626l6.591-6.591C34.583 5.14 29.617 3 24 3c-7.732 0-14.41 4.41-17.694 10.691z"/><path fill="#FBBC05" d="M24 43c5.356 0 9.86-1.797 13.146-4.888l-6.066-4.966C29.418 36 24 36 24 36c-5.418 0-9.972-3.167-11.303-8.083l-6.591 6.591C9.59 40.59 16.268 45 24 45z"/><path fill="#EA4335" d="M43.611 20.083H42V20H24v8h11.303C34.418 32.833 29.418 36 24 36c-5.418 0-9.972-3.167-11.303-8.083l-6.591 6.591C9.59 40.59 16.268 45 24 45c7.732 0 14.41-4.41 17.694-10.691z"/></g></svg>
+              <svg width="20" height="20" viewBox="0 0 48 48" className="mr-2" aria-hidden="true">
+                <g>
+                  <path fill="#4285F4" d="M43.611 20.083H42V20H24v8h11.303C33.972 32.833 29.418 36 24 36c-6.627 0-12-5.373-12-12s5.373-12 12-12c2.803 0 5.377.99 7.409 2.626l6.591-6.591C34.583 5.14 29.617 3 24 3 12.954 3 4 11.954 4 23s8.954 20 20 20c11.045 0 19.799-7.954 19.799-19 0-1.27-.138-2.507-.377-3.717z"/>
+                  <path fill="#34A853" d="M6.306 14.691l6.571 4.819C14.655 16.104 19.001 13 24 13c2.803 0 5.377.99 7.409 2.626l6.591-6.591C34.583 5.14 29.617 3 24 3c-7.732 0-14.41 4.41-17.694 10.691z"/>
+                  <path fill="#FBBC05" d="M24 43c5.356 0 9.86-1.797 13.146-4.888l-6.066-4.966C29.418 36 24 36 24 36c-5.418 0-9.972-3.167-11.303-8.083l-6.591 6.591C9.59 40.59 16.268 45 24 45z"/>
+                  <path fill="#EA4335" d="M43.611 20.083H42V20H24v8h11.303C34.418 32.833 29.418 36 24 36c-5.418 0-9.972-3.167-11.303-8.083l-6.591 6.591C9.59 40.59 16.268 45 24 45c7.732 0 14.41-4.41 17.694-10.691z"/>
+                </g>
+              </svg>
               Continue with Google
             </>
           )}
         </Button>
         {/* Divider */}
         <div className="flex items-center my-2">
-          <div className="flex-grow border-t border-gray-200"></div>
-          <span className="mx-2 text-gray-400 text-xs">or</span>
-          <div className="flex-grow border-t border-gray-200"></div>
+          <div className="flex-grow border-t border-border"></div>
+          <span className="mx-2 text-text-muted text-xs">or</span>
+          <div className="flex-grow border-t border-border"></div>
         </div>
         {/* Name */}
         <div>
@@ -164,15 +171,15 @@ export default function SignupForm({ onSubmit, onSuccess, onError }: SignupFormP
             disabled={isLoading}
             minLength={6}
           />
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-text-muted">
             Password must be at least 6 characters long
           </p>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-md p-3">
-            <p className="text-red-800 text-sm">{error}</p>
+          <div className="bg-error-50 border border-error-200 rounded-md p-3">
+            <p className="text-error-800 text-sm">{error}</p>
           </div>
         )}
 

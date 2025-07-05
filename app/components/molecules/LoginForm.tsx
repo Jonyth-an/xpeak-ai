@@ -243,7 +243,7 @@ export default function LoginForm({
         >
           {isGoogleLoading ? (
             <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-text-muted mr-2"></div>
               Signing in with Google...
             </div>
           ) : (
@@ -280,12 +280,12 @@ export default function LoginForm({
         </Button>
         {/* Divider */}
         <div className="flex items-center my-2">
-          <div className="flex-grow border-t border-gray-200"></div>
-          <span className="mx-2 text-gray-400 text-xs">or</span>
-          <div className="flex-grow border-t border-gray-200"></div>
+          <div className="flex-grow border-t border-border"></div>
+          <span className="mx-2 text-text-muted text-xs">or</span>
+          <div className="flex-grow border-t border-border"></div>
         </div>
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+          <div className="bg-error-50 border border-error-200 text-error-700 px-4 py-3 rounded-lg text-sm">
             {error}
           </div>
         )}
@@ -342,13 +342,13 @@ export default function LoginForm({
 
         {/* Unverified email actions */}
         {unverifiedEmail && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-3">
-            <Text variant="small" className="text-yellow-800 font-medium">
+          <div className="bg-warning-50 border border-warning-200 rounded-lg p-4 space-y-3">
+            <Text variant="small" className="text-warning-800 font-medium">
               Email verification required
             </Text>
 
             {getRateLimitMessage() && (
-              <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-3 py-2 rounded text-sm">
+              <div className="bg-warning-100 border border-warning-300 text-warning-800 px-3 py-2 rounded text-sm">
                 {getRateLimitMessage()}
               </div>
             )}

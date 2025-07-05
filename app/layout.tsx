@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-          <div className="bg-token-primary text-token-text p-token-4 rounded-token-lg shadow-token-md">
+          <div className="bg-[#f9fafb] text-token-text">
             {children}
           </div>
         </AuthProvider>

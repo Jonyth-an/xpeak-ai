@@ -64,14 +64,14 @@ export default function PasswordResetForm({ onSubmit, onSuccess, onError }: Pass
     return (
       <Card className="max-w-md mx-auto rounded-token-lg">
         <div className="text-center space-y-4">
-          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-            <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-12 h-12 bg-success-100 rounded-full flex items-center justify-center mx-auto">
+            <svg className="w-6 h-6 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Check Your Email</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="text-lg font-medium text-text mb-2">Check Your Email</h3>
+            <p className="text-sm text-text-secondary">
               We've sent a password reset link to your email address. 
               Click the link in the email to reset your password.
             </p>
@@ -93,7 +93,7 @@ export default function PasswordResetForm({ onSubmit, onSuccess, onError }: Pass
     <Card className="max-w-md mx-auto rounded-token-lg">
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+          <div className="bg-error-50 border border-error-200 text-error-700 px-4 py-3 rounded-lg text-sm">
             {error}
           </div>
         )}

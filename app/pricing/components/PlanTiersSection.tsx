@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Button, Badge, ToggleGroup, Card, Text } from "@/app/components/ui";
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/AuthContext';
@@ -59,7 +59,7 @@ const plans = [
   }
 ];
 
-export default function PlanTiersSection() {
+function PlanTiersSectionInner() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
   const searchParams = useSearchParams();
   const urlCurrentPlan = searchParams.get('currentPlan');
@@ -400,5 +400,13 @@ export default function PlanTiersSection() {
         )}
       </div>
     </section>
+  );
+}
+
+export default function PlanTiersSection() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PlanTiersSectionInner />
+    </Suspense>
   );
 } 

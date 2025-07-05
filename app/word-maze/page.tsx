@@ -11,12 +11,12 @@ export default function WordMazePublicPage() {
   const { user } = useAuth();
   const router = useRouter();
 
-  // Generate maze pattern data once to avoid hydration errors
+  // Generate maze pattern data deterministically to avoid hydration errors
   const mazePattern = useMemo(() => {
-    return Array.from({ length: 40 }).map(() => ({
-      isActive: Math.random() > 0.7,
-      animationDelay: Math.random() * 2000,
-      animationDuration: 2000 + Math.random() * 2000
+    return Array.from({ length: 40 }).map((_, i) => ({
+      isActive: (i % 7 === 0) || (i % 11 === 0), // deterministic pattern
+      animationDelay: i * 100, // 0ms, 100ms, 200ms, ...
+      animationDuration: 2000 + (i % 10) * 300 // 2000ms, 2300ms, ...
     }));
   }, []);
 
@@ -73,7 +73,7 @@ export default function WordMazePublicPage() {
                               : 'bg-gradient-to-br from-blue-200/30 to-purple-200/30'
                           }`}
                           style={{
-                            animationDelay: `${i * 100}ms`,
+                            animationDelay: `${cell.animationDelay}ms`,
                             animationDuration: `${cell.animationDuration}ms`
                           }}
                         ></div>

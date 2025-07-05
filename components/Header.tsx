@@ -13,12 +13,14 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
+import { usePathname } from 'next/navigation';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState({ label: 'English', code: 'EN', flag: '🇺🇸' });
   const { user, loading, signOut } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,7 +50,7 @@ export default function Header() {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-background shadow-md' : 'bg-background/95 backdrop-blur-sm'
+      isScrolled ? 'bg-surface shadow-md' : 'bg-surface/95 backdrop-blur-sm'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -66,37 +68,19 @@ export default function Header() {
             {user ? (
               // Logged-in navigation
               <>
-                <Link href="/dashboard" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-                  Dashboard
-                </Link>
-                <Link href="/meet-sagea" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-                  Meet Sagea
-                </Link>
-                <Link href="/topic-spark" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-                  Topic Spark
-                </Link>
-                <Link href="/word-maze/learn" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-                  Word Maze
-                </Link>
-                <Link href="/pricing" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-                  Pricing
-                </Link>
+                <Link href="/dashboard" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/dashboard') ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Dashboard</Link>
+                <Link href="/meet-sagea" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/meet-sagea') ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Meet Sagea</Link>
+                <Link href="/topic-spark" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/topic-spark') ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Topic Spark</Link>
+                <Link href="/word-maze" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/word-maze') ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Word Maze</Link>
+                <Link href="/pricing" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname === '/pricing' ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Pricing</Link>
               </>
             ) : (
               // Logged-out navigation
               <>
-                <Link href="/meet-sagea" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-                  Meet Sagea
-                </Link>
-                <Link href="/topic-spark" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-                  Topic Spark
-                </Link>
-                <Link href="/word-maze" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-                  Word Maze
-                </Link>
-                <Link href="/pricing" className="text-base font-medium h-10 flex items-center px-4 rounded-lg text-text-secondary hover:text-primary-600 transition-colors">
-                  Pricing
-                </Link>
+                <Link href="/meet-sagea" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/meet-sagea') ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Meet Sagea</Link>
+                <Link href="/topic-spark" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/topic-spark') ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Topic Spark</Link>
+                <Link href="/word-maze" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/word-maze') ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Word Maze</Link>
+                <Link href="/pricing" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname === '/pricing' ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Pricing</Link>
               </>
             )}
           </nav>
@@ -106,7 +90,7 @@ export default function Header() {
             {/* Language Selector */}
             <div className="hidden md:block">
               <LanguageSelectorMenu
-                className="h-10 px-4 text-base font-medium rounded-lg border border-token-border bg-white"
+                className="h-10 px-4 text-base font-medium rounded-lg border border-border bg-surface"
                 options={[
                   { label: 'English', code: 'EN', flag: '🇺🇸' },
                   { label: 'Español', code: 'ES', flag: '🇪🇸' },
@@ -137,7 +121,7 @@ export default function Header() {
                           <img
                             src={user.user_metadata?.avatar_url || '/images/default-avatar.svg'}
                             alt="User avatar"
-                            className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 cursor-pointer hover:ring-2 hover:ring-primary-500 transition"
+                            className="w-8 h-8 rounded-full object-cover border-2 border-border cursor-pointer hover:ring-2 hover:ring-primary-500 transition"
                             onError={(e) => {
                               e.currentTarget.src = '/images/default-avatar.svg';
                             }}
@@ -155,14 +139,14 @@ export default function Header() {
                           <>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem asChild>
-                              <Link href="/admin/dashboard" className="text-purple-600 font-medium">
+                              <Link href="/admin/dashboard" className="text-secondary-600 font-medium">
                                 Admin Dashboard
                               </Link>
                             </DropdownMenuItem>
                           </>
                         )}
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleSignOut} disabled={signingOut} className="text-red-600">
+                        <DropdownMenuItem onClick={handleSignOut} disabled={signingOut} className="text-error-600">
                           {signingOut ? (
                             <div className="flex items-center">
                               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
