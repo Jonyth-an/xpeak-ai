@@ -94,7 +94,7 @@ export default function WordToMazeAnimation() {
           }
           return prev + 1;
         });
-      }, 3000);
+      }, 2000);
 
       return () => clearInterval(timer);
     }

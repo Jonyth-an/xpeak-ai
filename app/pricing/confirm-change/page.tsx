@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/AuthContext';
 import Layout from '../../../components/Layout';
@@ -20,7 +20,7 @@ interface PlanChangeDetails {
   isCrossCycleChange: boolean;
 }
 
-export default function ConfirmPlanChangePage() {
+function ConfirmPlanChangePageInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user, session } = useAuth();
@@ -322,5 +322,13 @@ export default function ConfirmPlanChangePage() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+export default function ConfirmPlanChangePage() {
+  return (
+    <Suspense>
+      <ConfirmPlanChangePageInner />
+    </Suspense>
   );
 } 

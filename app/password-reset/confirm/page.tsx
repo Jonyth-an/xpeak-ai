@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import Layout from '../../../components/Layout';
 import { Card, Input, Button, Text } from '@/app/components/ui';
 
-export default function PasswordResetConfirmPage() {
+function PasswordResetConfirmPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
@@ -175,5 +175,13 @@ export default function PasswordResetConfirmPage() {
         </div>
       </section>
     </Layout>
+  );
+}
+
+export default function PasswordResetConfirmPage() {
+  return (
+    <Suspense>
+      <PasswordResetConfirmPageInner />
+    </Suspense>
   );
 } 

@@ -51,8 +51,8 @@ export default function TutorsCrewSection() {
                 ].map((member, index) => {
                   const angle = index * 72 * (Math.PI / 180) // 72° intervals for 5 members
                   const radius = 120
-                  const x = 160 + radius * Math.cos(angle - Math.PI / 2)
-                  const y = 160 + radius * Math.sin(angle - Math.PI / 2)
+                  const x = 130 + radius * Math.cos(angle - Math.PI / 2)
+                  const y = 130 + radius * Math.sin(angle - Math.PI / 2)
 
                   return (
                     <motion.div

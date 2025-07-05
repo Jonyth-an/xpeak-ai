@@ -33,34 +33,34 @@ export default function TopicSparkPage() {
           </div>
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-            <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-extrabold text-text leading-tight mb-8">
-                Topic Spark
-                <br />
-                <span className="text-blue-600">Ignite Your Next Conversation</span>
-              </h1>
-              <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
-                Every journey begins with a spark. Topic Spark suggests personalized lesson ideas, cultural themes, and speaking challenges based on your goals — and your Word Maze.
-              </p>
-              
-              {/* CTA Button */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <div className="flex flex-col lg:flex-row items-center gap-12">
+              {/* Left: Text content */}
+              <div className="flex-1 text-left">
+                <h1 className="text-4xl md:text-5xl font-extrabold text-text leading-tight mb-8">
+                  Topic Spark
+                  <br />
+                  <span className="text-blue-600">Ignite Your Next Conversation</span>
+                </h1>
+                <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl leading-relaxed">
+                  Every journey begins with a spark. Topic Spark suggests personalized lesson ideas, cultural themes, and speaking challenges based on your goals — and your Word Maze.
+                </p>
                 <Button 
                   onClick={() => router.push('/signup')}
-                  className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-10 py-4 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                  className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-10 py-4 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 mb-8"
                 >
                   → Generate Your Next Spark
                 </Button>
               </div>
-
-              <ConstellationSparks />
-
-              {/* Caption below the new animation */}
-              <div className="mt-8 text-center">
-                <p className="text-lg text-gray-700 font-medium">
-                  🔥 Watch your sparks form constellations — as your fluency path lights up with Treks uniquely tailored to you.
-                </p>
+              {/* Right: Animation/Visual Metaphor */}
+              <div className="flex-1 flex justify-center items-center">
+                <ConstellationSparks />
               </div>
+            </div>
+            {/* Caption below the flex row */}
+            <div className="mt-8 text-center">
+              <p className="text-lg text-gray-700 font-medium">
+                🔥 Watch your sparks form constellations — as your fluency path lights up with Treks uniquely tailored to you.
+              </p>
             </div>
           </div>
         </div>

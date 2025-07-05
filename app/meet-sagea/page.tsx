@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import Layout from '../../components/Layout';
 import TutorHeroSection from './components/TutorHeroSection';
 import TutorValueCardsSection from './components/TutorValueCardsSection';
@@ -12,7 +12,7 @@ import TopicSparksSection from './components/TopicSparksSection';
 import LearningTreksSection from './components/LearningTreksSection';
 import TutorsCrewSection from './components/TutorsCrewSection';
 
-export default function MeetSageaPage() {
+function MeetSageaPageInner() {
   return (
     <Layout>
       <TutorHeroSection />
@@ -52,5 +52,13 @@ export default function MeetSageaPage() {
       <PlanTiersSection />
       <FinalCTASection />
     </Layout>
+  );
+}
+
+export default function MeetSageaPage() {
+  return (
+    <Suspense>
+      <MeetSageaPageInner />
+    </Suspense>
   );
 } 

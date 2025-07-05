@@ -244,7 +244,7 @@ async function enhanceInvoiceWithAdditionalData(invoice: Stripe.Invoice, custome
           failure_reason: (chargeData as any).failure_reason || undefined,
           outcome: chargeData.outcome ? {
             type: chargeData.outcome.type,
-            seller_message: chargeData.outcome.seller_message,
+            seller_message: chargeData.outcome.seller_message || '',
           } : undefined,
         };
       }
@@ -311,8 +311,8 @@ async function enhanceInvoiceWithAdditionalData(invoice: Stripe.Invoice, custome
       subscription = {
         id: sub.id,
         status: sub.status,
-        current_period_start: sub.current_period_start,
-        current_period_end: sub.current_period_end,
+        current_period_start: (sub as any).current_period_start,
+        current_period_end: (sub as any).current_period_end,
       };
     } catch (error) {
       console.log('Could not retrieve subscription:', (invoice as any).subscription);
@@ -320,33 +320,33 @@ async function enhanceInvoiceWithAdditionalData(invoice: Stripe.Invoice, custome
   }
 
   return {
-    id: invoice.id,
-    number: invoice.number,
+    id: invoice.id ?? '',
+    number: invoice.number ?? '',
     amount_paid: invoice.amount_paid,
     amount_due: invoice.amount_due,
-    currency: invoice.currency,
-    status: invoice.status,
+    currency: invoice.currency ?? '',
+    status: invoice.status ?? '',
     created: invoice.created,
-    due_date: invoice.due_date,
-    invoice_pdf: invoice.invoice_pdf,
-    hosted_invoice_url: invoice.hosted_invoice_url,
-    description: invoice.description,
-    customer_email: invoice.customer_email,
+    due_date: invoice.due_date ?? undefined,
+    invoice_pdf: invoice.invoice_pdf ?? undefined,
+    hosted_invoice_url: invoice.hosted_invoice_url ?? undefined,
+    description: invoice.description ?? undefined,
+    customer_email: invoice.customer_email ?? undefined,
     line_items_count: invoice.lines?.data?.length || 0,
-    period_start: invoice.period_start,
-    period_end: invoice.period_end,
+    period_start: invoice.period_start ?? undefined,
+    period_end: invoice.period_end ?? undefined,
     paid_at: invoice.status === 'paid' ? invoice.created : undefined,
-    product,
-    interval,
+    product: product ?? '',
+    interval: interval ?? '',
     
     // Enhanced fields
     payment_method,
     refunds,
     line_items,
-    tax_amount: invoice.tax,
-    discount_amount: invoice.discount,
-    subtotal: invoice.subtotal,
-    total_tax_amounts: invoice.total_tax_amounts?.map(tax => ({
+    tax_amount: (invoice as any).tax ?? undefined,
+    discount_amount: (invoice as any).discount ?? undefined,
+    subtotal: invoice.subtotal ?? undefined,
+    total_tax_amounts: ((invoice as any).total_tax_amounts as Array<any> | undefined)?.map((tax: any) => ({
       amount: tax.amount,
       inclusive: tax.inclusive,
       tax_rate: tax.tax_rate ? {
@@ -355,7 +355,21 @@ async function enhanceInvoiceWithAdditionalData(invoice: Stripe.Invoice, custome
       } : undefined,
     })),
     payment_intent,
-    charge,
+    charge: charge
+      ? {
+          id: charge.id,
+          status: charge.status ?? '',
+          created: charge.created,
+          receipt_url: charge.receipt_url ?? undefined,
+          failure_reason: (charge as any).failure_reason || undefined,
+          outcome: charge.outcome
+            ? {
+                type: charge.outcome.type ?? '',
+                seller_message: charge.outcome.seller_message || '',
+              }
+            : undefined,
+        }
+      : undefined,
     subscription,
   };
 }
@@ -690,24 +704,24 @@ export async function GET(request: NextRequest) {
         console.log('🔍 DEBUG: Extracted product/interval:', { product, interval });
         
         return {
-          id: invoice.id,
-          number: invoice.number,
+          id: invoice.id ?? '',
+          number: invoice.number ?? '',
           amount_paid: invoice.amount_paid,
           amount_due: invoice.amount_due,
-          currency: invoice.currency,
-          status: invoice.status,
+          currency: invoice.currency ?? '',
+          status: invoice.status ?? '',
           created: invoice.created,
-          due_date: invoice.due_date,
-          invoice_pdf: invoice.invoice_pdf,
-          hosted_invoice_url: invoice.hosted_invoice_url,
-          description: invoice.description,
-          customer_email: invoice.customer_email,
+          due_date: invoice.due_date ?? undefined,
+          invoice_pdf: invoice.invoice_pdf ?? undefined,
+          hosted_invoice_url: invoice.hosted_invoice_url ?? undefined,
+          description: invoice.description ?? undefined,
+          customer_email: invoice.customer_email ?? undefined,
           line_items_count: invoice.lines?.data?.length || 0,
-          period_start: invoice.period_start,
-          period_end: invoice.period_end,
+          period_start: invoice.period_start ?? undefined,
+          period_end: invoice.period_end ?? undefined,
           paid_at: invoice.status === 'paid' ? invoice.created : undefined,
-          product,
-          interval,
+          product: product ?? '',
+          interval: interval ?? '',
         } as EnhancedInvoice;
       });
     }

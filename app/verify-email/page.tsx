@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Layout from '../../components/Layout';
 import { Card, Button, Text } from '@/app/components/ui';
@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { rateLimiter, RATE_LIMIT_CONFIGS } from '@/lib/rateLimiter';
 
-export default function VerifyEmailPage() {
+function VerifyEmailPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useAuth();
@@ -332,5 +332,13 @@ export default function VerifyEmailPage() {
         </div>
       </section>
     </Layout>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense>
+      <VerifyEmailPageInner />
+    </Suspense>
   );
 } 

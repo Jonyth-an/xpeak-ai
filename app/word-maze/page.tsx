@@ -40,29 +40,26 @@ export default function WordMazePublicPage() {
           </div>
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-            <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-extrabold text-text leading-tight mb-8">
-                Word Maze
-                <br />
-                <span className="text-blue-600">Where Words Become Worlds</span>
-              </h1>
-              <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
-                Turn every word into a stepping stone. Word Maze helps you connect, practice, and remember vocabulary — like never before.
-              </p>
-              
-              {/* CTA Button */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <div className="flex flex-col lg:flex-row items-center gap-12">
+              {/* Left: Text content */}
+              <div className="flex-1 text-left">
+                <h1 className="text-4xl md:text-5xl font-extrabold text-text leading-tight mb-8">
+                  Word Maze
+                  <br />
+                  <span className="text-blue-600">Where Words Become Worlds</span>
+                </h1>
+                <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl leading-relaxed">
+                  Turn every word into a stepping stone. Word Maze helps you connect, practice, and remember vocabulary — like never before.
+                </p>
                 <Button 
                   onClick={() => router.push('/signup')}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-4 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-4 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 mb-8"
                 >
                   → Start Your Maze
                 </Button>
               </div>
-
-              {/* Visual Metaphor Section */}
-              <div className="relative">
-                {/* Maze Illustration Placeholder */}
+              {/* Right: Animation/Visual Metaphor */}
+              <div className="flex-1 flex justify-center items-center">
                 <div className="relative mx-auto w-96 h-64 bg-gradient-to-br from-blue-100/50 to-purple-100/50 rounded-2xl border-2 border-blue-200/50 backdrop-blur-sm">
                   {/* Animated maze pattern */}
                   <div className="absolute inset-4">
@@ -83,18 +80,16 @@ export default function WordMazePublicPage() {
                       ))}
                     </div>
                   </div>
-                  
                   {/* Glowing center */}
                   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full shadow-lg animate-pulse"></div>
                 </div>
-
-                {/* Caption */}
-                <div className="mt-8 text-center">
-                  <p className="text-lg text-gray-700 font-medium">
-                    🌀 Explore a living, intelligent maze of words — personalized to how you think, learn, and speak.
-                  </p>
-                </div>
               </div>
+            </div>
+            {/* Caption below the flex row */}
+            <div className="mt-8 text-center">
+              <p className="text-lg text-gray-700 font-medium">
+                🌀 Explore a living, intelligent maze of words — personalized to how you think, learn, and speak.
+              </p>
             </div>
           </div>
         </div>

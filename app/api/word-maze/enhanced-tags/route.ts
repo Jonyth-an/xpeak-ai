@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { AITaggingEngineEnhanced } from '../../../../lib/services/businessLogic/aiTaggingEngineEnhanced';
-import { VocabularyManager } from '../../../../lib/services/businessLogic/vocabularyManager';
+import { VocabularyManager } from '../../../../lib/services/vocabularyManager';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

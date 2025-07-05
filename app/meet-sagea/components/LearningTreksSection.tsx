@@ -66,7 +66,7 @@ export default function LearningTreksSection() {
               {/* Winding path */}
               <svg className="absolute inset-0 w-full h-full">
                 <motion.path
-                  d="M 80 320 Q 120 280 180 240 T 280 180 Q 320 160 360 180 T 380 240 Q 370 280 350 300"
+                  d="M 80 270 Q 120 230 180 190 T 280 150 Q 320 110 360 130 T 380 190 Q 370 230 350 250"
                   stroke="url(#trekGradient)"
                   strokeWidth="6"
                   fill="none"
@@ -86,11 +86,11 @@ export default function LearningTreksSection() {
 
               {/* Trek milestones along the path */}
               {[
-                { label: "Start", x: 80, y: 320 },
-                { label: "Explore", x: 180, y: 240 },
-                { label: "Practice", x: 280, y: 180 },
-                { label: "Master", x: 380, y: 240 },
-                { label: "Apply", x: 350, y: 300 },
+                { label: "Start", x: 100, y: 250 },
+                { label: "Explore", x: 180, y: 200 },
+                { label: "Practice", x: 280, y: 150 },
+                { label: "Master", x: 380, y: 120 },
+                { label: "Apply", x: 360, y: 230 },
               ].map((milestone, index) => (
                 <motion.div
                   key={milestone.label}
