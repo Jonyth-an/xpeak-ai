@@ -4,7 +4,7 @@ import { Button, Text } from '@/app/components/ui';
 
 export default function HeroSection() {
   return (
-    <section className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-20 px-4 sm:px-6 lg:px-8">
+    <section className="bg-gradient-to-br from-token-surface-subtle via-token-surface to-token-surface-accent py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto text-center">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text leading-tight mb-6">
           Help the World Speak as One

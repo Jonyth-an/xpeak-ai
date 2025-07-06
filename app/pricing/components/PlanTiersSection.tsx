@@ -291,11 +291,11 @@ function PlanTiersSectionInner() {
   // Show loading state only for authenticated users
   if (loading && user && session) {
     return (
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-token-surface-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading your current plan...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-token-primary mx-auto"></div>
+            <p className="mt-4 text-text-secondary">Loading your current plan...</p>
           </div>
         </div>
       </section>
@@ -303,13 +303,13 @@ function PlanTiersSectionInner() {
   }
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-token-surface-subtle">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl font-bold text-text mb-4">
             {isUpgradeDowngrade ? 'Change Your Plan' : 'Choose Your Plan'}
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-text-secondary max-w-2xl mx-auto">
             {isUpgradeDowngrade 
               ? `You're currently on the ${currentPlan ? currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1) : ''} plan (${currentBillingCycle} billing). Choose a new plan and billing cycle.`
               : 'Choose the perfect plan to start your language adventure with Xpeak AI. Upgrade, downgrade, or cancel anytime.'
@@ -350,7 +350,7 @@ function PlanTiersSectionInner() {
             return (
               <Card 
                 key={plan.id} 
-                className={`relative p-8 ${plan.highlight ? 'ring-2 ring-blue-500' : ''} ${isCurrentPlan ? 'ring-2 ring-blue-300 bg-blue-50' : ''}`}
+                className={`relative p-8 ${plan.highlight ? 'ring-2 ring-token-primary' : ''} ${isCurrentPlan ? 'ring-2 ring-token-primary-light bg-token-primary/5' : ''}`}
               >
                 {isCurrentPlan && (
                   <Badge variant="primary" className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -359,20 +359,20 @@ function PlanTiersSectionInner() {
                 )}
                 
                 <div className="text-center">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+                  <h3 className="text-2xl font-bold text-text mb-2">{plan.name}</h3>
                   <div className="mb-4">
-                    <span className="text-4xl font-bold text-gray-900">{priceLabel}</span>
-                    <span className="text-gray-600">{priceSuffix}</span>
+                    <span className="text-4xl font-bold text-text">{priceLabel}</span>
+                    <span className="text-text-secondary">{priceSuffix}</span>
                   </div>
-                  <p className="text-gray-600 mb-6">{plan.description}</p>
+                  <p className="text-text-secondary mb-6">{plan.description}</p>
                   
                   <ul className="text-left space-y-3 mb-8">
                     {plan.features.map((feature, index) => (
                       <li key={index} className="flex items-start">
-                        <svg className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-5 h-5 text-token-success mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
-                        <span className="text-gray-700">{feature}</span>
+                        <span className="text-text">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -395,7 +395,7 @@ function PlanTiersSectionInner() {
 
         {error && (
           <div className="mt-6 text-center">
-            <p className="text-red-600">{error}</p>
+            <p className="text-token-error">{error}</p>
           </div>
         )}
       </div>

@@ -17,7 +17,7 @@ function MeetSageaPageInner() {
     <Layout>
       <TutorHeroSection />
       {/* How Sagea works? Section */}
-      <section className="pt-8 pb-0 bg-slate-50">
+      <section className="pt-8 pb-0 bg-token-surface-subtle">
         <div className="container mx-auto px-4">
           {/* Flex layout with animation on left, content on right */}
           <div className="flex flex-col lg:flex-row items-start gap-12">
@@ -30,7 +30,7 @@ function MeetSageaPageInner() {
             <div className="flex-1 space-y-8 pl-0 lg:pl-16">
               {/* Header moved to right side */}
               <div className="text-left pt-16">
-                <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">
+                <h2 className="text-4xl md:text-5xl font-extrabold text-text mb-4">
                   How Sagea works?
                 </h2>
                 <p className="text-xl text-text-secondary leading-relaxed">
