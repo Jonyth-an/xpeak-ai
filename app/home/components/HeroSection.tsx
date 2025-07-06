@@ -6,7 +6,7 @@ export default function HeroSection() {
   return (
     <section className="bg-gradient-to-br from-token-surface-subtle via-token-surface to-token-surface-accent p-token-20 px-token-4 sm:px-token-6 lg:px-token-8">
       <div className="container-xl mx-auto text-token-center">
-        <h1 className="text-token-display-2xl md:text-token-display-xl lg:text-token-display-2xl font-token-bold text-token-primary leading-tight mb-token-6">
+        <h1 className="text-token-display-lg md:text-token-display-xl lg:text-token-5xl font-token-bold text-token-primary leading-tight mb-token-6">
           Help the World Speak as One
         </h1>
         <Text 

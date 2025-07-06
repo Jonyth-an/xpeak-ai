@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import Layout from '../../components/Layout';
 import PlanTiersSection from '../pricing/components/PlanTiersSection';
+import BuiltWithXpeakSection from './components/BuiltWithXpeakSection';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -86,14 +87,6 @@ const testimonials = [
     quote: "Finally, a learning platform that connects everything together.",
     author: "Sofia, Language Teacher",
   },
-]
-
-const xpeakFeatures = [
-  { icon: <Brain className="w-6 h-6" />, title: "Sagea", subtitle: "Your lifelong learning partner" },
-  { icon: <Puzzle className="w-6 h-6" />, title: "Word Maze", subtitle: "Vocabulary built into memory" },
-  { icon: <Sparkles className="w-6 h-6" />, title: "Topic Sparks", subtitle: "AI-generated ideas to explore" },
-  { icon: <Map className="w-6 h-6" />, title: "Learning Treks", subtitle: "Structured paths from sparks" },
-  { icon: <Users className="w-6 h-6" />, title: "Tutors & Crew", subtitle: "Human and AI support in sync" },
 ]
 
 export default function HomePage() {
@@ -188,49 +181,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* What is Xpeak AI Section */}
-        <section className="py-20 bg-token-surface/50">
-          <div className="container mx-auto px-4">
-            <div className="max-w-6xl mx-auto">
-              <motion.div
-                className="text-center mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-              >
-                <h2 className="text-4xl md:text-5xl font-bold mb-8 bg-gradient-to-r from-token-text to-token-text-secondary bg-clip-text text-transparent">
-                  Built with the Power of Xpeak AI
-                </h2>
-                <p className="text-xl text-text-secondary leading-relaxed max-w-4xl mx-auto mb-12">
-                  At the core of Xpeak is an adaptive learning engine that evolves with you. It remembers what you've
-                  learned, suggests what's next, and connects you with the right content, tools, and people — at the right
-                  time.
-                </p>
-                <p className="text-lg text-text-secondary mb-8">Xpeak AI powers every step of your journey:</p>
-              </motion.div>
-
-              <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
-                {xpeakFeatures.map((feature, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="flex-1 min-w-[200px] max-w-[220px]"
-                  >
-                    <Card className="p-6 text-center hover:shadow-lg transition-all duration-300 border-2 border-token-border hover:border-token-primary h-full">
-                      <div className="w-16 h-16 bg-gradient-to-r from-token-primary to-token-secondary rounded-full flex items-center justify-center mx-auto mb-4 text-white">
-                        {feature.icon}
-                      </div>
-                      <h3 className="text-lg font-bold text-text mb-2">{feature.title}</h3>
-                      <p className="text-text-secondary text-sm">{feature.subtitle}</p>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Built with the Power of Xpeak AI Section */}
+        <BuiltWithXpeakSection />
 
         {/* Feature Overview Cards */}
         <section className="py-20">

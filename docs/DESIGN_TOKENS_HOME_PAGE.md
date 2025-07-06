@@ -12,8 +12,9 @@ This document tracks the migration of the home page components to use the compre
 
 **Typography:**
 - **Before:** `text-4xl md:text-5xl lg:text-6xl font-extrabold text-text`
-- **After:** `text-token-display-2xl md:text-token-display-xl lg:text-token-display-2xl font-token-bold text-token-primary`
+- **After:** `text-token-display-lg md:text-token-display-xl lg:text-token-5xl font-token-bold text-token-primary`
 - **Improvement:** Uses semantic typography tokens with proper responsive scaling and semantic color tokens
+- **Font Sizes:** 36px (mobile) → 48px (tablet) → 60px (desktop) for optimal readability
 
 **Body Text:**
 - **Before:** `text-lg md:text-xl`
@@ -47,7 +48,7 @@ This document tracks the migration of the home page components to use the compre
 
 #### Benefits:
 1. **Consistent Typography:** Uses semantic display and body text tokens
-2. **Responsive Design:** Proper responsive typography scaling
+2. **Responsive Design:** Proper responsive typography scaling (36px → 48px → 60px)
 3. **Color Hierarchy:** Clear primary and secondary text colors
 4. **Interactive Feedback:** Proper hover and focus states with shadows
 5. **Spacing Consistency:** All spacing uses design tokens
@@ -58,6 +59,81 @@ This document tracks the migration of the home page components to use the compre
 - Better interactive feedback on buttons
 - Consistent spacing throughout the section
 - Enhanced accessibility with proper focus states
+- Optimized font sizes for better readability across devices
+
+---
+
+### ✅ Built with the Power of Xpeak AI Section (`app/home/components/BuiltWithXpeakSection.tsx`)
+
+**Upgraded:** January 2025
+
+#### Changes Made:
+
+**Typography:**
+- **Before:** `text-4xl md:text-5xl font-bold mb-8 bg-gradient-to-r from-token-text to-token-text-secondary`
+- **After:** `text-token-display-lg md:text-token-display-xl font-token-bold mb-token-8 bg-gradient-to-r from-token-primary to-token-secondary`
+- **Improvement:** Uses semantic typography tokens with proper gradient colors
+
+**Body Text:**
+- **Before:** `text-xl text-text-secondary leading-relaxed max-w-4xl mx-auto mb-12`
+- **After:** `text-token-body-xl text-token-secondary leading-relaxed max-w-4xl mx-auto mb-token-12`
+- **Improvement:** Uses semantic body text tokens with proper spacing
+
+**Subtitle Text:**
+- **Before:** `text-lg text-text-secondary mb-8`
+- **After:** `text-token-body-lg text-token-secondary mb-token-8`
+- **Improvement:** Uses semantic body text tokens
+
+**Spacing:**
+- **Before:** `py-20 bg-token-surface/50`
+- **After:** `p-token-20 bg-token-surface/50`
+- **Improvement:** Uses token-based padding
+
+**Container:**
+- **Before:** `container mx-auto px-4`
+- **After:** `container-xl mx-auto px-token-4`
+- **Improvement:** Uses semantic container tokens
+
+**Card Layout:**
+- **Before:** `p-6 text-center hover:shadow-lg transition-all duration-300 border-2 border-token-border hover:border-token-primary h-full`
+- **After:** `p-token-6 text-token-center hover:shadow-lg transition-base border-regular border-token-border hover:border-token-primary h-full bg-token-surface`
+- **Improvement:** Uses token-based padding, transitions, borders, and background colors
+
+**Card Typography:**
+- **Before:** `text-lg font-bold text-text mb-2`
+- **After:** `text-token-heading-lg font-token-bold text-token-primary mb-token-2`
+- **Improvement:** Uses semantic heading tokens with proper color hierarchy
+
+**Card Subtitle:**
+- **Before:** `text-text-secondary text-sm`
+- **After:** `text-token-body-md text-token-secondary`
+- **Improvement:** Uses semantic body text tokens
+
+**Gap:**
+- **Before:** `gap-6`
+- **After:** `gap-token-6`
+- **Improvement:** Uses token-based gap spacing
+
+**Icon Container:**
+- **Before:** `text-white`
+- **After:** `text-token-inverse`
+- **Improvement:** Uses semantic inverse text color token
+
+#### Benefits:
+1. **Component Extraction:** Separated into reusable component
+2. **Consistent Typography:** Uses semantic display, heading, and body text tokens
+3. **Color Hierarchy:** Clear primary and secondary text colors with proper gradients
+4. **Interactive Feedback:** Proper hover states with token-based transitions
+5. **Spacing Consistency:** All spacing uses design tokens
+6. **Border System:** Uses token-based border widths and colors
+7. **Background Colors:** Uses semantic surface colors
+
+#### Visual Impact:
+- Improved visual hierarchy with semantic typography
+- Better color contrast and gradients
+- Consistent spacing and layout
+- Enhanced card interactions
+- Proper component separation for maintainability
 
 ---
 
@@ -87,10 +163,13 @@ This document tracks the migration of the home page components to use the compre
 ## Design Token Reference
 
 ### Typography Tokens Used:
-- `text-token-display-2xl` - Hero headlines (64px)
+- `text-token-display-lg` - Main headlines (36px)
 - `text-token-display-xl` - Large headlines (48px)
+- `text-token-5xl` - Extra large headlines (60px)
+- `text-token-heading-lg` - Large headings (18px)
 - `text-token-body-xl` - Large body text (18px)
 - `text-token-body-lg` - Main body text (16px)
+- `text-token-body-md` - Medium body text (14px)
 - `font-token-bold` - Bold font weight
 
 ### Spacing Tokens Used:
@@ -98,16 +177,24 @@ This document tracks the migration of the home page components to use the compre
 - `px-token-4` - Small horizontal padding (16px)
 - `px-token-6` - Medium horizontal padding (24px)
 - `px-token-8` - Large horizontal padding (32px)
+- `mb-token-2` - Small bottom margin (8px)
 - `mb-token-6` - Medium bottom margin (24px)
 - `mb-token-8` - Large bottom margin (32px)
+- `mb-token-12` - Extra large bottom margin (48px)
+- `mb-token-16` - Huge bottom margin (64px)
 - `gap-token-4` - Medium gap (16px)
+- `gap-token-6` - Large gap (24px)
 
 ### Color Tokens Used:
-- `text-token-primary` - Primary text color
-- `text-token-secondary` - Secondary text color
-- `from-token-surface-subtle` - Gradient start
-- `via-token-surface` - Gradient middle
-- `to-token-surface-accent` - Gradient end
+- `text-token-primary` - Primary text color (#1E1E2F)
+- `text-token-secondary` - Secondary text color (#475569)
+- `text-token-inverse` - Inverse text color (#FFFFFF)
+- `from-token-primary` - Gradient start
+- `to-token-secondary` - Gradient end
+- `border-token-border` - Border color
+- `border-token-primary` - Primary border color
+- `bg-token-surface` - Surface background
+- `bg-token-surface/50` - Semi-transparent surface
 
 ### Interactive Tokens Used:
 - `transition-base` - Standard transition
@@ -118,4 +205,10 @@ This document tracks the migration of the home page components to use the compre
 
 ### Layout Tokens Used:
 - `container-xl` - Extra large container (1280px)
-- `text-token-center` - Center text alignment 
+- `text-token-center` - Center text alignment
+- `border-regular` - Regular border width (2px)
+
+### Border Tokens Used:
+- `border-regular` - Regular border width (2px)
+- `border-token-border` - Default border color
+- `border-token-primary` - Primary border color 
