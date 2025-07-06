@@ -10,4 +10,9 @@ export { default as UIDemo } from './UIDemo';
 export { default as Dropdown, type DropdownOption } from './Dropdown';
 export { default as ToggleGroup, type ToggleGroupOption } from './ToggleGroup';
 export { default as FeatureCard } from './FeatureCard';
+export { default as Typography, 
+  Display2XL, DisplayXL, DisplayLG, DisplayMD, DisplaySM, DisplayXS,
+  HeadingXL, HeadingLG, HeadingMD, HeadingSM,
+  BodyXL, BodyLG, BodyMD, BodySM, BodyXS
+} from './Typography';
 // Add further exports as you extract more atoms 

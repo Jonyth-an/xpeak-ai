@@ -166,14 +166,13 @@
   --font-xs: 0.75rem;      /* 12px */
   --font-sm: 0.875rem;     /* 14px */
   --font-base: 1rem;       /* 16px */
-  --font-lg: 1.125rem;     /* 18px */
-  --font-xl: 1.25rem;      /* 20px */
-  --font-2xl: 1.5rem;      /* 24px */
-  --font-3xl: 1.875rem;    /* 30px */
-  --font-4xl: 2.25rem;     /* 36px */
-  --font-5xl: 3rem;        /* 48px */
-  --font-6xl: 3.75rem;     /* 60px */
-  --font-7xl: 4.5rem;      /* 72px */
+  --font-md: 1.125rem;     /* 18px */
+  --font-lg: 1.25rem;      /* 20px */
+  --font-xl: 1.5rem;       /* 24px */
+  --font-2xl: 1.875rem;    /* 30px */
+  --font-3xl: 2.25rem;     /* 36px */
+  --font-4xl: 3rem;        /* 48px */
+  --font-5xl: 4rem;        /* 64px */
 
   /* --- Spacing --- */
   --space-xs: 0.25rem;     /* 4px */
@@ -202,35 +201,59 @@
 
   /* --- Border Radius --- */
   --radius-none: 0;
-  --radius-sm: 0.125rem;   /* 2px */
-  --radius-md: 0.375rem;   /* 6px */
-  --radius-lg: 0.5rem;     /* 8px */
-  --radius-xl: 0.75rem;    /* 12px */
-  --radius-2xl: 1rem;      /* 16px */
-  --radius-3xl: 1.5rem;    /* 24px */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-3xl: 32px;
   --radius-full: 9999px;
 
   /* Legacy radius (for backward compatibility) */
-  --radius-base: 0.25rem;  /* 4px */
+  --radius-base: 4px;
+
+  /* --- Border Widths --- */
+  --border-thin: 1px;
+  --border-regular: 2px;
+  --border-thick: 4px;
 
   /* --- Shadows --- */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 20px 30px rgba(0, 0, 0, 0.2);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
   --shadow-glow: 0 0 20px rgba(107, 206, 245, 0.3);
 
   /* Legacy shadows (for backward compatibility) */
-  --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-base: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   /* --- Transitions --- */
   --transition-fast: 150ms ease-in-out;
-  --transition-base: 200ms ease-in-out;
-  --transition-slow: 300ms ease-in-out;
+  --transition-base: 250ms ease-in-out;
+  --transition-slow: 400ms ease;
 
-  /* --- Z-Index Scale --- */
+  /* --- Motion Curves --- */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* --- Animations (Reference) --- */
+  --anim-bounce: var(--bounce);
+  --anim-fade: var(--ease-in-out);
+
+  /* --- Z-Index System --- */
+  --z-auto: auto;
+  --z-default: 0;
+  --z-10: 10;
+  --z-20: 20;
+  --z-30: 30;
+  --z-40: 40;
+  --z-50: 50;
   --z-dropdown: 1000;
   --z-sticky: 1020;
   --z-fixed: 1030;
@@ -238,4 +261,362 @@
   --z-modal: 1050;
   --z-popover: 1060;
   --z-tooltip: 1070;
+  --z-toast: 1080;
+
+  /* --- Grid & Layout --- */
+  --grid-gutter: 1.5rem;
+  --grid-gap-sm: 0.75rem;
+  --grid-gap-md: 1.5rem;
+  --grid-gap-lg: 2.5rem;
+
+  /* --- Container Widths --- */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+
+  /* --- Opacity Levels --- */
+  --opacity-0: 0;
+  --opacity-25: 0.25;
+  --opacity-50: 0.5;
+  --opacity-75: 0.75;
+  --opacity-100: 1;
+
+  /* --- Typography System --- */
+  /* Font Families */
+  --font-family-sans: 'Inter', 'Helvetica Neue', sans-serif;
+  --font-family-serif: 'Georgia', serif;
+  --font-family-mono: 'JetBrains Mono', monospace;
+
+  /* Font Weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Letter Spacing */
+  --letter-spacing-tight: -0.01em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.02em;
+
+  /* Semantic Typography Scale (using your practical sizes) */
+  --text-display-2xl: var(--font-5xl);    /* 64px - Hero headlines */
+  --text-display-xl: var(--font-4xl);     /* 48px - Large headlines */
+  --text-display-lg: var(--font-3xl);     /* 36px - Main headlines */
+  --text-display-md: var(--font-2xl);     /* 30px - Section headlines */
+  --text-display-sm: var(--font-xl);      /* 24px - Subsection headlines */
+  --text-display-xs: var(--font-lg);      /* 20px - Small headlines */
+  
+  --text-heading-xl: var(--font-lg);      /* 20px - Large headings */
+  --text-heading-lg: var(--font-md);      /* 18px - Main headings */
+  --text-heading-md: var(--font-base);    /* 16px - Sub headings */
+  --text-heading-sm: var(--font-sm);      /* 14px - Small headings */
+  
+  --text-body-xl: var(--font-md);         /* 18px - Large body text */
+  --text-body-lg: var(--font-base);       /* 16px - Main body text */
+  --text-body-md: var(--font-sm);         /* 14px - Small body text */
+  --text-body-sm: var(--font-xs);         /* 12px - Caption text */
+  --text-body-xs: 0.625rem;               /* 10px - Micro text (keeping this) */
+
+  /* Enhanced Spacing Scale */
+  --space-0: 0;
+  --space-1: 0.25rem;              /* 4px */
+  --space-2: 0.5rem;               /* 8px */
+  --space-3: 0.75rem;              /* 12px */
+  --space-4: 1rem;                 /* 16px */
+  --space-5: 1.25rem;              /* 20px */
+  --space-6: 1.5rem;               /* 24px */
+  --space-8: 2rem;                 /* 32px */
+  --space-10: 2.5rem;              /* 40px */
+  --space-12: 3rem;                /* 48px */
+  --space-16: 4rem;                /* 64px */
+  --space-20: 5rem;                /* 80px */
+  --space-24: 6rem;                /* 96px */
+  --space-32: 8rem;                /* 128px */
+  --space-40: 10rem;               /* 160px */
+  --space-48: 12rem;               /* 192px */
+  --space-56: 14rem;               /* 224px */
+  --space-64: 16rem;               /* 256px */
+
+  /* Layout Tokens */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+
+  /* Z-Index Scale */
+  --z-auto: auto;
+  --z-0: 0;
+  --z-10: 10;
+  --z-20: 20;
+  --z-30: 30;
+  --z-40: 40;
+  --z-50: 50;
+  --z-toast: 1080;
+
+  /* Aspect Ratios */
+  --aspect-square: 1 / 1;
+  --aspect-video: 16 / 9;
+  --aspect-photo: 4 / 3;
+  --aspect-wide: 21 / 9;
+  --aspect-ultrawide: 32 / 9;
+
+  /* Animation Durations */
+  --duration-75: 75ms;
+  --duration-100: 100ms;
+  --duration-150: 150ms;
+  --duration-200: 200ms;
+  --duration-300: 300ms;
+  --duration-500: 500ms;
+  --duration-700: 700ms;
+  --duration-1000: 1000ms;
+
+  /* Animation Easing */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Grid System */
+  --grid-cols-1: repeat(1, minmax(0, 1fr));
+  --grid-cols-2: repeat(2, minmax(0, 1fr));
+  --grid-cols-3: repeat(3, minmax(0, 1fr));
+  --grid-cols-4: repeat(4, minmax(0, 1fr));
+  --grid-cols-5: repeat(5, minmax(0, 1fr));
+  --grid-cols-6: repeat(6, minmax(0, 1fr));
+  --grid-cols-12: repeat(12, minmax(0, 1fr));
+
+  /* Flex Basis */
+  --flex-basis-auto: auto;
+  --flex-basis-0: 0;
+  --flex-basis-1: 8.333333%;
+  --flex-basis-2: 16.666667%;
+  --flex-basis-3: 25%;
+  --flex-basis-4: 33.333333%;
+  --flex-basis-5: 41.666667%;
+  --flex-basis-6: 50%;
+  --flex-basis-7: 58.333333%;
+  --flex-basis-8: 66.666667%;
+  --flex-basis-9: 75%;
+  --flex-basis-10: 83.333333%;
+  --flex-basis-11: 91.666667%;
+  --flex-basis-full: 100%;
+}
+
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+
+/* --- Border Radius Utilities --- */
+.radius-none { border-radius: var(--radius-none); }
+.radius-xs { border-radius: var(--radius-xs); }
+.radius-sm { border-radius: var(--radius-sm); }
+.radius-md { border-radius: var(--radius-md); }
+.radius-lg { border-radius: var(--radius-lg); }
+.radius-xl { border-radius: var(--radius-xl); }
+.radius-2xl { border-radius: var(--radius-2xl); }
+.radius-3xl { border-radius: var(--radius-3xl); }
+.radius-full { border-radius: var(--radius-full); }
+
+/* --- Border Width Utilities --- */
+.border-thin { border-width: var(--border-thin); }
+.border-regular { border-width: var(--border-regular); }
+.border-thick { border-width: var(--border-thick); }
+
+/* --- Shadow Utilities --- */
+.shadow-none { box-shadow: none; }
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-xl { box-shadow: var(--shadow-xl); }
+.shadow-2xl { box-shadow: var(--shadow-2xl); }
+.shadow-inner { box-shadow: var(--shadow-inner); }
+.shadow-glow { box-shadow: var(--shadow-glow); }
+
+/* --- Transition Utilities --- */
+.transition-none { transition: none; }
+.transition-fast { transition: var(--transition-fast); }
+.transition-base { transition: var(--transition-base); }
+.transition-slow { transition: var(--transition-slow); }
+
+/* --- Z-Index Utilities --- */
+.z-auto { z-index: var(--z-auto); }
+.z-0 { z-index: var(--z-0); }
+.z-10 { z-index: var(--z-10); }
+.z-20 { z-index: var(--z-20); }
+.z-30 { z-index: var(--z-30); }
+.z-40 { z-index: var(--z-40); }
+.z-50 { z-index: var(--z-50); }
+.z-dropdown { z-index: var(--z-dropdown); }
+.z-sticky { z-index: var(--z-sticky); }
+.z-fixed { z-index: var(--z-fixed); }
+.z-modal { z-index: var(--z-modal); }
+.z-toast { z-index: var(--z-toast); }
+.z-tooltip { z-index: var(--z-tooltip); }
+
+/* --- Opacity Utilities --- */
+.opacity-0 { opacity: var(--opacity-0); }
+.opacity-25 { opacity: var(--opacity-25); }
+.opacity-50 { opacity: var(--opacity-50); }
+.opacity-75 { opacity: var(--opacity-75); }
+.opacity-100 { opacity: var(--opacity-100); }
+
+/* --- Container Utilities --- */
+.container-sm { max-width: var(--container-sm); }
+.container-md { max-width: var(--container-md); }
+.container-lg { max-width: var(--container-lg); }
+.container-xl { max-width: var(--container-xl); }
+.container-2xl { max-width: var(--container-2xl); }
+
+/* --- Grid Gap Utilities --- */
+.gap-sm { gap: var(--grid-gap-sm); }
+.gap-md { gap: var(--grid-gap-md); }
+.gap-lg { gap: var(--grid-gap-lg); }
+
+/* --- Aspect Ratio Utilities --- */
+.aspect-square { aspect-ratio: var(--aspect-square); }
+.aspect-video { aspect-ratio: var(--aspect-video); }
+.aspect-photo { aspect-ratio: var(--aspect-photo); }
+.aspect-wide { aspect-ratio: var(--aspect-wide); }
+.aspect-ultrawide { aspect-ratio: var(--aspect-ultrawide); }
+
+/* --- Animation Duration Utilities --- */
+.duration-75 { transition-duration: var(--duration-75); }
+.duration-100 { transition-duration: var(--duration-100); }
+.duration-150 { transition-duration: var(--duration-150); }
+.duration-200 { transition-duration: var(--duration-200); }
+.duration-300 { transition-duration: var(--duration-300); }
+.duration-500 { transition-duration: var(--duration-500); }
+.duration-700 { transition-duration: var(--duration-700); }
+.duration-1000 { transition-duration: var(--duration-1000); }
+
+/* --- Animation Easing Utilities --- */
+.ease-linear { transition-timing-function: var(--ease-linear); }
+.ease-in { transition-timing-function: var(--ease-in); }
+.ease-out { transition-timing-function: var(--ease-out); }
+.ease-in-out { transition-timing-function: var(--ease-in-out); }
+.ease-bounce { transition-timing-function: var(--bounce); }
+
+/* --- Flex Basis Utilities --- */
+.flex-basis-auto { flex-basis: var(--flex-basis-auto); }
+.flex-basis-0 { flex-basis: var(--flex-basis-0); }
+.flex-basis-1 { flex-basis: var(--flex-basis-1); }
+.flex-basis-2 { flex-basis: var(--flex-basis-2); }
+.flex-basis-3 { flex-basis: var(--flex-basis-3); }
+.flex-basis-4 { flex-basis: var(--flex-basis-4); }
+.flex-basis-5 { flex-basis: var(--flex-basis-5); }
+.flex-basis-6 { flex-basis: var(--flex-basis-6); }
+.flex-basis-7 { flex-basis: var(--flex-basis-7); }
+.flex-basis-8 { flex-basis: var(--flex-basis-8); }
+.flex-basis-9 { flex-basis: var(--flex-basis-9); }
+.flex-basis-10 { flex-basis: var(--flex-basis-10); }
+.flex-basis-11 { flex-basis: var(--flex-basis-11); }
+.flex-basis-full { flex-basis: var(--flex-basis-full); }
+
+/* --- Semantic Component Classes --- */
+.card {
+  background: var(--color-surface);
+  border: var(--border-thin) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.button {
+  border-radius: var(--radius-md);
+  transition: var(--transition-fast);
+  font-weight: var(--font-weight-medium);
+}
+
+.button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.modal {
+  z-index: var(--z-modal);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2xl);
+}
+
+.dropdown {
+  z-index: var(--z-dropdown);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+.tooltip {
+  z-index: var(--z-tooltip);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+}
+
+.toast {
+  z-index: var(--z-toast);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+}
+
+/* --- Layout Component Classes --- */
+.container {
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+.grid {
+  display: grid;
+  gap: var(--grid-gap-md);
+}
+
+.flex {
+  display: flex;
+  gap: var(--grid-gap-sm);
+}
+
+/* --- Interactive States --- */
+.interactive {
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.interactive:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.interactive:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* --- Focus States --- */
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+/* --- Loading States --- */
+.loading {
+  opacity: var(--opacity-75);
+  pointer-events: none;
+}
+
+/* --- Disabled States --- */
+.disabled {
+  opacity: var(--opacity-50);
+  pointer-events: none;
+  cursor: not-allowed;
 } 
