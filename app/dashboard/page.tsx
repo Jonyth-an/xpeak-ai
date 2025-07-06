@@ -12,14 +12,14 @@ export default function DashboardPage() {
     <ProtectedRoute>
       <RequireEmailVerification>
         <Layout>
-          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-token-surface-accent-light">
             <div className="max-w-6xl mx-auto">
               {/* Header */}
               <div className="text-center mb-12">
                 <Text variant="h1" as="h1" className="mb-4">
                   Your Learning Dashboard
                 </Text>
-                <Text variant="lead" className="text-gray-600">
+                <Text variant="lead" className="text-text-secondary">
                   Track your progress, view your achievements, and continue your language learning journey
                 </Text>
               </div>

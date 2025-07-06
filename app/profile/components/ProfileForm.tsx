@@ -82,9 +82,9 @@ export default function ProfileForm() {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div className="bg-token-surface rounded-xl shadow-sm border border-token-border overflow-hidden">
       {/* Header */}
-      <div className="px-8 py-6 border-b border-gray-200 bg-gray-50">
+      <div className="px-8 py-6 border-b border-token-border bg-token-surface-accent-light">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-token-primary/10 rounded-xl flex items-center justify-center">
@@ -93,8 +93,8 @@ export default function ProfileForm() {
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
-              <p className="text-sm text-gray-600">Update your account details</p>
+              <h3 className="text-lg font-semibold text-text">Personal Information</h3>
+              <p className="text-sm text-text-secondary">Update your account details</p>
             </div>
           </div>
           {!isEditing && (
@@ -117,8 +117,8 @@ export default function ProfileForm() {
         {message && (
           <div className={`mb-6 p-4 rounded-xl border ${
             message.type === 'success' 
-              ? 'bg-green-50 border-green-200 text-green-800' 
-              : 'bg-red-50 border-red-200 text-red-800'
+              ? 'bg-token-success-surface border-token-success text-token-success' 
+              : 'bg-token-error-surface border-token-error text-token-error'
           }`}>
             <div className="flex items-center">
               {message.type === 'success' ? (
@@ -139,7 +139,7 @@ export default function ProfileForm() {
         <div className="space-y-6">
           {/* Full Name */}
           <div>
-            <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="full_name" className="block text-sm font-medium text-text-secondary mb-2">
               Full Name
             </label>
             <input
@@ -149,14 +149,14 @@ export default function ProfileForm() {
               value={profile.full_name}
               onChange={handleInputChange}
               disabled={!isEditing}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-token-primary focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors duration-200"
+              className="w-full px-4 py-3 border border-token-border rounded-xl bg-token-surface text-text placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-token-primary focus:border-transparent disabled:bg-token-surface-accent-light disabled:text-text-muted disabled:cursor-not-allowed transition-colors duration-200"
               placeholder="Enter your full name"
             />
           </div>
 
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-text-secondary mb-2">
               Email Address
             </label>
             <input
@@ -165,9 +165,9 @@ export default function ProfileForm() {
               name="email"
               value={profile.email}
               disabled={true}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-500 cursor-not-allowed"
+              className="w-full px-4 py-3 border border-token-border rounded-xl bg-token-surface-accent-light text-text-muted cursor-not-allowed"
             />
-            <p className="mt-2 text-sm text-gray-500 flex items-center">
+            <p className="mt-2 text-sm text-text-muted flex items-center">
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -176,12 +176,12 @@ export default function ProfileForm() {
           </div>
 
           {/* Account Info */}
-          <div className="pt-6 border-t border-gray-200">
-            <h4 className="text-sm font-medium text-gray-900 mb-4">Account Information</h4>
+          <div className="pt-6 border-t border-token-border">
+            <h4 className="text-sm font-medium text-text mb-4">Account Information</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                <div className="text-sm text-gray-500 mb-1">Member since</div>
-                <div className="text-sm font-medium text-gray-900">
+              <div className="bg-token-surface-accent-light rounded-xl p-4 border border-token-border">
+                <div className="text-sm text-text-muted mb-1">Member since</div>
+                <div className="text-sm font-medium text-text">
                   {user.created_at ? new Date(user.created_at).toLocaleDateString('en-US', { 
                     year: 'numeric', 
                     month: 'long', 
@@ -189,9 +189,9 @@ export default function ProfileForm() {
                   }) : 'N/A'}
                 </div>
               </div>
-              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                <div className="text-sm text-gray-500 mb-1">Last sign in</div>
-                <div className="text-sm font-medium text-gray-900">
+              <div className="bg-token-surface-accent-light rounded-xl p-4 border border-token-border">
+                <div className="text-sm text-text-muted mb-1">Last sign in</div>
+                <div className="text-sm font-medium text-text">
                   {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString('en-US', { 
                     year: 'numeric', 
                     month: 'short', 
@@ -205,7 +205,7 @@ export default function ProfileForm() {
 
         {/* Action Buttons */}
         {isEditing && (
-          <div className="mt-8 pt-6 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
+          <div className="mt-8 pt-6 border-t border-token-border flex flex-col sm:flex-row gap-3">
             <button
               onClick={handleSave}
               disabled={isLoading}
@@ -231,7 +231,7 @@ export default function ProfileForm() {
             <button
               onClick={handleCancel}
               disabled={isLoading}
-              className="inline-flex items-center justify-center px-6 py-3 bg-white text-gray-700 text-sm font-medium rounded-xl border border-gray-300 hover:bg-gray-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center px-6 py-3 bg-token-surface text-text-secondary text-sm font-medium rounded-xl border border-token-border hover:bg-token-surface-accent-light transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-token-border disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>

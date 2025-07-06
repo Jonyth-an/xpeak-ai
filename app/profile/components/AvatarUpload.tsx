@@ -187,7 +187,7 @@ export default function AvatarUpload({ onAvatarUpdate, className = '', compact =
           <Avatar
             src={currentAvatarUrl}
             alt="Current avatar"
-            className="w-20 h-20 rounded-full object-cover border-2 border-gray-200 mb-2"
+            className="w-20 h-20 rounded-full object-cover border-2 border-token-border mb-2"
           />
           {/* Buttons */}
           <div className="flex gap-2 mt-2">
@@ -212,14 +212,14 @@ export default function AvatarUpload({ onAvatarUpdate, className = '', compact =
                     onChange={handleFileInputChange}
                   />
                   <div
-                    className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 transition"
+                    className="border-2 border-dashed border-token-border rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:border-token-primary transition"
                     onClick={() => fileInputRef.current?.click()}
                     onDrop={handleDrop}
                     onDragOver={handleDragOver}
                   >
                     <span className="text-4xl mb-2">📤</span>
-                    <span className="text-gray-600 text-sm">Click to upload or drag and drop</span>
-                    <span className="text-gray-400 text-xs mt-1">PNG, JPG, WebP up to 5MB</span>
+                    <span className="text-text-secondary text-sm">Click to upload or drag and drop</span>
+                    <span className="text-text-muted text-xs mt-1">PNG, JPG, WebP up to 5MB</span>
                   </div>
                 </div>
                 {/* --- End Upload UI --- */}
@@ -251,7 +251,7 @@ export default function AvatarUpload({ onAvatarUpdate, className = '', compact =
           <img
             src={currentAvatarUrl}
             alt="Current avatar"
-            className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+            className="w-20 h-20 rounded-full object-cover border-2 border-token-border"
           />
           {isUploading && (
             <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
@@ -261,15 +261,15 @@ export default function AvatarUpload({ onAvatarUpdate, className = '', compact =
         </div>
         
         <div className="flex-1">
-          <Text variant="h4" className="text-gray-900 mb-1">
+          <Text variant="h4" className="text-text mb-1">
             Profile Photo
           </Text>
-          <Text variant="body" className="text-gray-600 mb-2">
+          <Text variant="body" className="text-text-secondary mb-2">
             Upload a square image for best results. We'll automatically compress and crop it.
           </Text>
           
           {compressionInfo && (
-            <div className="text-sm text-green-600 bg-green-50 p-2 rounded">
+            <div className="text-sm text-token-success bg-token-success-surface p-2 rounded">
               <div>Original: {(compressionInfo.originalSize / 1024 / 1024).toFixed(2)} MB</div>
               <div>Compressed: {(compressionInfo.compressedSize / 1024 / 1024).toFixed(2)} MB</div>
               <div>Saved: {((1 - compressionInfo.compressedSize / compressionInfo.originalSize) * 100).toFixed(1)}%</div>
@@ -282,8 +282,8 @@ export default function AvatarUpload({ onAvatarUpdate, className = '', compact =
       <div
         className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
           isDragOver 
-            ? 'border-blue-500 bg-blue-50' 
-            : 'border-gray-300 hover:border-gray-400'
+            ? 'border-token-primary bg-token-primary-surface' 
+            : 'border-token-border hover:border-token-border-hover'
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -291,21 +291,21 @@ export default function AvatarUpload({ onAvatarUpdate, className = '', compact =
       >
         <div className="space-y-4">
           <div className="flex flex-col items-center space-y-2">
-            <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-12 h-12 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
             <div>
-              <Text variant="body" className="text-gray-600">
+              <Text variant="body" className="text-text-secondary">
                 <button
                   type="button"
                   onClick={triggerFileInput}
-                  className="text-blue-600 hover:text-blue-500 font-medium"
+                  className="text-token-primary hover:text-token-primary-hover font-medium"
                 >
                   Click to upload
                 </button>
                 {' '}or drag and drop
               </Text>
-              <Text variant="small" className="text-gray-500">
+              <Text variant="small" className="text-text-muted">
                 PNG, JPG, WebP up to 5MB
               </Text>
             </div>
@@ -336,8 +336,8 @@ export default function AvatarUpload({ onAvatarUpdate, className = '', compact =
 
       {/* Error Display */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-          <Text variant="body" className="text-red-600">
+        <div className="bg-token-error-surface border border-token-error rounded-lg p-3">
+          <Text variant="body" className="text-token-error">
             {error}
           </Text>
         </div>

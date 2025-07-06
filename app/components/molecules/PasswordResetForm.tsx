@@ -64,8 +64,8 @@ export default function PasswordResetForm({ onSubmit, onSuccess, onError }: Pass
     return (
       <Card className="max-w-md mx-auto rounded-token-lg">
         <div className="text-center space-y-4">
-          <div className="w-12 h-12 bg-success-100 rounded-full flex items-center justify-center mx-auto">
-            <svg className="w-6 h-6 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-12 h-12 bg-token-success-surface rounded-full flex items-center justify-center mx-auto">
+            <svg className="w-6 h-6 text-token-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
@@ -79,7 +79,7 @@ export default function PasswordResetForm({ onSubmit, onSuccess, onError }: Pass
           <div className="pt-4">
             <a 
               href="/login" 
-              className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+              className="text-sm text-token-primary hover:text-token-primary-dark font-medium"
             >
               Back to Login
             </a>
@@ -93,7 +93,7 @@ export default function PasswordResetForm({ onSubmit, onSuccess, onError }: Pass
     <Card className="max-w-md mx-auto rounded-token-lg">
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <div className="bg-error-50 border border-error-200 text-error-700 px-4 py-3 rounded-lg text-sm">
+          <div className="bg-token-error-surface border border-token-error text-token-error px-4 py-3 rounded-lg text-sm">
             {error}
           </div>
         )}
@@ -133,7 +133,7 @@ export default function PasswordResetForm({ onSubmit, onSuccess, onError }: Pass
         <div className="text-center">
           <a 
             href="/login" 
-            className="text-sm text-text-secondary hover:text-primary-600 underline transition-colors"
+            className="text-sm text-text-secondary hover:text-token-primary underline transition-colors"
           >
             Back to Login
           </a>

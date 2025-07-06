@@ -77,25 +77,25 @@ export default function PasswordChangeForm() {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div className="token-surface-primary rounded-xl shadow-sm border token-border-primary overflow-hidden">
       {/* Header */}
-      <div className="px-8 py-6 border-b border-gray-200 bg-gray-50">
+      <div className="px-8 py-6 border-b token-border-primary token-surface-secondary">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-              <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 token-accent-light rounded-xl flex items-center justify-center">
+              <svg className="w-5 h-5 token-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Password Security</h3>
-              <p className="text-sm text-gray-600">Update your password to keep your account secure</p>
+              <h3 className="text-lg font-semibold token-text-primary">Password Security</h3>
+              <p className="text-sm token-text-secondary">Update your password to keep your account secure</p>
             </div>
           </div>
           {!showForm && (
             <button
               onClick={() => setShowForm(true)}
-              className="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              className="inline-flex items-center px-4 py-2 token-accent text-white text-sm font-medium rounded-lg hover:token-accent-hover transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-token-accent"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -112,8 +112,8 @@ export default function PasswordChangeForm() {
         {message && (
           <div className={`mb-6 p-4 rounded-xl border ${
             message.type === 'success' 
-              ? 'bg-green-50 border-green-200 text-green-800' 
-              : 'bg-red-50 border-red-200 text-red-800'
+              ? 'token-success-light token-border-success token-text-success' 
+              : 'token-error-light token-border-error token-text-error'
           }`}>
             <div className="flex items-center">
               {message.type === 'success' ? (
@@ -134,7 +134,7 @@ export default function PasswordChangeForm() {
         {showForm && (
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="newPassword" className="block text-sm font-medium token-text-primary mb-2">
                 New Password
               </label>
               <input
@@ -144,13 +144,13 @@ export default function PasswordChangeForm() {
                 value={passwords.newPassword}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors duration-200"
+                className="w-full px-4 py-3 border token-border-primary rounded-xl token-surface-primary token-text-primary placeholder-token-text-tertiary focus:outline-none focus:ring-2 focus:ring-token-accent focus:border-transparent transition-colors duration-200"
                 placeholder="Enter new password (min 6 characters)"
               />
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium token-text-primary mb-2">
                 Confirm New Password
               </label>
               <input
@@ -160,34 +160,34 @@ export default function PasswordChangeForm() {
                 value={passwords.confirmPassword}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors duration-200"
+                className="w-full px-4 py-3 border token-border-primary rounded-xl token-surface-primary token-text-primary placeholder-token-text-tertiary focus:outline-none focus:ring-2 focus:ring-token-accent focus:border-transparent transition-colors duration-200"
                 placeholder="Confirm new password"
               />
             </div>
 
             {/* Password Strength Indicator */}
             {passwords.newPassword && (
-              <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="p-4 token-surface-secondary rounded-xl border token-border-primary">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-gray-700">Password Strength</span>
+                  <span className="text-sm font-medium token-text-primary">Password Strength</span>
                   <span className={`text-sm font-medium ${
-                    passwords.newPassword.length >= 8 ? 'text-green-600' : 
-                    passwords.newPassword.length >= 6 ? 'text-yellow-600' : 'text-red-600'
+                    passwords.newPassword.length >= 8 ? 'token-success' : 
+                    passwords.newPassword.length >= 6 ? 'token-warning' : 'token-error'
                   }`}>
                     {passwords.newPassword.length >= 8 ? 'Strong' : 
                      passwords.newPassword.length >= 6 ? 'Medium' : 'Weak'}
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                <div className="w-full token-surface-tertiary rounded-full h-2 mb-2">
                   <div 
                     className={`h-2 rounded-full transition-all duration-300 ${
-                      passwords.newPassword.length >= 8 ? 'bg-green-500' : 
-                      passwords.newPassword.length >= 6 ? 'bg-yellow-500' : 'bg-red-500'
+                      passwords.newPassword.length >= 8 ? 'token-success' : 
+                      passwords.newPassword.length >= 6 ? 'token-warning' : 'token-error'
                     }`}
                     style={{ width: `${Math.min((passwords.newPassword.length / 8) * 100, 100)}%` }}
                   ></div>
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs token-text-tertiary">
                   Use at least 6 characters for a secure password
                 </p>
               </div>
@@ -198,7 +198,7 @@ export default function PasswordChangeForm() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="inline-flex items-center justify-center px-6 py-3 bg-red-600 text-white text-sm font-medium rounded-xl hover:bg-red-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center justify-center px-6 py-3 token-accent text-white text-sm font-medium rounded-xl hover:token-accent-hover transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-token-accent disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <>
@@ -221,7 +221,7 @@ export default function PasswordChangeForm() {
                 type="button"
                 onClick={handleCancel}
                 disabled={isLoading}
-                className="inline-flex items-center justify-center px-6 py-3 bg-white text-gray-700 text-sm font-medium rounded-xl border border-gray-300 hover:bg-gray-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center justify-center px-6 py-3 token-surface-primary token-text-primary text-sm font-medium rounded-xl border token-border-primary hover:token-surface-secondary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-token-border-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>
@@ -231,14 +231,14 @@ export default function PasswordChangeForm() {
 
         {/* Security Tips */}
         {!showForm && (
-          <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+          <div className="mt-6 p-4 token-info-light rounded-xl border token-border-info">
             <div className="flex items-start">
-              <svg className="w-5 h-5 text-blue-600 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 token-info-dark mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <div>
-                <h4 className="text-sm font-medium text-blue-900 mb-1">Security Tips</h4>
-                <p className="text-sm text-blue-700">
+                <h4 className="text-sm font-medium token-info-dark mb-1">Security Tips</h4>
+                <p className="text-sm token-text-secondary">
                   Use a strong password with at least 6 characters. Consider using a mix of letters, numbers, and symbols for better security.
                 </p>
               </div>

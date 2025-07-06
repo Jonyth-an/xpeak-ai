@@ -7,8 +7,8 @@ import { Card, Text, Button } from '@/app/components/ui';
 
 // Simple pencil SVG icon
 const EditIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block align-middle">
-    <path d="M14.7 2.29a1 1 0 0 1 1.42 0l1.59 1.59a1 1 0 0 1 0 1.42l-9.3 9.3-2.83.71.71-2.83 9.3-9.3zM3 17h14a1 1 0 1 1 0 2H3a1 1 0 1 1 0-2z" fill="#2563eb"/>
+  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block align-middle token-accent-dark">
+    <path d="M14.7 2.29a1 1 0 0 1 1.42 0l1.59 1.59a1 1 0 0 1 0 1.42l-9.3 9.3-2.83.71.71-2.83 9.3-9.3zM3 17h14a1 1 0 1 1 0 2H3a1 1 0 1 1 0-2z" fill="currentColor"/>
   </svg>
 );
 
@@ -208,11 +208,11 @@ export default function LanguagePreferences() {
         <Text as="h3" className="font-semibold mb-2">Current Language Level</Text>
         {!editLevel ? (
           <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm token-text-secondary">
               {getCurrentLevel()}
             </div>
             <button
-              className="ml-4 p-2 rounded hover:bg-blue-50 transition"
+              className="ml-4 p-2 rounded hover:token-accent-light transition"
               onClick={() => setEditLevel(true)}
             >
               <EditIcon />
@@ -220,7 +220,7 @@ export default function LanguagePreferences() {
           </div>
         ) : (
           <div>
-            <div className="mb-3 text-sm text-gray-600">Tell us your current level so we can match you with the right content and tutors:</div>
+            <div className="mb-3 text-sm token-text-secondary">Tell us your current level so we can match you with the right content and tutors:</div>
             <div className="space-y-2">
               {languageLevels.map((level) => (
                 <label key={level.code} className="flex items-start cursor-pointer">
@@ -230,11 +230,11 @@ export default function LanguagePreferences() {
                     value={level.code}
                     checked={selectedLevel === level.code}
                     onChange={(e) => setSelectedLevel(e.target.value)}
-                    className="mt-1 mr-3 accent-blue-600"
+                    className="mt-1 mr-3 accent-token-accent"
                   />
                   <div>
-                    <div className="font-medium text-blue-700">{level.name}</div>
-                    <div className="text-sm text-gray-600">{level.description}</div>
+                    <div className="font-medium token-accent-dark">{level.name}</div>
+                    <div className="text-sm token-text-secondary">{level.description}</div>
                   </div>
                 </label>
               ))}
@@ -254,11 +254,11 @@ export default function LanguagePreferences() {
         <Text as="h3" className="font-semibold mb-2">Your Goals</Text>
         {!editGoals ? (
           <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm token-text-secondary">
               {getSelectedGoalNames()}
             </div>
             <button
-              className="ml-4 p-2 rounded hover:bg-purple-50 transition"
+              className="ml-4 p-2 rounded hover:token-purple-light transition"
               onClick={() => setEditGoals(true)}
             >
               <EditIcon />
@@ -266,10 +266,10 @@ export default function LanguagePreferences() {
           </div>
         ) : (
           <div>
-            <div className="mb-3 text-sm text-gray-600">Learning for travel, work, test prep, or fun? Help us personalize your experience:</div>
+            <div className="mb-3 text-sm token-text-secondary">Learning for travel, work, test prep, or fun? Help us personalize your experience:</div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {learningGoals.map((goal) => (
-                <label key={goal.id} className="flex items-center cursor-pointer p-3 border border-purple-200 rounded-lg hover:bg-purple-50">
+                <label key={goal.id} className="flex items-center cursor-pointer p-3 border border-token-border-purple rounded-lg hover:bg-token-accent-light">
                   <input
                     type="checkbox"
                     checked={selectedGoals.includes(goal.id)}
@@ -280,11 +280,11 @@ export default function LanguagePreferences() {
                         setSelectedGoals(selectedGoals.filter(id => id !== goal.id));
                       }
                     }}
-                    className="mr-3 accent-purple-600"
+                    className="mr-3 accent-token-purple"
                   />
                   <div>
-                    <div className="font-medium text-purple-700">{goal.icon} {goal.name}</div>
-                    <div className="text-sm text-gray-600">{goal.description}</div>
+                    <div className="font-medium token-purple-dark">{goal.icon} {goal.name}</div>
+                    <div className="text-sm token-text-secondary">{goal.description}</div>
                   </div>
                 </label>
               ))}
@@ -304,11 +304,11 @@ export default function LanguagePreferences() {
         <Text as="h3" className="font-semibold mb-2">Topics & Interests</Text>
         {!editTopics ? (
           <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm token-text-secondary">
               {getSelectedTopicNames()}
             </div>
             <button
-              className="ml-4 p-2 rounded hover:bg-orange-50 transition"
+              className="ml-4 p-2 rounded hover:token-orange-light transition"
               onClick={() => setEditTopics(true)}
             >
               <EditIcon />
@@ -316,10 +316,10 @@ export default function LanguagePreferences() {
           </div>
         ) : (
           <div>
-            <div className="mb-3 text-sm text-gray-600">Choose what excites you — culture, business, pop trends, or daily life:</div>
+            <div className="mb-3 text-sm token-text-secondary">Choose what excites you — culture, business, pop trends, or daily life:</div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {topicInterests.map((topic) => (
-                <label key={topic.id} className="flex items-center cursor-pointer p-3 border border-orange-200 rounded-lg hover:bg-orange-50">
+                <label key={topic.id} className="flex items-center cursor-pointer p-3 border border-token-border-orange rounded-lg hover:bg-token-accent-light">
                   <input
                     type="checkbox"
                     checked={selectedTopics.includes(topic.id)}
@@ -330,11 +330,11 @@ export default function LanguagePreferences() {
                         setSelectedTopics(selectedTopics.filter(id => id !== topic.id));
                       }
                     }}
-                    className="mr-3 accent-orange-600"
+                    className="mr-3 accent-token-orange"
                   />
                   <div>
-                    <div className="font-medium text-orange-700">{topic.icon} {topic.name}</div>
-                    <div className="text-sm text-gray-600">{topic.description}</div>
+                    <div className="font-medium token-orange-dark">{topic.icon} {topic.name}</div>
+                    <div className="text-sm token-text-secondary">{topic.description}</div>
                   </div>
                 </label>
               ))}
@@ -350,7 +350,7 @@ export default function LanguagePreferences() {
       </Card>
 
       {error && (
-        <div className="text-red-500 text-sm mt-2">{error}</div>
+        <div className="token-error text-sm mt-2">{error}</div>
       )}
     </div>
   );

@@ -24,7 +24,7 @@ export default function ProfilePage() {
     <ProtectedRoute>
       <RequireEmailVerification>
         <Layout>
-          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 min-h-screen">
+          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-token-surface-accent-light min-h-screen">
             <div className="max-w-7xl mx-auto">
               {/* Main Content with Sidebar - Use flex for large screens */}
               <div className="relative lg:flex lg:min-h-[600px]">
@@ -45,7 +45,7 @@ export default function ProfilePage() {
                         <Text variant="h3" as="h3" className="mb-2">
                           Profile Photo
                         </Text>
-                        <Text variant="body" className="text-gray-600">
+                        <Text variant="body" className="text-text-secondary">
                           Upload a photo to personalize your profile
                         </Text>
                       </div>
@@ -57,7 +57,7 @@ export default function ProfilePage() {
                       
                       {avatarUpdated && (
                         <div className="mt-4 text-center">
-                          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
+                          <div className="bg-token-success-surface border border-token-success text-token-success px-4 py-3 rounded-lg text-sm">
                             ✅ Avatar updated successfully!
                           </div>
                         </div>
@@ -70,7 +70,7 @@ export default function ProfilePage() {
                         <Text variant="h3" as="h3" className="mb-2">
                           Personal Information
                         </Text>
-                        <Text variant="body" className="text-gray-600">
+                        <Text variant="body" className="text-text-secondary">
                           Update your personal details and contact information
                         </Text>
                       </div>

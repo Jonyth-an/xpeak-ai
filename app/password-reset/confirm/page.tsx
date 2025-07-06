@@ -74,14 +74,14 @@ function PasswordResetConfirmPageInner() {
           <div className="max-w-7xl mx-auto">
             <Card className="max-w-md mx-auto rounded-token-lg">
               <div className="text-center space-y-4">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-token-success-surface rounded-full flex items-center justify-center mx-auto">
+                  <svg className="w-6 h-6 text-token-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Password Updated!</h3>
-                  <p className="text-sm text-gray-600">
+                  <h3 className="text-lg font-medium text-text mb-2">Password Updated!</h3>
+                  <p className="text-sm text-text-secondary">
                     Your password has been successfully updated. You can now sign in with your new password.
                   </p>
                 </div>

@@ -7,8 +7,8 @@ import { Card, Text, Button } from '@/app/components/ui';
 
 // Simple pencil SVG icon
 const EditIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block align-middle">
-    <path d="M14.7 2.29a1 1 0 0 1 1.42 0l1.59 1.59a1 1 0 0 1 0 1.42l-9.3 9.3-2.83.71.71-2.83 9.3-9.3zM3 17h14a1 1 0 1 1 0 2H3a1 1 0 1 1 0-2z" fill="#2563eb"/>
+  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block align-middle token-accent-dark">
+    <path d="M14.7 2.29a1 1 0 0 1 1.42 0l1.59 1.59a1 1 0 0 1 0 1.42l-9.3 9.3-2.83.71.71-2.83 9.3-9.3zM3 17h14a1 1 0 1 1 0 2H3a1 1 0 1 1 0-2z" fill="currentColor"/>
   </svg>
 );
 
@@ -121,13 +121,13 @@ export default function TimezonePreferences() {
       {!editMode ? (
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-sm text-gray-600">Region: <span className="font-medium">{currentTzObj ? currentTzObj.region : '—'}</span></div>
-            <div className="text-sm text-gray-600">City: <span className="font-medium">{currentTzObj ? currentTzObj.city : currentTimezone}</span></div>
-            <div className="text-sm text-gray-600">Timezone: <span className="font-medium">{currentTzObj ? `${currentTzObj.label} (${currentTzObj.offset})` : currentTimezone}</span></div>
-            <div className="text-xs text-gray-400">Current time: {getCurrentTime(currentTimezone)}</div>
+            <div className="text-sm token-text-secondary">Region: <span className="font-medium">{currentTzObj ? currentTzObj.region : '\u2014'}</span></div>
+            <div className="text-sm token-text-secondary">City: <span className="font-medium">{currentTzObj ? currentTzObj.city : currentTimezone}</span></div>
+            <div className="text-sm token-text-secondary">Timezone: <span className="font-medium">{currentTzObj ? `${currentTzObj.label} (${currentTzObj.offset})` : currentTimezone}</span></div>
+            <div className="text-xs token-text-tertiary">Current time: {getCurrentTime(currentTimezone)}</div>
           </div>
           <button
-            className="ml-4 p-2 rounded hover:bg-blue-50 transition"
+            className="ml-4 p-2 rounded hover:token-accent-light transition"
             aria-label="Edit timezone"
             onClick={() => setEditMode(true)}
           >
@@ -136,11 +136,11 @@ export default function TimezonePreferences() {
         </div>
       ) : (
         <div>
-          <div className="mb-2 text-sm text-gray-600">Select your timezone (by city):</div>
+          <div className="mb-2 text-sm token-text-secondary">Select your timezone (by city):</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {regions.map(region => (
               <div key={region}>
-                <div className="font-semibold text-blue-700 mb-1">{region}</div>
+                <div className="font-semibold token-accent-dark mb-1">{region}</div>
                 <div className="space-y-1">
                   {timezones.filter(tz => tz.region === region).map(tz => (
                     <label key={tz.value} className="flex items-center cursor-pointer">
@@ -150,9 +150,9 @@ export default function TimezonePreferences() {
                         value={tz.value}
                         checked={selectedTimezone === tz.value}
                         onChange={() => setSelectedTimezone(tz.value)}
-                        className="mr-2 accent-blue-600"
+                        className="mr-2 accent-token-accent"
                       />
-                      <span className="text-sm">{tz.city} <span className="text-gray-400">({tz.label}, {tz.offset})</span> <span className="text-gray-300 ml-1">{getCurrentTime(tz.value)}</span></span>
+                      <span className="text-sm">{tz.city} <span className="token-text-tertiary">({tz.label}, {tz.offset})</span> <span className="token-border-tertiary ml-1">{getCurrentTime(tz.value)}</span></span>
                     </label>
                   ))}
                 </div>
@@ -162,7 +162,7 @@ export default function TimezonePreferences() {
           <div className="mt-4 flex gap-2">
             <Button onClick={handleSave} disabled={loading} variant="primary">{loading ? 'Saving...' : 'Save'}</Button>
             <Button onClick={() => { setEditMode(false); setSelectedTimezone(currentTimezone); }} variant="secondary">Cancel</Button>
-            {error && <span className="text-red-500 ml-2 text-sm">{error}</span>}
+            {error && <span className="token-error ml-2 text-sm">{error}</span>}
           </div>
         </div>
       )}

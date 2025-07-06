@@ -280,12 +280,12 @@ export default function LoginForm({
         </Button>
         {/* Divider */}
         <div className="flex items-center my-2">
-          <div className="flex-grow border-t border-border"></div>
+          <div className="flex-grow border-t border-token-border"></div>
           <span className="mx-2 text-text-muted text-xs">or</span>
-          <div className="flex-grow border-t border-border"></div>
+          <div className="flex-grow border-t border-token-border"></div>
         </div>
         {error && (
-          <div className="bg-error-50 border border-error-200 text-error-700 px-4 py-3 rounded-lg text-sm">
+          <div className="bg-token-error-surface border border-token-error text-token-error px-4 py-3 rounded-lg text-sm">
             {error}
           </div>
         )}
@@ -342,13 +342,13 @@ export default function LoginForm({
 
         {/* Unverified email actions */}
         {unverifiedEmail && (
-          <div className="bg-warning-50 border border-warning-200 rounded-lg p-4 space-y-3">
-            <Text variant="small" className="text-warning-800 font-medium">
+          <div className="bg-token-warning-surface border border-token-warning rounded-lg p-4 space-y-3">
+            <Text variant="small" className="text-token-warning font-medium">
               Email verification required
             </Text>
 
             {getRateLimitMessage() && (
-              <div className="bg-warning-100 border border-warning-300 text-warning-800 px-3 py-2 rounded text-sm">
+              <div className="bg-token-warning-surface-light border border-token-warning text-token-warning px-3 py-2 rounded text-sm">
                 {getRateLimitMessage()}
               </div>
             )}
@@ -378,7 +378,7 @@ export default function LoginForm({
         <div className="text-center mt-2">
           <a
             href="/password-reset"
-            className="text-sm text-text-secondary hover:text-primary-600 underline transition-colors"
+            className="text-sm text-text-secondary hover:text-token-primary underline transition-colors"
           >
             Forgot your password?
           </a>

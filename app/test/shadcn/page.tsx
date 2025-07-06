@@ -85,7 +85,7 @@ export default function TestShadcnPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-token-surface-accent-light p-8">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="text-center">
           <Text variant="h1" className="mb-4">shadcn/ui + Custom UI Integration Test</Text>
@@ -192,10 +192,10 @@ export default function TestShadcnPage() {
           
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 bg-primary text-white rounded-lg">
+              <div className="p-4 bg-token-primary text-white rounded-lg">
                 <Text variant="body" className="text-white">Primary Color Token</Text>
               </div>
-              <div className="p-4 bg-secondary text-white rounded-lg">
+              <div className="p-4 bg-token-secondary text-white rounded-lg">
                 <Text variant="body" className="text-white">Secondary Color Token</Text>
               </div>
               <div className="p-4 bg-accent text-black rounded-lg">

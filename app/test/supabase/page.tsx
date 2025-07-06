@@ -30,32 +30,32 @@ export default function TestSupabasePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">Supabase Client Test</h1>
+    <div className="min-h-screen bg-token-surface-accent-light flex items-center justify-center">
+      <div className="bg-token-surface p-8 rounded-lg shadow-md max-w-md w-full">
+        <h1 className="text-2xl font-bold text-text mb-4">Supabase Client Test</h1>
         
         <div className="space-y-4">
           <div className="flex items-center space-x-2">
-            <div className={`w-3 h-3 rounded-full ${status === 'Connected successfully!' ? 'bg-green-500' : status === 'Failed' ? 'bg-red-500' : 'bg-yellow-500'}`}></div>
+            <div className={`w-3 h-3 rounded-full ${status === 'Connected successfully!' ? 'bg-token-success' : status === 'Failed' ? 'bg-token-error' : 'bg-token-warning'}`}></div>
             <span className="text-sm font-medium">{status}</span>
           </div>
           
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-md p-3">
-              <p className="text-red-800 text-sm">{error}</p>
+            <div className="bg-token-error-light border border-token-error-light rounded-md p-3">
+              <p className="text-token-error text-sm">{error}</p>
             </div>
           )}
           
           {status === 'Connected successfully!' && (
-            <div className="bg-green-50 border border-green-200 rounded-md p-3">
-              <p className="text-green-800 text-sm">
+            <div className="bg-token-success-light border border-token-success-light rounded-md p-3">
+              <p className="text-token-success-dark text-sm">
                 ✅ Supabase client is working correctly! You can now proceed with authentication integration.
               </p>
             </div>
           )}
         </div>
         
-        <div className="mt-6 text-xs text-gray-500">
+        <div className="mt-6 text-xs text-text-tertiary">
           <p>Environment variables loaded:</p>
           <p>• NEXT_PUBLIC_SUPABASE_URL: {process.env.NEXT_PUBLIC_SUPABASE_URL ? '✅ Set' : '❌ Missing'}</p>
           <p>• NEXT_PUBLIC_SUPABASE_ANON_KEY: {process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? '✅ Set' : '❌ Missing'}</p>

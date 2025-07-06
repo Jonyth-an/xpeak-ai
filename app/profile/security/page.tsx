@@ -13,7 +13,7 @@ export default function SecurityPage() {
     <ProtectedRoute>
       <RequireEmailVerification>
         <Layout>
-          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 min-h-screen">
+          <section className="py-20 px-4 sm:px-6 lg:px-8 token-surface-secondary min-h-screen">
             <div className="max-w-7xl mx-auto">
               {/* Main Content with Sidebar - Use flex for large screens */}
               <div className="relative lg:flex lg:min-h-[600px]">
@@ -33,7 +33,7 @@ export default function SecurityPage() {
                       <Text variant="h3" as="h3" className="mb-2">
                         Security Settings
                       </Text>
-                      <Text variant="body" className="text-gray-600">
+                      <Text variant="body" className="token-text-secondary">
                         Manage your password and account security
                       </Text>
                     </div>

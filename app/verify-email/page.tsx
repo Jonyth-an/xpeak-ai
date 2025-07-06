@@ -180,27 +180,27 @@ function VerifyEmailPageInner() {
       case 'verifying':
         return (
           <div className="text-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="animate-spin w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24">
+            <div className="w-12 h-12 bg-token-primary-surface rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="animate-spin w-6 h-6 text-token-primary" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
             </div>
             <Text variant="h3" as="h3" className="mb-2">Verifying your email...</Text>
-            <Text variant="body" className="text-gray-600">Please wait while we verify your email address.</Text>
+            <Text variant="body" className="text-text-secondary">Please wait while we verify your email address.</Text>
           </div>
         );
 
       case 'success':
         return (
           <div className="text-center">
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-12 h-12 bg-token-success-surface rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-token-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
             <Text variant="h3" as="h3" className="mb-2">Email verified successfully!</Text>
-            <Text variant="body" className="text-gray-600 mb-6">
+            <Text variant="body" className="text-text-secondary mb-6">
               Your email has been verified. You'll be redirected to the home page shortly.
             </Text>
             <Button 
@@ -216,13 +216,13 @@ function VerifyEmailPageInner() {
       case 'error':
         return (
           <div className="text-center">
-            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-12 h-12 bg-token-error-surface rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-token-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
             <Text variant="h3" as="h3" className="mb-2">Verification failed</Text>
-            <Text variant="body" className="text-gray-600 mb-4">
+            <Text variant="body" className="text-text-secondary mb-4">
               {error || 'There was an error verifying your email address.'}
             </Text>
             <div className="space-y-3">
@@ -248,31 +248,31 @@ function VerifyEmailPageInner() {
       default:
         return (
           <div className="text-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-12 h-12 bg-token-primary-surface rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-token-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
             <Text variant="h3" as="h3" className="mb-2">Check your email</Text>
-            <Text variant="body" className="text-gray-600 mb-6">
+            <Text variant="body" className="text-text-secondary mb-6">
               We've sent a verification link to <strong>{user?.email}</strong>. 
               Please check your email and click the link to verify your account.
             </Text>
             
             {resendSuccess && (
-              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm mb-4">
+              <div className="bg-token-success-surface border border-token-success text-token-success px-4 py-3 rounded-lg text-sm mb-4">
                 Verification email sent successfully!
               </div>
             )}
             
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">
+              <div className="bg-token-error-surface border border-token-error text-token-error px-4 py-3 rounded-lg text-sm mb-4">
                 {error}
               </div>
             )}
 
             {getRateLimitMessage() && (
-              <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-lg text-sm mb-4">
+              <div className="bg-token-warning-surface border border-token-warning text-token-warning px-4 py-3 rounded-lg text-sm mb-4">
                 {getRateLimitMessage()}
               </div>
             )}
@@ -295,8 +295,8 @@ function VerifyEmailPageInner() {
               </Button>
             </div>
             
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <Text variant="small" className="text-gray-600">
+            <div className="mt-6 p-4 bg-token-surface-accent rounded-lg">
+              <Text variant="small" className="text-text-secondary">
                 <strong>Didn't receive the email?</strong>
                 <br />
                 • Check your spam folder
@@ -313,13 +313,13 @@ function VerifyEmailPageInner() {
 
   return (
     <Layout>
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-token-surface-accent">
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">
             <Text variant="h1" as="h1" className="mb-2">
               Email Verification
             </Text>
-            <Text variant="lead" className="text-gray-600">
+            <Text variant="lead" className="text-text-secondary">
               Complete your account setup
             </Text>
           </div>

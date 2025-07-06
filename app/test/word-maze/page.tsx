@@ -505,200 +505,136 @@ const WordMazeTestPage = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-3xl mx-auto px-4 py-10 flex flex-col gap-8">
-          <h1 className="text-2xl font-bold mb-6">Word Maze Test</h1>
-          {/* Tabs Navigation */}
-          <div className="flex gap-2 mb-6 border-b border-gray-200">
+      <div className="min-h-screen bg-gradient-to-br from-token-surface-accent-light via-token-surface to-token-surface-accent py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-text mb-4">
+              🧪 Word Maze Test & Debug
+            </h1>
+            <p className="text-xl text-text-tertiary max-w-3xl mx-auto">
+              Test and debug Word Maze functionality, enhanced AI tagging, and maze path management.
+            </p>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex flex-wrap gap-2 mb-8 justify-center">
             {TABS.map((tab) => (
               <button
                 key={tab.id}
-                className={clsx(
-                  'px-4 py-2 font-medium transition-all',
-                  activeTab === tab.id
-                    ? 'border-b-2 border-primary-600 text-primary-700 bg-white'
-                    : 'text-gray-500 hover:text-primary-600 bg-gray-50'
-                )}
                 onClick={() => setActiveTab(tab.id)}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeTab === tab.id
+                    ? 'bg-token-primary text-white'
+                    : 'bg-token-surface text-text-secondary hover:bg-token-surface-accent-light border border-token-border'
+                }`}
               >
                 {tab.label}
               </button>
             ))}
           </div>
 
-          {/* Tab Panels */}
+          {/* Tab Content */}
           {activeTab === 'debug' && (
-            <section className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">Debug Info</h2>
-              <div className="text-xs text-gray-500 font-mono mb-1">{debugInfo}</div>
-              <div className="text-xs text-gray-400">Words: {words.length} | Maze paths: {mazePaths.length}</div>
-            </section>
+            <Card className="p-6">
+              <h2 className="text-2xl font-bold text-text mb-4">Debug Information</h2>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-text-secondary mb-2">User Status</h3>
+                  <div className="flex items-center gap-2">
+                    <div className={`w-3 h-3 rounded-full ${user ? 'bg-token-success' : 'bg-token-error'}`}></div>
+                    <span className="text-sm text-text-tertiary">
+                      {user ? `Authenticated as ${user.email}` : 'Not authenticated'}
+                    </span>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-semibold text-text-secondary mb-2">Debug Log</h3>
+                  <div className="bg-token-surface-accent p-4 rounded-lg text-sm text-text-secondary font-mono max-h-64 overflow-y-auto">
+                    {debugInfo || 'No debug information available'}
+                  </div>
+                </div>
+
+                {message && (
+                  <div className={`p-4 rounded-lg border-2 ${
+                    message.includes('Error') 
+                      ? 'bg-token-error-light border-token-error-light text-token-error' 
+                      : 'bg-token-success-light border-token-success-light text-token-success-dark'
+                  }`}>
+                    {message}
+                  </div>
+                )}
+              </div>
+            </Card>
           )}
 
           {activeTab === 'ai' && (
-            <section className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Enhanced AI Tagging Demo</h2>
-                <Button
-                  onClick={() => setShowEnhancedDemo(!showEnhancedDemo)}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-                >
-                  {showEnhancedDemo ? 'Hide' : 'Show'} Demo
-                </Button>
-              </div>
-              {showEnhancedDemo && <EnhancedTagsDemo />}
-            </section>
+            <Card className="p-6">
+              <h2 className="text-2xl font-bold text-text mb-4">Enhanced AI Tagging Demo</h2>
+              <EnhancedTagsDemo />
+            </Card>
           )}
 
           {activeTab === 'paths' && (
-            <section className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Maze Paths <span className="text-gray-400 font-normal">({mazePaths.length})</span></h2>
-                <Button variant="outline" onClick={loadMazePaths} disabled={loadingPaths}>
-                  {loadingPaths ? 'Loading...' : 'Refresh'}
-                </Button>
-              </div>
-              <div className="divide-y divide-gray-100">
+            <Card className="p-6">
+              <h2 className="text-2xl font-bold text-text mb-4">Maze Paths</h2>
+              <div className="space-y-6">
                 {loadingPaths ? (
-                  <div className="text-center py-8 text-gray-400">Loading maze paths...</div>
-                ) : mazePaths.length === 0 ? (
-                  <div className="text-center py-8 text-gray-400">No maze paths found</div>
+                  <div className="text-center text-text-tertiary">Loading maze paths...</div>
+                ) : mazePaths.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {mazePaths.map(renderMazePathCard)}
+                  </div>
                 ) : (
-                  mazePaths.map((path) => (
-                    <div key={path.id} className="p-4 hover:bg-gray-50 cursor-pointer transition" onClick={() => getPathDetails(path.id)}>
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <div className="font-medium text-gray-800">{path.name}</div>
-                          <div className="text-xs text-gray-500 mb-1">{path.description}</div>
-                          <div className="flex gap-2 text-xs">
-                            <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded">{path.difficulty_level}</span>
-                            {path.is_active ? (
-                              <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded">Active</span>
-                            ) : (
-                              <span className="bg-gray-100 text-gray-800 px-2 py-0.5 rounded">Inactive</span>
-                            )}
-                            {path.maze_nodes && (
-                              <span className="bg-purple-100 text-purple-800 px-2 py-0.5 rounded">{path.maze_nodes.length} nodes</span>
-                            )}
-                          </div>
-                        </div>
-                        <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); getPathDetails(path.id); }}>View</Button>
-                      </div>
-                    </div>
-                  ))
+                  <div className="text-center text-text-tertiary">No maze paths found</div>
                 )}
               </div>
-            </section>
+            </Card>
           )}
 
           {activeTab === 'words' && (
-            <section className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Words <span className="text-gray-400 font-normal">({words.length})</span></h2>
-                <div className="flex gap-2 w-full md:w-auto">
+            <Card className="p-6">
+              <h2 className="text-2xl font-bold text-text mb-4">Word Bank</h2>
+              <div className="space-y-6">
+                {/* Add Word Form */}
+                <div className="flex gap-4">
                   <Input
                     value={newWord}
                     onChange={(e) => setNewWord(e.target.value)}
-                    placeholder="Add a new word..."
-                    className="flex-1"
+                    placeholder="Enter a new word..."
                     onKeyPress={(e) => e.key === 'Enter' && addWord()}
                   />
-                  <Button onClick={addWord} disabled={loading || !newWord.trim()}>
-                    {loading ? 'Adding...' : 'Add'}
+                  <Button onClick={addWord} disabled={!newWord.trim() || loading}>
+                    {loading ? 'Adding...' : 'Add Word'}
                   </Button>
+                </div>
+
+                {/* Search */}
+                <div className="flex gap-4">
                   <Input
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search words..."
-                    className="flex-1"
                     onKeyPress={(e) => e.key === 'Enter' && searchWords()}
                   />
                   <Button onClick={searchWords} disabled={loading}>
                     {loading ? 'Searching...' : 'Search'}
                   </Button>
-                  <Button variant="outline" onClick={() => { setSearchQuery(''); loadWords(); }}>
-                    Clear
-                  </Button>
-                  <Button variant="outline" onClick={loadWords} disabled={loading}>
-                    {loading ? 'Loading...' : 'Refresh'}
-                  </Button>
                 </div>
-              </div>
-              <div className="divide-y divide-gray-100">
+
+                {/* Words Grid */}
                 {loading ? (
-                  <div className="text-center py-8 text-gray-400">Loading words...</div>
-                ) : words.length === 0 ? (
-                  <div className="text-center py-8 text-gray-400">No words found</div>
+                  <div className="text-center text-text-tertiary">Loading words...</div>
+                ) : words.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {words.map(renderWordCard)}
+                  </div>
                 ) : (
-                  words.map((word) => (
-                    <div key={word.id} className="p-4 hover:bg-gray-50 cursor-pointer transition group" onClick={() => getWordDetails(word.id)}>
-                      {editingWordId === word.id ? (
-                        <div className="flex flex-col md:flex-row md:items-center gap-2">
-                          <Input
-                            value={editWordDraft.word_text || ''}
-                            onChange={e => handleEditChange('word_text', e.target.value)}
-                            className="flex-1"
-                          />
-                          <Input
-                            value={editWordDraft.type || ''}
-                            onChange={e => handleEditChange('type', e.target.value)}
-                            className="w-32"
-                          />
-                          <Input
-                            value={editWordDraft.difficulty_level || ''}
-                            onChange={e => handleEditChange('difficulty_level', e.target.value)}
-                            className="w-32"
-                          />
-                          <Button size="sm" onClick={saveEditWord} disabled={loading}>Save</Button>
-                          <Button size="sm" variant="outline" onClick={cancelEditWord}>Cancel</Button>
-                        </div>
-                      ) : (
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <div className="font-medium text-gray-800">{word.word_text}</div>
-                            <div className="flex gap-2 text-xs mt-1">
-                              <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded">{word.type}</span>
-                              {word.difficulty_level && (
-                                <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded">{word.difficulty_level}</span>
-                              )}
-                              {word.is_verified && (
-                                <span className="bg-purple-100 text-purple-800 px-2 py-0.5 rounded">Verified</span>
-                              )}
-                            </div>
-                            <div className="text-xs text-gray-400 mt-1">Added: {new Date(word.created_at).toLocaleDateString()}</div>
-                          </div>
-                          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button variant="ghost" size="sm" onClick={e => { e.stopPropagation(); getWordDetails(word.id); }}>Details</Button>
-                            <Button variant="ghost" size="sm" onClick={e => { e.stopPropagation(); startEditWord(word); }}>Edit</Button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))
+                  <div className="text-center text-text-tertiary">No words found</div>
                 )}
               </div>
-            </section>
-          )}
-
-          {/* Details Modals */}
-          {selectedWord && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-              <div className="bg-white rounded-xl shadow-lg max-w-lg w-full p-8 relative">
-                <button className="absolute top-4 right-4 text-gray-400 hover:text-gray-700" onClick={() => setSelectedWord(null)}>&times;</button>
-                {renderWordDetails(selectedWord)}
-              </div>
-            </div>
-          )}
-          {selectedPath && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-              <div className="bg-white rounded-xl shadow-lg max-w-lg w-full p-8 relative">
-                <button className="absolute top-4 right-4 text-gray-400 hover:text-gray-700" onClick={() => { setSelectedPath(null); setPathNodes([]); }}>&times;</button>
-                {renderMazePathDetails(selectedPath, pathNodes)}
-              </div>
-            </div>
-          )}
-          {message && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-800 mb-4">{message}</div>
+            </Card>
           )}
         </div>
       </div>

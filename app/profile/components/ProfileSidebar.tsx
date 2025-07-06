@@ -69,17 +69,17 @@ export default function ProfileSidebar({
   const sidebarContent = (
     <Card className="p-6 h-fit">
       {/* User Info */}
-      <div className="mb-8 pb-6 border-b border-gray-200">
+      <div className="mb-8 pb-6 border-b border-token-border">
         <div className="flex items-center space-x-3 mb-2">
-          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-            <User className="w-5 h-5 text-blue-600" />
+          <div className="w-10 h-10 bg-token-primary-surface rounded-full flex items-center justify-center">
+            <User className="w-5 h-5 text-token-primary" />
           </div>
           <div>
             <Text variant="h4" as="h4" className="font-semibold">
               Account Settings
             </Text>
             {userEmail && (
-              <Text variant="body" className="text-gray-500 text-sm">
+              <Text variant="body" className="text-text-muted text-sm">
                 {userEmail}
               </Text>
             )}
@@ -98,8 +98,8 @@ export default function ProfileSidebar({
               className={`
                 w-full flex items-center justify-between p-4 rounded-lg transition-all duration-300 ease-in-out group
                 ${isActive 
-                  ? 'bg-blue-50 border border-blue-200 text-blue-700 shadow-sm scale-[1.02]' 
-                  : 'hover:bg-gray-50 text-gray-700 hover:text-gray-900 hover:shadow-sm hover:scale-[1.01]'
+                  ? 'bg-token-primary-surface border border-token-primary text-token-primary shadow-sm scale-[1.02]' 
+                  : 'hover:bg-token-surface-accent-light text-text-secondary hover:text-text hover:shadow-sm hover:scale-[1.01]'
                 }
               `}
             >
@@ -107,8 +107,8 @@ export default function ProfileSidebar({
                 <div className={`
                   p-2 rounded-lg transition-all duration-300 ease-in-out
                   ${isActive 
-                    ? 'bg-blue-100 text-blue-600 shadow-sm' 
-                    : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200 group-hover:text-gray-600 group-hover:shadow-sm'
+                    ? 'bg-token-primary text-white shadow-sm' 
+                    : 'bg-token-surface-accent text-text-muted group-hover:bg-token-surface-accent-light group-hover:text-text-secondary group-hover:shadow-sm'
                   }
                 `}>
                   <Icon className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
@@ -116,7 +116,7 @@ export default function ProfileSidebar({
                 <div className="text-left">
                   <Text 
                     variant="body" 
-                    className={`font-medium transition-colors duration-300 ${isActive ? 'text-blue-700' : 'text-gray-700'}`}
+                    className={`font-medium transition-colors duration-300 ${isActive ? 'text-token-primary' : 'text-text-secondary'}`}
                   >
                     {tab.label}
                   </Text>
@@ -126,7 +126,7 @@ export default function ProfileSidebar({
               <ChevronRight 
                 className={`
                   w-4 h-4 transition-all duration-300 ease-in-out
-                  ${isActive ? 'text-blue-600 rotate-90 scale-110' : 'text-gray-400 group-hover:text-gray-600 group-hover:scale-110'}
+                  ${isActive ? 'text-token-primary rotate-90 scale-110' : 'text-text-muted group-hover:text-text-secondary group-hover:scale-110'}
                 `} 
               />
             </div>
@@ -141,14 +141,14 @@ export default function ProfileSidebar({
       </nav>
 
       {/* Help Section */}
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <div className="bg-gray-50 rounded-lg p-4">
-          <Text variant="body" className="text-sm text-gray-600 mb-2">
+      <div className="mt-8 pt-6 border-t border-token-border">
+        <div className="bg-token-surface-accent-light rounded-lg p-4">
+          <Text variant="body" className="text-sm text-text-secondary mb-2">
             Need help?
           </Text>
           <a 
             href="/community" 
-            className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors duration-200"
+            className="text-token-primary hover:text-token-primary-hover text-sm font-medium transition-colors duration-200"
           >
             Visit our help center →
           </a>
@@ -163,22 +163,22 @@ export default function ProfileSidebar({
       <div className="lg:hidden mb-6">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="w-full flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200 shadow-sm"
+          className="w-full flex items-center justify-between p-4 bg-token-surface rounded-lg border border-token-border shadow-sm"
         >
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-              <User className="w-4 h-4 text-blue-600" />
+            <div className="w-8 h-8 bg-token-primary-surface rounded-full flex items-center justify-center">
+              <User className="w-4 h-4 text-token-primary" />
             </div>
             <div className="text-left">
-              <Text variant="body" className="font-medium text-gray-700">
+              <Text variant="body" className="font-medium text-text-secondary">
                 {tabs.find(tab => pathname === tab.href || (pathname === '/profile' && tab.id === 'profile'))?.label || 'Account Settings'}
               </Text>
             </div>
           </div>
           {isMobileMenuOpen ? (
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-text-muted" />
           ) : (
-            <Menu className="w-5 h-5 text-gray-500" />
+            <Menu className="w-5 h-5 text-text-muted" />
           )}
         </button>
       </div>

@@ -159,3 +159,19 @@ a {
 .animate-spin-slow {
   animation: spin-slow 20s linear infinite;
 }
+
+/* Design Token Button Utilities */
+.token-accent {
+  background-color: var(--color-accent, #6BCEF5);
+  color: #fff;
+}
+.token-accent-hover:hover {
+  background-color: var(--color-accent-dark, #0369A1);
+}
+
+.bg-token-elevated {
+  background-color: var(--color-surface, #f9fafb);
+}
+.bg-token-surface {
+  background-color: var(--color-bg, #FDFDFD);
+}

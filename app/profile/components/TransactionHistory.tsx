@@ -459,32 +459,31 @@ export default function TransactionHistory() {
       {transactions.length > 0 ? (
         <Card className="overflow-hidden">
           {/* Table Header */}
-          <div className="bg-gray-50 px-6 py-3 border-b border-gray-200">
-            <div className="grid grid-cols-6 gap-4 text-sm font-medium text-gray-700">
+          <div className="bg-token-surface-subtle px-6 py-3 border-b token-border-primary">
+            <div className="grid grid-cols-6 gap-4 text-sm font-medium token-text-secondary">
               <div className="col-span-1">Payment Date</div>
               <div className="col-span-1">Amount</div>
               <div className="col-span-1">Actions</div>
             </div>
           </div>
-
           {/* Table Body */}
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y token-border-primary">
             {transactions.map((transaction) => (
               <div
                 key={transaction.id}
-                className="px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer"
+                className="px-6 py-4 hover:bg-token-surface-accent transition-colors cursor-pointer"
                 onClick={() => openTransactionModal(transaction)}
               >
                 <div className="grid grid-cols-6 gap-4 items-center">
                   {/* Payment Date */}
                   <div className="col-span-1">
-                    <Text className="text-sm text-gray-600">
+                    <Text className="text-sm token-text-secondary">
                       {formatDate(transaction.created)}
                     </Text>
                   </div>
                   {/* Amount */}
                   <div className="col-span-1">
-                    <Text className="font-medium text-gray-900">
+                    <Text className="font-medium token-text-primary">
                       {formatCurrency(transaction.amount_paid, transaction.currency)}
                     </Text>
                   </div>
@@ -495,12 +494,12 @@ export default function TransactionHistory() {
                         href={transaction.hosted_invoice_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-block px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 transition text-sm font-medium"
+                        className="inline-block px-3 py-1 rounded token-border-primary border hover:bg-token-surface-subtle transition text-sm font-medium token-text-primary"
                       >
                         View Invoice
                       </a>
                     ) : (
-                      <span className="text-gray-400 text-sm">No invoice available</span>
+                      <span className="token-text-muted text-sm">No invoice available</span>
                     )}
                   </div>
                 </div>
@@ -510,9 +509,9 @@ export default function TransactionHistory() {
         </Card>
       ) : (
         <Card className="text-center py-12">
-          <div className="text-gray-400 text-6xl mb-4">💳</div>
-          <Text className="text-gray-500 mb-2">No transactions found</Text>
-          <Text className="text-gray-400 text-sm">
+          <div className="token-text-muted text-6xl mb-4">💳</div>
+          <Text className="token-text-secondary mb-2">No transactions found</Text>
+          <Text className="token-text-muted text-sm">
             {statusFilter !== 'all' || searchQuery || dateRange.start || dateRange.end
               ? 'Try adjusting your filters'
               : 'Your transaction history will appear here'}

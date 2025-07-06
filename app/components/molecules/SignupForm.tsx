@@ -123,9 +123,9 @@ export default function SignupForm({ onSubmit, onSuccess, onError }: SignupFormP
         </Button>
         {/* Divider */}
         <div className="flex items-center my-2">
-          <div className="flex-grow border-t border-border"></div>
+          <div className="flex-grow border-t border-token-border"></div>
           <span className="mx-2 text-text-muted text-xs">or</span>
-          <div className="flex-grow border-t border-border"></div>
+          <div className="flex-grow border-t border-token-border"></div>
         </div>
         {/* Name */}
         <div>
@@ -178,8 +178,8 @@ export default function SignupForm({ onSubmit, onSuccess, onError }: SignupFormP
 
         {/* Error Message */}
         {error && (
-          <div className="bg-error-50 border border-error-200 rounded-md p-3">
-            <p className="text-error-800 text-sm">{error}</p>
+          <div className="bg-token-error-surface border border-token-error rounded-md p-3">
+            <p className="text-token-error text-sm">{error}</p>
           </div>
         )}
 

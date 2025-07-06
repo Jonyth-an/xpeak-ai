@@ -555,7 +555,7 @@ export default function BillingSection() {
           <Text variant="h3" as="h3" className="mb-2">
             Billing & Subscription
           </Text>
-          <Text variant="body" className="text-gray-600">
+          <Text variant="body" className="token-text-secondary">
             Manage your subscription, payment methods, and billing information
           </Text>
         </div>
@@ -571,7 +571,7 @@ export default function BillingSection() {
           <Text variant="h3" as="h3" className="mb-2">
             Billing & Subscription
           </Text>
-          <Text variant="body" className="text-red-600">
+          <Text variant="body" className="token-error">
             Error: {error}
           </Text>
           <Button onClick={fetchBillingData} variant="primary" className="mt-4">
@@ -589,7 +589,7 @@ export default function BillingSection() {
           <Text variant="h3" as="h3" className="mb-2">
             Billing & Subscription
           </Text>
-          <Text variant="body" className="text-gray-600">
+          <Text variant="body" className="token-text-secondary">
             No active subscription found.
           </Text>
         </div>
@@ -627,23 +627,23 @@ export default function BillingSection() {
         <Text variant="h3" as="h3" className="mb-2">
           Billing & Subscription
         </Text>
-        <Text variant="body" className="text-gray-600">
+        <Text variant="body" className="token-text-secondary">
           Manage your subscription, payment methods, and billing information
         </Text>
       </div>
 
       {/* Success Message */}
       {showSuccessMessage && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+        <div className="token-success-light border token-border-success rounded-lg p-4 mb-6">
           <div className="flex items-center space-x-3">
-            <div className="text-green-600 text-xl">✅</div>
+            <div className="token-success text-xl">✅</div>
             <div className="flex-1">
-              <Text className="font-medium text-green-800">
+              <Text className="font-medium token-success-dark">
                 {successMessage || 'Action completed successfully!'}
               </Text>
             </div>
             <button
-              className="ml-4 text-green-700 hover:text-green-900"
+              className="ml-4 token-success hover:token-success-darker"
               onClick={() => setShowSuccessMessage(false)}
               aria-label="Dismiss success message"
             >
@@ -661,7 +661,7 @@ export default function BillingSection() {
             Edit
           </Button>
         </div>
-        <div className="text-gray-700 text-sm">
+        <div className="token-text-tertiary text-sm">
           {billingData?.customer?.address ? (
             <div className="space-y-2">
               {billingData.customer.name && (
@@ -700,7 +700,7 @@ export default function BillingSection() {
               )}
             </div>
           ) : (
-            <div className="flex items-center space-x-2 text-gray-500">
+            <div className="flex items-center space-x-2 token-text-disabled">
               <span>📍</span>
               <span>No billing address on file.</span>
             </div>
@@ -709,48 +709,47 @@ export default function BillingSection() {
       </Card>
 
       {/* Billing Content */}
-      <div className="bg-white rounded-lg shadow-sm border p-6 space-y-8">
+      <div className="bg-token-surface rounded-lg shadow-sm token-border-primary border p-6 space-y-8">
         {/* Current Plan Section */}
         <section>
           <div className="flex items-center justify-between mb-2">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Current Plan</h2>
-              <p className="text-sm text-gray-600">Your active subscription details</p>
+              <h2 className="text-lg font-semibold token-text-primary">Current Plan</h2>
+              <p className="text-sm token-text-secondary">Your active subscription details</p>
             </div>
             <div className="flex items-center space-x-2">
               <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                isPaused ? 'bg-blue-100 text-blue-800' : isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                isPaused ? 'bg-token-accent-light token-text-accent-dark' : isActive ? 'bg-token-success-light token-text-success-dark' : 'bg-token-error-light token-text-error-dark'
               }`}>
                 {isPaused ? 'Paused' : isActive ? 'Active' : 'Inactive'}
               </span>
               {isCanceled && (
-                <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
+                <span className="px-2 py-1 text-xs font-medium rounded-full bg-token-warning-light token-text-warning-dark">
                   Canceling
                 </span>
               )}
             </div>
           </div>
-          
-          <div className="bg-gray-50 rounded-lg p-4">
+          <div className="bg-token-surface-subtle rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-medium text-gray-900">
+                <h3 className="font-medium token-text-primary">
                   {currentPlanPrice ? `${formatCurrency(currentPlanPrice.unit_amount, currentPlanPrice.currency)}/${currentPlanPrice.recurring.interval}` : 'Plan'}
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm token-text-secondary">
                   {subscription?.status === 'canceled' ? 'Access until' : isCanceled ? 'Renews until' : 'Renews'} {renewalDate ? formatDate(renewalDate) : '—'}
                 </p>
                 {isPaused && (
-                  <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                    <p className="text-sm text-blue-800 font-medium">
+                  <div className="mt-2 bg-token-accent-light border token-border-accent rounded-md p-3">
+                    <p className="text-sm token-text-accent-dark font-medium">
                       ⏸️ Subscription Paused
                     </p>
-                    <p className="text-sm text-blue-700">
+                    <p className="text-sm token-text-accent">
                       Paused on {billingData.subscription.paused_at ? 
                         formatDate(billingData.subscription.paused_at) : '—'
                       } for {subscriptionPauseDuration} month{subscriptionPauseDuration > 1 ? 's' : ''}
                     </p>
-                    <p className="text-sm text-blue-700">
+                    <p className="text-sm token-text-accent">
                       Resumes on {billingData.subscription.resume_at ? 
                         formatDate(billingData.subscription.resume_at) : '—'
                       }
@@ -766,38 +765,38 @@ export default function BillingSection() {
             <section>
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900">Available Credits</h2>
-                  <p className="text-sm text-gray-600">Credits from subscription changes</p>
+                  <h2 className="text-lg font-semibold token-text-primary">Available Credits</h2>
+                  <p className="text-sm token-text-secondary">Credits from subscription changes</p>
                 </div>
               </div>
               
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="token-success-light border token-border-success rounded-lg p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-green-800">
+                    <p className="font-medium token-success-dark">
                       {formatCurrency(totalCredit, 'usd')} available
                     </p>
-                    <p className="text-sm text-green-600">
+                    <p className="text-sm token-success">
                       {credits.length} credit{credits.length !== 1 ? 's' : ''} • Expires within 30 days
                     </p>
                   </div>
-                  <div className="text-green-600 text-2xl">💰</div>
+                  <div className="token-success text-2xl">💰</div>
                 </div>
                 
                 {credits.length > 0 && (
                   <div className="mt-3 space-y-2">
                     {credits.slice(0, 3).map((credit) => (
                       <div key={credit.id} className="flex justify-between text-sm">
-                        <span className="text-green-700">
+                        <span className="token-success">
                           {formatCurrency(credit.amount, credit.currency)}
                         </span>
-                        <span className="text-green-600">
+                        <span className="token-success">
                           Expires {formatDate(credit.expires_at)}
                         </span>
                       </div>
                     ))}
                     {credits.length > 3 && (
-                      <p className="text-xs text-green-600">
+                      <p className="text-xs token-success">
                         +{credits.length - 3} more credit{credits.length - 3 !== 1 ? 's' : ''}
                       </p>
                     )}
@@ -832,7 +831,7 @@ export default function BillingSection() {
                   onClick={() => setShowPauseModal(true)}
                   variant="outline"
                   size="sm"
-                  className="border-blue-500 text-blue-600 hover:bg-blue-50 focus:ring-blue-500"
+                  className="token-accent-border token-text-accent hover:bg-token-accent-light focus:ring-token-accent"
                 >
                   Manage Pause
                 </Button>
@@ -840,7 +839,7 @@ export default function BillingSection() {
                   onClick={() => setShowCancelModal(true)}
                   variant="outline"
                   size="sm"
-                  className="border-red-500 text-red-600 hover:bg-red-50 focus:ring-red-500"
+                  className="token-error-border token-text-error hover:bg-token-error-light focus:ring-token-error"
                 >
                   Cancel Subscription
                 </Button>
@@ -859,7 +858,7 @@ export default function BillingSection() {
                   onClick={() => setShowPauseModal(true)}
                   variant="outline"
                   size="sm"
-                  className="border-yellow-500 text-yellow-600 hover:bg-yellow-50 focus:ring-yellow-500"
+                  className="token-warning-border token-text-warning hover:bg-token-warning-light focus:ring-token-warning"
                 >
                   Pause Subscription
                 </Button>
@@ -867,7 +866,7 @@ export default function BillingSection() {
                   onClick={() => setShowCancelModal(true)}
                   variant="outline"
                   size="sm"
-                  className="border-red-500 text-red-600 hover:bg-red-50 focus:ring-red-500"
+                  className="token-error-border token-text-error hover:bg-token-error-light focus:ring-token-error"
                 >
                   Cancel Subscription
                 </Button>
@@ -880,48 +879,48 @@ export default function BillingSection() {
         <section>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Payment Method</h2>
-              <p className="text-sm text-gray-600">Your current payment method</p>
+              <h2 className="text-lg font-semibold token-text-primary">Payment Method</h2>
+              <p className="text-sm token-text-secondary">Your current payment method</p>
             </div>
             <Button
               onClick={handleUpdatePaymentMethod}
               disabled={updatingPayment}
               variant="secondary"
               size="sm"
+              className="token-secondary-border token-text-secondary bg-token-secondary hover:bg-token-secondary-light focus:ring-token-secondary"
             >
               {updatingPayment ? 'Updating...' : 'Update Payment Method'}
             </Button>
           </div>
-          
           {paymentMethod ? (
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-token-surface-subtle rounded-lg p-4">
               <div className="flex items-center space-x-3">
                 <span className="text-2xl">{getCardBrandIcon(paymentMethod.card?.brand || 'card')}</span>
                 <div>
-                  <p className="font-medium text-gray-900">
+                  <p className="font-medium token-text-primary">
                     {paymentMethod.card?.brand?.toUpperCase()} •••• {paymentMethod.card?.last4}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm token-text-secondary">
                     Expires {paymentMethod.card?.exp_month}/{paymentMethod.card?.exp_year}
                   </p>
                 </div>
               </div>
               {/* Security Notice */}
-              <div className="text-sm text-gray-500 mt-2">
-                🔒 Your payment information is securely processed by Stripe. 
-                We only store the last 4 digits and expiry date for display purposes.
+              <div className="text-sm token-text-muted mt-2 flex items-center gap-1">
+                <span role="img" aria-label="lock">🔒</span>
+                Your payment information is securely processed by Stripe. We only store the last 4 digits and expiry date for display purposes.
               </div>
             </div>
-          ) : (
-            <div className="bg-yellow-50 rounded-lg p-4">
+          ) :
+            <div className="bg-token-warning-light rounded-lg p-4">
               <div className="flex items-center space-x-2">
-                <span className="text-yellow-600">⚠️</span>
-                <p className="text-sm text-yellow-800">
+                <span className="token-text-warning">⚠️</span>
+                <p className="text-sm token-text-warning-dark">
                   No payment method on file. Please add a payment method to continue your subscription.
                 </p>
               </div>
             </div>
-          )}
+          }
         </section>
 
         {/* Invoice History Section */}
@@ -933,16 +932,14 @@ export default function BillingSection() {
       {/* Cancel Subscription Modal */}
       {showCancelModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-token-elevated rounded-lg p-6 max-w-md w-full mx-4 token-border-primary border">
+            <h3 className="text-lg font-semibold token-text-primary mb-4">
               Cancel Subscription
             </h3>
-            
             <div className="mb-6">
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm token-text-secondary mb-4">
                 How would you like to cancel your subscription?
               </p>
-              
               <div className="space-y-3">
                 <label className="flex items-center space-x-3 cursor-pointer">
                   <input
@@ -951,16 +948,15 @@ export default function BillingSection() {
                     value="end_of_period"
                     checked={cancelType === 'end_of_period'}
                     onChange={() => setCancelType('end_of_period')}
-                    className="text-blue-600"
+                    className="token-accent focus:ring-token-accent"
                   />
                   <div>
-                    <p className="font-medium text-gray-900">Cancel at period end</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="font-medium token-text-primary">Cancel at period end</p>
+                    <p className="text-sm token-text-secondary">
                       Keep access until {renewalDate ? formatDate(renewalDate) : '—'}
                     </p>
                   </div>
                 </label>
-                
                 <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="radio"
@@ -968,24 +964,23 @@ export default function BillingSection() {
                     value="immediate"
                     checked={cancelType === 'immediate'}
                     onChange={() => setCancelType('immediate')}
-                    className="text-blue-600"
+                    className="token-accent focus:ring-token-accent"
                   />
                   <div>
-                    <p className="font-medium text-gray-900">Cancel immediately</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="font-medium token-text-primary">Cancel immediately</p>
+                    <p className="text-sm token-text-secondary">
                       Lose access right away (no refund)
                     </p>
                   </div>
                 </label>
               </div>
             </div>
-            
             <div className="flex space-x-3">
               <Button
                 onClick={handleCancelSubscription}
                 disabled={canceling}
                 variant="outline"
-                className="flex-1 border-red-500 text-red-600 hover:bg-red-50 focus:ring-red-500"
+                className="flex-1 token-error-border token-text-error hover:bg-token-error-light focus:ring-token-error"
               >
                 {canceling ? 'Canceling...' : 'Cancel Subscription'}
               </Button>
@@ -1004,36 +999,32 @@ export default function BillingSection() {
       {/* Pause Subscription Modal */}
       {showPauseModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+          <div className="bg-token-elevated rounded-lg p-6 max-w-md w-full mx-4 token-border-primary border">
             {isPaused ? (
-              // Show pause status and cancel pause option
               <>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="text-lg font-semibold token-text-primary mb-4">
                   Subscription Paused
                 </h3>
-                
                 <div className="mb-6">
-                  <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
+                  <div className="bg-token-accent-light border token-border-accent rounded-md p-4 mb-4">
                     <div className="flex items-center space-x-2 mb-2">
-                      <span className="text-blue-600">⏸️</span>
-                      <p className="font-medium text-blue-900">Currently Paused</p>
+                      <span className="token-text-accent">⏸️</span>
+                      <p className="font-medium token-text-accent-dark">Currently Paused</p>
                     </div>
-                    <p className="text-sm text-blue-800">
+                    <p className="text-sm token-text-accent">
                       Your subscription is paused for {subscriptionPauseDuration} month{subscriptionPauseDuration > 1 ? 's' : ''}.
                     </p>
-                    <p className="text-sm text-blue-800 mt-1">
+                    <p className="text-sm token-text-accent mt-1">
                       Paused on: {billingData.subscription.paused_at ? formatDate(billingData.subscription.paused_at) : '—'}
                     </p>
-                    <p className="text-sm text-blue-800">
+                    <p className="text-sm token-text-accent">
                       Will resume on: {billingData.subscription.resume_at ? formatDate(billingData.subscription.resume_at) : '—'}
                     </p>
                   </div>
-                  
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm token-text-secondary">
                     You can cancel the pause to resume your subscription immediately, or wait for it to automatically resume.
                   </p>
                 </div>
-                
                 <div className="flex space-x-3">
                   <Button
                     onClick={handleCancelPause}
@@ -1053,34 +1044,30 @@ export default function BillingSection() {
                 </div>
               </>
             ) : (
-              // Show pause options for active subscription
               <>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="text-lg font-semibold token-text-primary mb-4">
                   Pause Subscription
                 </h3>
-                
                 <div className="mb-6">
-                  <p className="text-sm text-gray-600 mb-4">
+                  <p className="text-sm token-text-secondary mb-4">
                     Temporarily pause your subscription. You won't be charged during the pause period, but you'll maintain access to your current features.
                   </p>
-                  
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium token-text-primary mb-2">
                       Pause Duration
                     </label>
                     <select
                       value={pauseDuration}
                       onChange={(e) => setPauseDuration(Number(e.target.value))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border token-border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-token-accent focus:border-token-accent"
                     >
                       <option value={1}>1 month</option>
                       <option value={2}>2 months</option>
                       <option value={3}>3 months</option>
                     </select>
                   </div>
-                  
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-                    <p className="text-sm text-yellow-800">
+                  <div className="bg-token-warning-light border token-border-warning rounded-md p-3">
+                    <p className="text-sm token-text-warning">
                       <strong>Note:</strong> Your subscription will automatically resume on{' '}
                       {(() => {
                         const resumeDate = new Date();
@@ -1090,13 +1077,12 @@ export default function BillingSection() {
                     </p>
                   </div>
                 </div>
-                
                 <div className="flex space-x-3">
                   <Button
                     onClick={handlePauseSubscription}
                     disabled={pausing}
                     variant="outline"
-                    className="flex-1 border-yellow-500 text-yellow-600 hover:bg-yellow-50 focus:ring-yellow-500"
+                    className="flex-1 token-warning-border token-text-warning hover:bg-token-warning-light focus:ring-token-warning"
                   >
                     {pausing ? 'Pausing...' : 'Pause Subscription'}
                   </Button>

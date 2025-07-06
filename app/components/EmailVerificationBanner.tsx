@@ -137,23 +137,23 @@ export default function EmailVerificationBanner() {
   };
 
   return (
-    <div className="bg-yellow-50 border-b border-yellow-200 px-4 py-3">
+    <div className="bg-token-warning-surface border-b border-token-warning px-4 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center">
           <div className="flex-shrink-0">
-            <svg className="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-5 w-5 text-token-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
           <div className="ml-3">
-            <Text variant="body" className="text-yellow-800 font-medium">
+            <Text variant="body" className="text-token-warning font-medium">
               Please verify your email address
             </Text>
-            <Text variant="small" className="text-yellow-700">
+            <Text variant="small" className="text-token-warning">
               We sent a verification link to <strong>{user.email}</strong>
             </Text>
             {getRateLimitMessage() && (
-              <Text variant="small" className="text-yellow-600 mt-1">
+              <Text variant="small" className="text-token-warning mt-1">
                 {getRateLimitMessage()}
               </Text>
             )}
@@ -162,13 +162,13 @@ export default function EmailVerificationBanner() {
         
         <div className="flex items-center space-x-3">
           {resendSuccess && (
-            <Text variant="small" className="text-green-700 font-medium">
+            <Text variant="small" className="text-token-success font-medium">
               Email sent!
             </Text>
           )}
           
           {error && (
-            <Text variant="small" className="text-red-700">
+            <Text variant="small" className="text-token-error">
               {error}
             </Text>
           )}

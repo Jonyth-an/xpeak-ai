@@ -271,15 +271,15 @@ export default function BillingInformationForm({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b">
+      <div className="bg-token-elevated rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto token-border-primary border">
+        <div className="p-6 border-b token-border-primary">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold token-text-primary">
               Update Billing Information
             </h2>
             <button
               onClick={onCancel}
-              className="text-gray-400 hover:text-gray-600"
+              className="token-text-tertiary hover:token-text-primary"
             >
               ✕
             </button>
@@ -289,11 +289,11 @@ export default function BillingInformationForm({
         <form onSubmit={handleSubmit} className="p-6 space-y-8">
           {/* Success Message */}
           {success && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div className="token-success-light border token-border-success rounded-lg p-4">
               <div className="flex items-center space-x-3">
-                <div className="text-green-600 text-xl">✅</div>
+                <div className="token-success text-xl">✅</div>
                 <div>
-                  <Text className="font-medium text-green-800">
+                  <Text className="font-medium token-success-dark">
                     Billing information updated successfully!
                   </Text>
                 </div>
@@ -303,11 +303,11 @@ export default function BillingInformationForm({
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="token-error-light border token-border-error rounded-lg p-4">
               <div className="flex items-center space-x-3">
-                <div className="text-red-600 text-xl">⚠️</div>
+                <div className="token-error text-xl">⚠️</div>
                 <div>
-                  <Text className="font-medium text-red-800">
+                  <Text className="font-medium token-error-dark">
                     {error}
                   </Text>
                 </div>
@@ -316,13 +316,13 @@ export default function BillingInformationForm({
           )}
 
           {/* Contact Information */}
-          <Card className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <Card className="p-6 bg-token-elevated token-border-primary border">
+            <h3 className="text-lg font-medium token-text-primary mb-4">
               Contact Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium token-text-tertiary mb-2">
                   Full Name
                 </label>
                 <Input
@@ -334,7 +334,7 @@ export default function BillingInformationForm({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium token-text-tertiary mb-2">
                   Email Address
                 </label>
                 <Input
@@ -346,7 +346,7 @@ export default function BillingInformationForm({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium token-text-tertiary mb-2">
                   Phone Number
                 </label>
                 <Input
@@ -360,13 +360,13 @@ export default function BillingInformationForm({
           </Card>
 
           {/* Billing Address */}
-          <Card className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <Card className="p-6 bg-token-elevated token-border-primary border">
+            <h3 className="text-lg font-medium token-text-primary mb-4">
               Billing Address
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium token-text-tertiary mb-2">
                   Address Line 1
                 </label>
                 <Input
@@ -378,7 +378,7 @@ export default function BillingInformationForm({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium token-text-tertiary mb-2">
                   Address Line 2
                 </label>
                 <Input
@@ -390,7 +390,7 @@ export default function BillingInformationForm({
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium token-text-tertiary mb-2">
                     City
                   </label>
                   <Input
@@ -402,7 +402,7 @@ export default function BillingInformationForm({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium token-text-tertiary mb-2">
                     State/Province
                   </label>
                   {formData.address?.country === 'US' ? (
@@ -410,6 +410,7 @@ export default function BillingInformationForm({
                       value={formData.address?.state}
                       onChange={(e) => handleAddressChange('state', e.target.value)}
                       required
+                      className="token-accent-border"
                     >
                       <option value="">Select State</option>
                       {US_STATES.map(state => (
@@ -429,7 +430,7 @@ export default function BillingInformationForm({
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium token-text-tertiary mb-2">
                     Postal Code
                   </label>
                   <Input
@@ -442,13 +443,14 @@ export default function BillingInformationForm({
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium token-text-tertiary mb-2">
                   Country
                 </label>
                 <Select
                   value={formData.address?.country}
                   onChange={(e) => handleAddressChange('country', e.target.value)}
                   required
+                  className="token-accent-border"
                 >
                   {COUNTRIES.map(country => (
                     <option key={country.value} value={country.value}>
@@ -461,8 +463,8 @@ export default function BillingInformationForm({
           </Card>
 
           {/* Tax Information */}
-          <Card className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <Card className="p-6 bg-token-elevated token-border-primary border">
+            <h3 className="text-lg font-medium token-text-primary mb-4">
               Tax Information
             </h3>
             <div className="space-y-4">
@@ -472,16 +474,16 @@ export default function BillingInformationForm({
                   id="tax_exempt"
                   checked={formData.tax_info?.tax_exempt}
                   onChange={(e) => handleTaxInfoChange('tax_exempt', e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="rounded token-border-primary token-accent focus:ring-token-accent"
                 />
-                <label htmlFor="tax_exempt" className="text-sm font-medium text-gray-700">
+                <label htmlFor="tax_exempt" className="text-sm font-medium token-text-tertiary">
                   Tax Exempt Organization
                 </label>
               </div>
               
               {formData.tax_info?.tax_exempt && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium token-text-tertiary mb-2">
                     Tax Exemption Reason
                   </label>
                   <Input
@@ -495,12 +497,13 @@ export default function BillingInformationForm({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium token-text-tertiary mb-2">
                     Tax ID Type
                   </label>
                   <Select
                     value={formData.tax_info?.tax_id_type}
                     onChange={(e) => handleTaxInfoChange('tax_id_type', e.target.value)}
+                    className="token-accent-border"
                   >
                     {TAX_ID_TYPES.map(type => (
                       <option key={type.value} value={type.value}>
@@ -510,7 +513,7 @@ export default function BillingInformationForm({
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium token-text-tertiary mb-2">
                     Tax ID Number
                   </label>
                   <Input
@@ -525,8 +528,8 @@ export default function BillingInformationForm({
           </Card>
 
           {/* Receipt Preferences */}
-          <Card className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <Card className="p-6 bg-token-elevated token-border-primary border">
+            <h3 className="text-lg font-medium token-text-primary mb-4">
               Receipt Preferences
             </h3>
             <div className="space-y-4">
@@ -536,16 +539,16 @@ export default function BillingInformationForm({
                   id="email_receipts"
                   checked={formData.receipt_prefs?.email_receipts}
                   onChange={(e) => handleReceiptPrefsChange('email_receipts', e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="rounded token-border-primary token-accent focus:ring-token-accent"
                 />
-                <label htmlFor="email_receipts" className="text-sm font-medium text-gray-700">
+                <label htmlFor="email_receipts" className="text-sm font-medium token-text-tertiary">
                   Email receipts automatically
                 </label>
               </div>
 
               {formData.receipt_prefs?.email_receipts && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium token-text-tertiary mb-2">
                     Receipt Email Address
                   </label>
                   <Input
@@ -563,9 +566,9 @@ export default function BillingInformationForm({
                   id="auto_download"
                   checked={formData.receipt_prefs?.auto_download}
                   onChange={(e) => handleReceiptPrefsChange('auto_download', e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="rounded token-border-primary token-accent focus:ring-token-accent"
                 />
-                <label htmlFor="auto_download" className="text-sm font-medium text-gray-700">
+                <label htmlFor="auto_download" className="text-sm font-medium token-text-tertiary">
                   Automatically download receipts
                 </label>
               </div>
@@ -576,9 +579,9 @@ export default function BillingInformationForm({
                   id="include_tax_breakdown"
                   checked={formData.receipt_prefs?.include_tax_breakdown}
                   onChange={(e) => handleReceiptPrefsChange('include_tax_breakdown', e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="rounded token-border-primary token-accent focus:ring-token-accent"
                 />
-                <label htmlFor="include_tax_breakdown" className="text-sm font-medium text-gray-700">
+                <label htmlFor="include_tax_breakdown" className="text-sm font-medium token-text-tertiary">
                   Include tax breakdown in receipts
                 </label>
               </div>
@@ -586,11 +589,12 @@ export default function BillingInformationForm({
           </Card>
 
           {/* Form Actions */}
-          <div className="flex justify-end space-x-3 pt-6 border-t">
+          <div className="flex justify-end space-x-3 pt-6 border-t token-border-primary">
             <Button
               type="button"
               onClick={onCancel}
               variant="outline"
+              className="token-accent-border token-accent hover:token-accent-light focus:ring-token-accent"
             >
               Cancel
             </Button>
@@ -598,6 +602,7 @@ export default function BillingInformationForm({
               type="submit"
               disabled={loading}
               variant="primary"
+              className="token-accent"
             >
               {loading ? 'Saving...' : 'Save Changes'}
             </Button>

@@ -34,7 +34,7 @@ const animationSteps: AnimationStep[] = [
     title: "Word Unlocked",
     caption: 'You learn "serendipity."',
     icon: <Puzzle className="w-6 h-6" />,
-    color: "from-blue-500 to-cyan-500",
+    color: "from-token-primary to-token-accent",
     position: calculatePosition(0), // 0° (top)
   },
   {
@@ -42,7 +42,7 @@ const animationSteps: AnimationStep[] = [
     title: "Maze Connection",
     caption: 'Sagea links it to "coincidence" and "chance."',
     icon: <Link className="w-6 h-6" />,
-    color: "from-purple-500 to-pink-500",
+    color: "from-token-accent to-token-secondary",
     position: calculatePosition(72), // 72° (top right)
   },
   {
@@ -50,7 +50,7 @@ const animationSteps: AnimationStep[] = [
     title: "Spark Ignition",
     caption: "You're ready for a new Topic Spark.",
     icon: <Sparkles className="w-6 h-6" />,
-    color: "from-amber-500 to-orange-500",
+    color: "from-token-warning to-token-error",
     position: calculatePosition(144), // 144° (bottom right)
   },
   {
@@ -58,7 +58,7 @@ const animationSteps: AnimationStep[] = [
     title: "Trek Formed",
     caption: "Sagea plots your personalized Trek.",
     icon: <Map className="w-6 h-6" />,
-    color: "from-emerald-500 to-teal-500",
+    color: "from-token-success to-token-accent",
     position: calculatePosition(216), // 216° (bottom left)
   },
   {
@@ -66,7 +66,7 @@ const animationSteps: AnimationStep[] = [
     title: "Tutor Touchpoint",
     caption: "Your tutor jumps in with tailored guidance.",
     icon: <GraduationCap className="w-6 h-6" />,
-    color: "from-rose-500 to-red-500",
+    color: "from-token-error to-token-primary",
     position: calculatePosition(288), // 288° (top left)
   },
 ]
@@ -136,12 +136,12 @@ export default function SageaAnimation() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-token-surface-accent-light via-token-surface to-token-surface-accent">
       {/* Debug toggle */}
       <div className="fixed top-4 right-4 z-50">
         <button
           onClick={() => setDebug((d) => !d)}
-          className="px-3 py-1 rounded bg-blue-200 text-blue-900 font-bold shadow hover:bg-blue-300"
+          className="px-3 py-1 rounded bg-token-primary/20 text-token-primary-dark font-bold shadow hover:bg-token-primary/30"
         >
           {debug ? 'Hide Debug' : 'Show Debug'}
         </button>
@@ -151,7 +151,7 @@ export default function SageaAnimation() {
         <div className="container mx-auto px-4">
           <div className="text-center max-w-4xl mx-auto mb-16">
             <motion.h1
-              className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent"
+              className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-token-primary via-token-accent to-token-success bg-clip-text text-transparent"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
@@ -160,7 +160,7 @@ export default function SageaAnimation() {
             </motion.h1>
 
             <motion.p
-              className="text-xl md:text-2xl text-slate-600 leading-relaxed"
+              className="text-xl md:text-2xl text-text-tertiary leading-relaxed"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
@@ -176,13 +176,13 @@ export default function SageaAnimation() {
               {/* Central Sagea */}
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <motion.div
-                  className="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow-lg border-4 border-white flex items-center justify-center relative z-20"
+                  className="w-24 h-24 bg-gradient-to-r from-token-primary to-token-accent rounded-full shadow-lg border-4 border-white flex items-center justify-center relative z-20"
                   animate={{
                     scale: [1, 1.1, 1],
                     boxShadow: [
-                      "0 0 20px rgba(59, 130, 246, 0.3)",
-                      "0 0 40px rgba(139, 92, 246, 0.6)",
-                      "0 0 20px rgba(59, 130, 246, 0.3)",
+                      "0 0 20px rgba(var(--token-primary-rgb), 0.3)",
+                      "0 0 40px rgba(var(--token-accent-rgb), 0.6)",
+                      "0 0 20px rgba(var(--token-primary-rgb), 0.3)",
                     ],
                   }}
                   transition={{
