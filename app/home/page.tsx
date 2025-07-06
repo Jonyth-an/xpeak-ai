@@ -24,6 +24,7 @@ import {
   Video,
 } from "lucide-react"
 import TrustedByLearnersSection from './components/TrustedByLearnersSection';
+import FinalCTASection from './components/FinalCTASection';
 
 const stats = [
   { number: "1M+", label: "Sparks Ignited", icon: <Sparkles className="w-6 h-6" /> },
@@ -152,38 +153,7 @@ export default function HomePage() {
         <PlanTiersSection />
 
         {/* Final CTA Section */}
-        <section className="py-20 bg-gradient-to-r from-token-surface-dark to-token-surface-darker">
-          <div className="container mx-auto px-4 text-center">
-            <motion.div
-              className="max-w-5xl mx-auto"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-4xl md:text-6xl font-bold mb-8">
-                <span className="text-token-primary">
-                  You're not just learning a language.
-                </span>
-                <br />
-                <span className="bg-gradient-to-r from-token-primary-light to-token-secondary-light bg-clip-text text-transparent">
-                  You're building a world.
-                </span>
-              </h2>
-              <p className="text-xl md:text-2xl text-token-text-inverse/70 mb-12 leading-relaxed">
-                With Sagea at your side and Xpeak AI beneath it all — you're ready to grow.
-              </p>
-              <Link href="/signup">
-                <Button
-                  size="lg"
-                  className="bg-gradient-to-r from-token-primary to-token-secondary hover:from-token-primary-dark hover:to-token-secondary-dark text-white px-12 py-4 rounded-full text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group"
-                >
-                  Start Learning with Xpeak AI
-                  <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-            </motion.div>
-          </div>
-        </section>
+        <FinalCTASection />
       </div>
     </Layout>
   )
