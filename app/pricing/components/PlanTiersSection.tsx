@@ -291,11 +291,11 @@ function PlanTiersSectionInner() {
   // Show loading state only for authenticated users
   if (loading && user && session) {
     return (
-      <section className="py-16 bg-token-surface-subtle">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-token-20 bg-token-surface-subtle">
+        <div className="container-token-7xl mx-auto px-token-4 sm:px-token-6 lg:px-token-8">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-token-primary mx-auto"></div>
-            <p className="mt-4 text-text-secondary">Loading your current plan...</p>
+            <div className="animate-spin rounded-full h-token-12 w-token-12 border-b-token-2 border-token-primary mx-auto"></div>
+            <p className="mt-token-4 token-text-secondary">Loading your current plan...</p>
           </div>
         </div>
       </section>
@@ -303,13 +303,13 @@ function PlanTiersSectionInner() {
   }
 
   return (
-    <section className="py-16 bg-token-surface-subtle">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-text mb-4">
+    <section className="py-token-20 bg-token-surface-subtle">
+      <div className="container-token-7xl mx-auto px-token-4 sm:px-token-6 lg:px-token-8">
+        <div className="text-center mb-token-16">
+          <h2 className="text-token-4xl font-bold token-text-primary mb-token-6">
             {isUpgradeDowngrade ? 'Change Your Plan' : 'Choose Your Plan'}
           </h2>
-          <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+          <p className="text-token-lg token-text-secondary max-w-token-2xl mx-auto leading-relaxed">
             {isUpgradeDowngrade 
               ? `You're currently on the ${currentPlan ? currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1) : ''} plan (${currentBillingCycle} billing). Choose a new plan and billing cycle.`
               : 'Choose the perfect plan to start your language adventure with Xpeak AI. Upgrade, downgrade, or cancel anytime.'
@@ -318,7 +318,7 @@ function PlanTiersSectionInner() {
         </div>
 
         {/* Billing Cycle Toggle */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-token-12">
           <ToggleGroup 
             value={billingCycle} 
             onChange={(value) => setBillingCycle(value as 'monthly' | 'quarterly' | 'yearly')}
@@ -329,7 +329,7 @@ function PlanTiersSectionInner() {
                 label: (
                   <>
                     Yearly
-                    <Badge variant="primary" className="ml-2">Save 20%</Badge>
+                    <Badge variant="primary" className="ml-token-2">Save 20%</Badge>
                   </>
                 ), 
                 value: 'yearly' 
@@ -339,7 +339,7 @@ function PlanTiersSectionInner() {
         </div>
 
         {/* Plans Grid */}
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-token-8">
           {plans.map((plan) => {
             const isCurrentPlan = currentPlan === plan.id;
             const isCurrentCycle = currentBillingCycle === billingCycle;
@@ -350,29 +350,37 @@ function PlanTiersSectionInner() {
             return (
               <Card 
                 key={plan.id} 
-                className={`relative p-8 ${plan.highlight ? 'ring-2 ring-token-primary' : ''} ${isCurrentPlan ? 'ring-2 ring-token-primary-light bg-token-primary/5' : ''}`}
+                className={`card-token-elevated relative p-token-8 transition-token-normal hover:shadow-token-xl hover:scale-token-105 ${
+                  plan.highlight 
+                    ? 'ring-token-2 ring-token-primary shadow-token-lg' 
+                    : 'border-token-border hover:border-token-accent/30'
+                } ${
+                  isCurrentPlan 
+                    ? 'ring-token-2 ring-token-primary-light bg-token-primary/5 shadow-token-lg' 
+                    : ''
+                }`}
               >
                 {isCurrentPlan && (
-                  <Badge variant="primary" className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <Badge variant="primary" className="absolute -top-token-3 left-1/2 transform -translate-x-1/2 z-token-10">
                     {isCurrentCycle ? 'Current Plan' : 'Current Plan (Different Cycle)'}
                   </Badge>
                 )}
                 
                 <div className="text-center">
-                  <h3 className="text-2xl font-bold text-text mb-2">{plan.name}</h3>
-                  <div className="mb-4">
-                    <span className="text-4xl font-bold text-text">{priceLabel}</span>
-                    <span className="text-text-secondary">{priceSuffix}</span>
+                  <h3 className="text-token-2xl font-bold token-text-primary mb-token-4">{plan.name}</h3>
+                  <div className="mb-token-6">
+                    <span className="text-token-4xl font-bold token-text-primary">{priceLabel}</span>
+                    <span className="token-text-secondary text-token-lg">{priceSuffix}</span>
                   </div>
-                  <p className="text-text-secondary mb-6">{plan.description}</p>
+                  <p className="token-text-secondary mb-token-8 leading-relaxed">{plan.description}</p>
                   
-                  <ul className="text-left space-y-3 mb-8">
+                  <ul className="text-left space-y-token-4 mb-token-10">
                     {plan.features.map((feature, index) => (
                       <li key={index} className="flex items-start">
-                        <svg className="w-5 h-5 text-token-success mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-token-5 h-token-5 text-token-success mr-token-3 mt-token-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
-                        <span className="text-text">{feature}</span>
+                        <span className="token-text-primary leading-relaxed">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -381,7 +389,7 @@ function PlanTiersSectionInner() {
                     onClick={() => handleSubscribe(plan.id)}
                     disabled={isLoading || (isCurrentPlanAndCycle && isUpgradeDowngrade)}
                     variant={plan.highlight ? "primary" : "secondary"}
-                    className="w-full"
+                    className="w-full transition-token-normal hover:shadow-token-md hover:scale-token-105"
                   >
                     {isLoading ? 'Processing...' : 
                      isCurrentPlanAndCycle && isUpgradeDowngrade ? 'Current Plan' : 
@@ -394,8 +402,10 @@ function PlanTiersSectionInner() {
         </div>
 
         {error && (
-          <div className="mt-6 text-center">
-            <p className="text-token-error">{error}</p>
+          <div className="mt-token-8 text-center">
+            <p className="token-text-error bg-token-error-light border border-token-error-light rounded-token-lg p-token-4">
+              {error}
+            </p>
           </div>
         )}
       </div>

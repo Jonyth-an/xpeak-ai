@@ -5,6 +5,12 @@ import { Card } from "@/app/components/ui"
 
 const testPages = [
   {
+    title: "Design Tokens Demo",
+    description: "Interactive showcase of all design tokens, utilities, and semantic components",
+    path: "/test/design-tokens-demo",
+    category: "Design System"
+  },
+  {
     title: "Optimistic UI Test",
     description: "Test optimistic UI updates and error handling",
     path: "/test/optimistic",

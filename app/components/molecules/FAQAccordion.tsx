@@ -21,21 +21,24 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-token-4">
       {items.map((item, idx) => (
-        <Card key={idx} className="bg-token-surface rounded-lg">
+        <Card 
+          key={idx} 
+          className="card-token-interactive bg-token-surface border-token-border hover:border-token-accent/30 transition-token-normal hover:shadow-token-md"
+        >
           <Button
             variant="ghost"
             onClick={() => toggle(idx)}
-            className="w-full flex justify-between items-center py-1 px-2 min-h-0 focus:outline-none focus:ring-0 ring-0 outline-none"
+            className="w-full flex justify-between items-center py-token-4 px-token-4 min-h-0 focus:outline-none focus:ring-token-2 focus:ring-token-primary rounded-token-lg transition-token-normal hover:bg-token-surface-accent-light"
           >
-            <span className="token-text-primary">{item.question}</span>
-            <span className="token-text-secondary">
+            <span className="token-text-primary font-medium text-left">{item.question}</span>
+            <span className="token-text-secondary text-token-lg font-bold transition-token-normal transform">
               {openIndex === idx ? '−' : '+'}
             </span>
           </Button>
           {openIndex === idx && (
-            <div className="pt-0.5 pb-2 px-2 token-text-secondary text-sm leading-tight">
+            <div className="pt-token-0 pb-token-4 px-token-4 token-text-secondary text-token-sm leading-relaxed border-t-token-border border-token-border-light">
               {item.answer}
             </div>
           )}

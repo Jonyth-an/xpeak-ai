@@ -43,20 +43,20 @@ const faqs: FAQItem[] = [
 
 export default function FAQSection() {
   return (
-    <section className="bg-token-surface py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
+    <section className="bg-token-surface py-token-20 px-token-4 sm:px-token-6 lg:px-token-8">
+      <div className="container-token-lg mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-text mb-2">
+        <div className="text-center mb-token-12">
+          <h2 className="text-token-3xl font-bold token-text-primary mb-token-4">
             Frequently Asked Questions
           </h2>
-          <p className="text-text-muted">
+          <p className="text-token-lg token-text-secondary max-w-token-xl mx-auto">
             Everything you need to know about learning with Xpeak
           </p>
         </div>
 
         {/* FAQ Accordion */}
-        <div className="space-y-3">
+        <div className="space-y-token-4">
           <FAQAccordion items={faqs} />
         </div>
       </div>
