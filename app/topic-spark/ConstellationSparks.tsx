@@ -104,13 +104,13 @@ export default function ConstellationSparks() {
   }, []);
 
   return (
-    <div className="w-full max-w-3xl mx-auto mt-8 p-6 bg-gradient-to-br from-token-surface-accent-light via-token-surface-accent to-token-surface-accent-dark rounded-2xl shadow-lg overflow-hidden relative border border-token-primary/20">
+    <div className="w-full max-w-token-3xl mx-auto mt-token-8 p-token-6 bg-gradient-to-br from-token-surface-accent-light via-token-surface-accent to-token-surface-accent-dark rounded-token-2xl shadow-token-lg overflow-hidden relative border border-token-primary/20">
       {/* Background stars */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {backgroundStars.map((star, i) => (
           <div
             key={i}
-            className="absolute bg-white rounded-full opacity-40 animate-pulse"
+            className="absolute bg-white rounded-token-full opacity-40 animate-pulse"
             style={{
               width: `${star.width}px`,
               height: `${star.height}px`,
@@ -125,7 +125,7 @@ export default function ConstellationSparks() {
       </div>
 
       {/* Constellation Container */}
-      <div className="relative h-64 mb-4">
+      <div className="relative h-token-64 mb-token-4">
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 70" preserveAspectRatio="xMidYMid meet">
           {/* Connection lines */}
           <AnimatePresence>
@@ -201,13 +201,13 @@ export default function ConstellationSparks() {
               >
                 {/* Spark glow */}
                 <div
-                  className="absolute inset-0 rounded-full blur-sm opacity-70 animate-pulse"
+                  className="absolute inset-0 rounded-token-full blur-token-sm opacity-70 animate-pulse"
                   style={{ backgroundColor: spark.color }}
                 />
 
                 {/* Spark core */}
                 <div
-                  className="relative w-3 h-3 rounded-full shadow-lg border border-white/30"
+                  className="relative w-token-3 h-token-3 rounded-token-full shadow-token-lg border border-white/30"
                   style={{ backgroundColor: spark.color }}
                 />
 
@@ -215,14 +215,14 @@ export default function ConstellationSparks() {
                 <AnimatePresence>
                   {activeSparkIndex === index && (
                     <motion.div
-                      className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-2 py-1 rounded text-xs whitespace-nowrap backdrop-blur-sm border border-white/20"
+                      className="absolute top-full mt-token-2 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-token-2 py-token-1 rounded-token-xs whitespace-nowrap backdrop-blur-sm border border-white/20"
                       initial={{ opacity: 0, y: -5, scale: 0.8 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -5, scale: 0.8 }}
                       transition={{ duration: 0.2 }}
                     >
                       {spark.topic}
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-2 border-transparent border-b-token-surface-dark/80" />
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-token-2 border-transparent border-b-token-surface-dark/80" />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -240,7 +240,7 @@ export default function ConstellationSparks() {
               animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-token-secondary-light/20 via-token-accent-light/20 to-token-primary-light/20 rounded-lg animate-pulse" />
+              <div className="absolute inset-0 bg-gradient-to-r from-token-secondary-light/20 via-token-accent-light/20 to-token-primary-light/20 rounded-token-lg animate-pulse" />
             </motion.div>
           )}
         </AnimatePresence>

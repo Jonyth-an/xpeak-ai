@@ -87,13 +87,13 @@ export default function SparkToTrekAnimation() {
   }, []);
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-8 bg-gradient-to-br from-token-secondary-light via-token-accent-light to-token-primary-light rounded-2xl overflow-hidden relative my-20 shadow-xl">
+    <div className="w-full max-w-token-6xl mx-auto p-token-8 bg-gradient-to-br from-token-secondary-light via-token-accent-light to-token-primary-light rounded-token-2xl overflow-hidden relative my-token-20 shadow-token-xl">
       {/* Background stars */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {backgroundStars.map((star, i) => (
           <div
             key={i}
-            className="absolute bg-white rounded-full opacity-70 animate-pulse shadow-lg"
+            className="absolute bg-white rounded-token-full opacity-70 animate-pulse shadow-token-lg"
             style={{
               width: `${star.width}px`,
               height: `${star.height}px`,
@@ -108,16 +108,16 @@ export default function SparkToTrekAnimation() {
       </div>
 
       {/* Section Title */}
-      <motion.div className="text-center mb-6">
-        <h2 className="text-4xl font-bold text-text mb-4">From a Spark to a Trek</h2>
-        <p className="text-lg text-text-secondary max-w-3xl mx-auto leading-relaxed">
+      <motion.div className="text-center mb-token-6">
+        <h2 className="text-token-4xl font-bold token-text-primary mb-token-4">From a Spark to a Trek</h2>
+        <p className="text-token-lg token-text-secondary max-w-token-3xl mx-auto leading-relaxed">
           Topic Spark uses your progress, interests, and vocabulary Maze to generate a dynamic, evolving learning path —
           one meaningful topic at a time.
         </p>
       </motion.div>
 
       {/* Animation Container */}
-      <div className="relative h-80 mb-6">
+      <div className="relative h-token-80 mb-token-6">
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 500 120" preserveAspectRatio="xMidYMid meet">
           {/* Connection paths */}
           <AnimatePresence>
@@ -179,16 +179,16 @@ export default function SparkToTrekAnimation() {
                 onHoverEnd={() => setHoveredNode(null)}
               >
                 {/* Node glow effect */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-token-secondary to-token-accent blur-lg opacity-60 animate-pulse" />
+                <div className="absolute inset-0 rounded-token-full bg-gradient-to-r from-token-secondary to-token-accent blur-token-lg opacity-60 animate-pulse" />
 
                 {/* Node */}
-                <div className="relative w-16 h-16 bg-gradient-to-br from-token-secondary to-token-accent rounded-full flex items-center justify-center text-2xl shadow-2xl border-2 border-white/20">
+                <div className="relative w-token-16 h-token-16 bg-gradient-to-br from-token-secondary to-token-accent rounded-token-full flex items-center justify-center text-token-2xl shadow-token-2xl border-token-2 border-white/20">
                   {node.icon}
                 </div>
 
                 {/* Label - always visible */}
                 <motion.div
-                  className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-token-surface-dark/80 text-token-text-inverse px-3 py-2 rounded-lg text-sm whitespace-nowrap backdrop-blur-sm border border-token-surface/20 text-center"
+                  className="absolute top-full mt-token-2 left-1/2 transform -translate-x-1/2 bg-token-surface-dark/80 text-token-text-inverse px-token-3 py-token-2 rounded-token-lg text-token-sm whitespace-nowrap backdrop-blur-sm border border-token-surface/20 text-center"
                   initial={{ opacity: 0, y: -10, scale: 0.8 }}
                   animate={{
                     opacity: hoveredNode === node.id ? 1 : 0.8,
@@ -201,7 +201,7 @@ export default function SparkToTrekAnimation() {
                   }}
                 >
                   {node.label}
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-token-surface-dark/80" />
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-token-4 border-transparent border-b-token-surface-dark/80" />
                 </motion.div>
               </motion.div>
             ) : null}
@@ -264,7 +264,7 @@ export default function SparkToTrekAnimation() {
 
       {/* Supporting text */}
       <motion.div className="text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5 }}>
-        <p className="text-token-primary font-medium mb-6">
+        <p className="text-token-primary font-medium mb-token-6 leading-relaxed">
           Each Spark expands into a curated Trek — updated in real-time, as Sagea tracks your progress and shapes what
           comes next.
         </p>
@@ -273,7 +273,7 @@ export default function SparkToTrekAnimation() {
         <motion.button
           onClick={startAnimation}
           disabled={isPlaying}
-          className="px-6 py-3 bg-gradient-to-r from-token-secondary to-token-accent text-token-text-inverse font-semibold rounded-full hover:from-token-secondary-dark hover:to-token-accent-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+          className="btn-token-secondary px-token-6 py-token-3 bg-gradient-to-r from-token-secondary to-token-accent text-token-text-inverse font-semibold rounded-token-full hover:from-token-secondary-dark hover:to-token-accent-dark transition-token-normal disabled:opacity-50 disabled:cursor-not-allowed shadow-token-lg hover:shadow-token-xl"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
