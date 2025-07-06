@@ -175,7 +175,7 @@ function ConfirmPlanChangePageInner() {
       <Layout>
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-token-primary mx-auto mb-4"></div>
             <Text>Calculating plan change details...</Text>
           </div>
         </div>
@@ -188,7 +188,7 @@ function ConfirmPlanChangePageInner() {
       <Layout>
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <Text className="text-red-600 mb-4">{error}</Text>
+            <Text className="token-text-error mb-4">{error}</Text>
             <Button onClick={() => router.push('/profile/billing')}>
               Back to Billing
             </Button>
@@ -208,13 +208,13 @@ function ConfirmPlanChangePageInner() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-token-surface-subtle py-12">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            <h1 className="text-3xl font-bold token-text-primary mb-4">
               Confirm Plan Change
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg token-text-secondary">
               {changeDetails.isCrossCycleChange 
                 ? `You're changing your billing cycle from ${changeDetails.currentBillingCycle} to ${changeDetails.newBillingCycle}`
                 : isSamePlan 
@@ -227,35 +227,35 @@ function ConfirmPlanChangePageInner() {
           <Card className="p-6 mb-6">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <Text className="text-gray-600">Current Plan:</Text>
-                <Text className="font-semibold">
+                <Text className="token-text-secondary">Current Plan:</Text>
+                <Text className="font-semibold token-text-primary">
                   {changeDetails.currentPlan} ({changeDetails.currentBillingCycle})
                 </Text>
               </div>
               
               <div className="flex justify-between items-center">
-                <Text className="text-gray-600">New Plan:</Text>
-                <Text className="font-semibold">
+                <Text className="token-text-secondary">New Plan:</Text>
+                <Text className="font-semibold token-text-primary">
                   {changeDetails.newPlan} ({changeDetails.newBillingCycle})
                 </Text>
               </div>
               
               <div className="flex justify-between items-center">
-                <Text className="text-gray-600">Current Price:</Text>
-                <Text className="font-semibold">${changeDetails.currentPlanPrice}</Text>
+                <Text className="token-text-secondary">Current Price:</Text>
+                <Text className="font-semibold token-text-primary">${changeDetails.currentPlanPrice}</Text>
               </div>
               
               <div className="flex justify-between items-center">
-                <Text className="text-gray-600">New Price:</Text>
-                <Text className="font-semibold">${changeDetails.newPlanPrice}</Text>
+                <Text className="token-text-secondary">New Price:</Text>
+                <Text className="font-semibold token-text-primary">${changeDetails.newPlanPrice}</Text>
               </div>
               
-              <hr className="my-4" />
+              <hr className="my-4 token-border-primary" />
               
               {isUpgrade && (
                 <div className="flex justify-between items-center">
-                  <Text className="text-gray-600">Additional Charge:</Text>
-                  <Text className="font-semibold text-green-600">
+                  <Text className="token-text-secondary">Additional Charge:</Text>
+                  <Text className="font-semibold token-text-success">
                     +${changeDetails.additionalCharge}
                   </Text>
                 </div>
@@ -263,8 +263,8 @@ function ConfirmPlanChangePageInner() {
               
               {isDowngrade && (
                 <div className="flex justify-between items-center">
-                  <Text className="text-gray-600">Credit Applied:</Text>
-                  <Text className="font-semibold text-blue-600">
+                  <Text className="token-text-secondary">Credit Applied:</Text>
+                  <Text className="font-semibold token-text-accent">
                     -${changeDetails.creditAmount}
                   </Text>
                 </div>
@@ -272,23 +272,23 @@ function ConfirmPlanChangePageInner() {
               
               {!isUpgrade && !isDowngrade && (
                 <div className="flex justify-between items-center">
-                  <Text className="text-gray-600">Price Difference:</Text>
-                  <Text className="font-semibold text-gray-600">No change</Text>
+                  <Text className="token-text-secondary">Price Difference:</Text>
+                  <Text className="font-semibold token-text-secondary">No change</Text>
                 </div>
               )}
             </div>
           </Card>
 
           {changeDetails.isCrossCycleChange && (
-            <Card className="p-6 mb-6 bg-blue-50 border-blue-200">
+            <Card className="p-6 mb-6 bg-token-accent-light border-token-accent">
               <div className="flex items-start">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                  <svg className="h-5 w-5 token-text-accent" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <Text className="text-sm text-blue-800">
+                  <Text className="text-sm token-text-accent">
                     <strong>Billing Cycle Change:</strong> You're changing your billing cycle from {changeDetails.currentBillingCycle} to {changeDetails.newBillingCycle}. 
                     This will affect your billing schedule and may result in prorated charges or credits.
                   </Text>
@@ -316,7 +316,7 @@ function ConfirmPlanChangePageInner() {
 
           {error && (
             <div className="mt-4 text-center">
-              <Text className="text-red-600">{error}</Text>
+              <Text className="token-text-error">{error}</Text>
             </div>
           )}
         </div>

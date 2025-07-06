@@ -21,21 +21,21 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
   };
 
   return (
-    <div className="space-y-token-4">
+    <div className="space-y-4">
       {items.map((item, idx) => (
-        <Card key={idx} className="bg-surface rounded-token">
+        <Card key={idx} className="bg-token-surface rounded-lg">
           <Button
             variant="ghost"
             onClick={() => toggle(idx)}
             className="w-full flex justify-between items-center py-1 px-2 min-h-0 focus:outline-none focus:ring-0 ring-0 outline-none"
           >
-            <span className="text-text-primary">{item.question}</span>
-            <span className="text-text-secondary">
+            <span className="token-text-primary">{item.question}</span>
+            <span className="token-text-secondary">
               {openIndex === idx ? '−' : '+'}
             </span>
           </Button>
           {openIndex === idx && (
-            <div className="pt-0.5 pb-2 px-2 text-text-secondary text-sm leading-tight">
+            <div className="pt-0.5 pb-2 px-2 token-text-secondary text-sm leading-tight">
               {item.answer}
             </div>
           )}
