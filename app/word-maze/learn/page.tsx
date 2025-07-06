@@ -156,14 +156,12 @@ export default function WordMazeLearnPage() {
   // Show loading if user is not authenticated
   if (!user) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading...</p>
-          </div>
+      <div className="min-h-screen flex items-center justify-center bg-token-surface-subtle">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-token-primary mx-auto mb-4"></div>
+          <div className="token-text-secondary">Loading your learning journey...</div>
         </div>
-      </Layout>
+      </div>
     );
   }
 
@@ -193,7 +191,7 @@ export default function WordMazeLearnPage() {
         )}
 
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-white text-gray-900 py-20 px-4 sm:px-6 lg:px-8">
+        <section className="relative overflow-hidden bg-token-surface token-text-primary py-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="text-center">
               <h1 className="text-5xl md:text-6xl font-bold mb-6">
@@ -207,7 +205,7 @@ export default function WordMazeLearnPage() {
                   size="lg"
                   onClick={startLearningSession}
                   disabled={isLoading}
-                  className="bg-blue-600 text-white hover:bg-blue-700"
+                  className="bg-token-primary token-text-inverse hover:bg-token-primary-hover"
                 >
                   {isLoading ? 'Loading...' : 'Start Learning Session'}
                 </Button>
@@ -215,7 +213,7 @@ export default function WordMazeLearnPage() {
                   size="lg"
                   variant="outline"
                   onClick={() => setShowAddWordModal(true)}
-                  className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                  className="token-primary-border token-text-primary hover:bg-token-primary-light"
                 >
                   Add New Word {" "}
                   <PlusIcon className="w-5 h-5 ml-2" />
@@ -234,34 +232,34 @@ export default function WordMazeLearnPage() {
         <section className="py-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-              <Card className="p-6 text-center">
-                <div className="text-3xl font-bold text-blue-600 mb-2">
+              <Card className="p-6 text-center bg-token-surface-elevated">
+                <div className="text-3xl font-bold token-text-primary mb-2">
                   {syncedCount + pendingCount}
                 </div>
-                <div className="text-gray-600">Total Words</div>
+                <div className="token-text-secondary">Total Words</div>
                 {pendingCount > 0 && (
-                  <div className="text-sm text-orange-600 mt-1">
+                  <div className="text-sm token-text-warning mt-1">
                     {pendingCount} syncing...
                   </div>
                 )}
               </Card>
-              <Card className="p-6 text-center">
-                <div className="text-3xl font-bold text-green-600 mb-2">
+              <Card className="p-6 text-center bg-token-surface-elevated">
+                <div className="text-3xl font-bold token-text-success mb-2">
                   {mockUserStats.wordsLearned}
                 </div>
-                <div className="text-gray-600">Words Learned</div>
+                <div className="token-text-secondary">Words Learned</div>
               </Card>
-              <Card className="p-6 text-center">
-                <div className="text-3xl font-bold text-purple-600 mb-2">
+              <Card className="p-6 text-center bg-token-surface-elevated">
+                <div className="text-3xl font-bold token-text-accent mb-2">
                   {mockUserStats.currentStreak}
                 </div>
-                <div className="text-gray-600">Day Streak</div>
+                <div className="token-text-secondary">Day Streak</div>
               </Card>
-              <Card className="p-6 text-center">
-                <div className="text-3xl font-bold text-yellow-600 mb-2">
+              <Card className="p-6 text-center bg-token-surface-elevated">
+                <div className="text-3xl font-bold token-text-warning mb-2">
                   {mockUserStats.totalPoints}
                 </div>
-                <div className="text-gray-600">Total Points</div>
+                <div className="token-text-secondary">Total Points</div>
               </Card>
             </div>
           </div>
@@ -278,8 +276,8 @@ export default function WordMazeLearnPage() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                     activeTab === tab.id
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-token-primary token-text-inverse'
+                      : 'bg-token-surface-subtle token-text-secondary hover:bg-token-surface-accent'
                   }`}
                 >
                   <span className="mr-2">{tab.icon}</span>
@@ -294,7 +292,7 @@ export default function WordMazeLearnPage() {
                 {/* Recent Words Section */}
                 <div>
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-gray-900">Recent Words</h2>
+                    <h2 className="text-2xl font-bold token-text-primary">Recent Words</h2>
                     <div className="flex gap-2">
                       <Button
                         variant="outline"
@@ -317,11 +315,11 @@ export default function WordMazeLearnPage() {
                   {storeLoading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {[...Array(6)].map((_, i) => (
-                        <Card key={i} className="h-64 p-6 animate-pulse">
-                          <div className="h-6 bg-gray-200 rounded mb-4"></div>
-                          <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                          <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                        <Card key={i} className="h-64 p-6 animate-pulse bg-token-surface-elevated">
+                          <div className="h-6 bg-token-surface-subtle rounded mb-4"></div>
+                          <div className="h-4 bg-token-surface-subtle rounded mb-2"></div>
+                          <div className="h-4 bg-token-surface-subtle rounded mb-2"></div>
+                          <div className="h-4 bg-token-surface-subtle rounded w-3/4"></div>
                         </Card>
                       ))}
                     </div>
@@ -338,17 +336,17 @@ export default function WordMazeLearnPage() {
                       ))}
                     </div>
                   ) : (
-                    <Card className="p-12 text-center">
+                    <Card className="p-12 text-center bg-token-surface-elevated">
                       <div className="text-6xl mb-4">📚</div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                      <h3 className="text-xl font-semibold token-text-primary mb-2">
                         No words yet
                       </h3>
-                      <p className="text-gray-600 mb-6">
+                      <p className="token-text-secondary mb-6">
                         Start building your vocabulary by adding your first word!
                       </p>
                       <Button
                         onClick={() => setShowAddWordModal(true)}
-                        className="bg-blue-600 text-white hover:bg-blue-700"
+                        className="bg-token-primary token-text-inverse hover:bg-token-primary-hover"
                       >
                         Add Your First Word
                       </Button>
@@ -358,24 +356,24 @@ export default function WordMazeLearnPage() {
 
                 {/* Learning Path Section */}
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Learning Paths</h2>
+                  <h2 className="text-2xl font-bold token-text-primary mb-6">Learning Paths</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {mockLearningPath.map((path) => (
-                      <Card key={path.id} className="p-6">
+                      <Card key={path.id} className="p-6 bg-token-surface-elevated">
                         <div className="flex justify-between items-start mb-4">
-                          <h3 className="text-lg font-semibold text-gray-900">
+                          <h3 className="text-lg font-semibold token-text-primary">
                             {path.title}
                           </h3>
                           <Badge variant="default">{path.difficulty}</Badge>
                         </div>
                         <div className="mb-4">
-                          <div className="flex justify-between text-sm text-gray-600 mb-1">
+                          <div className="flex justify-between text-sm token-text-secondary mb-1">
                             <span>Progress</span>
                             <span>{path.completed}/{path.words}</span>
                           </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div className="w-full bg-token-surface-subtle rounded-full h-2">
                             <div
-                              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                              className="bg-token-primary h-2 rounded-full transition-all duration-300"
                               style={{
                                 width: `${(path.completed / path.words) * 100}%`,
                               }}
@@ -396,7 +394,7 @@ export default function WordMazeLearnPage() {
 
                 {/* Achievements Section */}
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Recent Achievements</h2>
+                  <h2 className="text-2xl font-bold token-text-primary mb-6">Recent Achievements</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {mockAchievements.map((achievement) => (
                       <Card

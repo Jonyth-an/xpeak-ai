@@ -142,23 +142,23 @@ export default function AuditTrailPage() {
     switch (eventType) {
       case 'subscription_created':
       case 'payment_succeeded':
-        return 'text-green-600 bg-green-50';
+        return 'token-text-success bg-token-success-light';
       case 'subscription_cancelled':
       case 'payment_failed':
-        return 'text-red-600 bg-red-50';
+        return 'token-text-error bg-token-error-light';
       case 'subscription_updated':
       case 'customer_updated':
-        return 'text-blue-600 bg-blue-50';
+        return 'token-text-info bg-token-info-light';
       default:
-        return 'text-gray-600 bg-gray-50';
+        return 'token-text-secondary bg-token-surface-subtle';
     }
   };
 
   if (loading) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="min-h-screen bg-token-surface-subtle flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-token-primary"></div>
         </div>
       </AdminLayout>
     );
@@ -167,12 +167,12 @@ export default function AuditTrailPage() {
   if (!isAdmin) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-token-surface-subtle flex items-center justify-center">
           <div className="text-center">
-            <Text variant="h1" as="h1" className="mb-4 text-red-600">
+            <Text variant="h1" as="h1" className="mb-4 token-text-error">
               Access Denied
             </Text>
-            <Text variant="body" className="text-gray-600 mb-6">
+            <Text variant="body" className="token-text-secondary mb-6">
               You don't have permission to access the audit trail.
             </Text>
           </div>
@@ -183,16 +183,16 @@ export default function AuditTrailPage() {
 
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-token-surface-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <div>
-                <Text variant="h1" as="h1" className="mb-2">
+                <Text variant="h1" as="h1" className="mb-2 token-text-primary">
                   Audit Trail
                 </Text>
-                <Text variant="lead" className="text-gray-600">
+                <Text variant="lead" className="token-text-secondary">
                   Complete history of all billing events and user actions
                 </Text>
               </div>
@@ -203,17 +203,17 @@ export default function AuditTrailPage() {
           </div>
 
           {/* Filters */}
-          <Card className="p-6 mb-6">
-            <Text variant="h3" as="h3" className="mb-4">Filters</Text>
+          <Card className="p-6 mb-6 bg-token-surface token-border-primary border">
+            <Text variant="h3" as="h3" className="mb-4 token-text-primary">Filters</Text>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium token-text-secondary mb-1">
                   Event Type
                 </label>
                 <select
                   value={filters.eventType}
                   onChange={(e) => handleFilterChange('eventType', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  className="w-full border token-border-primary rounded-md px-3 py-2 bg-token-surface token-text-primary"
                 >
                   <option value="">All Events</option>
                   <option value="subscription_created">Subscription Created</option>
@@ -227,7 +227,7 @@ export default function AuditTrailPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium token-text-secondary mb-1">
                   User Email
                 </label>
                 <input
@@ -235,31 +235,31 @@ export default function AuditTrailPage() {
                   value={filters.userEmail}
                   onChange={(e) => handleFilterChange('userEmail', e.target.value)}
                   placeholder="Filter by email"
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  className="w-full border token-border-primary rounded-md px-3 py-2 bg-token-surface token-text-primary"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium token-text-secondary mb-1">
                   Start Date
                 </label>
                 <input
                   type="date"
                   value={filters.startDate}
                   onChange={(e) => handleFilterChange('startDate', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  className="w-full border token-border-primary rounded-md px-3 py-2 bg-token-surface token-text-primary"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium token-text-secondary mb-1">
                   End Date
                 </label>
                 <input
                   type="date"
                   value={filters.endDate}
                   onChange={(e) => handleFilterChange('endDate', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  className="w-full border token-border-primary rounded-md px-3 py-2 bg-token-surface token-text-primary"
                 />
               </div>
             </div>
@@ -275,17 +275,17 @@ export default function AuditTrailPage() {
           </Card>
 
           {/* Events List */}
-          <Card className="p-6">
+          <Card className="p-6 bg-token-surface token-border-primary border">
             <div className="flex items-center justify-between mb-4">
-              <Text variant="h3" as="h3">Events ({pagination.total})</Text>
-              <Text variant="small" className="text-gray-500">
+              <Text variant="h3" as="h3" className="token-text-primary">Events ({pagination.total})</Text>
+              <Text variant="small" className="token-text-muted">
                 Showing {events.length} of {pagination.total} events
               </Text>
             </div>
 
             <div className="space-y-4">
               {events.map((event) => (
-                <div key={event.id} className="border border-gray-200 rounded-lg p-4">
+                <div key={event.id} className="border token-border-primary rounded-lg p-4 bg-token-surface-subtle">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-3">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-lg ${getEventColor(event.event_type)}`}>
@@ -293,23 +293,23 @@ export default function AuditTrailPage() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center space-x-2">
-                          <Text variant="body" className="font-semibold">
+                          <Text variant="body" className="font-semibold token-text-primary">
                             {event.event_type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                           </Text>
-                          <span className="text-sm text-gray-500">
+                          <span className="text-sm token-text-muted">
                             {new Date(event.created_at).toLocaleString()}
                           </span>
                         </div>
-                        <Text variant="small" className="text-gray-600 mt-1">
+                        <Text variant="small" className="token-text-secondary mt-1">
                           User: {event.user_email}
                         </Text>
                         {event.event_data && (
                           <div className="mt-2">
                             <details className="text-sm">
-                              <summary className="cursor-pointer text-gray-600 hover:text-gray-800">
+                              <summary className="cursor-pointer token-text-secondary hover:token-text-primary">
                                 View Event Data
                               </summary>
-                              <pre className="mt-2 p-2 bg-gray-50 rounded text-xs overflow-x-auto">
+                              <pre className="mt-2 p-2 bg-token-surface rounded text-xs overflow-x-auto token-text-secondary">
                                 {JSON.stringify(event.event_data, null, 2)}
                               </pre>
                             </details>
@@ -323,7 +323,7 @@ export default function AuditTrailPage() {
 
               {events.length === 0 && (
                 <div className="text-center py-8">
-                  <Text variant="body" className="text-gray-500">
+                  <Text variant="body" className="token-text-muted">
                     No events found matching your filters.
                   </Text>
                 </div>

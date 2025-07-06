@@ -93,7 +93,7 @@ export default function WordCard({
 
   return (
     <Card
-      className={`relative h-64 flex flex-col justify-between p-6 rounded-token-lg transition-all duration-200 bg-white shadow-token-md cursor-pointer hover:shadow-lg hover:ring-2 hover:ring-blue-400 ${cardClassName} ${showModal ? 'z-40' : ''}`}
+      className={`relative h-64 flex flex-col justify-between p-6 rounded-token-lg transition-all duration-200 bg-token-surface shadow-token-md cursor-pointer hover:shadow-lg hover:ring-2 hover:ring-token-accent ${cardClassName} ${showModal ? 'z-40' : ''}`}
       onClick={() => setShowModalId(id)}
       tabIndex={0}
       role="button"
@@ -101,12 +101,12 @@ export default function WordCard({
       onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setShowModalId(id); }}
     >
       <div>
-        <h3 className="text-xl font-bold mb-2 text-gray-900">{word}</h3>
-        <div className="text-gray-700 text-base line-clamp-4">
+        <h3 className="text-xl font-bold mb-2 text-token-primary">{word}</h3>
+        <div className="text-token-secondary text-base line-clamp-4">
           {definition}
         </div>
       </div>
-      <div className="text-sm text-gray-500 mt-2">
+      <div className="text-sm text-token-tertiary mt-2">
         Added: {new Date(dateAdded).toLocaleDateString()}
       </div>
       {/* Modal for full details */}
@@ -123,13 +123,13 @@ export default function WordCard({
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-token-elevated rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-6">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{word}</h2>
+                    <h2 className="text-2xl font-bold text-token-primary mb-2">{word}</h2>
                     {pronunciationUrls && (
                       <div className="flex gap-2">
                         {pronunciationUrls.us && (
@@ -142,7 +142,7 @@ export default function WordCard({
                   </div>
                   <button
                     onClick={handleCloseModal}
-                    className="text-gray-400 hover:text-gray-600 text-2xl"
+                    className="text-token-tertiary hover:text-token-secondary text-2xl"
                   >
                     ×
                   </button>
@@ -150,15 +150,15 @@ export default function WordCard({
 
                 {isLoadingDetails ? (
                   <div className="text-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-2 text-gray-600">Loading word details...</p>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-token-accent mx-auto"></div>
+                    <p className="mt-2 text-token-secondary">Loading word details...</p>
                   </div>
                 ) : detailsError ? (
                   <div className="text-center py-8">
-                    <p className="text-red-600 mb-4">{detailsError}</p>
+                    <p className="text-token-error mb-4">{detailsError}</p>
                     <button
                       onClick={fetchWordDetails}
-                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                      className="px-4 py-2 bg-token-accent text-token-text-inverse rounded hover:bg-token-accent-dark"
                     >
                       Try Again
                     </button>
@@ -167,27 +167,27 @@ export default function WordCard({
                   <div className="space-y-6">
                     {/* Definition */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
+                      <h3 className="text-lg font-semibold text-token-primary mb-2 flex items-center">
                         🧠 Definition
                       </h3>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-token-secondary leading-relaxed">
                         {wordDetails.definition || 'No definition available'}
                       </p>
                     </div>
 
                     {/* Example Sentence */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
+                      <h3 className="text-lg font-semibold text-token-primary mb-2 flex items-center">
                         📘 Example Sentence
                       </h3>
-                      <p className="text-gray-700 leading-relaxed italic">
+                      <p className="text-token-secondary leading-relaxed italic">
                         {wordDetails.example || 'No example available'}
                       </p>
                     </div>
 
                     {/* Synonyms */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
+                      <h3 className="text-lg font-semibold text-token-primary mb-2 flex items-center">
                         🟡 Synonyms
                       </h3>
                       {wordDetails.synonyms && wordDetails.synonyms.length > 0 ? (
@@ -195,41 +195,44 @@ export default function WordCard({
                           {wordDetails.synonyms.map((synonym, index) => (
                             <span
                               key={index}
-                              className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"
+                              className="px-3 py-1 bg-token-warning/20 text-token-warning rounded-full text-sm"
                             >
                               {synonym}
                             </span>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-gray-500">No synonyms available</p>
+                        <p className="text-token-tertiary">No synonyms available</p>
                       )}
                     </div>
 
                     {/* Usage Tip */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
+                      <h3 className="text-lg font-semibold text-token-primary mb-2 flex items-center">
                         💡 Usage Tip
                       </h3>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-token-secondary leading-relaxed">
                         {wordDetails.usageTip || 'No usage tip available'}
                       </p>
                     </div>
                   </div>
                 ) : (
                   <div className="text-center py-8">
-                    <p className="text-gray-600">Click "Show more" to load detailed information</p>
+                    <p className="text-token-secondary">Click "Show more" to load detailed information</p>
                   </div>
                 )}
 
-                <div className="mt-6 pt-4 border-t border-gray-200">
-                  <div className="flex justify-between items-center text-sm text-gray-500">
+                <div className="mt-6 pt-4 border-t border-token">
+                  <div className="flex justify-between items-center text-sm text-token-tertiary">
                     <span>Added: {new Date(dateAdded).toLocaleDateString()}</span>
                     <button
-                      onClick={onDelete}
-                      className="text-red-600 hover:text-red-800 font-medium"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete();
+                      }}
+                      className="text-token-error hover:text-token-error-dark font-medium"
                     >
-                      Delete Word
+                      Delete
                     </button>
                   </div>
                 </div>
@@ -238,13 +241,15 @@ export default function WordCard({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Delete button */}
       <button
-        className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-lg"
-        onClick={e => {
+        onClick={(e) => {
           e.stopPropagation();
           onDelete();
         }}
-        aria-label="Delete"
+        className="absolute top-2 right-2 text-token-tertiary hover:text-token-secondary text-lg"
+        aria-label={`Delete ${word}`}
       >
         ×
       </button>

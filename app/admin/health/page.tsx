@@ -102,33 +102,33 @@ export default function SystemHealthPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'healthy':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
+        return <CheckCircle className="h-5 w-5 text-token-success" />;
       case 'warning':
-        return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
+        return <AlertTriangle className="h-5 w-5 text-token-warning" />;
       case 'critical':
-        return <XCircle className="h-5 w-5 text-red-500" />;
+        return <XCircle className="h-5 w-5 text-token-error" />;
       default:
-        return <Info className="h-5 w-5 text-blue-500" />;
+        return <Info className="h-5 w-5 text-token-accent" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'healthy':
-        return 'bg-green-100 text-green-800';
+        return 'bg-token-success/20 text-token-success';
       case 'warning':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-token-warning/20 text-token-warning';
       case 'critical':
-        return 'bg-red-100 text-red-800';
+        return 'bg-token-error/20 text-token-error';
       default:
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-token-accent/20 text-token-accent';
     }
   };
 
   const getMetricColor = (value: number, thresholds: { warning: number; critical: number }) => {
-    if (value >= thresholds.critical) return 'text-red-600';
-    if (value >= thresholds.warning) return 'text-yellow-600';
-    return 'text-green-600';
+    if (value >= thresholds.critical) return 'text-token-error';
+    if (value >= thresholds.warning) return 'text-token-warning';
+    return 'text-token-success';
   };
 
   const formatTimestamp = (timestamp: string) => {
@@ -138,8 +138,8 @@ export default function SystemHealthPage() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="min-h-screen bg-token-surface flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-token-accent"></div>
         </div>
       </AdminLayout>
     );
@@ -148,12 +148,12 @@ export default function SystemHealthPage() {
   if (!isAdmin) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-token-surface flex items-center justify-center">
           <div className="text-center">
-            <Text variant="h1" as="h1" className="mb-4 text-red-600">
+            <Text variant="h1" as="h1" className="mb-4 text-token-error">
               Access Denied
             </Text>
-            <Text variant="body" className="text-gray-600 mb-6">
+            <Text variant="body" className="text-token-secondary mb-6">
               You don't have permission to access the admin dashboard.
             </Text>
           </div>
@@ -165,9 +165,9 @@ export default function SystemHealthPage() {
   if (error) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-red-800">Error: {error}</p>
+        <div className="min-h-screen bg-token-surface flex items-center justify-center">
+          <div className="bg-token-error/10 border border-token-error/20 rounded-lg p-4">
+            <p className="text-token-error">Error: {error}</p>
             <Button onClick={fetchHealthData} className="mt-2">
               Retry
             </Button>
@@ -180,12 +180,12 @@ export default function SystemHealthPage() {
   if (!healthData) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-token-surface flex items-center justify-center">
           <div className="text-center">
-            <Text variant="h1" as="h1" className="mb-4 text-gray-600">
+            <Text variant="h1" as="h1" className="mb-4 text-token-secondary">
               No health data available
             </Text>
-            <Text variant="body" className="text-gray-600 mb-6">
+            <Text variant="body" className="text-token-secondary mb-6">
               Please try refreshing the page.
             </Text>
             <Button onClick={fetchHealthData} className="mt-2">
@@ -199,13 +199,13 @@ export default function SystemHealthPage() {
 
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-token-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <div>
-              <Text variant="h1" as="h1" className="mb-2">System Health</Text>
-              <Text variant="lead" className="text-gray-600">
+              <Text variant="h1" as="h1" className="mb-2 text-token-primary">System Health</Text>
+              <Text variant="lead" className="text-token-secondary">
                 Last updated: {formatTimestamp(healthData.timestamp)}
               </Text>
             </div>
@@ -220,16 +220,16 @@ export default function SystemHealthPage() {
           </div>
 
           {/* Overall Status */}
-          <Card className="mb-8">
+          <Card className="mb-8 bg-token-elevated border border-token">
             <div className="flex items-center gap-2 mb-4">
               {getStatusIcon(healthData.overall_status)}
-              <Text variant="h3" as="h3">Overall System Status</Text>
+              <Text variant="h3" as="h3" className="text-token-primary">Overall System Status</Text>
             </div>
             <div className="flex items-center gap-4">
               <Badge className={getStatusColor(healthData.overall_status)}>
                 {healthData.overall_status.toUpperCase()}
               </Badge>
-              <div className="flex gap-4 text-sm text-gray-600">
+              <div className="flex gap-4 text-sm text-token-tertiary">
                 <span>Critical: {healthData.alerts.critical}</span>
                 <span>Warning: {healthData.alerts.warning}</span>
                 <span>Info: {healthData.alerts.info}</span>
@@ -240,99 +240,99 @@ export default function SystemHealthPage() {
           {/* Services Status */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {Object.entries(healthData.services).map(([serviceName, service]) => (
-              <Card key={serviceName}>
+              <Card key={serviceName} className="bg-token-elevated border border-token">
                 <div className="flex items-center justify-between mb-4">
-                  <Text variant="h3" as="h3" className="capitalize">
+                  <Text variant="h3" as="h3" className="capitalize text-token-primary">
                     {serviceName.replace('_', ' ')}
                   </Text>
                   {getStatusIcon(service.status)}
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Status:</span>
+                    <span className="text-sm text-token-tertiary">Status:</span>
                     <Badge className={getStatusColor(service.status)}>
                       {service.status}
                     </Badge>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Response Time:</span>
-                    <span className="text-sm font-medium">{service.response_time}ms</span>
+                    <span className="text-sm text-token-tertiary">Response Time:</span>
+                    <span className="text-sm font-medium text-token-primary">{service.response_time}ms</span>
                   </div>
                   {service.uptime && (
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Uptime:</span>
-                      <span className="text-sm font-medium">{service.uptime}</span>
+                      <span className="text-sm text-token-tertiary">Uptime:</span>
+                      <span className="text-sm font-medium text-token-primary">{service.uptime}</span>
                     </div>
                   )}
                   {service.connections && (
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Connections:</span>
-                      <span className="text-sm font-medium">{service.connections}</span>
+                      <span className="text-sm text-token-tertiary">Connections:</span>
+                      <span className="text-sm font-medium text-token-primary">{service.connections}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Last Check:</span>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-token-tertiary">Last Check:</span>
+                    <span className="text-sm text-token-tertiary">
                       {formatTimestamp(service.last_check)}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 mt-2">{service.details}</p>
+                  <p className="text-sm text-token-secondary mt-2">{service.details}</p>
                 </div>
               </Card>
             ))}
           </div>
 
           {/* System Metrics */}
-          <Card className="mb-8">
-            <Text variant="h3" as="h3" className="mb-4">System Metrics</Text>
+          <Card className="mb-8 bg-token-elevated border border-token">
+            <Text variant="h3" as="h3" className="mb-4 text-token-primary">System Metrics</Text>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="text-center">
                 <div className={`text-2xl font-bold ${getMetricColor(healthData.system_metrics.memory_usage, { warning: 80, critical: 90 })}`}>
                   {healthData.system_metrics.memory_usage}%
                 </div>
-                <div className="text-sm text-gray-600">Memory Usage</div>
+                <div className="text-sm text-token-secondary">Memory Usage</div>
               </div>
               <div className="text-center">
                 <div className={`text-2xl font-bold ${getMetricColor(healthData.system_metrics.cpu_usage, { warning: 70, critical: 85 })}`}>
                   {healthData.system_metrics.cpu_usage}%
                 </div>
-                <div className="text-sm text-gray-600">CPU Usage</div>
+                <div className="text-sm text-token-secondary">CPU Usage</div>
               </div>
               <div className="text-center">
                 <div className={`text-2xl font-bold ${getMetricColor(healthData.system_metrics.disk_usage, { warning: 80, critical: 90 })}`}>
                   {healthData.system_metrics.disk_usage}%
                 </div>
-                <div className="text-sm text-gray-600">Disk Usage</div>
+                <div className="text-sm text-token-secondary">Disk Usage</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-bold text-token-accent">
                   {healthData.system_metrics.active_users}
                 </div>
-                <div className="text-sm text-gray-600">Active Users</div>
+                <div className="text-sm text-token-secondary">Active Users</div>
               </div>
             </div>
           </Card>
 
           {/* Recent Incidents */}
-          <Card>
-            <Text variant="h3" as="h3" className="mb-4">Recent Incidents</Text>
+          <Card className="bg-token-elevated border border-token">
+            <Text variant="h3" as="h3" className="mb-4 text-token-primary">Recent Incidents</Text>
             {healthData.recent_incidents.length === 0 ? (
-              <p className="text-gray-500 text-center py-4">No recent incidents</p>
+              <p className="text-token-tertiary text-center py-4">No recent incidents</p>
             ) : (
               <div className="space-y-4">
                 {healthData.recent_incidents.map((incident) => (
-                  <div key={incident.id} className="border rounded-lg p-4">
+                  <div key={incident.id} className="border border-token rounded-lg p-4 bg-token-surface">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           {getStatusIcon(incident.type)}
-                          <h4 className="font-medium">{incident.title}</h4>
+                          <h4 className="font-medium text-token-primary">{incident.title}</h4>
                           {incident.resolved && (
-                            <Badge className="bg-green-100 text-green-800">Resolved</Badge>
+                            <Badge className="bg-token-success/20 text-token-success">Resolved</Badge>
                           )}
                         </div>
-                        <p className="text-sm text-gray-600 mb-2">{incident.description}</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-sm text-token-secondary mb-2">{incident.description}</p>
+                        <p className="text-xs text-token-tertiary">
                           {formatTimestamp(incident.timestamp)}
                         </p>
                       </div>

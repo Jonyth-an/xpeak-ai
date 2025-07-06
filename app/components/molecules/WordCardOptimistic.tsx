@@ -108,19 +108,19 @@ export default function WordCardOptimistic({
     >
       <div>
         <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-bold text-gray-900">{word.word}</h3>
+          <h3 className="text-xl font-bold text-token-primary">{word.word}</h3>
           <WordStatusIndicator 
             status={word.status} 
             error={word.error}
             className="ml-2"
           />
         </div>
-        <div className="text-gray-700 text-base line-clamp-4">
+        <div className="text-token-secondary text-base line-clamp-4">
           {displayDefinition || 'Loading definition...'}
         </div>
       </div>
       
-      <div className="flex justify-between items-center text-sm text-gray-500 mt-2">
+      <div className="flex justify-between items-center text-sm text-token-tertiary mt-2">
         <span>Added: {new Date(word.created_at).toLocaleDateString()}</span>
         {word.status === 'error' && (
           <button
@@ -128,7 +128,7 @@ export default function WordCardOptimistic({
               e.stopPropagation();
               handleRetrySync();
             }}
-            className="text-blue-600 hover:text-blue-800 text-xs"
+            className="text-token-accent hover:text-token-accent-dark text-xs"
           >
             Retry
           </button>
@@ -155,7 +155,7 @@ export default function WordCardOptimistic({
               <div className="p-6">
                 <div className="flex justify-between items-start mb-6">
                   <div className="flex items-center gap-3">
-                    <h2 className="text-2xl font-bold text-gray-900">{word.word}</h2>
+                    <h2 className="text-2xl font-bold text-token-primary">{word.word}</h2>
                     <WordStatusIndicator 
                       status={word.status} 
                       error={word.error}
@@ -163,7 +163,7 @@ export default function WordCardOptimistic({
                   </div>
                   <button
                     onClick={handleCloseModal}
-                    className="text-gray-400 hover:text-gray-600 text-2xl"
+                    className="text-token-tertiary hover:text-token-secondary text-2xl"
                   >
                     ×
                   </button>
@@ -171,15 +171,15 @@ export default function WordCardOptimistic({
 
                 {isLoadingDetails ? (
                   <div className="text-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-2 text-gray-600">Loading word details...</p>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-token-accent mx-auto"></div>
+                    <p className="mt-2 text-token-secondary">Loading word details...</p>
                   </div>
                 ) : detailsError ? (
                   <div className="text-center py-8">
-                    <p className="text-red-600 mb-4">{detailsError}</p>
+                    <p className="text-token-error mb-4">{detailsError}</p>
                     <button
                       onClick={fetchWordDetails}
-                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                      className="px-4 py-2 bg-token-accent text-token-text-inverse rounded hover:bg-token-accent-dark"
                     >
                       Try Again
                     </button>
@@ -188,27 +188,27 @@ export default function WordCardOptimistic({
                   <div className="space-y-6">
                     {/* Definition */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
+                      <h3 className="text-lg font-semibold text-token-primary mb-2 flex items-center">
                         🧠 Definition
                       </h3>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-token-secondary leading-relaxed">
                         {displayDefinition || 'No definition available'}
                       </p>
                     </div>
 
                     {/* Example Sentence */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
+                      <h3 className="text-lg font-semibold text-token-primary mb-2 flex items-center">
                         📘 Example Sentence
                       </h3>
-                      <p className="text-gray-700 leading-relaxed italic">
+                      <p className="text-token-secondary leading-relaxed italic">
                         {displayExample || 'No example available'}
                       </p>
                     </div>
 
                     {/* Synonyms */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
+                      <h3 className="text-lg font-semibold text-token-primary mb-2 flex items-center">
                         🟡 Synonyms
                       </h3>
                       {displaySynonyms && displaySynonyms.length > 0 ? (
@@ -216,39 +216,39 @@ export default function WordCardOptimistic({
                           {displaySynonyms.map((synonym, index) => (
                             <span
                               key={index}
-                              className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"
+                              className="px-3 py-1 bg-token-warning/20 text-token-warning rounded-full text-sm"
                             >
                               {synonym}
                             </span>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-gray-500">No synonyms available</p>
+                        <p className="text-token-tertiary">No synonyms available</p>
                       )}
                     </div>
 
                     {/* Usage Tip */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
+                      <h3 className="text-lg font-semibold text-token-primary mb-2 flex items-center">
                         💡 Usage Tip
                       </h3>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-token-secondary leading-relaxed">
                         {displayUsageTip || 'No usage tip available'}
                       </p>
                     </div>
                   </div>
                 ) : (
                   <div className="text-center py-8">
-                    <p className="text-gray-600">Click "Show more" to load detailed information</p>
+                    <p className="text-token-secondary">Click "Show more" to load detailed information</p>
                   </div>
                 )}
 
-                <div className="mt-6 pt-4 border-t border-gray-200">
-                  <div className="flex justify-between items-center text-sm text-gray-500">
+                <div className="mt-6 pt-4 border-t border-token">
+                  <div className="flex justify-between items-center text-sm text-token-tertiary">
                     <span>Added: {new Date(word.created_at).toLocaleDateString()}</span>
                     <button
                       onClick={handleDelete}
-                      className="text-red-600 hover:text-red-800 font-medium"
+                      className="text-token-error hover:text-token-error-dark font-medium"
                     >
                       Delete Word
                     </button>
@@ -261,7 +261,7 @@ export default function WordCardOptimistic({
       </AnimatePresence>
       
       <button
-        className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-lg"
+        className="absolute top-2 right-2 text-token-tertiary hover:text-token-secondary text-lg"
         onClick={e => {
           e.stopPropagation();
           handleDelete();

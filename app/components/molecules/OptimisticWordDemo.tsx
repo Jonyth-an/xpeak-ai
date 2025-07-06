@@ -50,10 +50,10 @@ export default function OptimisticWordDemo() {
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">
-          Optimistic UI Demo - Word Maze
+        <h1 className="text-3xl font-bold text-token-primary mb-4">
+          Optimistic Word Demo
         </h1>
-        <p className="text-gray-600 max-w-2xl mx-auto">
+        <p className="text-token-secondary max-w-2xl mx-auto">
           This demo showcases optimistic UI updates using Zustand. Words appear instantly 
           with a "pending" status, then sync with the backend. Watch the status indicators 
           change from "Pending" → "Syncing" → "Synced".
@@ -97,24 +97,24 @@ export default function OptimisticWordDemo() {
       {/* Status Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-4 text-center">
-          <div className="text-2xl font-bold text-blue-600">{words.length}</div>
-          <div className="text-sm text-gray-600">Total Words</div>
+          <div className="text-2xl font-bold text-token-accent">{words.length}</div>
+          <div className="text-sm text-token-secondary">Total Words</div>
         </Card>
         <Card className="p-4 text-center">
-          <div className="text-2xl font-bold text-yellow-600">{pendingWords.length}</div>
-          <div className="text-sm text-gray-600">Pending/Syncing</div>
+          <div className="text-2xl font-bold text-token-warning">{pendingWords.length}</div>
+          <div className="text-sm text-token-secondary">Pending/Syncing</div>
         </Card>
         <Card className="p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">{syncedWords.length}</div>
-          <div className="text-sm text-gray-600">Synced</div>
+          <div className="text-2xl font-bold text-token-success">{syncedWords.length}</div>
+          <div className="text-sm text-token-secondary">Synced</div>
         </Card>
       </div>
 
       {/* Error Display */}
       {error && (
-        <Card className="p-4 bg-red-50 border-red-200">
+        <Card className="p-4 bg-token-error/10 border-token-error/20">
           <div className="flex justify-between items-center">
-            <div className="text-red-800">
+            <div className="text-token-error">
               <strong>Error:</strong> {error}
             </div>
             <Button onClick={clearError} variant="outline" size="sm">
@@ -127,8 +127,8 @@ export default function OptimisticWordDemo() {
       {/* Loading State */}
       {isLoading && (
         <Card className="p-4 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading words...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-token-accent mx-auto"></div>
+          <p className="mt-2 text-token-secondary">Loading words...</p>
         </Card>
       )}
 
@@ -136,7 +136,7 @@ export default function OptimisticWordDemo() {
       <div>
         <h2 className="text-xl font-semibold mb-4">Your Words</h2>
         {words.length === 0 ? (
-          <Card className="p-8 text-center text-gray-500">
+          <Card className="p-8 text-center text-token-tertiary">
             No words yet. Add your first word above!
           </Card>
         ) : (

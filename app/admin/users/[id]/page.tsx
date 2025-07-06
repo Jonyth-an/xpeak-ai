@@ -87,8 +87,8 @@ export default function StudentDetailPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="min-h-screen bg-token-surface flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-token-accent"></div>
         </div>
       </Layout>
     );
@@ -97,12 +97,12 @@ export default function StudentDetailPage() {
   if (!user) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-token-surface flex items-center justify-center">
           <div className="text-center">
-            <Text variant="h1" as="h1" className="mb-4 text-red-600">
+            <Text variant="h1" as="h1" className="mb-4 text-token-error">
               User Not Found
             </Text>
-            <Text variant="body" className="text-gray-600 mb-6">
+            <Text variant="body" className="text-token-secondary mb-6">
               The user you are looking for does not exist.
             </Text>
             <Link href="/admin/users">
@@ -120,14 +120,14 @@ export default function StudentDetailPage() {
 
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-token-surface">
         <div className="max-w-[1100px] mx-auto px-4 sm:px-8 lg:px-12 py-10 space-y-10">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <Text variant="h1" as="h1" className="mb-2">
+              <Text variant="h1" as="h1" className="mb-2 text-token-primary">
                 Student Details
               </Text>
-              <Text variant="lead" className="text-gray-600">
+              <Text variant="lead" className="text-token-secondary">
                 View and manage user profile, preferences, and subscription
               </Text>
             </div>
@@ -137,84 +137,84 @@ export default function StudentDetailPage() {
           </div>
 
           {/* Profile Overview */}
-          <Card className="p-8 mb-4">
+          <Card className="p-8 mb-4 bg-token-elevated border border-token">
             <div className="flex items-center gap-8">
               <img
                 src={meta.avatar_url || meta.picture || '/images/default-avatar.svg'}
                 alt="Avatar"
-                className="w-24 h-24 rounded-full border object-cover"
+                className="w-24 h-24 rounded-full border border-token object-cover"
               />
               <div>
-                <Text variant="h2" as="h2" className="mb-1">
+                <Text variant="h2" as="h2" className="mb-1 text-token-primary">
                   {meta.full_name || meta.name || user.email}
                 </Text>
-                <div className="text-gray-600 mb-1">{user.email}</div>
+                <div className="text-token-accent mb-1">{user.email}</div>
                 <div className="flex gap-2 mb-1 flex-wrap">
                   {user.email_confirmed_at ? (
-                    <span className="px-2 py-1 text-xs rounded bg-green-100 text-green-800">Email Verified</span>
+                    <span className="px-2 py-1 text-xs rounded bg-token-success/20 text-token-success">Email Verified</span>
                   ) : (
-                    <span className="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-800">Email Not Verified</span>
+                    <span className="px-2 py-1 text-xs rounded bg-token-warning/20 text-token-warning">Email Not Verified</span>
                   )}
                   {meta.phone_verified ? (
-                    <span className="px-2 py-1 text-xs rounded bg-green-100 text-green-800">Phone Verified</span>
+                    <span className="px-2 py-1 text-xs rounded bg-token-success/20 text-token-success">Phone Verified</span>
                   ) : (
-                    <span className="px-2 py-1 text-xs rounded bg-gray-100 text-gray-800">Phone Not Verified</span>
+                    <span className="px-2 py-1 text-xs rounded bg-token-secondary/10 text-token-secondary">Phone Not Verified</span>
                   )}
                 </div>
-                <div className="text-xs text-gray-500 mb-1">User ID: {user.id}</div>
-                <div className="text-xs text-gray-500 mb-1">Joined: {new Date(user.created_at).toLocaleString()}</div>
-                <div className="text-xs text-gray-500">Last Sign In: {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : 'Never'}</div>
+                <div className="text-xs text-token-tertiary mb-1">User ID: {user.id}</div>
+                <div className="text-xs text-token-tertiary mb-1">Joined: {new Date(user.created_at).toLocaleString()}</div>
+                <div className="text-xs text-token-tertiary">Last Sign In: {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : 'Never'}</div>
               </div>
             </div>
           </Card>
 
           {/* Learning Preferences */}
-          <Card className="p-8 mb-4">
-            <Text variant="h3" as="h3" className="mb-4">Learning Preferences</Text>
+          <Card className="p-8 mb-4 bg-token-elevated border border-token">
+            <Text variant="h3" as="h3" className="mb-4 text-token-primary">Learning Preferences</Text>
             <div className="mb-3">
-              <b>Current Level:</b> {meta.current_level || 'N/A'}
+              <b>Current Level:</b> <span className="text-token-success">{meta.current_level || 'N/A'}</span>
             </div>
             <div className="mb-3">
               <b>Preferred Languages:</b>{' '}
               {Array.isArray(meta.preferred_languages) && meta.preferred_languages.length > 0 ? (
                 meta.preferred_languages.map((lang: string) => (
-                  <span key={lang} className="inline-block px-2 py-1 mr-2 mb-1 rounded bg-blue-100 text-blue-800 text-xs font-medium">
+                  <span key={lang} className="inline-block px-2 py-1 mr-2 mb-1 rounded bg-token-info/20 text-token-link text-xs font-medium">
                     {LANGUAGE_MAP[lang.toUpperCase()] || lang}
                   </span>
                 ))
               ) : (
-                <span className="text-gray-500">None</span>
+                <span className="text-token-tertiary">None</span>
               )}
             </div>
             <div className="mb-3">
               <b>Learning Goals:</b>
               {Array.isArray(meta.learning_goals) && meta.learning_goals.length > 0 ? (
-                <ul className="list-disc list-inside mt-1 ml-4">
+                <ul className="list-disc list-inside mt-1 ml-4 text-token-secondary">
                   {meta.learning_goals.map((goal: string) => (
                     <li key={goal}>{goal}</li>
                   ))}
                 </ul>
               ) : (
-                <span className="text-gray-500 ml-2">None</span>
+                <span className="text-token-tertiary ml-2">None</span>
               )}
             </div>
             <div className="mb-2">
               <b>Topic Interests:</b>{' '}
               {Array.isArray(meta.topic_interests) && meta.topic_interests.length > 0 ? (
                 meta.topic_interests.map((topic: string) => (
-                  <span key={topic} className="inline-block px-2 py-1 mr-2 mb-1 rounded bg-purple-100 text-purple-800 text-xs font-medium">
+                  <span key={topic} className="inline-block px-2 py-1 mr-2 mb-1 rounded bg-token-accent/20 text-token-accent text-xs font-medium">
                     {topic}
                   </span>
                 ))
               ) : (
-                <span className="text-gray-500">None</span>
+                <span className="text-token-tertiary">None</span>
               )}
             </div>
           </Card>
 
           {/* Subscription */}
-          <Card className="p-8 mb-4">
-            <Text variant="h3" as="h3" className="mb-4">Subscription</Text>
+          <Card className="p-8 mb-4 bg-token-elevated border border-token">
+            <Text variant="h3" as="h3" className="mb-4 text-token-primary">Subscription</Text>
             {subscription ? (
               <>
                 {/* Current Plan mapping logic */}
@@ -273,19 +273,19 @@ export default function StudentDetailPage() {
           </Card>
 
           {/* Account Actions */}
-          <Card className="p-8 mb-4">
-            <Text variant="h3" as="h3" className="mb-2">Account Actions</Text>
+          <Card className="p-8 mb-4 bg-token-elevated border border-token">
+            <Text variant="h3" as="h3" className="mb-2 text-token-primary">Account Actions</Text>
             <div className="flex gap-4 flex-wrap">
               <Button variant="secondary" disabled>Reset Password</Button>
               <Button variant="secondary" disabled>Suspend Account</Button>
               <Button variant="secondary" disabled>Email User</Button>
             </div>
-            <div className="text-xs text-gray-400 mt-2">(Actions coming soon)</div>
+            <div className="text-xs text-token-tertiary mt-2">(Actions coming soon)</div>
           </Card>
 
           {/* Payment History */}
-          <Card className="p-8 mb-4">
-            <Text variant="h3" as="h3" className="mb-4">Payment History</Text>
+          <Card className="p-8 mb-4 bg-token-elevated border border-token">
+            <Text variant="h3" as="h3" className="mb-4 text-token-primary">Payment History</Text>
             <PaymentHistoryTable userEmail={user.email} />
           </Card>
         </div>
@@ -334,21 +334,21 @@ function PaymentHistoryTable({ userEmail }: { userEmail: string }) {
     'price_1Ret2RFM2iXH8TuNYQIQk9BU': { name: 'Xpeak Pro', duration: '12 Months' },
   };
 
-  if (loading) return <div>Loading payment history...</div>;
-  if (error) return <div className="text-red-600">{error}</div>;
-  if (!invoices.length) return <div>No payment history found.</div>;
+  if (loading) return <div className="text-token-secondary">Loading payment history...</div>;
+  if (error) return <div className="text-token-error">{error}</div>;
+  if (!invoices.length) return <div className="text-token-tertiary">No payment history found.</div>;
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full border text-sm">
+      <table className="min-w-full border border-token text-sm">
         <thead>
-          <tr className="bg-gray-100">
-            <th className="px-4 py-2 border">Invoice</th>
-            <th className="px-4 py-2 border">Payment Date</th>
-            <th className="px-4 py-2 border">Subscription Plan</th>
-            <th className="px-4 py-2 border">Plan Duration</th>
-            <th className="px-4 py-2 border">Payment Amount</th>
-            <th className="px-4 py-2 border">Status</th>
+          <tr className="bg-token-surface">
+            <th className="px-4 py-2 border-b border-token text-token-primary">Invoice</th>
+            <th className="px-4 py-2 border-b border-token text-token-primary">Payment Date</th>
+            <th className="px-4 py-2 border-b border-token text-token-primary">Subscription Plan</th>
+            <th className="px-4 py-2 border-b border-token text-token-primary">Plan Duration</th>
+            <th className="px-4 py-2 border-b border-token text-token-primary">Payment Amount</th>
+            <th className="px-4 py-2 border-b border-token text-token-primary">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -387,21 +387,21 @@ function PaymentHistoryTable({ userEmail }: { userEmail: string }) {
               planDuration = 'Monthly';
             }
             return (
-              <tr key={inv.id}>
-                <td className="px-4 py-2 border">
+              <tr key={inv.id} className="bg-token-surface">
+                <td className="px-4 py-2 border-b border-token">
                   {inv.hosted_invoice_url ? (
-                    <a href={inv.hosted_invoice_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                    <a href={inv.hosted_invoice_url} target="_blank" rel="noopener noreferrer" className="text-token-link underline">
                       {inv.number || inv.id}
                     </a>
                   ) : (
                     inv.number || inv.id
                   )}
                 </td>
-                <td className="px-4 py-2 border">{new Date(inv.created * 1000).toLocaleDateString()}</td>
-                <td className="px-4 py-2 border">{planName}</td>
-                <td className="px-4 py-2 border">{planDuration}</td>
-                <td className="px-4 py-2 border">${(inv.amount_paid / 100).toFixed(2)}</td>
-                <td className="px-4 py-2 border text-green-700 font-semibold">Paid</td>
+                <td className="px-4 py-2 border-b border-token">{new Date(inv.created * 1000).toLocaleDateString()}</td>
+                <td className="px-4 py-2 border-b border-token">{planName}</td>
+                <td className="px-4 py-2 border-b border-token">{planDuration}</td>
+                <td className="px-4 py-2 border-b border-token">${(inv.amount_paid / 100).toFixed(2)}</td>
+                <td className="px-4 py-2 border-b border-token text-token-success font-semibold">Paid</td>
               </tr>
             );
           })}

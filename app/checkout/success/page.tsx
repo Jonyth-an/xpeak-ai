@@ -62,10 +62,10 @@ function CheckoutSuccessInner() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <div className="max-w-lg w-full py-20 px-6 sm:px-10 bg-white rounded-lg shadow text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <Text className="text-lg">Verifying your payment...</Text>
+      <div className="min-h-screen flex items-center justify-center bg-token-surface">
+        <div className="max-w-lg w-full py-20 px-6 sm:px-10 bg-token-elevated rounded-lg shadow text-center border border-token">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-token-accent mx-auto mb-4"></div>
+          <Text className="text-lg text-token-primary">Verifying your payment...</Text>
         </div>
       </div>
     );
@@ -73,11 +73,11 @@ function CheckoutSuccessInner() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <div className="max-w-lg w-full py-20 px-6 sm:px-10 bg-white rounded-lg shadow text-center">
-          <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <Text as="h1" className="text-2xl font-bold mb-4 text-red-600">Payment Verification Failed</Text>
-          <Text className="mb-6 text-gray-600">{error}</Text>
+      <div className="min-h-screen flex items-center justify-center bg-token-surface">
+        <div className="max-w-lg w-full py-20 px-6 sm:px-10 bg-token-elevated rounded-lg shadow text-center border border-token">
+          <div className="text-token-error text-6xl mb-4">⚠️</div>
+          <Text as="h1" className="text-2xl font-bold mb-4 text-token-error">Payment Verification Failed</Text>
+          <Text className="mb-6 text-token-secondary">{error}</Text>
           <div className="space-y-3">
             <Button onClick={handleGoToDashboard} variant="primary" className="w-full">
               Go to Dashboard
@@ -92,18 +92,18 @@ function CheckoutSuccessInner() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface">
-      <div className="max-w-lg w-full py-20 px-6 sm:px-10 bg-white rounded-lg shadow text-center">
-        <div className="text-green-500 text-6xl mb-4">✅</div>
-        <Text as="h1" className="text-3xl font-bold mb-4 text-green-600">Payment Successful!</Text>
-        <Text className="mb-6 text-gray-600">
+    <div className="min-h-screen flex items-center justify-center bg-token-surface">
+      <div className="max-w-lg w-full py-20 px-6 sm:px-10 bg-token-elevated rounded-lg shadow text-center border border-token">
+        <div className="text-token-success text-6xl mb-4">✅</div>
+        <Text as="h1" className="text-3xl font-bold mb-4 text-token-success">Payment Successful!</Text>
+        <Text className="mb-6 text-token-secondary">
           Thank you for subscribing to Xpeak AI. Your payment was processed successfully.
         </Text>
         
         {subscriptionDetails && (
-          <Card className="mb-6 p-4 bg-gray-50">
-            <Text className="text-sm text-gray-600 mb-2">Subscription Details:</Text>
-            <Text className="font-medium">
+          <Card className="mb-6 p-4 bg-token-surface border border-token">
+            <Text className="text-sm text-token-tertiary mb-2">Subscription Details:</Text>
+            <Text className="font-medium text-token-primary">
               {subscriptionDetails.subscription?.items?.data?.[0]?.price?.unit_amount 
                 ? `$${(subscriptionDetails.subscription.items.data[0].price.unit_amount / 100).toFixed(2)}/month`
                 : 'Active Subscription'

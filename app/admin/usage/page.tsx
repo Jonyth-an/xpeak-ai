@@ -213,8 +213,8 @@ export default function UsageTrackingPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="min-h-screen bg-token-surface flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-token-accent"></div>
         </div>
       </Layout>
     );
@@ -223,12 +223,12 @@ export default function UsageTrackingPage() {
   if (!isAdmin) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-token-surface flex items-center justify-center">
           <div className="text-center">
-            <Text variant="h1" as="h1" className="mb-4 text-red-600">
+            <Text variant="h1" as="h1" className="mb-4 text-token-error">
               Access Denied
             </Text>
-            <Text variant="body" className="text-gray-600 mb-6">
+            <Text variant="body" className="text-token-secondary mb-6">
               You don't have permission to access the admin dashboard.
             </Text>
             <Link href="/dashboard">
@@ -244,16 +244,16 @@ export default function UsageTrackingPage() {
 
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-token-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <div>
-                <Text variant="h1" as="h1" className="mb-2">
+                <Text variant="h1" as="h1" className="mb-2 text-token-primary">
                   Usage Tracking
                 </Text>
-                <Text variant="lead" className="text-gray-600">
+                <Text variant="lead" className="text-token-secondary">
                   Monitor API calls, storage usage, and feature utilization per user
                 </Text>
               </div>
@@ -266,9 +266,9 @@ export default function UsageTrackingPage() {
           </div>
 
           {/* Period Selector */}
-          <Card className="p-6 mb-8">
+          <Card className="p-6 mb-8 bg-token-elevated border border-token">
             <div className="flex flex-col sm:flex-row gap-4 items-center">
-              <Text variant="body" className="font-medium">Time Period:</Text>
+              <Text variant="body" className="font-medium text-token-primary">Time Period:</Text>
               <div className="flex gap-2">
                 {['7d', '30d', '90d', '1y'].map((period) => (
                   <Button
@@ -286,14 +286,14 @@ export default function UsageTrackingPage() {
 
           {/* Tab Navigation */}
           <div className="mb-8">
-            <div className="border-b border-gray-200">
+            <div className="border-b border-token">
               <nav className="-mb-px flex space-x-8">
                 <button
                   onClick={() => setActiveTab('general')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'general'
-                      ? 'border-primary-500 text-primary-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-token-accent text-token-accent'
+                      : 'border-transparent text-token-tertiary hover:text-token-primary hover:border-token'
                   }`}
                 >
                   General Usage
@@ -302,8 +302,8 @@ export default function UsageTrackingPage() {
                   onClick={() => setActiveTab('dictionary')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'dictionary'
-                      ? 'border-primary-500 text-primary-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-token-accent text-token-accent'
+                      : 'border-transparent text-token-tertiary hover:text-token-primary hover:border-token'
                   }`}
                 >
                   AI Word Generation
@@ -316,44 +316,44 @@ export default function UsageTrackingPage() {
             <>
               {/* Stats Overview */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <Card className="p-6">
+                <Card className="p-6 bg-token-elevated border border-token">
                   <div className="text-center">
-                    <Text variant="h3" as="h3" className="text-2xl font-bold text-blue-600">
+                    <Text variant="h3" as="h3" className="text-2xl font-bold text-token-accent">
                       {getTotalUsage().toLocaleString()}
                     </Text>
-                    <Text variant="small" className="text-gray-600">Total API Calls</Text>
+                    <Text variant="small" className="text-token-secondary">Total API Calls</Text>
                   </div>
                 </Card>
-                <Card className="p-6">
+                <Card className="p-6 bg-token-elevated border border-token">
                   <div className="text-center">
-                    <Text variant="h3" as="h3" className="text-2xl font-bold text-green-600">
+                    <Text variant="h3" as="h3" className="text-2xl font-bold text-token-success">
                       {filteredUsageData.length > 0 ? 
                         (getTotalUsage() / filteredUsageData.length).toFixed(1) : '0'
                       }
                     </Text>
-                    <Text variant="small" className="text-gray-600">Avg Calls per User</Text>
+                    <Text variant="small" className="text-token-secondary">Avg Calls per User</Text>
                   </div>
                 </Card>
-                <Card className="p-6">
+                <Card className="p-6 bg-token-elevated border border-token">
                   <div className="text-center">
-                    <Text variant="h3" as="h3" className="text-2xl font-bold text-purple-600">
+                    <Text variant="h3" as="h3" className="text-2xl font-bold text-token-info">
                       {(getTotalStorage() / (1024 * 1024)).toFixed(2)}
                     </Text>
-                    <Text variant="small" className="text-gray-600">Total Storage (MB)</Text>
+                    <Text variant="small" className="text-token-secondary">Total Storage (MB)</Text>
                   </div>
                 </Card>
-                <Card className="p-6">
+                <Card className="p-6 bg-token-elevated border border-token">
                   <div className="text-center">
-                    <Text variant="h3" as="h3" className="text-2xl font-bold text-orange-600">
+                    <Text variant="h3" as="h3" className="text-2xl font-bold text-token-warning">
                       {new Set(filteredUsageData.map(u => u.user_email)).size}
                     </Text>
-                    <Text variant="small" className="text-gray-600">Active Users</Text>
+                    <Text variant="small" className="text-token-secondary">Active Users</Text>
                   </div>
                 </Card>
               </div>
 
               {/* Filters */}
-              <Card className="p-6 mb-8">
+              <Card className="p-6 mb-8 bg-token-elevated border border-token">
                 <div className="flex flex-col sm:flex-row gap-4">
                   <div className="flex-1">
                     <Input
@@ -367,7 +367,7 @@ export default function UsageTrackingPage() {
                   <select
                     value={selectedFeature}
                     onChange={(e) => setSelectedFeature(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className="px-4 py-2 border border-token rounded-md focus:ring-2 focus:ring-token-accent focus:border-token-accent bg-token-surface text-token-primary"
                   >
                     <option value="all">All Features</option>
                     <option value="ai_topics">AI Topics</option>
@@ -382,20 +382,20 @@ export default function UsageTrackingPage() {
               {/* Top Users and Features */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 {/* Top Users */}
-                <Card className="p-6">
-                  <Text variant="h3" as="h3" className="mb-4">Top Users by Usage</Text>
+                <Card className="p-6 bg-token-elevated border border-token">
+                  <Text variant="h3" as="h3" className="mb-4 text-token-primary">Top Users by Usage</Text>
                   <div className="space-y-3">
                     {getTopUsers().map(([email, count], index) => (
-                      <div key={email} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={email} className="flex items-center justify-between p-3 bg-token-surface rounded-lg">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                            <Text variant="small" className="font-bold text-blue-600">
+                          <div className="w-8 h-8 bg-token-accent/20 rounded-full flex items-center justify-center">
+                            <Text variant="small" className="font-bold text-token-accent">
                               {index + 1}
                             </Text>
                           </div>
                           <div>
-                            <Text variant="body" className="font-medium">{email}</Text>
-                            <Text variant="small" className="text-gray-500">{count} calls</Text>
+                            <Text variant="body" className="font-medium text-token-primary">{email}</Text>
+                            <Text variant="small" className="text-token-tertiary">{count} calls</Text>
                           </div>
                         </div>
                       </div>
@@ -404,22 +404,22 @@ export default function UsageTrackingPage() {
                 </Card>
 
                 {/* Top Features */}
-                <Card className="p-6">
-                  <Text variant="h3" as="h3" className="mb-4">Most Used Features</Text>
+                <Card className="p-6 bg-token-elevated border border-token">
+                  <Text variant="h3" as="h3" className="mb-4 text-token-primary">Most Used Features</Text>
                   <div className="space-y-3">
                     {getTopFeatures().map(([feature, count], index) => (
-                      <div key={feature} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={feature} className="flex items-center justify-between p-3 bg-token-surface rounded-lg">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                            <Text variant="small" className="font-bold text-green-600">
+                          <div className="w-8 h-8 bg-token-success/20 rounded-full flex items-center justify-center">
+                            <Text variant="small" className="font-bold text-token-success">
                               {index + 1}
                             </Text>
                           </div>
                           <div>
-                            <Text variant="body" className="font-medium capitalize">
+                            <Text variant="body" className="font-medium capitalize text-token-primary">
                               {feature.replace('_', ' ')}
                             </Text>
-                            <Text variant="small" className="text-gray-500">{count} calls</Text>
+                            <Text variant="small" className="text-token-tertiary">{count} calls</Text>
                           </div>
                         </div>
                       </div>
@@ -429,43 +429,43 @@ export default function UsageTrackingPage() {
               </div>
 
               {/* Detailed Usage Table */}
-              <Card className="overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <Text variant="h3" as="h3">Detailed Usage Data</Text>
+              <Card className="overflow-hidden bg-token-elevated border border-token">
+                <div className="px-6 py-4 border-b border-token">
+                  <Text variant="h3" as="h3" className="text-token-primary">Detailed Usage Data</Text>
                 </div>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                  <table className="min-w-full divide-y divide-token">
+                    <thead className="bg-token-surface">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-token-tertiary uppercase tracking-wider">
                           User
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-token-tertiary uppercase tracking-wider">
                           Feature
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-token-tertiary uppercase tracking-wider">
                           Usage Count
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-token-tertiary uppercase tracking-wider">
                           Last Used
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-token-surface divide-y divide-token">
                       {filteredUsageData.slice(0, 20).map((usage, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
+                        <tr key={index} className="hover:bg-token-elevated">
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <Text variant="body" className="text-gray-900">{usage.user_email}</Text>
+                            <Text variant="body" className="text-token-primary">{usage.user_email}</Text>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                            <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-token-accent/20 text-token-accent">
                               {usage.feature.replace('_', ' ')}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-token-primary">
                             {usage.usage_count.toLocaleString()}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-token-tertiary">
                             {new Date(usage.last_used).toLocaleDateString()}
                           </td>
                         </tr>
@@ -475,7 +475,7 @@ export default function UsageTrackingPage() {
                 </div>
                 {filteredUsageData.length === 0 && (
                   <div className="text-center py-8">
-                    <Text variant="body" className="text-gray-500">No usage data found for the selected criteria.</Text>
+                    <Text variant="body" className="text-token-tertiary">No usage data found for the selected criteria.</Text>
                   </div>
                 )}
               </Card>
@@ -486,66 +486,66 @@ export default function UsageTrackingPage() {
             <>
               {/* AI Word Generation Stats Overview */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <Card className="p-6">
+                <Card className="p-6 bg-token-elevated border border-token">
                   <div className="text-center">
-                    <Text variant="h3" as="h3" className="text-2xl font-bold text-blue-600">
+                    <Text variant="h3" as="h3" className="text-2xl font-bold text-token-accent">
                       {aiWordStats?.totalWords.toLocaleString() || '0'}
                     </Text>
-                    <Text variant="small" className="text-gray-600">Total Words Generated</Text>
+                    <Text variant="small" className="text-token-secondary">Total Words Generated</Text>
                   </div>
                 </Card>
-                <Card className="p-6">
+                <Card className="p-6 bg-token-elevated border border-token">
                   <div className="text-center">
-                    <Text variant="h3" as="h3" className="text-2xl font-bold text-green-600">
+                    <Text variant="h3" as="h3" className="text-2xl font-bold text-token-success">
                       {aiWordStats?.aiSuccessRate || '0'}%
                     </Text>
-                    <Text variant="small" className="text-gray-600">AI Success Rate</Text>
+                    <Text variant="small" className="text-token-secondary">AI Success Rate</Text>
                   </div>
                 </Card>
-                <Card className="p-6">
+                <Card className="p-6 bg-token-elevated border border-token">
                   <div className="text-center">
-                    <Text variant="h3" as="h3" className="text-2xl font-bold text-purple-600">
+                    <Text variant="h3" as="h3" className="text-2xl font-bold text-token-info">
                       {aiWordStats?.uniqueWords || '0'}
                     </Text>
-                    <Text variant="small" className="text-gray-600">Unique Words</Text>
+                    <Text variant="small" className="text-token-secondary">Unique Words</Text>
                   </div>
                 </Card>
-                <Card className="p-6">
+                <Card className="p-6 bg-token-elevated border border-token">
                   <div className="text-center">
-                    <Text variant="h3" as="h3" className="text-2xl font-bold text-orange-600">
+                    <Text variant="h3" as="h3" className="text-2xl font-bold text-token-warning">
                       {aiWordStats?.uniqueTypes || '0'}
                     </Text>
-                    <Text variant="small" className="text-gray-600">Word Types</Text>
+                    <Text variant="small" className="text-token-secondary">Word Types</Text>
                   </div>
                 </Card>
               </div>
 
               {/* Generation Source Breakdown */}
-              <Card className="p-6 mb-8">
-                <Text variant="h3" as="h3" className="mb-4">Generation Source Breakdown</Text>
+              <Card className="p-6 mb-8 bg-token-elevated border border-token">
+                <Text variant="h3" as="h3" className="mb-4 text-token-primary">Generation Source Breakdown</Text>
                 <div className="space-y-4">
                   {Object.entries(sourceBreakdown).map(([source, stats]) => (
-                    <div key={source} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div key={source} className="flex items-center justify-between p-4 bg-token-surface rounded-lg">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                          <Text variant="small" className="font-bold text-blue-600">
+                        <div className="w-12 h-12 bg-token-accent/20 rounded-full flex items-center justify-center">
+                          <Text variant="small" className="font-bold text-token-accent">
                             {source.charAt(0).toUpperCase()}
                           </Text>
                         </div>
                         <div>
-                          <Text variant="body" className="font-medium capitalize">
+                          <Text variant="body" className="font-medium capitalize text-token-primary">
                             {source.replace('_', ' ')}
                           </Text>
-                          <Text variant="small" className="text-gray-500">
+                          <Text variant="small" className="text-token-tertiary">
                             {stats.total} words generated
                           </Text>
                         </div>
                       </div>
                       <div className="text-right">
-                        <Text variant="body" className="font-bold text-green-600">
+                        <Text variant="body" className="font-bold text-token-success">
                           {stats.percentage}%
                         </Text>
-                        <Text variant="small" className="text-gray-500">
+                        <Text variant="small" className="text-token-tertiary">
                           Percentage
                         </Text>
                       </div>
@@ -557,25 +557,25 @@ export default function UsageTrackingPage() {
               {/* Word Type Breakdown */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 {/* Word Types */}
-                <Card className="p-6">
-                  <Text variant="h3" as="h3" className="mb-4">Word Types Breakdown</Text>
+                <Card className="p-6 bg-token-elevated border border-token">
+                  <Text variant="h3" as="h3" className="mb-4 text-token-primary">Word Types Breakdown</Text>
                   <div className="space-y-3">
                     {Object.entries(typeBreakdown)
                       .sort(([, a], [, b]) => b.total - a.total)
                       .slice(0, 10)
                       .map(([type, stats], index) => (
-                        <div key={type} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div key={type} className="flex items-center justify-between p-3 bg-token-surface rounded-lg">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                              <Text variant="small" className="font-bold text-blue-600">
+                            <div className="w-8 h-8 bg-token-accent/20 rounded-full flex items-center justify-center">
+                              <Text variant="small" className="font-bold text-token-accent">
                                 {index + 1}
                               </Text>
                             </div>
                             <div>
-                              <Text variant="body" className="font-medium capitalize">
+                              <Text variant="body" className="font-medium capitalize text-token-primary">
                                 {type.replace('_', ' ')}
                               </Text>
-                              <Text variant="small" className="text-gray-500">
+                              <Text variant="small" className="text-token-tertiary">
                                 {stats.total} words ({stats.percentage}%)
                               </Text>
                             </div>
@@ -586,22 +586,22 @@ export default function UsageTrackingPage() {
                 </Card>
 
                 {/* Recent Word Generation */}
-                <Card className="p-6">
-                  <Text variant="h3" as="h3" className="mb-4">Recent Word Generation</Text>
+                <Card className="p-6 bg-token-elevated border border-token">
+                  <Text variant="h3" as="h3" className="mb-4 text-token-primary">Recent Word Generation</Text>
                   <div className="space-y-3">
                     {aiWordData.slice(0, 10).map((word, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={index} className="flex items-center justify-between p-3 bg-token-surface rounded-lg">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                            <Text variant="small" className="font-bold text-green-600">
+                          <div className="w-8 h-8 bg-token-success/20 rounded-full flex items-center justify-center">
+                            <Text variant="small" className="font-bold text-token-success">
                               {index + 1}
                             </Text>
                           </div>
                           <div>
-                            <Text variant="body" className="font-medium">
+                            <Text variant="body" className="font-medium text-token-primary">
                               {word.word_text}
                             </Text>
-                            <Text variant="small" className="text-gray-500">
+                            <Text variant="small" className="text-token-tertiary">
                               {word.metadata?.generated_by || 'unknown'} • {new Date(word.created_at).toLocaleDateString()}
                             </Text>
                           </div>
@@ -613,28 +613,28 @@ export default function UsageTrackingPage() {
               </div>
 
               {/* Daily Trends */}
-              <Card className="p-6 mb-8">
-                <Text variant="h3" as="h3" className="mb-4">Daily Word Generation Trends</Text>
+              <Card className="p-6 mb-8 bg-token-elevated border border-token">
+                <Text variant="h3" as="h3" className="mb-4 text-token-primary">Daily Word Generation Trends</Text>
                 <div className="space-y-3">
                   {Object.entries(dailyTrends)
                     .sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime())
                     .slice(0, 14)
                     .map(([date, stats]) => (
-                      <div key={date} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={date} className="flex items-center justify-between p-3 bg-token-surface rounded-lg">
                         <div className="flex items-center gap-4">
-                          <Text variant="body" className="font-medium">
+                          <Text variant="body" className="font-medium text-token-primary">
                             {new Date(date).toLocaleDateString()}
                           </Text>
                           <div className="flex gap-2">
-                            <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">
+                            <span className="px-2 py-1 text-xs bg-token-success/20 text-token-success rounded">
                               {stats.ai} AI generated
                             </span>
-                            <span className="px-2 py-1 text-xs bg-orange-100 text-orange-800 rounded">
+                            <span className="px-2 py-1 text-xs bg-token-warning/20 text-token-warning rounded">
                               {stats.fallback} fallback
                             </span>
                           </div>
                         </div>
-                        <Text variant="body" className="font-bold">
+                        <Text variant="body" className="font-bold text-token-primary">
                           {stats.total} total
                         </Text>
                       </div>
@@ -642,50 +642,50 @@ export default function UsageTrackingPage() {
                 </div>
               </Card>
 
-              {/* Recent Word Generation */}
-              <Card className="overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <Text variant="h3" as="h3">Recent Word Generation</Text>
+              {/* Recent Word Generation Table */}
+              <Card className="overflow-hidden bg-token-elevated border border-token">
+                <div className="px-6 py-4 border-b border-token">
+                  <Text variant="h3" as="h3" className="text-token-primary">Recent Word Generation</Text>
                 </div>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                  <table className="min-w-full divide-y divide-token">
+                    <thead className="bg-token-surface">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-token-tertiary uppercase tracking-wider">
                           Word
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-token-tertiary uppercase tracking-wider">
                           Type
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-token-tertiary uppercase tracking-wider">
                           Source
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-token-tertiary uppercase tracking-wider">
                           Generated At
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-token-surface divide-y divide-token">
                       {aiWordData.slice(0, 20).map((word, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
+                        <tr key={index} className="hover:bg-token-elevated">
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <Text variant="body" className="text-gray-900">{word.word_text}</Text>
+                            <Text variant="body" className="text-token-primary">{word.word_text}</Text>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 capitalize">
+                            <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-token-accent/20 text-token-accent capitalize">
                               {word.type.replace('_', ' ')}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                               word.metadata?.generated_by === 'openai' || word.metadata?.generated_by === 'ai'
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-orange-100 text-orange-800'
+                                ? 'bg-token-success/20 text-token-success' 
+                                : 'bg-token-warning/20 text-token-warning'
                             }`}>
                               {word.metadata?.generated_by || 'unknown'}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-token-tertiary">
                             {new Date(word.created_at).toLocaleString()}
                           </td>
                         </tr>
@@ -695,7 +695,7 @@ export default function UsageTrackingPage() {
                 </div>
                 {aiWordData.length === 0 && (
                   <div className="text-center py-8">
-                    <Text variant="body" className="text-gray-500">No word generation data found for the selected period.</Text>
+                    <Text variant="body" className="text-token-tertiary">No word generation data found for the selected period.</Text>
                   </div>
                 )}
               </Card>

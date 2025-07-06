@@ -112,7 +112,7 @@ export default function WordModal({
             }}
             className="w-full max-w-md"
           >
-            <Card className="p-6 rounded-token-lg">
+            <Card className="p-6 rounded-token-lg bg-token-elevated token-border-primary border">
               <motion.div 
                 className="flex justify-between items-center mb-6"
                 initial={{ opacity: 0, y: -10 }}
@@ -126,7 +126,7 @@ export default function WordModal({
                   variant="ghost"
                   size="sm"
                   onClick={onClose}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="token-text-secondary hover:token-text-primary"
                 >
                   ✕
                 </Button>
@@ -134,12 +134,12 @@ export default function WordModal({
 
               {smartCheck && (
                 <motion.div 
-                  className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg"
+                  className="mb-4 p-3 bg-token-info-light border token-border-info rounded-lg"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.15 }}
                 >
-                  <p className="text-sm text-blue-700">
+                  <p className="text-sm token-text-info">
                     🤖 Smart Check (Beta): AI-powered validation enabled
                   </p>
                 </motion.div>
@@ -156,7 +156,7 @@ export default function WordModal({
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.25 }}
                 >
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium token-text-primary mb-1">
                     Word *
                   </label>
                   <Input
@@ -182,7 +182,7 @@ export default function WordModal({
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium token-text-primary mb-1">
                     Definition *
                   </label>
                   <Textarea
@@ -211,7 +211,7 @@ export default function WordModal({
                   transition={{ delay: 0.35 }}
                 >
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium token-text-primary mb-1">
                       US Pronunciation
                     </label>
                     <Input
@@ -221,7 +221,7 @@ export default function WordModal({
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium token-text-primary mb-1">
                       UK Pronunciation
                     </label>
                     <Input
@@ -231,7 +231,7 @@ export default function WordModal({
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium token-text-primary mb-1">
                       AU Pronunciation
                     </label>
                     <Input
@@ -247,7 +247,7 @@ export default function WordModal({
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.4 }}
                 >
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium token-text-primary mb-1">
                     Image URL
                   </label>
                   <Input

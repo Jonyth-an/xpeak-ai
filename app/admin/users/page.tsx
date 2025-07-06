@@ -128,8 +128,8 @@ export default function UserManagementPage() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="min-h-screen bg-token-surface-subtle flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-token-primary"></div>
         </div>
       </AdminLayout>
     );
@@ -138,12 +138,12 @@ export default function UserManagementPage() {
   if (!isAdmin) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-token-surface-subtle flex items-center justify-center">
           <div className="text-center">
-            <Text variant="h1" as="h1" className="mb-4 text-red-600">
+            <Text variant="h1" as="h1" className="mb-4 token-text-error">
               Access Denied
             </Text>
-            <Text variant="body" className="text-gray-600 mb-6">
+            <Text variant="body" className="token-text-secondary mb-6">
               You don't have permission to access the admin dashboard.
             </Text>
             <Link href="/dashboard">
@@ -159,16 +159,16 @@ export default function UserManagementPage() {
 
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-token-surface-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <div>
-                <Text variant="h1" as="h1" className="mb-2">
+                <Text variant="h1" as="h1" className="mb-2 token-text-primary">
                   User Management
                 </Text>
-                <Text variant="lead" className="text-gray-600">
+                <Text variant="lead" className="token-text-secondary">
                   Manage user accounts, view profiles, and handle support requests
                 </Text>
               </div>
@@ -182,42 +182,42 @@ export default function UserManagementPage() {
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <Card className="p-6">
+            <Card className="p-6 bg-token-surface token-border-primary border">
               <div className="text-center">
-                <Text variant="h3" as="h3" className="text-2xl font-bold text-gray-900">
+                <Text variant="h3" as="h3" className="text-2xl font-bold token-text-primary">
                   {totalUsers.toLocaleString()}
                 </Text>
-                <Text variant="small" className="text-gray-600">Total Users</Text>
+                <Text variant="small" className="token-text-secondary">Total Users</Text>
               </div>
             </Card>
-            <Card className="p-6">
+            <Card className="p-6 bg-token-surface token-border-primary border">
               <div className="text-center">
-                <Text variant="h3" as="h3" className="text-2xl font-bold text-green-600">
+                <Text variant="h3" as="h3" className="text-2xl font-bold token-text-success">
                   {users.filter(u => u.email_confirmed_at).length.toLocaleString()}
                 </Text>
-                <Text variant="small" className="text-gray-600">Verified Users</Text>
+                <Text variant="small" className="token-text-secondary">Verified Users</Text>
               </div>
             </Card>
-            <Card className="p-6">
+            <Card className="p-6 bg-token-surface token-border-primary border">
               <div className="text-center">
-                <Text variant="h3" as="h3" className="text-2xl font-bold text-blue-600">
+                <Text variant="h3" as="h3" className="text-2xl font-bold token-text-info">
                   {users.filter(u => u.last_sign_in_at).length.toLocaleString()}
                 </Text>
-                <Text variant="small" className="text-gray-600">Active Users</Text>
+                <Text variant="small" className="token-text-secondary">Active Users</Text>
               </div>
             </Card>
-            <Card className="p-6">
+            <Card className="p-6 bg-token-surface token-border-primary border">
               <div className="text-center">
-                <Text variant="h3" as="h3" className="text-2xl font-bold text-purple-600">
+                <Text variant="h3" as="h3" className="text-2xl font-bold token-text-accent">
                   {subscriptions.filter(s => s.status === 'active').length.toLocaleString()}
                 </Text>
-                <Text variant="small" className="text-gray-600">Active Subscriptions</Text>
+                <Text variant="small" className="token-text-secondary">Active Subscriptions</Text>
               </div>
             </Card>
           </div>
 
           {/* Filters */}
-          <Card className="p-6 mb-8">
+          <Card className="p-6 mb-8 bg-token-surface token-border-primary border">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <Input
@@ -231,7 +231,7 @@ export default function UserManagementPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="px-4 py-2 border token-border-primary rounded-md focus:ring-2 focus:ring-token-primary focus:border-token-primary bg-token-surface token-text-primary"
               >
                 <option value="all">All Users</option>
                 <option value="verified">Verified Only</option>
@@ -243,40 +243,40 @@ export default function UserManagementPage() {
           </Card>
 
           {/* Users Table */}
-          <Card className="overflow-hidden">
+          <Card className="overflow-hidden bg-token-surface token-border-primary border">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-token-border-primary">
+                <thead className="bg-token-surface-subtle">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium token-text-muted uppercase tracking-wider">
                       User
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium token-text-muted uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium token-text-muted uppercase tracking-wider">
                       Subscription
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium token-text-muted uppercase tracking-wider">
                       Created
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium token-text-muted uppercase tracking-wider">
                       Last Sign In
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium token-text-muted uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-token-surface divide-y divide-token-border-primary">
                   {paginatedUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50">
+                    <tr key={user.id} className="hover:bg-token-surface-subtle">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium token-text-primary">
                             {user.email}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm token-text-muted">
                             ID: {user.id}
                           </div>
                         </div>
@@ -285,34 +285,34 @@ export default function UserManagementPage() {
                         <div className="flex flex-col gap-1">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                             user.email_confirmed_at 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-yellow-100 text-yellow-800'
+                              ? 'bg-token-success-light token-text-success' 
+                              : 'bg-token-warning-light token-text-warning'
                           }`}>
                             {user.email_confirmed_at ? 'Verified' : 'Unverified'}
                           </span>
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                             user.last_sign_in_at 
-                              ? 'bg-blue-100 text-blue-800' 
-                              : 'bg-gray-100 text-gray-800'
+                              ? 'bg-token-info-light token-text-info' 
+                              : 'bg-token-surface-subtle token-text-muted'
                           }`}>
                             {user.last_sign_in_at ? 'Active' : 'Inactive'}
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm token-text-primary">
                           {getSubscriptionStatus(user.email)}
                         </div>
                         {getSubscriptionId(user.email) && (
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs token-text-muted">
                             {getSubscriptionId(user.email)?.slice(-8)}
                           </div>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm token-text-muted">
                         {new Date(user.created_at).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm token-text-muted">
                         {user.last_sign_in_at 
                           ? new Date(user.last_sign_in_at).toLocaleDateString()
                           : 'Never'
@@ -333,7 +333,7 @@ export default function UserManagementPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+              <div className="bg-token-surface px-4 py-3 flex items-center justify-between border-t token-border-primary sm:px-6">
                 <div className="flex-1 flex justify-between sm:hidden">
                   <Button
                     variant="secondary"
@@ -354,15 +354,15 @@ export default function UserManagementPage() {
                 </div>
                 <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                   <div>
-                    <Text variant="small" className="text-gray-700">
+                    <Text variant="small" className="token-text-secondary">
                       Showing{' '}
-                      <span className="font-medium">{(currentPage - 1) * usersPerPage + 1}</span>
+                      <span className="font-medium token-text-primary">{(currentPage - 1) * usersPerPage + 1}</span>
                       {' '}to{' '}
-                      <span className="font-medium">
+                      <span className="font-medium token-text-primary">
                         {Math.min(currentPage * usersPerPage, filteredUsers.length)}
                       </span>
                       {' '}of{' '}
-                      <span className="font-medium">{filteredUsers.length}</span>
+                      <span className="font-medium token-text-primary">{filteredUsers.length}</span>
                       {' '}results
                     </Text>
                   </div>

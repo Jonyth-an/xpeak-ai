@@ -175,3 +175,12 @@ a {
 .bg-token-surface {
   background-color: var(--color-bg, #FDFDFD);
 }
+
+/* Accessible text token utilities */
+.text-token-primary { color: var(--color-text, #1E1E2F); }
+.text-token-secondary { color: var(--color-text-secondary, #475569); }
+.text-token-tertiary { color: var(--color-text-muted, #64748B); }
+.text-token-success { color: var(--color-success-dark, #15803D); }
+.text-token-accent { color: var(--color-accent-dark, #0369A1); }
+.text-token-link { color: var(--color-accent-dark, #0369A1); }
+.text-token-error { color: var(--color-error-dark, #B91C1C); }

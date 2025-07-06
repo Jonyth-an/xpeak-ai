@@ -71,7 +71,7 @@ export function WordStatusIndicator({
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-xs text-red-600 bg-red-50 px-2 py-1 rounded border border-red-200 max-w-xs"
+          className="text-xs text-token-error bg-token-error/20 px-2 py-1 rounded border border-token-error max-w-xs"
         >
           {error}
         </motion.div>
@@ -80,7 +80,7 @@ export function WordStatusIndicator({
       {/* Progress Indicator for Syncing */}
       {status === 'syncing' && (
         <motion.div
-          className="w-4 h-4 border-2 border-blue-200 border-t-blue-600 rounded-full"
+          className="w-4 h-4 border-2 border-token-accent/20 border-t-token-accent rounded-full"
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
         />
@@ -161,28 +161,26 @@ export function BulkOperationProgress({
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <div className="flex justify-between text-xs text-gray-600">
-        <span>Progress: {completed}/{total}</span>
-        <span>{Math.round(progress)}%</span>
+      <div className="flex justify-between text-xs text-token-secondary">
+        <span>Progress</span>
+        <span>{completed}/{total}</span>
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-2">
-        <div className="flex h-2 rounded-full overflow-hidden">
-          <motion.div
-            className="bg-green-500"
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.5 }}
-          />
-          <motion.div
-            className="bg-red-500"
-            initial={{ width: 0 }}
-            animate={{ width: `${failedProgress}%` }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          />
-        </div>
+      <div className="w-full bg-token-surface-alt rounded-full h-2">
+        <div
+          className="bg-token-success"
+          style={{ width: `${progress}%` }}
+        />
       </div>
       {failed > 0 && (
-        <div className="text-xs text-red-600">
+        <div className="w-full bg-token-surface-alt rounded-full h-2 mt-1">
+          <div
+            className="bg-token-error"
+            style={{ width: `${failedProgress}%` }}
+          />
+        </div>
+      )}
+      {failed > 0 && (
+        <div className="text-xs text-token-error">
           {failed} failed
         </div>
       )}

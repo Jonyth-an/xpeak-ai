@@ -49,8 +49,8 @@ export default function ConfirmationModal({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
               >
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">{title}</h2>
-                <p className="text-gray-600 mb-6">{description}</p>
+                <h2 className="text-xl font-semibold text-token-primary mb-2">{title}</h2>
+                <p className="text-token-secondary mb-6">{description}</p>
               </motion.div>
 
               <motion.div 

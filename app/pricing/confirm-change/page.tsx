@@ -208,7 +208,7 @@ function ConfirmPlanChangePageInner() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-token-surface-subtle py-12">
+      <div className="min-h-screen bg-token-surface-subtle py-12 mt-20">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold token-text-primary mb-4">
