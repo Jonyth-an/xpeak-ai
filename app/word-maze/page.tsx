@@ -29,14 +29,14 @@ export default function WordMazePublicPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+      <div className="min-h-screen bg-gradient-to-br from-token-surface-subtle via-token-surface-accent to-token-surface-accent-light">
         {/* Hero Section */}
         <div className="relative overflow-hidden">
           {/* Animated background elements */}
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-pink-400/20 to-indigo-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-purple-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+            <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-token-primary/20 to-token-secondary/20 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-token-accent-light/20 to-token-primary/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-token-secondary/10 to-token-primary/10 rounded-full blur-3xl animate-pulse delay-500"></div>
           </div>
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
@@ -46,21 +46,21 @@ export default function WordMazePublicPage() {
                 <h1 className="text-4xl md:text-5xl font-extrabold text-text leading-tight mb-8">
                   Word Maze
                   <br />
-                  <span className="text-blue-600">Where Words Become Worlds</span>
+                  <span className="text-token-primary">Where Words Become Worlds</span>
                 </h1>
-                <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl leading-relaxed">
+                <p className="text-xl md:text-2xl text-text-secondary mb-12 max-w-2xl leading-relaxed">
                   Turn every word into a stepping stone. Word Maze helps you connect, practice, and remember vocabulary — like never before.
                 </p>
                 <Button 
                   onClick={() => router.push('/signup')}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-4 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 mb-8"
+                  className="bg-gradient-to-r from-token-primary to-token-secondary hover:from-token-primary-dark hover:to-token-secondary-dark text-token-text-inverse px-10 py-4 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 mb-8"
                 >
                   → Start Your Maze
                 </Button>
               </div>
               {/* Right: Animation/Visual Metaphor */}
               <div className="flex-1 flex justify-center items-center">
-                <div className="relative mx-auto w-96 h-64 bg-gradient-to-br from-blue-100/50 to-purple-100/50 rounded-2xl border-2 border-blue-200/50 backdrop-blur-sm">
+                <div className="relative mx-auto w-96 h-64 bg-gradient-to-br from-token-primary/10 to-token-secondary/10 rounded-2xl border-2 border-token-primary/20 backdrop-blur-sm">
                   {/* Animated maze pattern */}
                   <div className="absolute inset-4">
                     <div className="grid grid-cols-8 grid-rows-5 gap-1">
@@ -69,8 +69,8 @@ export default function WordMazePublicPage() {
                           key={i}
                           className={`w-full h-full rounded-sm transition-all duration-1000 ${
                             cell.isActive
-                              ? 'bg-gradient-to-br from-blue-400/60 to-purple-400/60 animate-pulse' 
-                              : 'bg-gradient-to-br from-blue-200/30 to-purple-200/30'
+                              ? 'bg-gradient-to-br from-token-primary/60 to-token-secondary/60 animate-pulse' 
+                              : 'bg-gradient-to-br from-token-primary/30 to-token-secondary/30'
                           }`}
                           style={{
                             animationDelay: `${cell.animationDelay}ms`,
@@ -81,13 +81,13 @@ export default function WordMazePublicPage() {
                     </div>
                   </div>
                   {/* Glowing center */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full shadow-lg animate-pulse"></div>
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-r from-token-accent to-token-accent-light rounded-full shadow-lg animate-pulse"></div>
                 </div>
               </div>
             </div>
             {/* Caption below the flex row */}
             <div className="mt-8 text-center">
-              <p className="text-lg text-gray-700 font-medium">
+              <p className="text-lg text-text font-medium">
                 🌀 Explore a living, intelligent maze of words — personalized to how you think, learn, and speak.
               </p>
             </div>
@@ -95,80 +95,80 @@ export default function WordMazePublicPage() {
         </div>
 
         {/* Feature Highlights Section */}
-        <div className="py-20 bg-white/80 backdrop-blur-sm">
+        <div className="py-20 bg-token-surface/80 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold text-text mb-6">
                 💡 Feature Highlights
               </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              <p className="text-xl text-text-secondary max-w-3xl mx-auto">
                 Discover how Word Maze transforms vocabulary learning into an engaging adventure
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Feature 1 */}
-              <Card className="p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-gradient-to-br from-blue-50 to-indigo-50 border-0">
-                <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <Card className="p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-gradient-to-br from-token-primary/5 to-token-primary-light/5 border-0">
+                <div className="w-20 h-20 bg-gradient-to-br from-token-primary to-token-primary-light rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
                   <span className="text-3xl">🕸️</span>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Dynamic Word Webs</h3>
-                <p className="text-gray-700 leading-relaxed">
+                <h3 className="text-2xl font-bold text-text mb-4">Dynamic Word Webs</h3>
+                <p className="text-text leading-relaxed">
                   Words connect based on meaning and usage — building a personal map of your fluency.
                 </p>
               </Card>
 
               {/* Feature 2 */}
-              <Card className="p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-gradient-to-br from-green-50 to-emerald-50 border-0">
-                <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <Card className="p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-gradient-to-br from-token-success/5 to-token-success-light/5 border-0">
+                <div className="w-20 h-20 bg-gradient-to-br from-token-success to-token-success-light rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
                   <span className="text-3xl">📚</span>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Real-Source Vocabulary</h3>
-                <p className="text-gray-700 leading-relaxed">
+                <h3 className="text-2xl font-bold text-text mb-4">Real-Source Vocabulary</h3>
+                <p className="text-text leading-relaxed">
                   Your Maze grows from real conversations, lessons, and the words you choose to learn.
                 </p>
               </Card>
 
               {/* Feature 3 */}
-              <Card className="p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-gradient-to-br from-purple-50 to-violet-50 border-0">
-                <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-violet-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <Card className="p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-gradient-to-br from-token-secondary/5 to-token-secondary-light/5 border-0">
+                <div className="w-20 h-20 bg-gradient-to-br from-token-secondary to-token-secondary-light rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
                   <span className="text-3xl">🧠</span>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Smart Practice & Hints</h3>
-                <p className="text-gray-700 leading-relaxed">
+                <h3 className="text-2xl font-bold text-text mb-4">Smart Practice & Hints</h3>
+                <p className="text-text leading-relaxed">
                   Get timely quizzes and gentle nudges to reinforce tricky words.
                 </p>
               </Card>
 
               {/* Feature 4 */}
-              <Card className="p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-gradient-to-br from-orange-50 to-red-50 border-0">
-                <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <Card className="p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-gradient-to-br from-token-accent/5 to-token-accent-light/5 border-0">
+                <div className="w-20 h-20 bg-gradient-to-br from-token-accent to-token-accent-light rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
                   <span className="text-3xl">🎯</span>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Purposeful Progression</h3>
-                <p className="text-gray-700 leading-relaxed">
+                <h3 className="text-2xl font-bold text-text mb-4">Purposeful Progression</h3>
+                <p className="text-text leading-relaxed">
                   Each word you unlock fuels your next lesson, topic, or conversation.
                 </p>
               </Card>
 
               {/* Feature 5 */}
-              <Card className="p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-gradient-to-br from-pink-50 to-rose-50 border-0">
-                <div className="w-20 h-20 bg-gradient-to-br from-pink-400 to-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <Card className="p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-gradient-to-br from-token-primary-light/5 to-token-secondary-light/5 border-0">
+                <div className="w-20 h-20 bg-gradient-to-br from-token-primary-light to-token-secondary-light rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
                   <span className="text-3xl">👥</span>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Powered by Community</h3>
-                <p className="text-gray-700 leading-relaxed">
+                <h3 className="text-2xl font-bold text-text mb-4">Powered by Community</h3>
+                <p className="text-text leading-relaxed">
                   See trending words, explore shared Mazes, and become a Maze Builder yourself.
                 </p>
               </Card>
 
               {/* Feature 6 - Bonus */}
-              <Card className="p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-gradient-to-br from-cyan-50 to-blue-50 border-0">
-                <div className="w-20 h-20 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <Card className="p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-gradient-to-br from-token-accent-light/5 to-token-primary/5 border-0">
+                <div className="w-20 h-20 bg-gradient-to-br from-token-accent-light to-token-primary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
                   <span className="text-3xl">🚀</span>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">AI-Powered Insights</h3>
-                <p className="text-gray-700 leading-relaxed">
+                <h3 className="text-2xl font-bold text-text mb-4">AI-Powered Insights</h3>
+                <p className="text-text leading-relaxed">
                   Advanced AI analyzes your learning patterns to optimize your vocabulary journey.
                 </p>
               </Card>
@@ -179,14 +179,14 @@ export default function WordMazePublicPage() {
         <WordToMazeAnimation />
 
         {/* Testimonial Section */}
-        <div className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="py-20 bg-gradient-to-r from-token-primary to-token-secondary">
           <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-            <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-12 border border-white/20">
+            <div className="bg-token-text-inverse/10 backdrop-blur-sm rounded-3xl p-12 border border-token-text-inverse/20">
               <div className="text-6xl mb-6">💬</div>
-              <blockquote className="text-2xl md:text-3xl font-medium text-white mb-6 leading-relaxed">
+              <blockquote className="text-2xl md:text-3xl font-medium text-token-text-inverse mb-6 leading-relaxed">
                 "Word Maze makes learning new vocabulary actually fun. I finally remember the words I used to forget!"
               </blockquote>
-              <cite className="text-xl text-blue-100 font-semibold">
+              <cite className="text-xl text-token-text-inverse/80 font-semibold">
                 — Lina, Intermediate English Learner
               </cite>
             </div>
@@ -194,17 +194,22 @@ export default function WordMazePublicPage() {
         </div>
 
         {/* Final CTA Section */}
-        <div className="py-20 bg-gradient-to-br from-gray-900 to-gray-800">
+        <div className="py-20 bg-gradient-to-br from-token-surface-dark to-token-surface-darker">
           <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Ready to make words stick — and shape your next learning journey?
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              <span className="block text-token-primary">
+                Ready to make words stick —
+              </span>
+              <span className="block bg-gradient-to-r from-token-primary to-token-secondary bg-clip-text text-transparent">
+                and shape your next learning journey?
+              </span>
             </h2>
-            <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+            <p className="text-xl text-token-text-inverse/70 mb-10 max-w-2xl mx-auto">
               Join thousands of learners who are already exploring their personalized word mazes.
             </p>
             <Button 
               onClick={() => router.push('/signup')}
-              className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-12 py-4 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              className="bg-gradient-to-r from-token-primary to-token-secondary hover:from-token-primary-dark hover:to-token-secondary-dark text-token-text-inverse px-12 py-4 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
             >
               → Start Exploring Your Maze Today
             </Button>

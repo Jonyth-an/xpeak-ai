@@ -87,7 +87,7 @@ export default function SparkToTrekAnimation() {
   }, []);
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-8 bg-gradient-to-br from-blue-100 via-purple-100 to-indigo-200 rounded-2xl overflow-hidden relative my-20 shadow-xl">
+    <div className="w-full max-w-6xl mx-auto p-8 bg-gradient-to-br from-token-secondary-light via-token-accent-light to-token-primary-light rounded-2xl overflow-hidden relative my-20 shadow-xl">
       {/* Background stars */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {backgroundStars.map((star, i) => (
@@ -109,8 +109,8 @@ export default function SparkToTrekAnimation() {
 
       {/* Section Title */}
       <motion.div className="text-center mb-6">
-        <h2 className="text-4xl font-bold text-gray-800 mb-4">From a Spark to a Trek</h2>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        <h2 className="text-4xl font-bold text-text mb-4">From a Spark to a Trek</h2>
+        <p className="text-lg text-text-secondary max-w-3xl mx-auto leading-relaxed">
           Topic Spark uses your progress, interests, and vocabulary Maze to generate a dynamic, evolving learning path —
           one meaningful topic at a time.
         </p>
@@ -137,9 +137,9 @@ export default function SparkToTrekAnimation() {
           {/* Gradient definition */}
           <defs>
             <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#8B5CF6" />
-              <stop offset="50%" stopColor="#06B6D4" />
-              <stop offset="100%" stopColor="#10B981" />
+              <stop offset="0%" stopColor="var(--color-secondary)" />
+              <stop offset="50%" stopColor="var(--color-accent)" />
+              <stop offset="100%" stopColor="var(--color-primary)" />
             </linearGradient>
           </defs>
         </svg>
@@ -179,16 +179,16 @@ export default function SparkToTrekAnimation() {
                 onHoverEnd={() => setHoveredNode(null)}
               >
                 {/* Node glow effect */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 to-cyan-400 blur-lg opacity-60 animate-pulse" />
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-token-secondary to-token-accent blur-lg opacity-60 animate-pulse" />
 
                 {/* Node */}
-                <div className="relative w-16 h-16 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-full flex items-center justify-center text-2xl shadow-2xl border-2 border-white/20">
+                <div className="relative w-16 h-16 bg-gradient-to-br from-token-secondary to-token-accent rounded-full flex items-center justify-center text-2xl shadow-2xl border-2 border-white/20">
                   {node.icon}
                 </div>
 
                 {/* Label - always visible */}
                 <motion.div
-                  className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap backdrop-blur-sm border border-white/20 text-center"
+                  className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-token-surface-dark/80 text-token-text-inverse px-3 py-2 rounded-lg text-sm whitespace-nowrap backdrop-blur-sm border border-token-surface/20 text-center"
                   initial={{ opacity: 0, y: -10, scale: 0.8 }}
                   animate={{
                     opacity: hoveredNode === node.id ? 1 : 0.8,
@@ -201,7 +201,7 @@ export default function SparkToTrekAnimation() {
                   }}
                 >
                   {node.label}
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-black/80" />
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-token-surface-dark/80" />
                 </motion.div>
               </motion.div>
             ) : null}
@@ -223,39 +223,39 @@ export default function SparkToTrekAnimation() {
                   cx="100"
                   cy="100"
                   r="2"
-                  fill="#8B5CF6"
+                  fill="var(--color-secondary)"
                   className="animate-pulse"
-                  style={{ filter: "drop-shadow(0 0 4px #8B5CF6)" }}
+                  style={{ filter: "drop-shadow(0 0 4px var(--color-secondary))" }}
                 />
                 <circle
                   cx="200"
                   cy="20"
                   r="1.5"
-                  fill="#06B6D4"
+                  fill="var(--color-accent)"
                   className="animate-pulse"
-                  style={{ filter: "drop-shadow(0 0 4px #06B6D4)" }}
+                  style={{ filter: "drop-shadow(0 0 4px var(--color-accent))" }}
                 />
                 <circle
                   cx="300"
                   cy="100"
                   r="2"
-                  fill="#10B981"
+                  fill="var(--color-primary)"
                   className="animate-pulse"
-                  style={{ filter: "drop-shadow(0 0 4px #10B981)" }}
+                  style={{ filter: "drop-shadow(0 0 4px var(--color-primary))" }}
                 />
                 <circle
                   cx="400"
                   cy="20"
                   r="1.5"
-                  fill="#F59E0B"
+                  fill="var(--color-accent)"
                   className="animate-pulse"
-                  style={{ filter: "drop-shadow(0 0 4px #F59E0B)" }}
+                  style={{ filter: "drop-shadow(0 0 4px var(--color-accent))" }}
                 />
 
                 {/* Connecting lines */}
-                <line x1="100" y1="100" x2="200" y2="20" stroke="#8B5CF6" strokeWidth="0.5" opacity="0.5" />
-                <line x1="200" y1="20" x2="300" y2="100" stroke="#06B6D4" strokeWidth="0.5" opacity="0.5" />
-                <line x1="300" y1="100" x2="400" y2="20" stroke="#10B981" strokeWidth="0.5" opacity="0.5" />
+                <line x1="100" y1="100" x2="200" y2="20" stroke="var(--color-secondary)" strokeWidth="0.5" opacity="0.5" />
+                <line x1="200" y1="20" x2="300" y2="100" stroke="var(--color-accent)" strokeWidth="0.5" opacity="0.5" />
+                <line x1="300" y1="100" x2="400" y2="20" stroke="var(--color-primary)" strokeWidth="0.5" opacity="0.5" />
               </svg>
             </motion.div>
           )}
@@ -264,7 +264,7 @@ export default function SparkToTrekAnimation() {
 
       {/* Supporting text */}
       <motion.div className="text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5 }}>
-        <p className="text-blue-600 font-medium mb-6">
+        <p className="text-token-primary font-medium mb-6">
           Each Spark expands into a curated Trek — updated in real-time, as Sagea tracks your progress and shapes what
           comes next.
         </p>
@@ -273,7 +273,7 @@ export default function SparkToTrekAnimation() {
         <motion.button
           onClick={startAnimation}
           disabled={isPlaying}
-          className="px-6 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-semibold rounded-full hover:from-purple-600 hover:to-cyan-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+          className="px-6 py-3 bg-gradient-to-r from-token-secondary to-token-accent text-token-text-inverse font-semibold rounded-full hover:from-token-secondary-dark hover:to-token-accent-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >

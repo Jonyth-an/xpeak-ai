@@ -56,7 +56,7 @@
 
   /* --- Backgrounds --- */
   --color-bg: #FDFDFD;             /* Main background */
-  --color-surface: #FFFFFF;        /* Cards, inner surfaces */
+  --color-surface: #f9fafb; /* Light neutral for cards and surfaces */
   --color-bg-alt: #FAFAFA;         /* Lighter alt background */
   --color-bg-hero: #FFF7F7;        /* Hero splash background */
   --color-bg-muted: #F5F5F5;

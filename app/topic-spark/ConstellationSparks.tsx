@@ -13,18 +13,18 @@ interface Spark {
 
 // Set each spark's delay to index * 1 (1 second per spark)
 const baseSparks: Omit<Spark, 'delay'>[] = [
-  { id: "coffee", position: { x: 15, y: 25 }, topic: "Coffee Culture", color: "#8B5CF6" },
-  { id: "travel", position: { x: 35, y: 15 }, topic: "Travel Planning", color: "#06B6D4" },
-  { id: "business", position: { x: 25, y: 45 }, topic: "Business Meetings", color: "#10B981" },
-  { id: "cooking", position: { x: 55, y: 20 }, topic: "Cooking Basics", color: "#F59E0B" },
-  { id: "sports", position: { x: 45, y: 50 }, topic: "Sports Discussion", color: "#EF4444" },
-  { id: "tech", position: { x: 75, y: 30 }, topic: "Technology", color: "#8B5CF6" },
-  { id: "culture", position: { x: 65, y: 60 }, topic: "Cultural Events", color: "#06B6D4" },
-  { id: "health", position: { x: 85, y: 45 }, topic: "Health & Wellness", color: "#10B981" },
-  { id: "music", position: { x: 20, y: 65 }, topic: "Music & Arts", color: "#F59E0B" },
-  { id: "shopping", position: { x: 40, y: 35 }, topic: "Shopping", color: "#EF4444" },
-  { id: "weather", position: { x: 60, y: 10 }, topic: "Weather Talk", color: "#8B5CF6" },
-  { id: "family", position: { x: 80, y: 65 }, topic: "Family Life", color: "#06B6D4" },
+  { id: "coffee", position: { x: 15, y: 25 }, topic: "Coffee Culture", color: "var(--color-secondary)" },
+  { id: "travel", position: { x: 35, y: 15 }, topic: "Travel Planning", color: "var(--color-accent)" },
+  { id: "business", position: { x: 25, y: 45 }, topic: "Business Meetings", color: "var(--color-primary)" },
+  { id: "cooking", position: { x: 55, y: 20 }, topic: "Cooking Basics", color: "var(--color-accent)" },
+  { id: "sports", position: { x: 45, y: 50 }, topic: "Sports Discussion", color: "var(--color-primary)" },
+  { id: "tech", position: { x: 75, y: 30 }, topic: "Technology", color: "var(--color-secondary)" },
+  { id: "culture", position: { x: 65, y: 60 }, topic: "Cultural Events", color: "var(--color-accent)" },
+  { id: "health", position: { x: 85, y: 45 }, topic: "Health & Wellness", color: "var(--color-primary)" },
+  { id: "music", position: { x: 20, y: 65 }, topic: "Music & Arts", color: "var(--color-accent)" },
+  { id: "shopping", position: { x: 40, y: 35 }, topic: "Shopping", color: "var(--color-primary)" },
+  { id: "weather", position: { x: 60, y: 10 }, topic: "Weather Talk", color: "var(--color-secondary)" },
+  { id: "family", position: { x: 80, y: 65 }, topic: "Family Life", color: "var(--color-accent)" },
 ];
 const sparks: Spark[] = baseSparks.map((spark, i) => ({ ...spark, delay: i }));
 
@@ -104,7 +104,7 @@ export default function ConstellationSparks() {
   }, []);
 
   return (
-    <div className="w-full max-w-3xl mx-auto mt-8 p-6 bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 rounded-2xl shadow-lg overflow-hidden relative border border-indigo-100">
+    <div className="w-full max-w-3xl mx-auto mt-8 p-6 bg-gradient-to-br from-token-surface-accent-light via-token-surface-accent to-token-surface-accent-dark rounded-2xl shadow-lg overflow-hidden relative border border-token-primary/20">
       {/* Background stars */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {backgroundStars.map((star, i) => (
@@ -160,9 +160,9 @@ export default function ConstellationSparks() {
           {/* Gradient definitions */}
           <defs>
             <linearGradient id="constellationGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#8B5CF6" />
-              <stop offset="50%" stopColor="#06B6D4" />
-              <stop offset="100%" stopColor="#10B981" />
+              <stop offset="0%" stopColor="var(--color-secondary)" />
+              <stop offset="50%" stopColor="var(--color-accent)" />
+              <stop offset="100%" stopColor="var(--color-primary)" />
             </linearGradient>
           </defs>
         </svg>
@@ -222,7 +222,7 @@ export default function ConstellationSparks() {
                       transition={{ duration: 0.2 }}
                     >
                       {spark.topic}
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-2 border-transparent border-b-black/80" />
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-2 border-transparent border-b-token-surface-dark/80" />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -240,7 +240,7 @@ export default function ConstellationSparks() {
               animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-200/20 via-blue-200/20 to-green-200/20 rounded-lg animate-pulse" />
+              <div className="absolute inset-0 bg-gradient-to-r from-token-secondary-light/20 via-token-accent-light/20 to-token-primary-light/20 rounded-lg animate-pulse" />
             </motion.div>
           )}
         </AnimatePresence>

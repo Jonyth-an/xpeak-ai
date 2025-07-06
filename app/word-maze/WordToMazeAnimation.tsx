@@ -27,35 +27,35 @@ const animationSteps: AnimationStep[] = [
     title: "Word Capture",
     description: "You learn a new word during a lesson or reading.",
     icon: <PenTool className="w-6 h-6" />,
-    color: "from-blue-500 to-cyan-500",
+    color: "from-token-primary to-token-primary-light",
   },
   {
     id: 2,
     title: "Maze Connection",
     description: "Word is added to your evolving Word Maze.",
     icon: <LinkIcon className="w-6 h-6" />,
-    color: "from-purple-500 to-pink-500",
+    color: "from-token-secondary to-token-secondary-light",
   },
   {
     id: 3,
     title: "AI Enhancement",
     description: "AI adds examples, definitions, and smart review cards.",
     icon: <Lightbulb className="w-6 h-6" />,
-    color: "from-amber-500 to-orange-500",
+    color: "from-token-accent to-token-accent-light",
   },
   {
     id: 4,
     title: "Review & Play",
     description: "You review it with mini-games and earn XP.",
     icon: <Gamepad2 className="w-6 h-6" />,
-    color: "from-green-500 to-emerald-500",
+    color: "from-token-success to-token-success-light",
   },
   {
     id: 5,
     title: "Maze Powers Your Next Spark",
     description: "Your Maze insights help unlock your next Topic Spark.",
     icon: <Rocket className="w-6 h-6" />,
-    color: "from-violet-500 to-purple-500",
+    color: "from-token-secondary-light to-token-secondary",
   },
 ];
 
@@ -147,12 +147,12 @@ export default function WordToMazeAnimation() {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-br from-slate-50 to-blue-50 overflow-hidden">
+    <section className="py-20 bg-gradient-to-br from-token-surface-subtle to-token-primary/5 overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
           <motion.h2
-            className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+            className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-token-primary to-token-secondary bg-clip-text text-transparent"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -160,7 +160,7 @@ export default function WordToMazeAnimation() {
             See How Words Become Worlds
           </motion.h2>
           <motion.p
-            className="text-xl text-gray-600 max-w-2xl mx-auto"
+            className="text-xl text-text-secondary max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -172,13 +172,13 @@ export default function WordToMazeAnimation() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Animation Visualization */}
           <div className="relative">
-            <div className="bg-white rounded-2xl shadow-2xl p-8 min-h-[500px] relative overflow-hidden">
+            <div className="bg-token-surface rounded-2xl shadow-2xl p-8 min-h-[500px] relative overflow-hidden">
               {/* Background constellation effect */}
               <div className="absolute inset-0 opacity-10">
                 {backgroundDots.map((dot, i) => (
                   <motion.div
                     key={i}
-                    className="absolute w-1 h-1 bg-blue-500 rounded-full"
+                    className="absolute w-1 h-1 bg-token-primary rounded-full"
                     style={{
                       left: `${dot.left}%`,
                       top: `${dot.top}%`,
@@ -206,7 +206,7 @@ export default function WordToMazeAnimation() {
                 }}
                 transition={{ duration: 0.8, type: "spring" }}
               >
-                <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-full text-lg font-semibold shadow-lg">
+                <div className="bg-gradient-to-r from-token-primary to-token-secondary text-token-text-inverse px-6 py-3 rounded-full text-lg font-semibold shadow-lg">
                   serendipity
                 </div>
               </motion.div>
@@ -223,7 +223,7 @@ export default function WordToMazeAnimation() {
                     exit={{ opacity: 0, scale: 0 }}
                     transition={{ delay: index * 0.1, type: "spring" }}
                   >
-                    <div className="bg-white border-2 border-purple-300 px-4 py-2 rounded-full text-sm font-medium shadow-md hover:shadow-lg transition-shadow">
+                    <div className="bg-token-surface border-2 border-token-secondary-light px-4 py-2 rounded-full text-sm font-medium shadow-md hover:shadow-lg transition-shadow">
                       {node.word}
                     </div>
                   </motion.div>
@@ -249,8 +249,8 @@ export default function WordToMazeAnimation() {
                   ))}
                   <defs>
                     <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#8B5CF6" />
-                      <stop offset="100%" stopColor="#EC4899" />
+                      <stop offset="0%" stopColor="var(--color-secondary)" />
+                      <stop offset="100%" stopColor="var(--color-secondary-light)" />
                     </linearGradient>
                   </defs>
                 </svg>
@@ -267,9 +267,9 @@ export default function WordToMazeAnimation() {
                       exit={{ opacity: 0, x: 50 }}
                       transition={{ delay: 0.2 }}
                     >
-                      <Card className="p-3 bg-amber-50 border-amber-200">
-                        <div className="text-xs font-medium text-amber-800">Definition</div>
-                        <div className="text-xs text-amber-700">A pleasant surprise</div>
+                      <Card className="p-3 bg-token-accent/5 border-token-accent/20">
+                        <div className="text-xs font-medium text-token-accent-dark">Definition</div>
+                        <div className="text-xs text-token-accent">A pleasant surprise</div>
                       </Card>
                     </motion.div>
 
@@ -280,9 +280,9 @@ export default function WordToMazeAnimation() {
                       exit={{ opacity: 0, x: -50 }}
                       transition={{ delay: 0.4 }}
                     >
-                      <Card className="p-3 bg-green-50 border-green-200">
-                        <div className="text-xs font-medium text-green-800">Example</div>
-                        <div className="text-xs text-green-700">"What a serendipity!"</div>
+                      <Card className="p-3 bg-token-success/5 border-token-success/20">
+                        <div className="text-xs font-medium text-token-success-dark">Example</div>
+                        <div className="text-xs text-token-success">"What a serendipity!"</div>
                       </Card>
                     </motion.div>
                   </>
@@ -297,7 +297,7 @@ export default function WordToMazeAnimation() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <div className="bg-gradient-to-r from-violet-500 to-purple-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
+                  <div className="bg-gradient-to-r from-token-secondary-light to-token-secondary text-token-text-inverse px-4 py-2 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
                     <Sparkles className="w-4 h-4" />
                     Topic Spark
                   </div>
@@ -313,15 +313,15 @@ export default function WordToMazeAnimation() {
                 key={step.id}
                 className={`relative p-6 rounded-xl transition-all duration-500 ${
                   currentStep === index
-                    ? "bg-white shadow-xl scale-105 border-2 border-blue-200"
-                    : "bg-white/50 shadow-md hover:shadow-lg"
+                    ? "bg-token-surface shadow-xl scale-105 border-2 border-token-primary-light"
+                    : "bg-token-surface/50 shadow-md hover:shadow-lg"
                 }`}
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`p-3 rounded-full bg-gradient-to-r ${step.color} text-white flex-shrink-0`}>
+                  <div className={`p-3 rounded-full bg-gradient-to-r ${step.color} text-token-text-inverse flex-shrink-0`}>
                     {step.icon}
                   </div>
                   <div className="flex-1">
@@ -329,20 +329,20 @@ export default function WordToMazeAnimation() {
                       {step.title}
                       {currentStep === index && (
                         <motion.div
-                          className="w-2 h-2 bg-blue-500 rounded-full"
+                          className="w-2 h-2 bg-token-primary rounded-full"
                           animate={{ scale: [1, 1.5, 1] }}
                           transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY }}
                         />
                       )}
                     </h3>
-                    <p className="text-gray-600">{step.description}</p>
+                    <p className="text-text-secondary">{step.description}</p>
                   </div>
                 </div>
 
                 {/* Progress indicator */}
-                <div className="absolute left-8 top-16 w-0.5 h-8 bg-gray-200">
+                <div className="absolute left-8 top-16 w-0.5 h-8 bg-token-border">
                   <motion.div
-                    className="w-full bg-gradient-to-b from-blue-500 to-purple-500"
+                    className="w-full bg-gradient-to-b from-token-primary to-token-secondary"
                     initial={{ height: 0 }}
                     animate={{ height: currentStep > index ? "100%" : "0%" }}
                     transition={{ duration: 0.5 }}
@@ -359,20 +359,20 @@ export default function WordToMazeAnimation() {
             <Button
               onClick={startAnimation}
               disabled={isPlaying}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-gradient-to-r from-token-primary to-token-secondary hover:from-token-primary-dark hover:to-token-secondary-dark text-token-text-inverse px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
             >
               {isPlaying ? "Playing..." : "🔄 Restart Animation"}
             </Button>
 
             <Button
               variant="outline"
-              className="px-8 py-3 rounded-full text-lg font-semibold border-2 border-purple-300 hover:bg-purple-50 transition-all duration-300 bg-transparent"
+              className="px-8 py-3 rounded-full text-lg font-semibold border-2 border-token-secondary-light hover:bg-token-secondary/5 transition-all duration-300 bg-transparent"
             >
               🎮 Try Your Maze
             </Button>
           </div>
 
-          <Button variant="ghost" className="text-purple-600 hover:text-purple-700 font-medium">
+          <Button variant="ghost" className="text-token-secondary hover:text-token-secondary-dark font-medium">
             🔍 View My Vocabulary World
           </Button>
         </div>
