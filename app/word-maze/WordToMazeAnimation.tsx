@@ -147,12 +147,12 @@ export default function WordToMazeAnimation() {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-br from-token-surface-subtle to-token-primary/5 overflow-hidden">
-      <div className="container mx-auto px-4">
+    <section className="py-token-20 bg-gradient-to-br from-token-surface-subtle to-token-primary/5 overflow-hidden">
+      <div className="container-token-lg mx-auto px-token-4 sm:px-token-6 lg:px-token-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-token-16">
           <motion.h2
-            className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-token-primary to-token-secondary bg-clip-text text-transparent"
+            className="text-token-4xl md:text-token-5xl font-bold mb-token-6 bg-gradient-to-r from-token-primary to-token-secondary bg-clip-text text-transparent"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -160,7 +160,7 @@ export default function WordToMazeAnimation() {
             See How Words Become Worlds
           </motion.h2>
           <motion.p
-            className="text-xl text-text-secondary max-w-2xl mx-auto"
+            className="text-token-xl token-text-secondary max-w-token-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -169,16 +169,16 @@ export default function WordToMazeAnimation() {
           </motion.p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-token-12 items-center">
           {/* Animation Visualization */}
           <div className="relative">
-            <div className="bg-token-surface rounded-2xl shadow-2xl p-8 min-h-[500px] relative overflow-hidden">
+            <div className="bg-token-surface rounded-token-2xl shadow-token-2xl p-token-8 min-h-[500px] relative overflow-hidden border border-token-border-light">
               {/* Background constellation effect */}
               <div className="absolute inset-0 opacity-10">
                 {backgroundDots.map((dot, i) => (
                   <motion.div
                     key={i}
-                    className="absolute w-1 h-1 bg-token-primary rounded-full"
+                    className="absolute w-token-1 h-token-1 bg-token-primary rounded-token-full"
                     style={{
                       left: `${dot.left}%`,
                       top: `${dot.top}%`,
@@ -206,7 +206,7 @@ export default function WordToMazeAnimation() {
                 }}
                 transition={{ duration: 0.8, type: "spring" }}
               >
-                <div className="bg-gradient-to-r from-token-primary to-token-secondary text-token-text-inverse px-6 py-3 rounded-full text-lg font-semibold shadow-lg">
+                <div className="bg-gradient-to-r from-token-primary to-token-secondary text-token-text-inverse px-token-6 py-token-3 rounded-token-full text-token-lg font-semibold shadow-token-lg">
                   serendipity
                 </div>
               </motion.div>
@@ -223,7 +223,7 @@ export default function WordToMazeAnimation() {
                     exit={{ opacity: 0, scale: 0 }}
                     transition={{ delay: index * 0.1, type: "spring" }}
                   >
-                    <div className="bg-token-surface border-2 border-token-secondary-light px-4 py-2 rounded-full text-sm font-medium shadow-md hover:shadow-lg transition-shadow">
+                    <div className="bg-token-surface border-token-2 border-token-secondary-light px-token-4 py-token-2 rounded-token-full text-token-sm font-medium shadow-token-md hover:shadow-token-lg transition-token-normal">
                       {node.word}
                     </div>
                   </motion.div>
@@ -261,28 +261,28 @@ export default function WordToMazeAnimation() {
                 {showEnhancements && (
                   <>
                     <motion.div
-                      className="absolute top-16 right-8"
+                      className="absolute top-token-16 right-token-8"
                       initial={{ opacity: 0, x: 50 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 50 }}
                       transition={{ delay: 0.2 }}
                     >
-                      <Card className="p-3 bg-token-accent/5 border-token-accent/20">
-                        <div className="text-xs font-medium text-token-accent-dark">Definition</div>
-                        <div className="text-xs text-token-accent">A pleasant surprise</div>
+                      <Card className="p-token-3 bg-token-accent/5 border-token-accent/20 shadow-token-md">
+                        <div className="text-token-xs font-medium token-text-accent-dark">Definition</div>
+                        <div className="text-token-xs token-text-accent">A pleasant surprise</div>
                       </Card>
                     </motion.div>
 
                     <motion.div
-                      className="absolute bottom-16 left-8"
+                      className="absolute bottom-token-16 left-token-8"
                       initial={{ opacity: 0, x: -50 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -50 }}
                       transition={{ delay: 0.4 }}
                     >
-                      <Card className="p-3 bg-token-success/5 border-token-success/20">
-                        <div className="text-xs font-medium text-token-success-dark">Example</div>
-                        <div className="text-xs text-token-success">"What a serendipity!"</div>
+                      <Card className="p-token-3 bg-token-success/5 border-token-success/20 shadow-token-md">
+                        <div className="text-token-xs font-medium token-text-success-dark">Example</div>
+                        <div className="text-token-xs token-text-success">"What a serendipity!"</div>
                       </Card>
                     </motion.div>
                   </>
@@ -292,13 +292,13 @@ export default function WordToMazeAnimation() {
               {/* Spark effect for final step */}
               {currentStep === 4 && (
                 <motion.div
-                  className="absolute top-8 right-8"
+                  className="absolute top-token-8 right-token-8"
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <div className="bg-gradient-to-r from-token-secondary-light to-token-secondary text-token-text-inverse px-4 py-2 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
-                    <Sparkles className="w-4 h-4" />
+                  <div className="bg-gradient-to-r from-token-secondary-light to-token-secondary text-token-text-inverse px-token-4 py-token-2 rounded-token-full text-token-sm font-semibold shadow-token-lg flex items-center gap-token-2">
+                    <Sparkles className="w-token-4 h-token-4" />
                     Topic Spark
                   </div>
                 </motion.div>
@@ -307,40 +307,40 @@ export default function WordToMazeAnimation() {
           </div>
 
           {/* Steps Timeline */}
-          <div className="space-y-6">
+          <div className="space-y-token-6">
             {animationSteps.map((step, index) => (
               <motion.div
                 key={step.id}
-                className={`relative p-6 rounded-xl transition-all duration-500 ${
+                className={`relative p-token-6 rounded-token-xl transition-token-normal duration-500 ${
                   currentStep === index
-                    ? "bg-token-surface shadow-xl scale-105 border-2 border-token-primary-light"
-                    : "bg-token-surface/50 shadow-md hover:shadow-lg"
+                    ? "bg-token-surface shadow-token-xl scale-token-105 border-token-2 border-token-primary-light"
+                    : "bg-token-surface/50 shadow-token-md hover:shadow-token-lg"
                 }`}
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <div className="flex items-start gap-4">
-                  <div className={`p-3 rounded-full bg-gradient-to-r ${step.color} text-token-text-inverse flex-shrink-0`}>
+                <div className="flex items-start gap-token-4">
+                  <div className={`p-token-3 rounded-token-full bg-gradient-to-r ${step.color} text-token-text-inverse flex-shrink-0 shadow-token-md`}>
                     {step.icon}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+                    <h3 className="text-token-lg font-semibold mb-token-2 flex items-center gap-token-2 token-text-primary">
                       {step.title}
                       {currentStep === index && (
                         <motion.div
-                          className="w-2 h-2 bg-token-primary rounded-full"
+                          className="w-token-2 h-token-2 bg-token-primary rounded-token-full"
                           animate={{ scale: [1, 1.5, 1] }}
                           transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY }}
                         />
                       )}
                     </h3>
-                    <p className="text-text-secondary">{step.description}</p>
+                    <p className="token-text-secondary leading-relaxed">{step.description}</p>
                   </div>
                 </div>
 
                 {/* Progress indicator */}
-                <div className="absolute left-8 top-16 w-0.5 h-8 bg-token-border">
+                <div className="absolute left-token-8 top-token-16 w-token-0-5 h-token-8 bg-token-border">
                   <motion.div
                     className="w-full bg-gradient-to-b from-token-primary to-token-secondary"
                     initial={{ height: 0 }}
@@ -354,25 +354,25 @@ export default function WordToMazeAnimation() {
         </div>
 
         {/* Controls */}
-        <div className="text-center mt-12 space-y-4">
-          <div className="flex justify-center gap-4">
+        <div className="text-center mt-token-12 space-y-token-4">
+          <div className="flex justify-center gap-token-4">
             <Button
               onClick={startAnimation}
               disabled={isPlaying}
-              className="bg-gradient-to-r from-token-primary to-token-secondary hover:from-token-primary-dark hover:to-token-secondary-dark text-token-text-inverse px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              className="btn-token-primary bg-gradient-to-r from-token-primary to-token-secondary hover:from-token-primary-dark hover:to-token-secondary-dark text-token-text-inverse px-token-8 py-token-3 rounded-token-full text-token-lg font-semibold shadow-token-lg hover:shadow-token-xl transition-token-normal"
             >
               {isPlaying ? "Playing..." : "🔄 Restart Animation"}
             </Button>
 
             <Button
               variant="outline"
-              className="px-8 py-3 rounded-full text-lg font-semibold border-2 border-token-secondary-light hover:bg-token-secondary/5 transition-all duration-300 bg-transparent"
+              className="px-token-8 py-token-3 rounded-token-full text-token-lg font-semibold border-token-2 border-token-secondary-light hover:bg-token-secondary/5 transition-token-normal bg-transparent"
             >
               🎮 Try Your Maze
             </Button>
           </div>
 
-          <Button variant="ghost" className="text-token-secondary hover:text-token-secondary-dark font-medium">
+          <Button variant="ghost" className="token-text-secondary hover:token-text-secondary-dark font-medium">
             🔍 View My Vocabulary World
           </Button>
         </div>
