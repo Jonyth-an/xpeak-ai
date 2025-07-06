@@ -6,27 +6,27 @@ import { Button } from '@/app/components/ui';
 
 export default function LearningTreksSection() {
   return (
-    <section className="py-20 bg-token-surface">
+    <section className="py-token-12 bg-token-surface">
       <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-token-10 items-center max-w-6xl mx-auto">
           {/* Left side - Content */}
           <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-token-accent to-token-accent-light rounded-2xl flex items-center justify-center">
-                <Map className="w-8 h-8 text-white" />
+            <div className="flex items-center gap-token-4 mb-token-6">
+              <div className="w-token-16 h-token-16 bg-gradient-to-r from-token-accent to-token-accent-light rounded-token-2xl flex items-center justify-center">
+                <Map className="w-token-8 h-token-8 text-white" />
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-text">
+              <h2 className="text-token-display-lg md:text-token-display-xl font-token-bold text-token-text">
                 Your Learning Trek, Mapped Just for You
               </h2>
             </div>
 
-            <p className="text-xl text-text-secondary mb-8 leading-relaxed">
+            <p className="text-token-xl text-token-text-secondary mb-token-8 leading-token-relaxed">
               Sagea organizes your Sparks into Trek paths — helping you stay curious or follow structured paths to
               fluency.
             </p>
 
             {/* Trek features */}
-            <div className="space-y-4 mb-8">
+            <div className="space-y-token-4 mb-token-8">
               {[
                 "Personalized learning pathways",
                 "Flexible pacing and scheduling",
@@ -35,23 +35,23 @@ export default function LearningTreksSection() {
               ].map((feature, index) => (
                 <motion.div
                   key={feature}
-                  className="flex items-center gap-3"
+                  className="flex items-center gap-token-3"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
                 >
-                  <div className="w-2 h-2 bg-token-accent rounded-full"></div>
-                  <span className="text-text-secondary">{feature}</span>
+                  <div className="w-token-2 h-token-2 bg-token-accent rounded-token-full"></div>
+                  <span className="text-token-text-secondary">{feature}</span>
                 </motion.div>
               ))}
             </div>
 
             <Button
               size="lg"
-              className="bg-gradient-to-r from-token-accent to-token-accent-light hover:from-token-accent-dark hover:to-token-accent text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg"
+              className="bg-gradient-to-r from-token-accent to-token-accent-light hover:from-token-accent-dark hover:to-token-accent text-white px-token-8 py-token-3 rounded-token-full text-token-lg font-token-semibold shadow-token-lg"
             >
               See Your Trek Map
-              <Map className="ml-2 w-5 h-5" />
+              <Map className="ml-token-2 w-token-5 h-token-5" />
             </Button>
           </motion.div>
 
@@ -62,7 +62,7 @@ export default function LearningTreksSection() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <div className="bg-gradient-to-br from-token-accent/10 to-token-accent-light/10 rounded-3xl p-8 relative overflow-hidden h-96">
+            <div className="bg-gradient-to-br from-token-accent/10 to-token-accent-light/10 rounded-token-3xl p-token-8 relative overflow-hidden h-96">
               {/* Winding path */}
               <svg className="absolute inset-0 w-full h-full">
                 <motion.path
@@ -100,13 +100,13 @@ export default function LearningTreksSection() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: 1 + index * 0.2 }}
                 >
-                  <div className="bg-token-surface rounded-full w-12 h-12 flex items-center justify-center shadow-lg border-4 border-token-accent/20 relative">
-                    <span className="text-sm font-bold text-token-accent">{index + 1}</span>
+                  <div className="bg-token-surface rounded-token-full w-token-12 h-token-12 flex items-center justify-center shadow-token-lg border-token-4 border-token-accent/20 relative">
+                    <span className="text-token-sm font-token-bold text-token-accent">{index + 1}</span>
 
                     {/* Pulsing effect for active milestone */}
                     {index === 2 && (
                       <motion.div
-                        className="absolute inset-0 rounded-full bg-token-accent/30"
+                        className="absolute inset-0 rounded-token-full bg-token-accent/30"
                         animate={{ scale: [1, 1.5, 1], opacity: [0.6, 0, 0.6] }}
                         transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
                       />
@@ -114,7 +114,7 @@ export default function LearningTreksSection() {
                   </div>
 
                   <div className="absolute top-14 left-1/2 transform -translate-x-1/2">
-                    <span className="text-xs font-semibold text-text-secondary bg-token-surface px-2 py-1 rounded-full shadow-md whitespace-nowrap">
+                    <span className="text-token-xs font-token-semibold text-token-text-secondary bg-token-surface px-token-2 py-token-1 rounded-token-full shadow-token-md whitespace-nowrap">
                       {milestone.label}
                     </span>
                   </div>
@@ -125,7 +125,7 @@ export default function LearningTreksSection() {
               {[...Array(8)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="absolute w-1.5 h-1.5 bg-token-accent/60 rounded-full"
+                  className="absolute w-token-1.5 h-token-1.5 bg-token-accent/60 rounded-token-full"
                   style={{
                     left: `${20 + Math.random() * 60}%`,
                     top: `${20 + Math.random() * 60}%`,

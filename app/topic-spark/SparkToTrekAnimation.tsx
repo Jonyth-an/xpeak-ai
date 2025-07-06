@@ -117,7 +117,7 @@ export default function SparkToTrekAnimation() {
       </motion.div>
 
       {/* Animation Container */}
-      <div className="relative h-token-80 mb-token-6">
+      <div className="relative" style={{ height: '15rem' }}>
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 500 120" preserveAspectRatio="xMidYMid meet">
           {/* Connection paths */}
           <AnimatePresence>

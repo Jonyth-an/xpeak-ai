@@ -35,24 +35,24 @@ const features = [
 
 export default function TutorValueCardsSection() {
   return (
-    <section className="py-20 bg-token-surface">
+    <section className="py-token-12 bg-token-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-text mb-4">
+        <div className="text-center mb-token-8">
+          <h2 className="text-token-display-lg md:text-token-display-xl font-token-bold text-token-text mb-token-4">
             💡 Feature Highlights
           </h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-token-6">
           {features.map((feature, idx) => (
             <div
               key={idx}
-              className="bg-token-surface-subtle rounded-2xl shadow-md p-8 flex flex-col items-center text-center hover:shadow-lg transition-shadow duration-200"
+              className="bg-token-surface-subtle rounded-token-xl shadow-token-md p-token-6 flex flex-col items-center text-center hover:shadow-token-lg transition-shadow duration-200"
             >
-              <div className={`w-16 h-16 flex items-center justify-center rounded-full mb-5 text-3xl ${feature.bg}`}>
+              <div className={`w-token-16 h-token-16 flex items-center justify-center rounded-token-full mb-token-4 text-token-3xl ${feature.bg}`}>
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-bold text-text mb-2">{feature.title}</h3>
-              <p className="text-text-muted text-base">{feature.subtext}</p>
+              <h3 className="text-token-xl font-token-bold text-token-text mb-token-2">{feature.title}</h3>
+              <p className="text-token-text-muted text-token-base">{feature.subtext}</p>
             </div>
           ))}
         </div>

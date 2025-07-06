@@ -17,23 +17,23 @@ function MeetSageaPageInner() {
     <Layout>
       <TutorHeroSection />
       {/* How Sagea works? Section */}
-      <section className="pt-8 pb-0 bg-token-surface-subtle">
+      <section className="pt-token-8 pb-0 bg-token-surface-subtle">
         <div className="container mx-auto px-4">
           {/* Flex layout with animation on left, content on right */}
-          <div className="flex flex-col lg:flex-row items-start gap-12">
+          <div className="flex flex-col lg:flex-row items-start gap-token-8">
             {/* Left side: Animation */}
-            <div className="w-full lg:w-[600px] lg:flex-shrink-0">
+            <div className="w-full lg:w-[37.5rem] lg:flex-shrink-0">
               <SageaAnimation />
             </div>
             
             {/* Right side: Header and Step cards */}
-            <div className="flex-1 space-y-8 pl-0 lg:pl-16">
+            <div className="flex-1 space-y-token-8 pl-0 lg:pl-token-8">
               {/* Header moved to right side */}
-              <div className="text-left pt-16">
-                <h2 className="text-4xl md:text-5xl font-extrabold text-text mb-4">
+              <div className="text-left pt-token-10">
+                <h2 className="text-token-display-xl md:text-token-display-2xl font-token-bold text-token-text mb-token-4">
                   How Sagea works?
                 </h2>
-                <p className="text-xl text-text-secondary leading-relaxed">
+                <p className="text-token-lg text-token-text-secondary leading-token-relaxed">
                   From your very first word to your next real-world conversation — Sagea is always there, connecting the dots, lighting the path, and cheering you on.
                 </p>
               </div>

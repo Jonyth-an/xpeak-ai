@@ -6,23 +6,23 @@ import { Button } from '@/app/components/ui';
 
 export default function TutorsCrewSection() {
   return (
-    <section className="py-20 bg-gradient-to-br from-token-surface-accent-light via-token-surface-accent to-token-surface-accent-dark">
+    <section className="py-token-12 bg-gradient-to-br from-token-surface-accent-light via-token-surface-accent to-token-surface-accent-dark">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-token-10"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <Users className="w-12 h-12 text-token-primary" />
-              <h2 className="text-3xl md:text-4xl font-bold text-text">Real Tutors Meet Smart Intelligence</h2>
+            <div className="flex items-center justify-center gap-token-4 mb-token-6">
+              <Users className="w-token-12 h-token-12 text-token-primary" />
+              <h2 className="text-token-display-lg md:text-token-display-xl font-token-bold text-token-text">Real Tutors Meet Smart Intelligence</h2>
             </div>
           </motion.div>
 
           {/* Team visualization */}
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-token-8 items-center">
             {/* Left side - Team circles */}
             <motion.div
               className="relative order-2 lg:order-1"
@@ -33,10 +33,10 @@ export default function TutorsCrewSection() {
               <div className="relative w-80 h-80 mx-auto">
                 {/* Central Sagea coordinator */}
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                  <div className="w-20 h-20 bg-gradient-to-r from-token-primary to-token-secondary rounded-full flex items-center justify-center shadow-lg border-4 border-token-surface">
-                    <Brain className="w-8 h-8 text-white" />
+                  <div className="w-token-20 h-token-20 bg-gradient-to-r from-token-primary to-token-secondary rounded-token-full flex items-center justify-center shadow-token-lg border-token-4 border-token-surface">
+                    <Brain className="w-token-8 h-token-8 text-white" />
                   </div>
-                  <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-sm font-semibold text-text-secondary whitespace-nowrap">
+                  <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-token-sm font-token-semibold text-token-text-secondary whitespace-nowrap">
                     Sagea Partner
                   </span>
                 </div>
@@ -45,9 +45,9 @@ export default function TutorsCrewSection() {
                 {[
                   { role: "AI Tutor", color: "bg-token-accent", icon: "🤖" },
                   { role: "Human Tutor by Heart", color: "bg-token-accent-light", icon: "👨‍🏫" },
-                  { role: "Topic Spark", color: "bg-token-primary-light", icon: <Sparkles className="w-4 h-4 text-white" /> },
-                  { role: "Word Maze", color: "bg-token-secondary", icon: <Puzzle className="w-4 h-4 text-white" /> },
-                  { role: "Lesson", color: "bg-token-accent-dark", icon: <GraduationCap className="w-4 h-4 text-white" /> },
+                  { role: "Topic Spark", color: "bg-token-primary-light", icon: <Sparkles className="w-token-4 h-token-4 text-white" /> },
+                  { role: "Word Maze", color: "bg-token-secondary", icon: <Puzzle className="w-token-4 h-token-4 text-white" /> },
+                  { role: "Lesson", color: "bg-token-accent-dark", icon: <GraduationCap className="w-token-4 h-token-4 text-white" /> },
                 ].map((member, index) => {
                   const angle = index * 72 * (Math.PI / 180) // 72° intervals for 5 members
                   const radius = 120
@@ -64,11 +64,11 @@ export default function TutorsCrewSection() {
                       transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
                     >
                       <div
-                        className={`w-16 h-16 ${member.color} rounded-full flex items-center justify-center shadow-lg border-2 border-token-surface text-2xl`}
+                        className={`w-token-16 h-token-16 ${member.color} rounded-token-full flex items-center justify-center shadow-token-lg border-token-2 border-token-surface text-2xl`}
                       >
                         {typeof member.icon === "string" ? member.icon : member.icon}
                       </div>
-                      <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs font-medium text-text-secondary whitespace-nowrap">
+                      <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-token-xs font-token-medium text-token-text-secondary whitespace-nowrap">
                         {member.role}
                       </span>
                     </motion.div>
@@ -110,12 +110,12 @@ export default function TutorsCrewSection() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
             >
-              <p className="text-xl text-text-secondary mb-8 leading-relaxed">
+              <p className="text-token-xl text-token-text-secondary mb-token-8 leading-token-relaxed">
                 Behind Sagea is a team of real human tutors and AI experts — dynamically matched to your needs, but
                 all coordinated by Sagea.
               </p>
 
-              <div className="space-y-4 mb-8">
+              <div className="space-y-token-4 mb-token-8">
                 {[
                   "Seamless handoffs between AI and human tutors",
                   "Consistent learning context across all sessions",
@@ -124,23 +124,23 @@ export default function TutorsCrewSection() {
                 ].map((feature, index) => (
                   <motion.div
                     key={feature}
-                    className="flex items-center gap-3"
+                    className="flex items-center gap-token-3"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
                   >
-                    <div className="w-2 h-2 bg-token-primary rounded-full"></div>
-                    <span className="text-text-secondary">{feature}</span>
+                    <div className="w-token-2 h-token-2 bg-token-primary rounded-token-full"></div>
+                    <span className="text-token-text-secondary">{feature}</span>
                   </motion.div>
                 ))}
               </div>
 
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-token-primary to-token-secondary hover:from-token-primary-dark hover:to-token-secondary-dark text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg"
+                className="bg-gradient-to-r from-token-primary to-token-secondary hover:from-token-primary-dark hover:to-token-secondary-dark text-white px-token-8 py-token-3 rounded-token-full text-token-lg font-token-semibold shadow-token-lg"
               >
                 Meet Your Crew
-                <Users className="ml-2 w-5 h-5" />
+                <Users className="ml-token-2 w-token-5 h-token-5" />
               </Button>
             </motion.div>
           </div>
