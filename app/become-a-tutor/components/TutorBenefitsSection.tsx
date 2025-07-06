@@ -6,35 +6,35 @@ const benefits = [
     icon: GlobeAltIcon,
     title: 'Teach from Anywhere',
     desc: 'All you need is Wi-Fi and passion. Work from home, cafés, or while traveling.',
-    bg: 'bg-blue-50',
-    iconColor: 'text-blue-600'
+    bg: 'bg-token-surface-accent-light',
+    iconColor: 'text-token-primary'
   },
   {
     icon: AcademicCapIcon,
     title: 'Focus on Coaching',
     desc: 'Admin tools and logistics are handled for you, so you can focus on teaching.',
-    bg: 'bg-purple-50',
-    iconColor: 'text-purple-600'
+    bg: 'bg-token-surface-accent',
+    iconColor: 'text-token-accent'
   },
   {
     icon: ChatBubbleLeftRightIcon,
     title: 'Supportive Team & Tools',
     desc: 'Get ongoing training support and connect with a community of fellow coaches.',
-    bg: 'bg-green-50',
-    iconColor: 'text-green-600'
+    bg: 'bg-token-surface-success',
+    iconColor: 'text-token-success'
   },
   {
     icon: BriefcaseIcon,
     title: 'Build a Brand',
     desc: 'Grow your reviews, build your teaching portfolio, and expand your impact.',
-    bg: 'bg-orange-50',
-    iconColor: 'text-orange-600'
+    bg: 'bg-token-surface-warning',
+    iconColor: 'text-token-warning'
   }
 ];
 
 export default function TutorBenefitsSection() {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-token-surface">
       <div className="max-w-4xl mx-auto text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold text-text">
           Empower Learners. Grow as a Coach.
@@ -54,7 +54,7 @@ export default function TutorBenefitsSection() {
               <h3 className="text-xl font-semibold text-text mb-2">
                 {b.title}
               </h3>
-              <p className="text-text-muted">{b.desc}</p>
+              <p className="text-text-tertiary">{b.desc}</p>
             </div>
           );
         })}

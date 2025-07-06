@@ -7,7 +7,7 @@ import { Button } from '@/app/components/ui';
 
 export default function TopicSparksSection() {
   return (
-    <section className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+    <section className="py-20 bg-gradient-to-br from-token-surface-accent-light via-token-surface-accent to-token-surface-accent-dark">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
           {/* Left side - Visual with floating sparks */}
@@ -17,11 +17,11 @@ export default function TopicSparksSection() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-3xl p-8 relative overflow-hidden h-80">
+            <div className="bg-gradient-to-br from-token-primary/10 to-token-secondary/10 rounded-3xl p-8 relative overflow-hidden h-80">
               {/* Central rotating spark */}
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <motion.div
-                  className="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-2xl"
+                  className="w-20 h-20 bg-gradient-to-r from-token-primary to-token-secondary rounded-full flex items-center justify-center shadow-2xl"
                   animate={{
                     rotate: [0, 360],
                     scale: [1, 1.2, 1],
@@ -57,7 +57,7 @@ export default function TopicSparksSection() {
                       delay: index * 0.5,
                     }}
                   >
-                    <div className="bg-white rounded-full px-4 py-2 shadow-lg border-2 border-purple-200 text-sm font-semibold text-purple-700">
+                    <div className="bg-token-surface rounded-full px-4 py-2 shadow-lg border-2 border-token-primary/20 text-sm font-semibold text-token-primary">
                       {topic}
                     </div>
                   </motion.div>
@@ -68,7 +68,7 @@ export default function TopicSparksSection() {
               {[...Array(15)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="absolute w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-60"
+                  className="absolute w-2 h-2 bg-gradient-to-r from-token-primary/60 to-token-secondary/60 rounded-full opacity-60"
                   style={{
                     left: `${Math.random() * 100}%`,
                     top: `${Math.random() * 100}%`,
@@ -97,10 +97,10 @@ export default function TopicSparksSection() {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-token-primary to-token-secondary rounded-2xl flex items-center justify-center">
                 <Sparkles className="w-8 h-8 text-white" />
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-800">Spark New Topics from What You Know</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-text">Spark New Topics from What You Know</h2>
             </div>
 
             {/* Vertical feature cards */}
@@ -112,28 +112,28 @@ export default function TopicSparksSection() {
               ].map((feature, index) => (
                 <motion.div
                   key={feature.title}
-                  className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-purple-200 flex items-center gap-4"
+                  className="bg-token-surface/80 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-token-primary/20 flex items-center gap-4"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
                 >
-                  <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex-shrink-0"></div>
+                  <div className="w-3 h-3 bg-gradient-to-r from-token-primary to-token-secondary rounded-full flex-shrink-0"></div>
                   <div>
-                    <h3 className="font-semibold text-slate-800">{feature.title}</h3>
-                    <p className="text-sm text-slate-600">{feature.desc}</p>
+                    <h3 className="font-semibold text-text">{feature.title}</h3>
+                    <p className="text-sm text-text-secondary">{feature.desc}</p>
                   </div>
                 </motion.div>
               ))}
             </div>
 
-            <p className="text-xl text-slate-600 mb-8 leading-relaxed">
+            <p className="text-xl text-text-secondary mb-8 leading-relaxed">
               Based on your progress and interests, Sagea suggests timely, personalized sparks — ready for AI practice
               or tutor sessions.
             </p>
 
             <Button
               size="lg"
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg"
+              className="bg-gradient-to-r from-token-primary to-token-secondary hover:from-token-primary-dark hover:to-token-secondary-dark text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg"
             >
               Discover Sparks
               <Sparkles className="ml-2 w-5 h-5" />

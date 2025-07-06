@@ -6,21 +6,21 @@ import { Button } from '@/app/components/ui';
 
 export default function LearningTreksSection() {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-token-surface">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
           {/* Left side - Content */}
           <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-token-accent to-token-accent-light rounded-2xl flex items-center justify-center">
                 <Map className="w-8 h-8 text-white" />
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-800">
+              <h2 className="text-3xl md:text-4xl font-bold text-text">
                 Your Learning Trek, Mapped Just for You
               </h2>
             </div>
 
-            <p className="text-xl text-slate-600 mb-8 leading-relaxed">
+            <p className="text-xl text-text-secondary mb-8 leading-relaxed">
               Sagea organizes your Sparks into Trek paths — helping you stay curious or follow structured paths to
               fluency.
             </p>
@@ -40,15 +40,15 @@ export default function LearningTreksSection() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
                 >
-                  <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
-                  <span className="text-slate-700">{feature}</span>
+                  <div className="w-2 h-2 bg-token-accent rounded-full"></div>
+                  <span className="text-text-secondary">{feature}</span>
                 </motion.div>
               ))}
             </div>
 
             <Button
               size="lg"
-              className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg"
+              className="bg-gradient-to-r from-token-accent to-token-accent-light hover:from-token-accent-dark hover:to-token-accent text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg"
             >
               See Your Trek Map
               <Map className="ml-2 w-5 h-5" />
@@ -62,7 +62,7 @@ export default function LearningTreksSection() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-3xl p-8 relative overflow-hidden h-96">
+            <div className="bg-gradient-to-br from-token-accent/10 to-token-accent-light/10 rounded-3xl p-8 relative overflow-hidden h-96">
               {/* Winding path */}
               <svg className="absolute inset-0 w-full h-full">
                 <motion.path
@@ -77,9 +77,9 @@ export default function LearningTreksSection() {
                 />
                 <defs>
                   <linearGradient id="trekGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#10B981" />
-                    <stop offset="50%" stopColor="#14B8A6" />
-                    <stop offset="100%" stopColor="#06B6D4" />
+                    <stop offset="0%" stopColor="var(--color-accent)" />
+                    <stop offset="50%" stopColor="var(--color-accent-light)" />
+                    <stop offset="100%" stopColor="var(--color-accent)" />
                   </linearGradient>
                 </defs>
               </svg>
@@ -100,13 +100,13 @@ export default function LearningTreksSection() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: 1 + index * 0.2 }}
                 >
-                  <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg border-4 border-emerald-200 relative">
-                    <span className="text-sm font-bold text-emerald-600">{index + 1}</span>
+                  <div className="bg-token-surface rounded-full w-12 h-12 flex items-center justify-center shadow-lg border-4 border-token-accent/20 relative">
+                    <span className="text-sm font-bold text-token-accent">{index + 1}</span>
 
                     {/* Pulsing effect for active milestone */}
                     {index === 2 && (
                       <motion.div
-                        className="absolute inset-0 rounded-full bg-emerald-400/30"
+                        className="absolute inset-0 rounded-full bg-token-accent/30"
                         animate={{ scale: [1, 1.5, 1], opacity: [0.6, 0, 0.6] }}
                         transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
                       />
@@ -114,7 +114,7 @@ export default function LearningTreksSection() {
                   </div>
 
                   <div className="absolute top-14 left-1/2 transform -translate-x-1/2">
-                    <span className="text-xs font-semibold text-slate-700 bg-white px-2 py-1 rounded-full shadow-md whitespace-nowrap">
+                    <span className="text-xs font-semibold text-text-secondary bg-token-surface px-2 py-1 rounded-full shadow-md whitespace-nowrap">
                       {milestone.label}
                     </span>
                   </div>
@@ -125,7 +125,7 @@ export default function LearningTreksSection() {
               {[...Array(8)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="absolute w-1.5 h-1.5 bg-emerald-400/60 rounded-full"
+                  className="absolute w-1.5 h-1.5 bg-token-accent/60 rounded-full"
                   style={{
                     left: `${20 + Math.random() * 60}%`,
                     top: `${20 + Math.random() * 60}%`,

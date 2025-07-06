@@ -29,31 +29,31 @@ const animationSteps: AnimationStep[] = [
     id: 1,
     title: "Word Unlocked",
     caption: 'You learn "serendipity."',
-    icon: <Puzzle className="w-6 h-6" />, color: "from-blue-500 to-cyan-500", position: calculatePosition(0),
+    icon: <Puzzle className="w-6 h-6" />, color: "from-token-primary to-token-accent", position: calculatePosition(0),
   },
   {
     id: 2,
     title: "Maze Connection",
     caption: 'Sagea links it to "coincidence" and "chance."',
-    icon: <Link className="w-6 h-6" />, color: "from-purple-500 to-pink-500", position: calculatePosition(72),
+    icon: <Link className="w-6 h-6" />, color: "from-token-accent to-token-secondary", position: calculatePosition(72),
   },
   {
     id: 3,
     title: "Spark Ignition",
     caption: "You're ready for a new Topic Spark.",
-    icon: <Sparkles className="w-6 h-6" />, color: "from-amber-500 to-orange-500", position: calculatePosition(144),
+    icon: <Sparkles className="w-6 h-6" />, color: "from-token-secondary to-token-primary-light", position: calculatePosition(144),
   },
   {
     id: 4,
     title: "Trek Formed",
     caption: "Sagea plots your personalized Trek.",
-    icon: <Map className="w-6 h-6" />, color: "from-emerald-500 to-teal-500", position: calculatePosition(216),
+    icon: <Map className="w-6 h-6" />, color: "from-token-accent-dark to-token-accent", position: calculatePosition(216),
   },
   {
     id: 5,
     title: "Tutor Touchpoint",
     caption: "Your tutor jumps in with tailored guidance.",
-    icon: <GraduationCap className="w-6 h-6" />, color: "from-rose-500 to-red-500", position: calculatePosition(288),
+    icon: <GraduationCap className="w-6 h-6" />, color: "from-token-primary-dark to-token-primary", position: calculatePosition(288),
   },
 ];
 
@@ -98,8 +98,8 @@ export default function SageaAnimation() {
         {/* Central Sagea */}
         <div className="absolute" style={{ left: "255px", top: "170px", transform: "translate(-50%, -50%)" }}>
           <motion.div
-            className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow-lg border-4 border-white flex items-center justify-center relative z-20"
-            animate={{ scale: [1, 1.1, 1], boxShadow: ["0 0 20px rgba(59, 130, 246, 0.3)", "0 0 40px rgba(139, 92, 246, 0.6)", "0 0 20px rgba(59, 130, 246, 0.3)"] }}
+            className="w-20 h-20 bg-gradient-to-r from-token-primary to-token-accent rounded-full shadow-lg border-4 border-token-surface flex items-center justify-center relative z-20"
+            animate={{ scale: [1, 1.1, 1], boxShadow: ["0 0 20px var(--color-primary)", "0 0 40px var(--color-accent)", "0 0 20px var(--color-primary)"] }}
             transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
           >
             <Brain className="w-6 h-6 text-white" />
@@ -109,9 +109,9 @@ export default function SageaAnimation() {
         <svg className="absolute inset-0 w-full h-full">
           <defs>
             <linearGradient id="orbitGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.3" />
-              <stop offset="50%" stopColor="#8B5CF6" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="#10B981" stopOpacity="0.3" />
+              <stop offset="0%" stopColor="var(--color-primary)" stopOpacity="0.3" />
+              <stop offset="50%" stopColor="var(--color-accent)" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="var(--color-secondary)" stopOpacity="0.3" />
             </linearGradient>
           </defs>
           <circle cx="250" cy="180" r="137.5" fill="none" stroke="url(#orbitGradient)" strokeWidth="3" strokeDasharray="8,4" opacity="0.8" />
@@ -130,7 +130,7 @@ export default function SageaAnimation() {
               animate={{ opacity: 1, scale: currentStep === index ? 1.2 : completedSteps.includes(index) ? 1 : 0.8 }}
               transition={{ duration: 0.5, type: "spring" }}
             >
-              <div className={`w-16 h-16 bg-gradient-to-r ${step.color} rounded-full shadow-lg border-4 border-white flex items-center justify-center text-white relative`}>
+              <div className={`w-16 h-16 bg-gradient-to-r ${step.color} rounded-full shadow-lg border-4 border-token-surface flex items-center justify-center text-white relative`}>
                 <div className="w-6 h-6 flex items-center justify-center">{step.icon}</div>
                 {currentStep === index && (
                   <motion.div className="absolute inset-0 rounded-full bg-white/30" animate={{ scale: [1, 1.5, 1], opacity: [0.6, 0, 0.6] }} transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }} />
@@ -146,14 +146,14 @@ export default function SageaAnimation() {
         })}
         {/* Traveling Dot */}
         <motion.div 
-          className="absolute w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full shadow-lg border-2 border-white transform -translate-x-1/2 -translate-y-1/2 z-30" 
+          className="absolute w-4 h-4 bg-gradient-to-r from-token-warning to-token-warning-dark rounded-full shadow-lg border-2 border-token-surface transform -translate-x-1/2 -translate-y-1/2 z-30" 
           animate={{ rotate: stepCount * 72 }} 
           transition={{ duration: 1.5, ease: "easeInOut" }} 
           style={{ left: "250px", top: "180px", transformOrigin: "0 0" }}
         >
           <div className="absolute" style={{ left: "0px", top: "-137.5px" }}>
-            <div className="w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full shadow-lg border-2 border-white relative">
-              <motion.div className="absolute inset-0 rounded-full bg-yellow-300/50" animate={{ scale: [1, 1.5, 1], opacity: [0.8, 0, 0.8] }} transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY }} />
+            <div className="w-4 h-4 bg-gradient-to-r from-token-warning to-token-warning-dark rounded-full shadow-lg border-2 border-token-surface relative">
+              <motion.div className="absolute inset-0 rounded-full bg-token-warning/50" animate={{ scale: [1, 1.5, 1], opacity: [0.8, 0, 0.8] }} transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY }} />
             </div>
           </div>
         </motion.div>

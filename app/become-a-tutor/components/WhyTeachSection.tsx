@@ -4,22 +4,22 @@ import { Card } from '@/app/components/ui';
 
 const benefits = [
   {
-    icon: HeartIcon, bg: 'bg-blue-500',
+    icon: HeartIcon, bg: 'bg-token-primary',
     title: "Coach, Don't Just Chat",
     desc: 'Support real learner growth through structured guidance, goal-setting, and mentorship — not just small talk. Be the coach who changes lives.'
   },
   {
-    icon: PencilIcon, bg: 'bg-fuchsia-500',
+    icon: PencilIcon, bg: 'bg-token-accent',
     title: 'AI as Your Teaching Assistant',
     desc: 'From personalized topic suggestions to tracking student progress, our AI helps you teach smarter — and frees up your energy for what matters most.'
   },
   {
-    icon: PaperAirplaneIcon, bg: 'bg-green-500',
+    icon: PaperAirplaneIcon, bg: 'bg-token-success',
     title: 'Teach From Anywhere, Anytime',
     desc: 'Whether you\'re on a laptop in Lisbon or a café in Cape Town, your schedule is yours. Teach students around the globe, on your terms.'
   },
   {
-    icon: Cog6ToothIcon, bg: 'bg-orange-500',
+    icon: Cog6ToothIcon, bg: 'bg-token-warning',
     title: 'Built-In Tools, Less Admin',
     desc: 'Say goodbye to juggling spreadsheets. With Xpeak, scheduling, payments, and feedback are all in one seamless platform.'
   },
@@ -35,12 +35,12 @@ const avatars = [
 
 export default function WhyTeachSection() {
   return (
-    <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
+    <section className="bg-token-surface py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto text-center mb-8">
         <h2 className="text-3xl md:text-4xl font-bold text-text mb-2">
           Why Teach on Xpeak?
         </h2>
-        <p className="text-text-muted">
+        <p className="text-text-tertiary">
           Join a movement of passionate educators who are changing lives, one conversation at a time.
         </p>
       </div>
@@ -59,7 +59,7 @@ export default function WhyTeachSection() {
               </div>
               <div>
                 <h3 className="text-lg font-bold text-text mb-1">{b.title}</h3>
-                <p className="text-text-muted text-sm leading-relaxed">{b.desc}</p>
+                <p className="text-text-tertiary text-sm leading-relaxed">{b.desc}</p>
               </div>
             </Card>
           );
@@ -67,7 +67,7 @@ export default function WhyTeachSection() {
       </div>
       {/* Community Card */}
       <div className="max-w-5xl mx-auto mt-8">
-        <Card variant="elevated" padding="lg" className="bg-gradient-to-r from-violet-600 to-purple-500 text-white text-center shadow-lg flex flex-col items-center rounded-token-lg">
+        <Card variant="elevated" padding="lg" className="bg-gradient-to-r from-token-primary to-token-accent text-white text-center shadow-lg flex flex-col items-center rounded-token-lg">
           <div className="flex items-center justify-center w-14 h-14 rounded-full bg-white/20 mb-4 mx-auto">
             <UserGroupIcon className="w-8 h-8 text-white" />
           </div>

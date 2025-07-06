@@ -70,7 +70,7 @@ function PasswordResetConfirmPageInner() {
   if (success) {
     return (
       <Layout>
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-token-surface-accent-light via-token-surface to-token-surface-accent">
           <div className="max-w-7xl mx-auto">
             <Card className="max-w-md mx-auto rounded-token-lg">
               <div className="text-center space-y-4">
@@ -104,7 +104,7 @@ function PasswordResetConfirmPageInner() {
 
   return (
     <Layout>
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-token-surface-accent-light via-token-surface to-token-surface-accent">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <Text variant="h1" as="h1" className="mb-4">
@@ -118,7 +118,7 @@ function PasswordResetConfirmPageInner() {
           <Card className="max-w-md mx-auto rounded-token-lg">
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                <div className="bg-token-error-surface border border-token-error text-token-error px-4 py-2 rounded mb-4 text-sm">
                   {error}
                 </div>
               )}

@@ -41,7 +41,7 @@ export default function SignupPage() {
 
   return (
     <Layout>
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-token-surface-accent-light via-token-surface to-token-surface-accent">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <Text variant="h1" as="h1" className="mb-4">
@@ -54,7 +54,7 @@ export default function SignupPage() {
           
           {/* Page-level error message */}
           {pageError && (
-            <div className="max-w-md mx-auto mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            <div className="bg-token-error-surface border border-token-error text-token-error px-4 py-2 rounded mb-4 text-sm">
               {pageError}
             </div>
           )}
@@ -66,15 +66,15 @@ export default function SignupPage() {
           />
           
           <div className="text-center mt-8">
-            <Text variant="body" className="text-gray-600">
+            <Text variant="body" className="text-text">
               Already have an account?{' '}
-              <a href="/login" className="text-primary-600 hover:text-primary-700 font-medium">
+              <a href="/login" className="text-token-primary hover:text-token-primary-dark font-medium">
                 Sign in here
               </a>
             </Text>
           </div>
         </div>
-      </section>
+      </main>
     </Layout>
   );
 } 

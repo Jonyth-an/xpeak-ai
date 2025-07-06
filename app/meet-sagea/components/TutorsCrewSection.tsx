@@ -6,7 +6,7 @@ import { Button } from '@/app/components/ui';
 
 export default function TutorsCrewSection() {
   return (
-    <section className="py-20 bg-gradient-to-br from-rose-50 via-pink-50 to-red-50">
+    <section className="py-20 bg-gradient-to-br from-token-surface-accent-light via-token-surface-accent to-token-surface-accent-dark">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -16,8 +16,8 @@ export default function TutorsCrewSection() {
             transition={{ duration: 0.8 }}
           >
             <div className="flex items-center justify-center gap-4 mb-6">
-              <Users className="w-12 h-12 text-rose-500" />
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-800">Real Tutors Meet Smart Intelligence</h2>
+              <Users className="w-12 h-12 text-token-primary" />
+              <h2 className="text-3xl md:text-4xl font-bold text-text">Real Tutors Meet Smart Intelligence</h2>
             </div>
           </motion.div>
 
@@ -33,21 +33,21 @@ export default function TutorsCrewSection() {
               <div className="relative w-80 h-80 mx-auto">
                 {/* Central Sagea coordinator */}
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                  <div className="w-20 h-20 bg-gradient-to-r from-rose-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+                  <div className="w-20 h-20 bg-gradient-to-r from-token-primary to-token-secondary rounded-full flex items-center justify-center shadow-lg border-4 border-token-surface">
                     <Brain className="w-8 h-8 text-white" />
                   </div>
-                  <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-sm font-semibold text-slate-700 whitespace-nowrap">
+                  <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-sm font-semibold text-text-secondary whitespace-nowrap">
                     Sagea Partner
                   </span>
                 </div>
 
                 {/* Surrounding team members */}
                 {[
-                  { role: "AI Tutor", color: "bg-blue-400", icon: "🤖" },
-                  { role: "Human Tutor by Heart", color: "bg-green-400", icon: "👨‍🏫" },
-                  { role: "Topic Spark", color: "bg-purple-400", icon: <Sparkles className="w-4 h-4 text-white" /> },
-                  { role: "Word Maze", color: "bg-amber-400", icon: <Puzzle className="w-4 h-4 text-white" /> },
-                  { role: "Lesson", color: "bg-indigo-400", icon: <GraduationCap className="w-4 h-4 text-white" /> },
+                  { role: "AI Tutor", color: "bg-token-accent", icon: "🤖" },
+                  { role: "Human Tutor by Heart", color: "bg-token-accent-light", icon: "👨‍🏫" },
+                  { role: "Topic Spark", color: "bg-token-primary-light", icon: <Sparkles className="w-4 h-4 text-white" /> },
+                  { role: "Word Maze", color: "bg-token-secondary", icon: <Puzzle className="w-4 h-4 text-white" /> },
+                  { role: "Lesson", color: "bg-token-accent-dark", icon: <GraduationCap className="w-4 h-4 text-white" /> },
                 ].map((member, index) => {
                   const angle = index * 72 * (Math.PI / 180) // 72° intervals for 5 members
                   const radius = 120
@@ -64,11 +64,11 @@ export default function TutorsCrewSection() {
                       transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
                     >
                       <div
-                        className={`w-16 h-16 ${member.color} rounded-full flex items-center justify-center shadow-lg border-2 border-white text-2xl`}
+                        className={`w-16 h-16 ${member.color} rounded-full flex items-center justify-center shadow-lg border-2 border-token-surface text-2xl`}
                       >
                         {typeof member.icon === "string" ? member.icon : member.icon}
                       </div>
-                      <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs font-medium text-slate-600 whitespace-nowrap">
+                      <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs font-medium text-text-secondary whitespace-nowrap">
                         {member.role}
                       </span>
                     </motion.div>
@@ -90,7 +90,7 @@ export default function TutorsCrewSection() {
                         y1="160"
                         x2={x}
                         y2={y}
-                        stroke="rgba(244, 63, 94, 0.3)"
+                        stroke="rgba(255, 107, 107, 0.3)"
                         strokeWidth="2"
                         strokeDasharray="4,2"
                         initial={{ pathLength: 0 }}
@@ -110,7 +110,7 @@ export default function TutorsCrewSection() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
             >
-              <p className="text-xl text-slate-600 mb-8 leading-relaxed">
+              <p className="text-xl text-text-secondary mb-8 leading-relaxed">
                 Behind Sagea is a team of real human tutors and AI experts — dynamically matched to your needs, but
                 all coordinated by Sagea.
               </p>
@@ -129,15 +129,15 @@ export default function TutorsCrewSection() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
                   >
-                    <div className="w-2 h-2 bg-rose-400 rounded-full"></div>
-                    <span className="text-slate-700">{feature}</span>
+                    <div className="w-2 h-2 bg-token-primary rounded-full"></div>
+                    <span className="text-text-secondary">{feature}</span>
                   </motion.div>
                 ))}
               </div>
 
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg"
+                className="bg-gradient-to-r from-token-primary to-token-secondary hover:from-token-primary-dark hover:to-token-secondary-dark text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg"
               >
                 Meet Your Crew
                 <Users className="ml-2 w-5 h-5" />

@@ -69,6 +69,10 @@ module.exports = {
   			// Background Colors
   			background: 'var(--color-bg)',
   			surface: 'var(--color-surface)',
+  			'surface-subtle': 'var(--color-surface-subtle)',
+  			'surface-accent': 'var(--color-surface-accent)',
+  			'surface-accent-light': 'var(--color-surface-accent-light)',
+  			'surface-accent-dark': 'var(--color-surface-accent-dark)',
   			'bg-alt': 'var(--color-bg-alt)',
   			'bg-hero': 'var(--color-bg-hero)',
   			'bg-muted': 'var(--color-bg-muted)',
@@ -216,6 +220,10 @@ module.exports = {
 
   				background: 'var(--color-bg)',
   				surface: 'var(--color-surface)',
+  				'surface-subtle': 'var(--color-surface-subtle)',
+  				'surface-accent': 'var(--color-surface-accent)',
+  				'surface-accent-light': 'var(--color-surface-accent-light)',
+  				'surface-accent-dark': 'var(--color-surface-accent-dark)',
   				success: 'var(--color-success)',
   				warning: 'var(--color-warning)',
   				error: 'var(--color-error)',

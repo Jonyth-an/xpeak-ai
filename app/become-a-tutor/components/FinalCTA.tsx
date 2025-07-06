@@ -12,7 +12,7 @@ const avatars = [
 
 export default function FinalCTA() {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-500 text-center">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-token-primary via-token-accent to-token-secondary text-center">
       <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
         Join a Global Community of Coaches
       </h2>
@@ -25,7 +25,7 @@ export default function FinalCTA() {
             key={i}
             src={src}
             alt="Coach avatar"
-            className="w-16 h-16 rounded-full border-4 border-white shadow-md object-cover"
+            className="w-16 h-16 rounded-full border-4 border-token-surface shadow-md object-cover"
           />
         ))}
       </div>
