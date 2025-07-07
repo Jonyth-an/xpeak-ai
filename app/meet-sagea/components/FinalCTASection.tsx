@@ -14,7 +14,7 @@ export default function FinalCTASection() {
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-token-4 mt-token-6">
           <Link href="/signup">
-            <Button variant="primary" size="lg" className="bg-white text-[var(--color-primary)] hover:bg-[var(--color-gray-50)]">
+            <Button variant="primary" size="lg" className="hover:bg-[#ff7f50] hover:text-white">
               → Start Learning with Sagea
             </Button>
           </Link>

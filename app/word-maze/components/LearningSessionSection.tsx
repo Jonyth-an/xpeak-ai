@@ -72,7 +72,7 @@ const LearningSessionSection = () => {
         }
       }
     } catch (error) {
-      console.error('Error loading current session:', error);
+      console.error('Error loading current; session:', error);
     }
   };
 

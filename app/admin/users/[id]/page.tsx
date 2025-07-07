@@ -9,17 +9,17 @@ import { supabase } from '@/lib/supabaseClient';
 import AdminLayout from '../../AdminLayout';
 
 const LANGUAGE_MAP: Record<string, string> = {
-  EN: 'English',
-  ES: 'Spanish',
-  FR: 'French',
-  DE: 'German',
-  ZH: 'Chinese',
-  JA: 'Japanese',
-  KO: 'Korean',
-  IT: 'Italian',
-  PT: 'Portuguese',
-  RU: 'Russian',
-  AR: 'Arabic',
+  EN: 'English',;
+  ES: 'Spanish',;
+  FR: 'French',;
+  DE: 'German',;
+  ZH: 'Chinese',;
+  JA: 'Japanese',;
+  KO: 'Korean',;
+  IT: 'Italian',;
+  PT: 'Portuguese',;
+  RU: 'Russian',;
+  AR: 'Arabic',;
   HI: 'Hindi',
   // Add more as needed
 };
@@ -121,10 +121,10 @@ export default function StudentDetailPage() {
   return (
     <AdminLayout>
       <div className="min-h-screen bg-token-surface">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-8 lg:px-12 py-10 space-y-10">
-          <div className="flex items-center justify-between mb-4">
+        <div className="max-w-[1100px] mx-auto px-token-4 sm:px-token-8 lg:px-token-12 py-token-10 space-y-token-10">
+          <div className="flex items-center justify-between mb-token-4">
             <div>
-              <Text variant="h1" as="h1" className="mb-2 text-token-primary">
+              <Text variant="h1" as="h1" className="mb-token-2 text-token-primary">
                 Student Details
               </Text>
               <Text variant="lead" className="text-token-secondary">
@@ -137,48 +137,48 @@ export default function StudentDetailPage() {
           </div>
 
           {/* Profile Overview */}
-          <Card className="p-8 mb-4 bg-token-elevated border border-token">
-            <div className="flex items-center gap-8">
+          <Card className="p-token-8 mb-token-4 bg-token-elevated border border-token">
+            <div className="flex items-center gap-token-8">
               <img
                 src={meta.avatar_url || meta.picture || '/images/default-avatar.svg'}
                 alt="Avatar"
                 className="w-24 h-24 rounded-full border border-token object-cover"
               />
               <div>
-                <Text variant="h2" as="h2" className="mb-1 text-token-primary">
+                <Text variant="h2" as="h2" className="mb-token-1 text-token-primary">
                   {meta.full_name || meta.name || user.email}
                 </Text>
-                <div className="text-token-accent mb-1">{user.email}</div>
-                <div className="flex gap-2 mb-1 flex-wrap">
+                <div className="text-token-accent mb-token-1">{user.email}</div>
+                <div className="flex gap-token-2 mb-token-1 flex-wrap">
                   {user.email_confirmed_at ? (
-                    <span className="px-2 py-1 text-xs rounded bg-token-success/20 text-token-success">Email Verified</span>
+                    <span className="px-token-2 py-token-1 text-xs rounded bg-token-success/20 text-token-success">Email Verified</span>
                   ) : (
-                    <span className="px-2 py-1 text-xs rounded bg-token-warning/20 text-token-warning">Email Not Verified</span>
+                    <span className="px-token-2 py-token-1 text-xs rounded bg-token-warning/20 text-token-warning">Email Not Verified</span>
                   )}
                   {meta.phone_verified ? (
-                    <span className="px-2 py-1 text-xs rounded bg-token-success/20 text-token-success">Phone Verified</span>
+                    <span className="px-token-2 py-token-1 text-xs rounded bg-token-success/20 text-token-success">Phone Verified</span>
                   ) : (
-                    <span className="px-2 py-1 text-xs rounded bg-token-secondary/10 text-token-secondary">Phone Not Verified</span>
+                    <span className="px-token-2 py-token-1 text-xs rounded bg-token-secondary/10 text-token-secondary">Phone Not Verified</span>
                   )}
                 </div>
-                <div className="text-xs text-token-tertiary mb-1">User ID: {user.id}</div>
-                <div className="text-xs text-token-tertiary mb-1">Joined: {new Date(user.created_at).toLocaleString()}</div>
+                <div className="text-xs text-token-tertiary mb-token-1">User ID: {user.id}</div>
+                <div className="text-xs text-token-tertiary mb-token-1">Joined: {new Date(user.created_at).toLocaleString()}</div>
                 <div className="text-xs text-token-tertiary">Last Sign In: {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : 'Never'}</div>
               </div>
             </div>
           </Card>
 
           {/* Learning Preferences */}
-          <Card className="p-8 mb-4 bg-token-elevated border border-token">
-            <Text variant="h3" as="h3" className="mb-4 text-token-primary">Learning Preferences</Text>
-            <div className="mb-3">
+          <Card className="p-token-8 mb-token-4 bg-token-elevated border border-token">
+            <Text variant="h3" as="h3" className="mb-token-4 text-token-primary">Learning Preferences</Text>
+            <div className="mb-token-3">
               <b>Current Level:</b> <span className="text-token-success">{meta.current_level || 'N/A'}</span>
             </div>
-            <div className="mb-3">
+            <div className="mb-token-3">
               <b>Preferred Languages:</b>{' '}
               {Array.isArray(meta.preferred_languages) && meta.preferred_languages.length > 0 ? (
                 meta.preferred_languages.map((lang: string) => (
-                  <span key={lang} className="inline-block px-2 py-1 mr-2 mb-1 rounded bg-token-info/20 text-token-link text-xs font-medium">
+                  <span key={lang} className="inline-block px-token-2 py-token-1 mr-token-2 mb-token-1 rounded bg-token-info/20 text-token-link text-xs font-medium">
                     {LANGUAGE_MAP[lang.toUpperCase()] || lang}
                   </span>
                 ))
@@ -186,23 +186,23 @@ export default function StudentDetailPage() {
                 <span className="text-token-tertiary">None</span>
               )}
             </div>
-            <div className="mb-3">
+            <div className="mb-token-3">
               <b>Learning Goals:</b>
               {Array.isArray(meta.learning_goals) && meta.learning_goals.length > 0 ? (
-                <ul className="list-disc list-inside mt-1 ml-4 text-token-secondary">
+                <ul className="list-disc list-inside mt-token-1 ml-token-4 text-token-secondary">
                   {meta.learning_goals.map((goal: string) => (
                     <li key={goal}>{goal}</li>
                   ))}
                 </ul>
               ) : (
-                <span className="text-token-tertiary ml-2">None</span>
+                <span className="text-token-tertiary ml-token-2">None</span>
               )}
             </div>
-            <div className="mb-2">
+            <div className="mb-token-2">
               <b>Topic Interests:</b>{' '}
               {Array.isArray(meta.topic_interests) && meta.topic_interests.length > 0 ? (
                 meta.topic_interests.map((topic: string) => (
-                  <span key={topic} className="inline-block px-2 py-1 mr-2 mb-1 rounded bg-token-accent/20 text-token-accent text-xs font-medium">
+                  <span key={topic} className="inline-block px-token-2 py-token-1 mr-token-2 mb-token-1 rounded bg-token-accent/20 text-token-accent text-xs font-medium">
                     {topic}
                   </span>
                 ))
@@ -213,8 +213,8 @@ export default function StudentDetailPage() {
           </Card>
 
           {/* Subscription */}
-          <Card className="p-8 mb-4 bg-token-elevated border border-token">
-            <Text variant="h3" as="h3" className="mb-4 text-token-primary">Subscription</Text>
+          <Card className="p-token-8 mb-token-4 bg-token-elevated border border-token">
+            <Text variant="h3" as="h3" className="mb-token-4 text-token-primary">Subscription</Text>
             {subscription ? (
               <>
                 {/* Current Plan mapping logic */}
@@ -242,50 +242,50 @@ export default function StudentDetailPage() {
                   }
                   const planName = priceToPlanName[priceId] || 'Unknown';
                   return (
-                    <div className="mb-2"><b>Current Plan:</b> {planName}</div>
+                    <div className="mb-token-2"><b>Current Plan:</b> {planName}</div>
                   );
                 })()}
-                <div className="mb-2"><b>Status:</b> {subscription.status}</div>
-                <div className="mb-2"><b>Stripe Subscription ID:</b> {subscription.stripe_subscription_id}</div>
-                <div className="mb-2"><b>Created:</b> {new Date(subscription.created_at).toLocaleString()}</div>
+                <div className="mb-token-2"><b>Status:</b> {subscription.status}</div>
+                <div className="mb-token-2"><b>Stripe Subscription ID:</b> {subscription.stripe_subscription_id}</div>
+                <div className="mb-token-2"><b>Created:</b> {new Date(subscription.created_at).toLocaleString()}</div>
                 {subscription.updated_at && (
-                  <div className="mb-2"><b>Updated:</b> {new Date(subscription.updated_at).toLocaleString()}</div>
+                  <div className="mb-token-2"><b>Updated:</b> {new Date(subscription.updated_at).toLocaleString()}</div>
                 )}
                 {subscription.billing_cycle && (
-                  <div className="mb-2"><b>Billing Cycle:</b> {subscription.billing_cycle}</div>
+                  <div className="mb-token-2"><b>Billing Cycle:</b> {subscription.billing_cycle}</div>
                 )}
                 {subscription.plan_features && subscription.plan_features.length > 0 && (
-                  <div className="mb-2"><b>Plan Features:</b> {subscription.plan_features.join(', ')}</div>
+                  <div className="mb-token-2"><b>Plan Features:</b> {subscription.plan_features.join(', ')}</div>
                 )}
                 {subscription.total_amount_paid !== undefined && (
-                  <div className="mb-2"><b>Total Paid:</b> ${(subscription.total_amount_paid / 100).toFixed(2)}</div>
+                  <div className="mb-token-2"><b>Total Paid:</b> ${(subscription.total_amount_paid / 100).toFixed(2)}</div>
                 )}
                 {subscription.last_payment_date && (
-                  <div className="mb-2"><b>Last Payment:</b> {new Date(subscription.last_payment_date).toLocaleString()}</div>
+                  <div className="mb-token-2"><b>Last Payment:</b> {new Date(subscription.last_payment_date).toLocaleString()}</div>
                 )}
                 {subscription.next_billing_date && (
-                  <div className="mb-2"><b>Next Billing:</b> {new Date(subscription.next_billing_date).toLocaleString()}</div>
+                  <div className="mb-token-2"><b>Next Billing:</b> {new Date(subscription.next_billing_date).toLocaleString()}</div>
                 )}
               </>
             ) : (
-              <div>No subscription found.</div>
+              <div className="text-token-tertiary">No subscription found.</div>
             )}
           </Card>
 
           {/* Account Actions */}
-          <Card className="p-8 mb-4 bg-token-elevated border border-token">
-            <Text variant="h3" as="h3" className="mb-2 text-token-primary">Account Actions</Text>
-            <div className="flex gap-4 flex-wrap">
+          <Card className="p-token-8 mb-token-4 bg-token-elevated border border-token">
+            <Text variant="h3" as="h3" className="mb-token-2 text-token-primary">Account Actions</Text>
+            <div className="flex gap-token-4 flex-wrap">
               <Button variant="secondary" disabled>Reset Password</Button>
               <Button variant="secondary" disabled>Suspend Account</Button>
               <Button variant="secondary" disabled>Email User</Button>
             </div>
-            <div className="text-xs text-token-tertiary mt-2">(Actions coming soon)</div>
+            <div className="text-xs text-token-tertiary mt-token-2">(Actions coming soon)</div>
           </Card>
 
           {/* Payment History */}
-          <Card className="p-8 mb-4 bg-token-elevated border border-token">
-            <Text variant="h3" as="h3" className="mb-4 text-token-primary">Payment History</Text>
+          <Card className="p-token-8 mb-token-4 bg-token-elevated border border-token">
+            <Text variant="h3" as="h3" className="mb-token-4 text-token-primary">Payment History</Text>
             <PaymentHistoryTable userEmail={user.email} />
           </Card>
         </div>
@@ -326,12 +326,12 @@ function PaymentHistoryTable({ userEmail }: { userEmail: string }) {
 
   // Stripe price ID to plan name and duration mapping
   const priceToPlan: Record<string, { name: string; duration: string }> = {
-    'price_1RessSFM2iXH8TuN4U2vQz9E': { name: 'Xpeak Plus', duration: '1 Month' },
-    'price_1Ret11FM2iXH8TuNdLCrRIxK': { name: 'Xpeak Plus', duration: '3 Months' },
-    'price_1Ret1bFM2iXH8TuNClhnN7c2': { name: 'Xpeak Plus', duration: '12 Months' },
-    'price_1Rest1FM2iXH8TuNKvbhbeTG': { name: 'Xpeak Pro', duration: '1 Month' },
-    'price_1Ret29FM2iXH8TuNKl7fICBr': { name: 'Xpeak Pro', duration: '3 Months' },
-    'price_1Ret2RFM2iXH8TuNYQIQk9BU': { name: 'Xpeak Pro', duration: '12 Months' },
+    'price_1RessSFM2iXH8TuN4U2vQz9E': { name: 'Xpeak Plus',; duration: '1 Month' },
+    'price_1Ret11FM2iXH8TuNdLCrRIxK': { name: 'Xpeak Plus',; duration: '3 Months' },
+    'price_1Ret1bFM2iXH8TuNClhnN7c2': { name: 'Xpeak Plus',; duration: '12 Months' },
+    'price_1Rest1FM2iXH8TuNKvbhbeTG': { name: 'Xpeak Pro',; duration: '1 Month' },
+    'price_1Ret29FM2iXH8TuNKl7fICBr': { name: 'Xpeak Pro',; duration: '3 Months' },
+    'price_1Ret2RFM2iXH8TuNYQIQk9BU': { name: 'Xpeak Pro',; duration: '12 Months' },
   };
 
   if (loading) return <div className="text-token-secondary">Loading payment history...</div>;

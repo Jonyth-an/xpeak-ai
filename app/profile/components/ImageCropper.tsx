@@ -8,7 +8,7 @@ interface ImageCropperProps {
   imageFile: File;
   onCropComplete: (croppedFile: File) => void;
   onCancel: () => void;
-  aspectRatio?: number; // Default to 1:1 (square)
+  aspectRatio?: number; // Default to 1:1 (square)Defaultto1
 }
 
 function createImage(url: string): Promise<HTMLImageElement> {

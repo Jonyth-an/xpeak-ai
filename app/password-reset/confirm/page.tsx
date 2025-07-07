@@ -168,7 +168,7 @@ function PasswordResetConfirmPageInner() {
                   </div>
                 ) : (
                   'Update Password'
-                )}
+                )UpdatetheuserPasswordupdatedsuccessfullyFailedtoupdatepasswordPasswordupdateerror}
               </Button>
             </form>
           </Card>
@@ -184,4 +184,4 @@ export default function PasswordResetConfirmPage() {
       <PasswordResetConfirmPageInner />
     </Suspense>
   );
-} 
+} }

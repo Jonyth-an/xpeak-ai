@@ -1,13 +1,13 @@
 import React from 'react'
 
 export interface FeatureCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  icon?: React.ReactNode
-  title: string
-  children: React.ReactNode
-  size?: 'sm' | 'md' | 'lg' | 'xl'
-  variant?: 'default' | 'elevated' | 'outlined' | 'filled'
-  iconSize?: 'sm' | 'md' | 'lg' | 'xl'
-  iconAnimation?: 'none' | 'bounce' | 'pulse' | 'spin'
+  icon?: React.ReactNode;
+  title: string;
+  children: React.ReactNode;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'default' | 'elevated' | 'outlined' | 'filled';
+  iconSize?: 'sm' | 'md' | 'lg' | 'xl';
+  iconAnimation?: 'none' | 'bounce' | 'pulse' | 'spin';
   align?: 'left' | 'center' | 'right'
 }
 

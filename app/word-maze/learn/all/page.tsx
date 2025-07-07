@@ -14,7 +14,7 @@ export default function WordMazeAllWordsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const { words, isLoading, getPendingWords, getSyncedWords } = useWordMazeStore();
-  const { addWordWithOptimisticUpdate, loadWords: reloadWords, loadWords } = useWordMazeService();
+  const { addWordWithOptimisticUpdate, loadWords: reloadWords, loadWordsloadWords } = useWordMazeService();
   const [selectedWordId, setSelectedWordId] = useState<string | null>(null);
 
   useEffect(() => {

@@ -360,7 +360,7 @@ export default function BillingSection() {
       
     } catch (error) {
       console.error('Error pausing subscription:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to pause subscription';
+      const errorMessage = error instanceof Error ? error.message : 'Failed to pause subscription';errorMessageerrorinstanceofErrorerror.message
       setError(errorMessage);
       
       // If the error is about already being paused, refresh the data to update the UI

@@ -10,103 +10,6 @@ interface Spark {
   topic: string;
   color: string;
 }
-
-// Set each spark's delay to index * 1 (1 second per spark)
-const baseSparks: Omit<Spark, 'delay'>[] = [
-  { id: "coffee", position: { x: 15, y: 25 }, topic: "Coffee Culture", color: "var(--color-secondary)" },
-  { id: "travel", position: { x: 35, y: 15 }, topic: "Travel Planning", color: "var(--color-accent)" },
-  { id: "business", position: { x: 25, y: 45 }, topic: "Business Meetings", color: "var(--color-primary)" },
-  { id: "cooking", position: { x: 55, y: 20 }, topic: "Cooking Basics", color: "var(--color-accent)" },
-  { id: "sports", position: { x: 45, y: 50 }, topic: "Sports Discussion", color: "var(--color-primary)" },
-  { id: "tech", position: { x: 75, y: 30 }, topic: "Technology", color: "var(--color-secondary)" },
-  { id: "culture", position: { x: 65, y: 60 }, topic: "Cultural Events", color: "var(--color-accent)" },
-  { id: "health", position: { x: 85, y: 45 }, topic: "Health & Wellness", color: "var(--color-primary)" },
-  { id: "music", position: { x: 20, y: 65 }, topic: "Music & Arts", color: "var(--color-accent)" },
-  { id: "shopping", position: { x: 40, y: 35 }, topic: "Shopping", color: "var(--color-primary)" },
-  { id: "weather", position: { x: 60, y: 10 }, topic: "Weather Talk", color: "var(--color-secondary)" },
-  { id: "family", position: { x: 80, y: 65 }, topic: "Family Life", color: "var(--color-accent)" },
-];
-const sparks: Spark[] = baseSparks.map((spark, i) => ({ ...spark, delay: i }));
-
-const connections = [
-  { from: "coffee", to: "travel" },
-  { from: "travel", to: "business" },
-  { from: "business", to: "cooking" },
-  { from: "cooking", to: "sports" },
-  { from: "sports", to: "tech" },
-  { from: "tech", to: "culture" },
-  { from: "culture", to: "health" },
-  { from: "coffee", to: "cooking" },
-  { from: "business", to: "tech" },
-  { from: "sports", to: "culture" },
-  { from: "music", to: "shopping" },
-  { from: "shopping", to: "weather" },
-  { from: "weather", to: "family" },
-  { from: "health", to: "music" },
-  { from: "culture", to: "family" },
-];
-
-export default function ConstellationSparks() {
-  const [animationStage, setAnimationStage] = useState(0);
-  const [hoveredSpark, setHoveredSpark] = useState<string | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [activeSparkIndex, setActiveSparkIndex] = useState<number>(-1);
-
-  // Sequentially activate sparks and show only one label at a time
-  useEffect(() => {
-    if (!isPlaying) return;
-    let timeouts: NodeJS.Timeout[] = [];
-    sparks.forEach((spark, i) => {
-      timeouts.push(
-        setTimeout(() => {
-          setActiveSparkIndex(i);
-        }, i * 1500)
-      );
-    });
-    // Optionally hide label after last spark
-    timeouts.push(
-      setTimeout(() => {
-        setActiveSparkIndex(-1);
-      }, (sparks.length) * 1500 + 100)
-    );
-    return () => timeouts.forEach(clearTimeout);
-  }, [isPlaying]);
-
-  const startAnimation = () => {
-    setIsPlaying(true);
-    setAnimationStage(-1);
-    setActiveSparkIndex(-1);
-    setTimeout(() => setAnimationStage(0), 100);
-    setTimeout(() => setAnimationStage(1), 500); // Show sparks
-    setTimeout(() => setAnimationStage(2), 10000); // Show connections
-    setTimeout(() => setAnimationStage(3), 11000); // Full constellation
-    setTimeout(() => setIsPlaying(false), 13000);
-  };
-
-  useEffect(() => {
-    startAnimation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const getSpark = (id: string) => sparks.find((s) => s.id === id);
-
-  // Generate background stars only once on the client to avoid hydration errors
-  const backgroundStars = useMemo(() => {
-    return Array.from({ length: 30 }).map(() => ({
-      width: 1 + Math.random() * 2,
-      height: 1 + Math.random() * 2,
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      animationDelay: Math.random() * 3,
-      animationDuration: 3 + Math.random() * 2,
-      boxShadow: `0 0 ${2 + Math.random() * 4}px rgba(255, 255, 255, 0.6)`
-    }));
-  }, []);
-
-  return (
-    <section
-      className="w-full flex items-center justify-center py-8"
-      style={{ height: '12rem' }}
     >
       <div
         className="flex items-center justify-center w-full h-full"
@@ -249,6 +152,103 @@ export default function ConstellationSparks() {
                 <div className="absolute inset-0 bg-gradient-to-r from-token-secondary-light/20 via-token-accent-light/20 to-token-primary-light/20 rounded-token-lg animate-pulse" />
               </motion.div>
             )}
+
+// Set each spark's delay to index * 1 (1 second per spark)
+const baseSparks: Omit<Spark, 'delay'>[] = [
+  { id: "coffee", position: { x: 15, y: 25 }, topic: "Coffee Culture", color: "var(--color-secondary)" },
+  { id: "travel", position: { x: 35, y: 15 }, topic: "Travel Planning", color: "var(--color-accent)" },
+  { id: "business", position: { x: 25, y: 45 }, topic: "Business Meetings", color: "var(--color-primary)" },
+  { id: "cooking", position: { x: 55, y: 20 }, topic: "Cooking Basics", color: "var(--color-accent)" },
+  { id: "sports", position: { x: 45, y: 50 }, topic: "Sports Discussion", color: "var(--color-primary)" },
+  { id: "tech", position: { x: 75, y: 30 }, topic: "Technology", color: "var(--color-secondary)" },
+  { id: "culture", position: { x: 65, y: 60 }, topic: "Cultural Events", color: "var(--color-accent)" },
+  { id: "health", position: { x: 85, y: 45 }, topic: "Health & Wellness", color: "var(--color-primary)" },
+  { id: "music", position: { x: 20, y: 65 }, topic: "Music & Arts", color: "var(--color-accent)" },
+  { id: "shopping", position: { x: 40, y: 35 }, topic: "Shopping", color: "var(--color-primary)" },
+  { id: "weather", position: { x: 60, y: 10 }, topic: "Weather Talk", color: "var(--color-secondary)" },
+  { id: "family", position: { x: 80, y: 65 }, topic: "Family Life", color: "var(--color-accent)" },
+];
+const sparks: Spark[] = baseSparks.map((spark, i) => ({ ...spark, delay: i }));
+
+const connections = [
+  { from: "coffee", to: "travel" },
+  { from: "travel", to: "business" },
+  { from: "business", to: "cooking" },
+  { from: "cooking", to: "sports" },
+  { from: "sports", to: "tech" },
+  { from: "tech", to: "culture" },
+  { from: "culture", to: "health" },
+  { from: "coffee", to: "cooking" },
+  { from: "business", to: "tech" },
+  { from: "sports", to: "culture" },
+  { from: "music", to: "shopping" },
+  { from: "shopping", to: "weather" },
+  { from: "weather", to: "family" },
+  { from: "health", to: "music" },
+  { from: "culture", to: "family" },
+];
+
+export default function ConstellationSparks() {
+  const [animationStage, setAnimationStage] = useState(0);
+  const [hoveredSpark, setHoveredSpark] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [activeSparkIndex, setActiveSparkIndex] = useState<number>(-1);
+
+  // Sequentially activate sparks and show only one label at a time
+  useEffect(() => {
+    if (!isPlaying) return;
+    let timeouts: NodeJS.Timeout[] = [];
+    sparks.forEach((spark, i) => {
+      timeouts.push(
+        setTimeout(() => {
+          setActiveSparkIndex(i);
+        }, i * 1500)
+      );
+    });
+    // Optionally hide label after last spark
+    timeouts.push(
+      setTimeout(() => {
+        setActiveSparkIndex(-1);
+      }, (sparks.length) * 1500 + 100)
+    );
+    return () => timeouts.forEach(clearTimeout);
+  }, [isPlaying]);
+
+  const startAnimation = () => {
+    setIsPlaying(true);
+    setAnimationStage(-1);
+    setActiveSparkIndex(-1);
+    setTimeout(() => setAnimationStage(0), 100);
+    setTimeout(() => setAnimationStage(1), 500); // Show sparks
+    setTimeout(() => setAnimationStage(2), 10000); // Show connections
+    setTimeout(() => setAnimationStage(3), 11000); // Full constellation
+    setTimeout(() => setIsPlaying(false), 13000);
+  };
+
+  useEffect(() => {
+    startAnimation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getSpark = (id: string) => sparks.find((s) => s.id === id);
+
+  // Generate background stars only once on the client to avoid hydration errors
+  const backgroundStars = useMemo(() => {
+    return Array.from({ length: 30 }).map(() => ({
+      width: 1 + Math.random() * 2,
+      height: 1 + Math.random() * 2,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      animationDelay: Math.random() * 3,
+      animationDuration: 3 + Math.random() * 2,
+      boxShadow: `0 0 ${2 + Math.random() * 4}px rgba(255, 255, 255, 0.6)`
+    }));
+  }, []);
+
+  return (
+    <section
+      className="w-full flex items-center justify-center py-8"
+      style={{ height: '12rem' }}
           </AnimatePresence>
         </div>
       </div>

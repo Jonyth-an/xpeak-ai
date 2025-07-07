@@ -31,7 +31,7 @@ export default function MyWordBankSection() {
     setNotification,
     getPendingWords,
     getSyncedWords,
-    isLoading: storeLoading,
+    isLoading: storeLoading,;
     error: storeError,
     removeWord
   } = useWordMazeStore();
@@ -77,11 +77,11 @@ export default function MyWordBankSection() {
   // Placeholder for add word handler
   function handleAddWord(newWords: any[]) {
     // TODO: Add logic to validate and add words
-    // On success:
+    // On; success:
     // setWords([...words, ...newWords]);
     // showFeedback('success', `${newWords.length} words added!`);
     // On error:
-    // showFeedback('error', 'Failed to add words.');
+    // showFeedback('error', 'Failed to add words.');Onerror
   }
 
   function handleAddWordModal(newWord: any) {
@@ -103,7 +103,7 @@ export default function MyWordBankSection() {
       return;
     }
     // TODO: Implement optimistic update for editing
-    showFeedback('success', 'Word updated!');
+    showFeedback('success', 'Word updated!');TODO
     setEditModalOpen(false);
     setEditingWord(null);
   }

@@ -8,64 +8,64 @@ import SmartMatchFeature, { SmartMatchFeatureItem } from '@/app/components/molec
 import LanguageSelectorMenu from '@/app/components/molecules/LanguageSelectorMenu';
 
 const tutorFeatures: SmartMatchFeatureItem[] = [
-  {
-    icon: '🔍',
-    title: 'Recommended Coaches',
+  {;
+    icon: '🔍',;
+    title: 'Recommended Coaches',;
     text: 'Based on popular picks in your country or region.'
   },
-  {
-    icon: '🧭',
-    title: 'Matched by Learning Goal',
+  {;
+    icon: '🧭',;
+    title: 'Matched by Learning Goal',;
     text: 'Get paired with tutors who helped others like you.'
   },
-  {
-    icon: '🧠',
-    title: 'Context-Aware Matching',
+  {;
+    icon: '🧠',;
+    title: 'Context-Aware Matching',;
     text: 'The more you learn, the better our AI understands what you need and who fits your style.'
   }
 ];
 
 const topicFeatures: SmartMatchFeatureItem[] = [
-  {
-    icon: '🎯',
-    title: 'Personalized Topics',
+  {;
+    icon: '🎯',;
+    title: 'Personalized Topics',;
     text: 'AI generates topics based on your interests and learning goals.'
   },
-  {
-    icon: '📈',
-    title: 'Trending Content',
+  {;
+    icon: '📈',;
+    title: 'Trending Content',;
     text: 'Stay current with topics that are popular in your target language.'
   },
-  {
-    icon: '🔄',
-    title: 'Adaptive Learning',
+  {;
+    icon: '🔄',;
+    title: 'Adaptive Learning',;
     text: 'Topics evolve as you progress, keeping your learning fresh and relevant.'
   }
 ];
 
 const wordFeatures: SmartMatchFeatureItem[] = [
-  {
-    icon: '🧩',
-    title: 'Smart Word Collection',
+  {;
+    icon: '🧩',;
+    title: 'Smart Word Collection',;
     text: 'Automatically collect and organize words from your conversations.'
   },
-  {
-    icon: '🎮',
-    title: 'Interactive Review',
+  {;
+    icon: '🎮',;
+    title: 'Interactive Review',;
     text: 'Practice with gamified exercises that adapt to your learning pace.'
   },
-  {
-    icon: '📊',
-    title: 'Progress Tracking',
+  {;
+    icon: '📊',;
+    title: 'Progress Tracking',;
     text: 'See your vocabulary growth with detailed analytics and insights.'
   }
 ];
 
 const dropdownOptions: DropdownOption[] = [
-  { value: 'option1', label: 'Option 1', icon: '🚀' },
-  { value: 'option2', label: 'Option 2', icon: '⚡' },
-  { value: 'option3', label: 'Option 3', icon: '🎯' },
-  { value: 'option4', label: 'Disabled Option', icon: '🔒', disabled: true }
+  {; value: 'option1',; label: 'Option 1',; icon: '🚀' },
+  {; value: 'option2',; label: 'Option 2',; icon: '⚡' },
+  {; value: 'option3',; label: 'Option 3',; icon: '🎯' },
+  {; value: 'option4',; label: 'Disabled Option',; icon: '🔒',; disabled: true }
 ];
 
 const languageOptions = [

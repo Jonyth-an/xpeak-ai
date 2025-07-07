@@ -11,7 +11,6 @@ import { Avatar } from '@/app/components/ui';
 const adminNav = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart2 },
-  { label: 'Audit Trail', href: '/admin/audit-trail', icon: FileText },
   { label: 'Email Monitoring', href: '/admin/email-monitoring', icon: Mail },
   { label: 'User Management', href: '/admin/users', icon: Users },
   { label: 'Usage Tracking', href: '/admin/usage', icon: Activity },

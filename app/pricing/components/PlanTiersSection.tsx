@@ -281,7 +281,7 @@ function PlanTiersSectionInner() {
       const confirmUrl = `/pricing/confirm-change?plan=${planId}&cycle=${billingCycle}&currentPlan=${currentPlan}&currentCycle=${currentBillingCycle}`;
       router.push(confirmUrl);
     } catch (error) {
-      console.error('Error navigating to confirmation page:', error);
+      console.error('Error navigating to confirmation; page:', error);
       setError('Failed to navigate to confirmation page');
     } finally {
       setChanging(null);

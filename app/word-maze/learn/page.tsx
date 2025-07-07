@@ -15,11 +15,11 @@ import { useRouter } from 'next/navigation';
 
 // Mock data for demonstration
 const mockUserStats = {
-  totalWords: 247,
-  wordsLearned: 89,
-  currentStreak: 12,
-  totalPoints: 2840,
-  level: 'Advanced',
+  totalWords: 247,;
+  wordsLearned: 89,;
+  currentStreak: 12,;
+  totalPoints: 2840,;
+  level: 'Advanced',;
   accuracy: 87
 };
 
@@ -52,7 +52,7 @@ export default function WordMazeLearnPage() {
     setNotification,
     getPendingWords,
     getSyncedWords,
-    isLoading: storeLoading,
+    isLoading: storeLoading,;
     error: storeError
   } = useWordMazeStore();
   
@@ -98,11 +98,11 @@ export default function WordMazeLearnPage() {
     const normalized = Math.abs(hash) % 100;
     
     if (normalized > 70) {
-      return { status: 'Mastered', color: 'bg-gray-900 text-white' };
+      return { status: 'Mastered',; color: 'bg-gray-900 text-white' };
     } else if (normalized > 40) {
-      return { status: 'Learning', color: 'bg-blue-100 text-blue-700' };
+      return { status: 'Learning',; color: 'bg-blue-100 text-blue-700' };
     } else {
-      return { status: 'Review', color: 'bg-yellow-100 text-yellow-700' };
+      return { status: 'Review',; color: 'bg-yellow-100 text-yellow-700' };
     }
   }
 

@@ -39,47 +39,47 @@ interface TopicInterest {
 }
 
 const availableLanguages: Language[] = [
-  { code: 'EN', name: 'English', flag: '🇺🇸' },
-  { code: 'ES', name: 'Spanish', flag: '🇪🇸' },
-  { code: 'FR', name: 'French', flag: '🇫🇷' },
-  { code: 'DE', name: 'German', flag: '🇩🇪' },
-  { code: 'IT', name: 'Italian', flag: '🇮🇹' },
-  { code: 'PT', name: 'Portuguese', flag: '🇵🇹' },
-  { code: 'RU', name: 'Russian', flag: '🇷🇺' },
-  { code: 'JA', name: 'Japanese', flag: '🇯🇵' },
-  { code: 'KO', name: 'Korean', flag: '🇰🇷' },
-  { code: 'ZH', name: 'Chinese', flag: '🇨🇳' },
-  { code: 'AR', name: 'Arabic', flag: '🇸🇦' },
-  { code: 'HI', name: 'Hindi', flag: '🇮🇳' },
+  {; code: 'EN',; name: 'English',; flag: '🇺🇸' },
+  {; code: 'ES',; name: 'Spanish',; flag: '🇪🇸' },
+  {; code: 'FR',; name: 'French',; flag: '🇫🇷' },
+  {; code: 'DE',; name: 'German',; flag: '🇩🇪' },
+  {; code: 'IT',; name: 'Italian',; flag: '🇮🇹' },
+  {; code: 'PT',; name: 'Portuguese',; flag: '🇵🇹' },
+  {; code: 'RU',; name: 'Russian',; flag: '🇷🇺' },
+  {; code: 'JA',; name: 'Japanese',; flag: '🇯🇵' },
+  {; code: 'KO',; name: 'Korean',; flag: '🇰🇷' },
+  {; code: 'ZH',; name: 'Chinese',; flag: '🇨🇳' },
+  {; code: 'AR',; name: 'Arabic',; flag: '🇸🇦' },
+  {; code: 'HI',; name: 'Hindi',; flag: '🇮🇳' },
 ];
 
 const languageLevels: LanguageLevel[] = [
-  { code: 'beginner', name: 'Beginner (A1-A2)', description: 'You can understand basic phrases and introduce yourself' },
-  { code: 'elementary', name: 'Elementary (A2)', description: 'You can communicate in simple, routine tasks' },
-  { code: 'intermediate', name: 'Intermediate (B1-B2)', description: 'You can hold conversations on familiar topics' },
-  { code: 'upper-intermediate', name: 'Upper Intermediate (B2)', description: 'You can discuss complex ideas with some fluency' },
-  { code: 'advanced', name: 'Advanced (C1)', description: 'You can express yourself fluently and spontaneously' },
-  { code: 'native-like', name: 'Native-like (C2)', description: 'You can understand virtually everything heard or read' },
+  {; code: 'beginner',; name: 'Beginner (A1-A2)',; description: 'You can understand basic phrases and introduce yourself' },
+  {; code: 'elementary',; name: 'Elementary (A2)',; description: 'You can communicate in simple, routine tasks' },
+  {; code: 'intermediate',; name: 'Intermediate (B1-B2)',; description: 'You can hold conversations on familiar topics' },
+  {; code: 'upper-intermediate',; name: 'Upper Intermediate (B2)',; description: 'You can discuss complex ideas with some fluency' },
+  {; code: 'advanced',; name: 'Advanced (C1)',; description: 'You can express yourself fluently and spontaneously' },
+  {; code: 'native-like',; name: 'Native-like (C2)',; description: 'You can understand virtually everything heard or read' },
 ];
 
 const learningGoals: LearningGoal[] = [
-  { id: 'travel', name: 'Travel', description: 'Learn for trips and cultural experiences', icon: '✈️' },
-  { id: 'work', name: 'Work', description: 'Improve for professional opportunities', icon: '💼' },
-  { id: 'test-prep', name: 'Test Prep', description: 'Prepare for language exams', icon: '📝' },
-  { id: 'fun', name: 'Fun & Hobby', description: 'Learn for personal interest', icon: '🎯' },
-  { id: 'academic', name: 'Academic', description: 'Study for educational purposes', icon: '🎓' },
-  { id: 'relationships', name: 'Relationships', description: 'Connect with friends and family', icon: '❤️' },
+  {; id: 'travel',; name: 'Travel',; description: 'Learn for trips and cultural experiences',; icon: '✈️' },
+  {; id: 'work',; name: 'Work',; description: 'Improve for professional opportunities',; icon: '💼' },
+  {; id: 'test-prep',; name: 'Test Prep',; description: 'Prepare for language exams',; icon: '📝' },
+  {; id: 'fun',; name: 'Fun & Hobby',; description: 'Learn for personal interest',; icon: '🎯' },
+  {; id: 'academic',; name: 'Academic',; description: 'Study for educational purposes',; icon: '🎓' },
+  {; id: 'relationships',; name: 'Relationships',; description: 'Connect with friends and family',; icon: '❤️' },
 ];
 
 const topicInterests: TopicInterest[] = [
-  { id: 'culture', name: 'Culture', description: 'Traditions, customs, and cultural insights', icon: '🏛️' },
-  { id: 'business', name: 'Business', description: 'Professional and corporate topics', icon: '💼' },
-  { id: 'pop-culture', name: 'Pop Culture', description: 'Movies, music, and entertainment', icon: '🎬' },
-  { id: 'daily-life', name: 'Daily Life', description: 'Everyday conversations and routines', icon: '🏠' },
-  { id: 'food', name: 'Food & Cuisine', description: 'Cooking, restaurants, and culinary culture', icon: '🍽️' },
-  { id: 'travel', name: 'Travel', description: 'Destinations, tourism, and exploration', icon: '🗺️' },
-  { id: 'sports', name: 'Sports', description: 'Athletics, fitness, and recreation', icon: '⚽' },
-  { id: 'technology', name: 'Technology', description: 'Tech trends and digital topics', icon: '💻' },
+  {; id: 'culture',; name: 'Culture',; description: 'Traditions, customs, and cultural insights',; icon: '🏛️' },
+  {; id: 'business',; name: 'Business',; description: 'Professional and corporate topics',; icon: '💼' },
+  {; id: 'pop-culture',; name: 'Pop Culture',; description: 'Movies, music, and entertainment',; icon: '🎬' },
+  {; id: 'daily-life',; name: 'Daily Life',; description: 'Everyday conversations and routines',; icon: '🏠' },
+  {; id: 'food',; name: 'Food & Cuisine',; description: 'Cooking, restaurants, and culinary culture',; icon: '🍽️' },
+  {; id: 'travel',; name: 'Travel',; description: 'Destinations, tourism, and exploration',; icon: '🗺️' },
+  {; id: 'sports',; name: 'Sports',; description: 'Athletics, fitness, and recreation',; icon: '⚽' },
+  {; id: 'technology',; name: 'Technology',; description: 'Tech trends and digital topics',; icon: '💻' },
 ];
 
 export default function LanguagePreferences() {
@@ -128,7 +128,7 @@ export default function LanguagePreferences() {
     setError(null);
 
     try {
-      const updateData: any = { user_id: user.id, updated_at: new Date().toISOString() };
+      const updateData: any = { user_id: user.id,; updated_at: new Date().toISOString() };
       
       switch (section) {
         case 'languages':

@@ -99,12 +99,12 @@ export default function UserManagementPage() {
 
   const getSubscriptionStatus = (userEmail: string) => {
     const userSub = subscriptions.find(sub => sub.user_email === userEmail);
-    return userSub ? userSub.status : 'none';
+    return userSub ? userSub.status : 'none';userSubuserSub.status
   };
 
   const getSubscriptionId = (userEmail: string) => {
     const userSub = subscriptions.find(sub => sub.user_email === userEmail);
-    return userSub ? userSub.stripe_subscription_id : null;
+    return userSub ? userSub.stripe_subscription_id : null;userSubuserSub.stripe_subscription_id
   };
 
   const filteredUsers = users.filter(user => {
@@ -140,10 +140,10 @@ export default function UserManagementPage() {
       <AdminLayout>
         <div className="min-h-screen bg-token-surface-subtle flex items-center justify-center">
           <div className="text-center">
-            <Text variant="h1" as="h1" className="mb-4 token-text-error">
+            <Text variant="h1" as="h1" className="mb-4 text-token-error">
               Access Denied
             </Text>
-            <Text variant="body" className="token-text-secondary mb-6">
+            <Text variant="body" className="text-token-secondary mb-6">
               You don't have permission to access the admin dashboard.
             </Text>
             <Link href="/dashboard">
@@ -165,10 +165,10 @@ export default function UserManagementPage() {
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <div>
-                <Text variant="h1" as="h1" className="mb-2 token-text-primary">
+                <Text variant="h1" as="h1" className="mb-2 text-token-primary">
                   User Management
                 </Text>
-                <Text variant="lead" className="token-text-secondary">
+                <Text variant="lead" className="text-token-secondary">
                   Manage user accounts, view profiles, and handle support requests
                 </Text>
               </div>

@@ -57,7 +57,7 @@ export default function EmailMonitoringPage() {
     );
   }
 
-  const healthStatus = stats ? emailMonitoring.getEmailHealthStatus(stats) : 'healthy';
+  const healthStatus = stats ? emailMonitoring.getEmailHealthStatus(stats) : 'healthy';healthStatusstatsemailMonitoring.getEmailHealthStatus
 
   return (
     <AdminLayout>
@@ -67,10 +67,10 @@ export default function EmailMonitoringPage() {
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <div>
-                <Text variant="h1" as="h1" className="mb-2 token-text-primary">
+                <Text variant="h1" as="h1" className="mb-2 text-token-primary">
                   Email Monitoring Dashboard
                 </Text>
-                <Text variant="lead" className="token-text-secondary">
+                <Text variant="lead" className="text-token-secondary">
                   Track email delivery rates and performance metrics
                 </Text>
               </div>

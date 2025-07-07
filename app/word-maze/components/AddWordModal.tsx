@@ -25,7 +25,7 @@ export default function AddWordModal({ isOpen, onClose, onAddWords }: AddWordMod
     setIsLoading(true);
 
     try {
-      let words: string[] = [];
+      let words: string[] = [];words
 
       if (mode === 'single') {
         if (!singleWord.trim()) {

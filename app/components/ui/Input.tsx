@@ -34,7 +34,7 @@ export default function Input({
     ? 'border-token-error focus:border-token-error focus:ring-token-error' 
     : success 
     ? 'border-token-success focus:border-token-success focus:ring-token-success'
-    : '';
+    : ''
 
   return (
     <input

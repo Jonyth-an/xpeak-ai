@@ -47,7 +47,7 @@ export default function LoginForm({
       }
 
       // Sign in with Supabase
-      const { data, error: signInError } =
+      const { data, error: signInErrorerror } =
         await supabase.auth.signInWithPassword({
           email,
           password,

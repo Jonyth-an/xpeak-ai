@@ -188,8 +188,8 @@ function ConfirmPlanChangePageInner() {
       <Layout>
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <Text className="token-text-error mb-4">{error}</Text>
-            <Button onClick={() => router.push('/profile/billing')}>
+            <Text className="text-token-error mb-4">{error}</Text>
+            <Button onClick={() => router.push('/profile/billing')} variant="outline">
               Back to Billing
             </Button>
           </div>

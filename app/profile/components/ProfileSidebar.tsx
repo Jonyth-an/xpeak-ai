@@ -17,7 +17,7 @@ import {
 interface ProfileSidebarProps {
   activeTab: string;
   onTabChange?: (tabId: string) => void; // Make optional for new routing
-  userEmail?: string;
+  userEmail?: string;MakeoptionalfornewroutinguserEmail?
 }
 
 const tabs = [

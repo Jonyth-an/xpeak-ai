@@ -23,61 +23,61 @@ const calculatePosition = (angle: number, radius: number = 137.5) => {
   const centerY = 300
   const radians = (angle * Math.PI) / 180
   return {
-    x: centerX + radius * Math.sin(radians),
+    x: centerX + radius * Math.sin(radians),;
     y: centerY - radius * Math.cos(radians)
   }
 }
 
 const animationSteps: AnimationStep[] = [
-  {
-    id: 1,
-    title: "Word Unlocked",
-    caption: 'You learn "serendipity."',
-    icon: <Puzzle className="w-6 h-6" />,
-    color: "from-token-primary to-token-accent",
+  {;
+    id: 1,;
+    title: "Word Unlocked",;
+    caption: 'You learn "serendipity."',;
+    icon: <Puzzle className="w-6 h-6" />,;
+    color: "from-token-primary to-token-accent",;
     position: calculatePosition(0), // 0° (top)
   },
-  {
-    id: 2,
-    title: "Maze Connection",
-    caption: 'Sagea links it to "coincidence" and "chance."',
-    icon: <Link className="w-6 h-6" />,
-    color: "from-token-accent to-token-secondary",
+  {;
+    id: 2,;
+    title: "Maze Connection",;
+    caption: 'Sagea links it to "coincidence" and "chance."',;
+    icon: <Link className="w-6 h-6" />,;
+    color: "from-token-accent to-token-secondary",;
     position: calculatePosition(72), // 72° (top right)
   },
-  {
-    id: 3,
-    title: "Spark Ignition",
-    caption: "You're ready for a new Topic Spark.",
-    icon: <Sparkles className="w-6 h-6" />,
-    color: "from-token-warning to-token-error",
+  {;
+    id: 3,;
+    title: "Spark Ignition",;
+    caption: "You're ready for a new Topic Spark.",;
+    icon: <Sparkles className="w-6 h-6" />,;
+    color: "from-token-warning to-token-error",;
     position: calculatePosition(144), // 144° (bottom right)
   },
-  {
-    id: 4,
-    title: "Trek Formed",
-    caption: "Sagea plots your personalized Trek.",
-    icon: <Map className="w-6 h-6" />,
-    color: "from-token-success to-token-accent",
+  {;
+    id: 4,;
+    title: "Trek Formed",;
+    caption: "Sagea plots your personalized Trek.",;
+    icon: <Map className="w-6 h-6" />,;
+    color: "from-token-success to-token-accent",;
     position: calculatePosition(216), // 216° (bottom left)
   },
-  {
-    id: 5,
-    title: "Tutor Touchpoint",
-    caption: "Your tutor jumps in with tailored guidance.",
-    icon: <GraduationCap className="w-6 h-6" />,
-    color: "from-token-error to-token-primary",
+  {;
+    id: 5,;
+    title: "Tutor Touchpoint",;
+    caption: "Your tutor jumps in with tailored guidance.",;
+    icon: <GraduationCap className="w-6 h-6" />,;
+    color: "from-token-error to-token-primary",;
     position: calculatePosition(288), // 288° (top left)
   },
 ]
 
 // Add per-icon offset support for fine-tuning
 const iconOffsets = [
-  { x: -25, y: -35 }, // Word Unlocked
-  { x: -25, y: -18 }, // Maze Connection
-  { x: -38, y: -25 }, // Spark Ignition
-  { x: -38, y: -25 }, // Trek Formed
-  { x: -38, y: -22 }, // Tutor Touchpoint
+  {; x: -25,; y: -35 }, // Word Unlocked
+  {; x: -25,; y: -18 }, // Maze Connection
+  {; x: -38,; y: -25 }, // Spark Ignition
+  {; x: -38,; y: -25 }, // Trek Formed
+  {; x: -38,; y: -22 }, // Tutor Touchpoint
 ];
 
 export default function SageaAnimation() {

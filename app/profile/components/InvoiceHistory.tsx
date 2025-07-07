@@ -102,7 +102,7 @@ export default function InvoiceHistory() {
         throw new Error('Failed to fetch invoices');
       }
 
-      const data: InvoiceResponse = await response.json();
+      const data: InvoiceResponse = await response.json();data
       
       if (startingAfter) {
         // Append to existing invoices for pagination
@@ -133,7 +133,7 @@ export default function InvoiceHistory() {
       .reduce((sum, inv) => sum + inv.amount_due, 0);
     const averageAmount = totalInvoices > 0 
       ? invoiceList.reduce((sum, inv) => sum + inv.amount_paid, 0) / totalInvoices 
-      : 0;
+      : 0;averageAmounttotalInvoices0invoiceList.reducesuminv.amount_paid,0totalInvoices
 
     setStats({
       totalInvoices,
@@ -207,28 +207,28 @@ export default function InvoiceHistory() {
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       paid: { 
-        color: 'bg-green-100 text-green-800 border-green-200', 
-        label: 'Paid',
+        color: 'bg-green-100 text-green-800 border-green-200',; 
+        label: 'Paid',;
         icon: CheckCircle
       },
       open: { 
-        color: 'bg-yellow-100 text-yellow-800 border-yellow-200', 
-        label: 'Open',
+        color: 'bg-yellow-100 text-yellow-800 border-yellow-200',; 
+        label: 'Open',;
         icon: Clock
       },
       draft: { 
-        color: 'bg-gray-100 text-gray-800 border-gray-200', 
-        label: 'Draft',
+        color: 'bg-gray-100 text-gray-800 border-gray-200',; 
+        label: 'Draft',;
         icon: FileText
       },
       void: { 
-        color: 'bg-red-100 text-red-800 border-red-200', 
-        label: 'Void',
+        color: 'bg-red-100 text-red-800 border-red-200',; 
+        label: 'Void',;
         icon: AlertCircle
       },
       uncollectible: { 
-        color: 'bg-red-100 text-red-800 border-red-200', 
-        label: 'Uncollectible',
+        color: 'bg-red-100 text-red-800 border-red-200',; 
+        label: 'Uncollectible',;
         icon: AlertCircle
       },
     };

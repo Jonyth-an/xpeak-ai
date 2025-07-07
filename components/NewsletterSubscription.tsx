@@ -5,11 +5,11 @@ import { Button, Input } from '@/app/components/ui'
 import { CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 
 interface NewsletterSubscriptionProps {
-  source?: string
-  className?: string
-  placeholder?: string
-  buttonText?: string
-  successMessage?: string
+  source?: string;
+  className?: string;
+  placeholder?: string;
+  buttonText?: string;
+  successMessage?: string;
   errorMessage?: string
 }
 

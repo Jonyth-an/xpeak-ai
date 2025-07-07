@@ -12,39 +12,39 @@ interface Node {
 }
 
 const nodes: Node[] = [
-  {
-    id: "spark",
-    label: "Sparked Topic",
-    icon: "💡",
-    position: { x: 50, y: 50 },
+  {;
+    id: "spark",;
+    label: "Sparked Topic",;
+    icon: "💡",;
+    position: {; x: 50,; y: 50 },;
     delay: 0,
   },
-  {
-    id: "vocab",
-    label: "Vocab Focus",
-    icon: "📚",
-    position: { x: 150, y: 30 },
+  {;
+    id: "vocab",;
+    label: "Vocab Focus",;
+    icon: "📚",;
+    position: {; x: 150,; y: 30 },;
     delay: 1.2,
   },
-  {
-    id: "speaking",
-    label: "Speaking Challenge",
-    icon: "🎤",
-    position: { x: 250, y: 60 },
+  {;
+    id: "speaking",;
+    label: "Speaking Challenge",;
+    icon: "🎤",;
+    position: {; x: 250,; y: 60 },;
     delay: 2.4,
   },
-  {
-    id: "cultural",
-    label: "Cultural Insight",
-    icon: "🌍",
-    position: { x: 350, y: 40 },
+  {;
+    id: "cultural",;
+    label: "Cultural Insight",;
+    icon: "🌍",;
+    position: {; x: 350,; y: 40 },;
     delay: 3.6,
   },
-  {
-    id: "tutor",
-    label: "Tutor Session",
-    icon: "👨‍🏫",
-    position: { x: 450, y: 70 },
+  {;
+    id: "tutor",;
+    label: "Tutor Session",;
+    icon: "👨‍🏫",;
+    position: {; x: 450,; y: 70 },;
     delay: 4.8,
   },
 ];

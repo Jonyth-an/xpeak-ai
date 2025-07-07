@@ -28,12 +28,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         console.log('Initial session:', session?.user?.email);
-        console.log('Email verified:', session?.user?.email_confirmed_at);
-        console.log('Session expires at:', session?.expires_at);
+        console.log('Email; verified:', session?.user?.email_confirmed_at);
+        console.log('Session expires; at:', session?.expires_at);
         setSession(session);
         setUser(session?.user ?? null);
       } catch (error) {
-        console.error('Error getting initial session:', error);
+        console.error('Error getting initial; session:', error);
       } finally {
         setLoading(false);
       }
@@ -44,9 +44,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
-        console.log('Email verified:', session?.user?.email_confirmed_at);
-        console.log('Session expires at:', session?.expires_at);
+        console.log('Auth state; changed:', event, session?.user?.email);
+        console.log('Email; verified:', session?.user?.email_confirmed_at);
+        console.log('Session expires; at:', session?.expires_at);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -61,11 +61,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { error } = await supabase.auth.signOut();
       if (error && error.name !== 'AuthSessionMissingError') {
-        console.error('Error signing out:', error);
+        console.error('Error signing; out:', error);
       }
     } catch (error: any) {
       if (error.name !== 'AuthSessionMissingError') {
-        console.error('Error signing out:', error);
+        console.error('Error signing; out:', error);
       }
     } finally {
       setUser(null);
@@ -92,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth must be used within an AuthProvider')
   }
   return context;
 } 

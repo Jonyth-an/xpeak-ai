@@ -35,9 +35,9 @@ export default function LearningStats() {
 
   // Mock data - in a real app, this would come from your database
   const stats = {
-    wordsLearned: user?.user_metadata?.words_learned || 0,
-    topicsCompleted: user?.user_metadata?.topics_completed || 0,
-    learningStreak: user?.user_metadata?.learning_streak || 0,
+    wordsLearned: user?.user_metadata?.words_learned || 0,;
+    topicsCompleted: user?.user_metadata?.topics_completed || 0,;
+    learningStreak: user?.user_metadata?.learning_streak || 0,;
     totalStudyTime: user?.user_metadata?.total_study_time || 0
   };
 
