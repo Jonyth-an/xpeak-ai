@@ -1,5 +1,6 @@
 import React from 'react';
-import { Card, Button } from '../ui';
+import { Card } from '../ui';
+import { Button } from '@/app/components/ui/Button';
 
 export interface TopicSampleCardProps {
   sampleText: string;
@@ -37,7 +38,7 @@ export default function TopicSampleCard({
         <Button variant="secondary" onClick={onAddToLesson} className="flex-1">
           Add to Current Reservation
         </Button>
-        <Button variant="ghost" onClick={onSave} className="flex-1">
+        <Button variant="tertiary" onClick={onSave} className="flex-1">
           Save Topic for Later
         </Button>
       </div>

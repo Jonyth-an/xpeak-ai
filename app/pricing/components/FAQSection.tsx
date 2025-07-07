@@ -43,8 +43,8 @@ const faqs: FAQItem[] = [
 
 export default function FAQSection() {
   return (
-    <section className="bg-token-surface py-token-20 px-token-4 sm:px-token-6 lg:px-token-8">
-      <div className="container-token-lg mx-auto">
+    <section className="bg-token-surface py-token-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-token-12">
           <h2 className="text-token-3xl font-bold token-text-primary mb-token-4">

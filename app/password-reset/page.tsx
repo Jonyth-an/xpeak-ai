@@ -25,18 +25,18 @@ export default function PasswordResetPage() {
   return (
     <Layout>
       <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-token-surface-accent-light via-token-surface to-token-surface-accent">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <Text variant="h1" as="h1" className="mb-4">
+        <div className="max-w-7xl mx-auto px-token-md">
+          <div className="text-center mb-token-2xl">
+            <Text variant="h1" as="h1" className="mb-token-md">
               Reset Your Password
             </Text>
-            <Text variant="lead" className="max-w-2xl mx-auto">
+            <Text variant="lead" className="max-w-2xl mx-auto text-token-text-secondary">
               Enter your email address and we'll send you a link to reset your password.
             </Text>
           </div>
           
           {pageError && (
-            <div className="bg-token-error-surface border border-token-error text-token-error px-4 py-2 rounded mb-4 text-sm">
+            <div className="bg-token-error-surface border border-token-error text-token-error px-token-md py-token-sm rounded-token-lg mb-token-md text-token-sm max-w-md mx-auto">
               {pageError}
             </div>
           )}

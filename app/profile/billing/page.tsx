@@ -12,7 +12,7 @@ export default function BillingPage() {
     <ProtectedRoute>
       <RequireEmailVerification>
         <Layout>
-          <section className="py-20 px-4 sm:px-6 lg:px-8 token-surface-secondary min-h-screen">
+          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-token-surface-accent-light min-h-screen">
             <div className="max-w-7xl mx-auto">
               {/* Main Content with Sidebar - Use flex for large screens */}
               <div className="relative lg:flex lg:min-h-[600px]">

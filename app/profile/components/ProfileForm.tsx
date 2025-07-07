@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../lib/AuthContext';
 import { supabase } from '../../../lib/supabaseClient';
+import { Button } from '@/app/components/ui';
 import AvatarUpload from './AvatarUpload';
 
 interface ProfileData {
@@ -98,15 +99,17 @@ export default function ProfileForm() {
             </div>
           </div>
           {!isEditing && (
-            <button
+            <Button
+              variant="primary"
+              size="md"
               onClick={() => setIsEditing(true)}
-              className="inline-flex items-center px-4 py-2 bg-token-primary text-white text-sm font-medium rounded-lg hover:bg-token-primary-hover transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-token-primary"
+              className="inline-flex items-center"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
               Edit Profile
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -206,10 +209,12 @@ export default function ProfileForm() {
         {/* Action Buttons */}
         {isEditing && (
           <div className="mt-8 pt-6 border-t border-token-border flex flex-col sm:flex-row gap-3">
-            <button
+            <Button
+              variant="primary"
+              size="md"
               onClick={handleSave}
               disabled={isLoading}
-              className="inline-flex items-center justify-center px-6 py-3 bg-token-primary text-white text-sm font-medium rounded-xl hover:bg-token-primary-hover transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-token-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center"
             >
               {isLoading ? (
                 <>
@@ -227,14 +232,16 @@ export default function ProfileForm() {
                   Save Changes
                 </>
               )}
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="outline"
+              size="md"
               onClick={handleCancel}
               disabled={isLoading}
-              className="inline-flex items-center justify-center px-6 py-3 bg-token-surface text-text-secondary text-sm font-medium rounded-xl border border-token-border hover:bg-token-surface-accent-light transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-token-border disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center"
             >
               Cancel
-            </button>
+            </Button>
           </div>
         )}
       </div>

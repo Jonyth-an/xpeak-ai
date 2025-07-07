@@ -32,7 +32,7 @@ export default function TopicSparkPage() {
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-token-96 h-token-96 bg-gradient-to-r from-token-primary/10 to-token-accent/10 rounded-token-full blur-token-3xl animate-pulse delay-500"></div>
           </div>
 
-          <div className="relative container-token-7xl mx-auto px-token-4 sm:px-token-6 lg:px-token-8 py-token-24">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-token-24">
             <div className="flex flex-col lg:flex-row items-center gap-token-12">
               {/* Left: Text content */}
               <div className="flex-1 text-left">
@@ -47,8 +47,10 @@ export default function TopicSparkPage() {
                   Every journey begins with a spark. Topic Spark suggests personalized lesson ideas, cultural themes, and speaking challenges based on your goals — and your Word Maze.
                 </p>
                 <Button 
+                  variant="primary"
+                  size="lg"
                   onClick={() => router.push('/signup')}
-                  className="btn-token-primary bg-gradient-to-r from-token-accent to-token-primary hover:from-token-accent-dark hover:to-token-primary-dark text-token-text-inverse px-token-10 py-token-4 text-token-xl font-semibold rounded-token-full shadow-token-lg hover:shadow-token-xl transform hover:scale-token-105 transition-token-normal mb-token-8"
+                  className="px-token-10 py-token-4 text-token-xl font-semibold transform hover:scale-token-105 transition-token-normal mb-token-8"
                 >
                   → Generate Your Next Spark
                 </Button>
@@ -69,12 +71,12 @@ export default function TopicSparkPage() {
 
         {/* Feature Highlights Section */}
         <div className="py-token-20 bg-token-surface/80 backdrop-blur-sm">
-          <div className="container-token-7xl mx-auto px-token-4 sm:px-token-6 lg:px-token-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-token-16">
-              <h2 className="text-token-4xl md:text-token-5xl font-bold token-text-primary mb-token-6">
+              <h2 className="text-token-display-lg md:text-token-display-xl font-token-bold text-token-primary mb-token-6">
                 💡 Feature Highlights
               </h2>
-              <p className="text-token-xl token-text-secondary max-w-token-3xl mx-auto leading-relaxed">
+              <p className="text-token-body-xl text-token-secondary max-w-3xl mx-auto leading-relaxed">
                 Discover how Topic Spark ignites your learning journey with AI-powered conversation starters
               </p>
             </div>
@@ -153,7 +155,7 @@ export default function TopicSparkPage() {
 
         {/* Testimonial Section */}
         <div className="py-token-20 bg-gradient-to-r from-token-accent to-token-primary">
-          <div className="container-token-lg mx-auto text-center px-token-4 sm:px-token-6 lg:px-token-8">
+          <div className="max-w-7xl mx-auto text-center px-4 sm:px-6 lg:px-8">
             <div className="bg-token-surface/10 backdrop-blur-sm rounded-token-3xl p-token-12 border border-token-surface/20 shadow-token-xl">
               <div className="text-token-6xl mb-token-6">💬</div>
               <blockquote className="text-token-2xl md:text-token-3xl font-medium token-text-inverse mb-token-6 leading-relaxed">
@@ -168,18 +170,20 @@ export default function TopicSparkPage() {
 
         {/* Final CTA Section */}
         <div className="py-token-20 bg-gradient-to-br from-token-surface-dark to-token-surface-darker">
-          <div className="container-token-lg mx-auto text-center px-token-4 sm:px-token-6 lg:px-token-8">
-            <h2 className="text-token-4xl md:text-token-5xl font-bold mb-token-6">
+          <div className="max-w-7xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 className="text-token-display-lg md:text-token-display-xl font-token-bold mb-token-6">
               <span className="block text-token-primary">
                 See where your next Spark will take you.
               </span>
             </h2>
-            <p className="text-token-xl token-text-inverse/70 mb-token-10 max-w-token-2xl mx-auto leading-relaxed">
+            <p className="text-token-body-xl text-token-inverse/70 mb-token-10 max-w-2xl mx-auto leading-relaxed">
               Join thousands of learners who are already igniting their conversations with Topic Spark.
             </p>
             <Button 
+              variant="primary"
+              size="lg"
               onClick={() => router.push('/signup')}
-              className="btn-token-primary bg-gradient-to-r from-token-accent to-token-primary hover:from-token-accent-dark hover:to-token-primary-dark text-token-text-inverse px-token-12 py-token-4 text-token-xl font-semibold rounded-token-full shadow-token-lg hover:shadow-token-xl transform hover:scale-token-105 transition-token-normal"
+              className="px-token-12 py-token-4 text-token-xl font-semibold transform hover:scale-token-105 transition-token-normal"
             >
               → Generate Your Spark Now
             </Button>

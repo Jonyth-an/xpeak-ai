@@ -594,7 +594,6 @@ export default function BillingInformationForm({
               type="button"
               onClick={onCancel}
               variant="outline"
-              className="token-accent-border token-accent hover:token-accent-light focus:ring-token-accent"
             >
               Cancel
             </Button>

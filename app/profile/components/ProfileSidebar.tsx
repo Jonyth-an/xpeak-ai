@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Card, Text } from '@/app/components/ui';
+import { Card, Text, Button } from '@/app/components/ui';
 import { 
   User, 
   Shield, 
@@ -161,26 +161,28 @@ export default function ProfileSidebar({
     <>
       {/* Mobile Menu Toggle */}
       <div className="lg:hidden mb-6">
-        <button
+        <Button
+          variant="outline"
+          size="md"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="w-full flex items-center justify-between p-4 bg-token-surface rounded-lg border border-token-border shadow-sm"
+          className="w-full flex items-center justify-between p-4"
         >
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-token-primary-surface rounded-full flex items-center justify-center">
+          <span className="flex items-center space-x-3">
+            <span className="w-8 h-8 bg-token-primary-surface rounded-full flex items-center justify-center">
               <User className="w-4 h-4 text-token-primary" />
-            </div>
-            <div className="text-left">
+            </span>
+            <span className="text-left">
               <Text variant="body" className="font-medium text-text-secondary">
                 {tabs.find(tab => pathname === tab.href || (pathname === '/profile' && tab.id === 'profile'))?.label || 'Account Settings'}
               </Text>
-            </div>
-          </div>
+            </span>
+          </span>
           {isMobileMenuOpen ? (
             <X className="w-5 h-5 text-text-muted" />
           ) : (
             <Menu className="w-5 h-5 text-text-muted" />
           )}
-        </button>
+        </Button>
       </div>
 
       {/* Mobile Menu */}
@@ -191,7 +193,7 @@ export default function ProfileSidebar({
       )}
 
       {/* Desktop Sidebar */}
-      <div className="hidden lg:block lg:w-56 lg:shrink-0">
+      <div className="hidden lg:block lg:w-72 lg:shrink-0">
         {sidebarContent}
       </div>
     </>

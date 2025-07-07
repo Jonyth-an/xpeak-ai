@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import TopicCard from '../../components/molecules/TopicCard';
+import { Card } from '@/app/components/ui';
 
 const globalTrends = [
   {
@@ -36,15 +37,14 @@ export default function TopicGlobalTrendsSection() {
   };
 
   return (
-    <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto text-center">
-        {/* Heading */}
-        <h2 className="text-2xl font-bold text-token-text mb-2">Trending Topics Around the World</h2>
-        <p className="text-token-text-secondary mb-10">Speak the Language of the Moment</p>
-        <p className="text-sm text-token-text-secondary mb-8 max-w-xl mx-auto">
-          Stay in sync with global trends. These topics reflect what learners worldwide are exploring right now — powered by real-world data.
+    <section className="py-token-16 px-token-4 bg-token-surface-accent">
+      <div className="max-w-5xl mx-auto">
+        <h2 className="text-token-heading-xl font-token-bold text-token-primary mb-token-6 text-center">
+          🌍 See where your next Spark will take you.
+        </h2>
+        <p className="text-token-body-lg text-token-text-secondary mb-token-12 text-center">
+          Explore trending topics from learners worldwide. Get inspired and join the conversation!
         </p>
-
         {/* Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {globalTrends.map((topic) => (

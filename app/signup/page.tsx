@@ -42,19 +42,19 @@ export default function SignupPage() {
   return (
     <Layout>
       <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-token-surface-accent-light via-token-surface to-token-surface-accent">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <Text variant="h1" as="h1" className="mb-4">
+        <div className="max-w-7xl mx-auto px-token-md">
+          <div className="text-center mb-token-2xl">
+            <Text variant="h1" as="h1" className="mb-token-md">
               Join Xpeak AI
             </Text>
-            <Text variant="lead" className="max-w-2xl mx-auto">
+            <Text variant="lead" className="max-w-2xl mx-auto text-token-text-secondary">
               Start your language learning journey with AI-powered personalized coaching.
             </Text>
           </div>
           
           {/* Page-level error message */}
           {pageError && (
-            <div className="bg-token-error-surface border border-token-error text-token-error px-4 py-2 rounded mb-4 text-sm">
+            <div className="bg-token-error-surface border border-token-error text-token-error px-token-md py-token-sm rounded-token-lg mb-token-md text-token-sm max-w-md mx-auto">
               {pageError}
             </div>
           )}
@@ -65,10 +65,10 @@ export default function SignupPage() {
             onError={handleSignupError}
           />
           
-          <div className="text-center mt-8">
-            <Text variant="body" className="text-text">
+          <div className="text-center mt-token-xl">
+            <Text variant="body" className="text-token-text-secondary">
               Already have an account?{' '}
-              <a href="/login" className="text-token-primary hover:text-token-primary-dark font-medium">
+              <a href="/login" className="text-token-primary hover:text-token-primary-dark font-token-semibold transition-colors">
                 Sign in here
               </a>
             </Text>

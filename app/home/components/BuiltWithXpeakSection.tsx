@@ -4,11 +4,36 @@ import { Card } from '@/components/ui/card';
 import { Brain, Puzzle, Sparkles, Map, Users } from 'lucide-react';
 
 const xpeakFeatures = [
-  { icon: <Brain className="w-6 h-6" />, title: "Sagea", subtitle: "Your lifelong learning partner" },
-  { icon: <Puzzle className="w-6 h-6" />, title: "Word Maze", subtitle: "Vocabulary built into memory" },
-  { icon: <Sparkles className="w-6 h-6" />, title: "Topic Sparks", subtitle: "AI-generated ideas to explore" },
-  { icon: <Map className="w-6 h-6" />, title: "Learning Treks", subtitle: "Structured paths from sparks" },
-  { icon: <Users className="w-6 h-6" />, title: "Tutors & Crew", subtitle: "Human and AI support in sync" },
+  {
+    icon: <Brain className="w-6 h-6" />, 
+    title: "Sagea", 
+    subtitle: "Your lifelong learning partner",
+    gradient: "from-[#ff7e5f] to-[#feb47b]" // orange-pink to peach
+  },
+  {
+    icon: <Puzzle className="w-6 h-6" />, 
+    title: "Word Maze", 
+    subtitle: "Vocabulary built into memory",
+    gradient: "from-[#43cea2] to-[#185a9d]" // green to blue
+  },
+  {
+    icon: <Sparkles className="w-6 h-6" />, 
+    title: "Topic Sparks", 
+    subtitle: "AI-generated ideas to explore",
+    gradient: "from-[#f7971e] to-[#ffd200]" // golden yellow
+  },
+  {
+    icon: <Map className="w-6 h-6" />, 
+    title: "Learning Treks", 
+    subtitle: "Structured paths from sparks",
+    gradient: "from-[#00c6ff] to-[#0072ff]" // light blue to deep blue
+  },
+  {
+    icon: <Users className="w-6 h-6" />, 
+    title: "Tutors & Crew", 
+    subtitle: "Human and AI support in sync",
+    gradient: "from-[#f953c6] to-[#b91d73]" // pink to purple
+  },
 ];
 
 export default function BuiltWithXpeakSection() {
@@ -43,7 +68,7 @@ export default function BuiltWithXpeakSection() {
                 className="flex-1 min-w-[200px] max-w-[220px]"
               >
                 <Card className="p-token-6 text-token-center hover:shadow-lg transition-base border-regular border-token-border hover:border-token-primary h-full bg-token-surface">
-                  <div className="w-16 h-16 bg-gradient-to-r from-token-primary to-token-secondary rounded-full flex items-center justify-center mx-auto mb-token-4 text-token-inverse">
+                  <div className={`w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-full flex items-center justify-center mx-auto mb-token-4 text-token-inverse`}>
                     {feature.icon}
                   </div>
                   <h3 className="text-token-heading-lg font-token-bold text-token-primary mb-token-2">{feature.title}</h3>

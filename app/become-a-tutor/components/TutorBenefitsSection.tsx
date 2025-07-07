@@ -34,27 +34,27 @@ const benefits = [
 
 export default function TutorBenefitsSection() {
   return (
-    <section className="py-20 bg-token-surface">
-      <div className="max-w-4xl mx-auto text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold text-text">
+    <section className="py-token-20 bg-token-surface">
+      <div className="max-w-4xl mx-auto text-center mb-token-12">
+        <h2 className="text-token-3xl md:text-token-4xl font-bold token-text-primary">
           Empower Learners. Grow as a Coach.
         </h2>
       </div>
-      <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-token-8">
         {benefits.map((b, idx) => {
           const Icon = b.icon;
           return (
             <div
               key={idx}
-              className={`rounded-2xl shadow p-6 ${b.bg}`}
+              className={`rounded-token-2xl shadow p-token-6 ${b.bg}`}
             >
-              <div className={`w-12 h-12 mb-4 flex items-center justify-center rounded-full bg-white/50 ${b.iconColor}`}>
+              <div className={`w-12 h-12 mb-token-4 flex items-center justify-center rounded-full bg-white/50 ${b.iconColor}`}>
                 <Icon className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-semibold text-text mb-2">
+              <h3 className="text-token-xl font-semibold token-text-primary mb-token-2">
                 {b.title}
               </h3>
-              <p className="text-text-tertiary">{b.desc}</p>
+              <p className="token-text-secondary text-token-base">{b.desc}</p>
             </div>
           );
         })}

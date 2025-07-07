@@ -1,9 +1,24 @@
 "use client"
 
 import Link from "next/link"
-import { Card } from "@/app/components/ui"
+import { Card, Button, Text } from "@/app/components/ui"
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogClose
+} from "@/components/ui/dialog";
 
 const testPages = [
+  {
+    title: "Unified Button System Overview",
+    description: "Overview and documentation of the unified button system, including design rationale and usage patterns.",
+    path: "/test/button-overview",
+    category: "Design System"
+  },
   {
     title: "Design Tokens Demo",
     description: "Interactive showcase of all design tokens, utilities, and semantic components",
@@ -44,34 +59,32 @@ const testPages = [
 
 export default function TestDashboard() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-token-surface-accent-light via-token-surface to-token-surface-accent py-12">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-text mb-4">
-            🧪 Test & Demo Pages
-          </h1>
-          <p className="text-lg text-text-tertiary max-w-2xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-token-surface-accent-light via-token-surface to-token-surface-accent py-token-2xl">
+      <div className="max-w-7xl mx-auto px-token-md">
+        <div className="text-center mb-token-2xl">
+          <Text variant="h1" as="h1" className="mb-token-md">🧪 Test & Demo Pages</Text>
+          <Text variant="lead" className="text-token-text-tertiary max-w-2xl mx-auto">
             Welcome to the test dashboard. Here you can find all the test and demo pages 
             for development and testing purposes.
-          </p>
+          </Text>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-token-lg">
           {testPages.map((page) => (
-            <Link key={page.path} href={page.path}>
-              <Card className="p-6 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer bg-token-surface/80 backdrop-blur-sm border-2 border-token-border">
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-xl font-semibold text-text">
+            <Link key={page.path} href={page.path} className="group">
+              <Card className="p-token-lg hover:shadow-token-lg transition-all duration-300 hover:scale-105 cursor-pointer bg-token-surface/80 backdrop-blur-sm border-2 border-token-border">
+                <div className="flex items-start justify-between mb-token-md">
+                  <Text variant="h3" as="h3" className="text-token-xl font-token-semibold text-token-text">
                     {page.title}
-                  </h3>
-                  <span className="text-xs px-2 py-1 bg-token-primary/10 text-token-primary rounded-full">
+                  </Text>
+                  <span className="text-token-xs px-token-sm py-token-xs bg-token-primary/10 text-token-primary rounded-token-full">
                     {page.category}
                   </span>
                 </div>
-                <p className="text-text-tertiary text-sm leading-relaxed">
+                <Text variant="body" className="text-token-text-tertiary text-token-sm leading-relaxed">
                   {page.description}
-                </p>
-                <div className="mt-4 text-token-primary text-sm font-medium">
+                </Text>
+                <div className="mt-token-lg text-token-primary text-token-sm font-token-medium group-hover:underline">
                   → View Test Page
                 </div>
               </Card>
@@ -79,12 +92,11 @@ export default function TestDashboard() {
           ))}
         </div>
 
-        <div className="mt-12 text-center">
-          <Link 
-            href="/"
-            className="inline-flex items-center px-6 py-3 bg-token-surface-dark text-white rounded-lg hover:bg-token-surface-accent-dark transition-colors"
-          >
-            ← Back to Main Site
+        <div className="mt-token-2xl text-center">
+          <Link href="/">
+            <Button variant="primary" size="md" className="inline-flex">
+              ← Back to Main Site
+            </Button>
           </Link>
         </div>
       </div>

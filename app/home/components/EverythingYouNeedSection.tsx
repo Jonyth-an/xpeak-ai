@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/app/components/ui/Button';
 import Link from 'next/link';
 import {
   Brain,
@@ -88,8 +88,8 @@ export default function EverythingYouNeedSection() {
                   </p>
                   <Link href="/meet-sagea">
                     <Button
-                      variant="outline"
-                      className="border-regular border-token-secondary text-token-secondary hover:bg-token-secondary/10 group bg-transparent transition-base"
+                      variant="secondary"
+                      className="group transition-base"
                     >
                       Meet Sagea
                       <ArrowRight className="ml-token-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -131,8 +131,8 @@ export default function EverythingYouNeedSection() {
                       <p className="text-token-secondary mb-token-6 leading-relaxed">{feature.detail}</p>
                       <Link href={feature.title === "Word Maze" ? "/word-maze" : feature.title === "Topic Sparks" ? "/topic-spark" : feature.title === "Learning Treks" ? "/topic-spark" : "/meet-sagea"}>
                         <Button
-                          variant="outline"
-                          className="border-regular border-token-border text-token-secondary hover:bg-token-surface-subtle group bg-transparent transition-base"
+                          variant="tertiary"
+                          className="group transition-base"
                         >
                           {feature.cta}
                           <ArrowRight className="ml-token-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />

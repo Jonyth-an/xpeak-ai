@@ -14,7 +14,7 @@ export default function PreferencesPage() {
     <ProtectedRoute>
       <RequireEmailVerification>
         <Layout>
-          <section className="py-20 px-4 sm:px-6 lg:px-8 token-surface-secondary min-h-screen">
+          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-token-surface-accent-light min-h-screen">
             <div className="max-w-7xl mx-auto">
               {/* Main Content with Sidebar - Use flex for large screens */}
               <div className="relative lg:flex lg:min-h-[600px]">
@@ -36,7 +36,7 @@ export default function PreferencesPage() {
                         <Text variant="h3" as="h3" className="mb-2">
                           Language Preferences
                         </Text>
-                        <Text variant="body" className="token-text-secondary">
+                        <Text variant="body" className="text-token-text-secondary">
                           Choose your preferred languages for learning
                         </Text>
                       </div>
@@ -49,7 +49,7 @@ export default function PreferencesPage() {
                         <Text variant="h3" as="h3" className="mb-2">
                           Current Region & Time
                         </Text>
-                        <Text variant="body" className="token-text-secondary">
+                        <Text variant="body" className="text-token-text-secondary">
                           Set your timezone to help us schedule lessons at the right time
                         </Text>
                       </div>

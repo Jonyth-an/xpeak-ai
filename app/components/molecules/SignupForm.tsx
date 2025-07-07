@@ -92,24 +92,24 @@ export default function SignupForm({ onSubmit, onSuccess, onError }: SignupFormP
   };
 
   return (
-    <Card className="max-w-md mx-auto rounded-token-lg">
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <Card className="max-w-md mx-auto rounded-token-lg shadow-token-lg">
+      <form onSubmit={handleSubmit} className="space-y-token-lg">
         {/* Google Signup Button */}
         <Button
           type="button"
           variant="outline"
-          className="w-full flex items-center justify-center gap-2"
+          className="w-full flex items-center justify-center gap-token-sm"
           onClick={handleGoogleSignup}
           disabled={isGoogleLoading || isLoading}
         >
           {isGoogleLoading ? (
             <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-text-muted mr-2"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-token-text-muted mr-token-sm"></div>
               Signing up with Google...
             </div>
           ) : (
             <>
-              <svg width="20" height="20" viewBox="0 0 48 48" className="mr-2" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 48 48" className="mr-token-sm" aria-hidden="true">
                 <g>
                   <path fill="#4285F4" d="M43.611 20.083H42V20H24v8h11.303C33.972 32.833 29.418 36 24 36c-6.627 0-12-5.373-12-12s5.373-12 12-12c2.803 0 5.377.99 7.409 2.626l6.591-6.591C34.583 5.14 29.617 3 24 3 12.954 3 4 11.954 4 23s8.954 20 20 20c11.045 0 19.799-7.954 19.799-19 0-1.27-.138-2.507-.377-3.717z"/>
                   <path fill="#34A853" d="M6.306 14.691l6.571 4.819C14.655 16.104 19.001 13 24 13c2.803 0 5.377.99 7.409 2.626l6.591-6.591C34.583 5.14 29.617 3 24 3c-7.732 0-14.41 4.41-17.694 10.691z"/>
@@ -122,14 +122,14 @@ export default function SignupForm({ onSubmit, onSuccess, onError }: SignupFormP
           )}
         </Button>
         {/* Divider */}
-        <div className="flex items-center my-2">
+        <div className="flex items-center my-token-sm">
           <div className="flex-grow border-t border-token-border"></div>
-          <span className="mx-2 text-text-muted text-xs">or</span>
+          <span className="mx-token-sm text-token-text-muted text-token-xs">or</span>
           <div className="flex-grow border-t border-token-border"></div>
         </div>
         {/* Name */}
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-text-secondary">
+          <label htmlFor="name" className="block text-token-sm font-token-medium text-token-text-secondary mb-token-xs">
             Full Name
           </label>
           <Input
@@ -144,7 +144,7 @@ export default function SignupForm({ onSubmit, onSuccess, onError }: SignupFormP
 
         {/* Email */}
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-text-secondary">
+          <label htmlFor="email" className="block text-token-sm font-token-medium text-token-text-secondary mb-token-xs">
             Email Address
           </label>
           <Input
@@ -158,8 +158,8 @@ export default function SignupForm({ onSubmit, onSuccess, onError }: SignupFormP
         </div>
 
         {/* Password */}
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-text-secondary">
+        <div className="mb-token-lg">
+          <label htmlFor="password" className="block text-token-sm font-token-medium text-token-text-secondary mb-token-xs">
             Password
           </label>
           <Input
@@ -171,15 +171,15 @@ export default function SignupForm({ onSubmit, onSuccess, onError }: SignupFormP
             disabled={isLoading}
             minLength={6}
           />
-          <p className="mt-1 text-xs text-text-muted">
+          <p className="mt-token-xs text-token-xs text-token-text-muted">
             Password must be at least 6 characters long
           </p>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="bg-token-error-surface border border-token-error rounded-md p-3">
-            <p className="text-token-error text-sm">{error}</p>
+          <div className="bg-token-error-surface border border-token-error rounded-token-lg p-token-md">
+            <p className="text-token-error text-token-sm">{error}</p>
           </div>
         )}
 
@@ -192,14 +192,14 @@ export default function SignupForm({ onSubmit, onSuccess, onError }: SignupFormP
         >
           {isLoading ? (
             <div className="flex items-center justify-center">
-              <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin -ml-1 mr-token-sm h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
               Creating account...
             </div>
           ) : (
-            'Sign Up'
+            'Create Account'
           )}
         </Button>
       </form>

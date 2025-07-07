@@ -4,7 +4,7 @@ import { Button } from '@/app/components/ui';
 export default function FinalCTASection() {
   return (
     <section className="py-token-24 bg-token-primary text-center">
-      <div className="container-token-lg mx-auto px-token-4 sm:px-token-6 lg:px-token-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-token-4xl md:text-token-5xl font-extrabold token-text-inverse mb-token-6">
           Ready to Begin Your Language Adventure?
         </h2>

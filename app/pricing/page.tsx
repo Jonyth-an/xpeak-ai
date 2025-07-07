@@ -11,10 +11,11 @@ import FinalCTASection from '@/app/pricing/components/FinalCTASection';
 function PricingPageInner() {
   return (
     <Layout>
-      <PricingHeroSection />   {/* Hero / gradient header */}
-      <PlanTiersSection />     {/* Choose Your Plan (Starter/Growth/Pro) */}
-      <FAQSection />           {/* FAQ Section */}
-      <FinalCTASection />      {/* Final CTA – Ready to Begin */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <PlanTiersSection />     {/* Choose Your Plan (Starter/Growth/Pro) */}
+        <FAQSection />           {/* FAQ Section */}
+        <FinalCTASection />      {/* Final CTA – Ready to Begin */}
+      </div>
     </Layout>
   );
 }

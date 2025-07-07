@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/app/components/ui/Button"
 import { Card } from "@/components/ui/card"
 import Layout from '../../components/Layout';
 import PlanTiersSection from '../pricing/components/PlanTiersSection';
@@ -117,8 +117,9 @@ export default function HomePage() {
               >
                 <Link href="/signup">
                   <Button
+                    variant="primary"
                     size="lg"
-                    className="bg-gradient-to-r from-token-primary to-token-secondary hover:from-token-primary-dark hover:to-token-secondary-dark text-white px-10 py-4 rounded-full text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group"
+                    className="px-10 py-4 text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group"
                   >
                     Start Learning Free
                     <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform" />
@@ -127,9 +128,9 @@ export default function HomePage() {
 
                 <Link href="/meet-sagea">
                   <Button
+                    variant="secondary"
                     size="lg"
-                    variant="outline"
-                    className="border-2 border-token-secondary text-token-secondary hover:bg-token-secondary/10 px-10 py-4 rounded-full text-xl font-semibold transition-all duration-300 bg-transparent"
+                    className="px-10 py-4 text-xl font-semibold transition-all duration-300"
                   >
                     Meet Sagea
                     <Brain className="ml-3 w-6 h-6" />

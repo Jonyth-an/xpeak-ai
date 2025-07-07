@@ -39,7 +39,7 @@ export default function WordMazePublicPage() {
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-token-96 h-token-96 bg-gradient-to-r from-token-secondary/10 to-token-primary/10 rounded-full blur-token-3xl animate-pulse delay-500"></div>
           </div>
 
-          <div className="relative container-token-7xl mx-auto px-token-4 sm:px-token-6 lg:px-token-8 py-token-24">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-token-24">
             <div className="flex flex-col lg:flex-row items-center gap-token-12">
               {/* Left: Text content */}
               <div className="flex-1 text-left">
@@ -50,12 +50,14 @@ export default function WordMazePublicPage() {
                     Where Words Become Worlds
                   </span>
                 </h1>
-                <p className="text-token-xl md:text-token-2xl token-text-secondary mb-token-12 max-w-token-2xl leading-relaxed">
+                <p className="text-token-body-xl md:text-token-body-2xl text-token-text-secondary mb-token-12 max-w-token-2xl leading-relaxed">
                   Turn every word into a stepping stone. Word Maze helps you connect, practice, and remember vocabulary — like never before.
                 </p>
                 <Button 
+                  variant="primary"
+                  size="lg"
                   onClick={() => router.push('/signup')}
-                  className="btn-token-primary bg-gradient-to-r from-token-primary to-token-secondary hover:from-token-primary-dark hover:to-token-secondary-dark text-token-text-inverse px-token-10 py-token-4 text-token-xl font-semibold rounded-token-full shadow-token-lg hover:shadow-token-xl transform hover:scale-token-105 transition-token-normal mb-token-8"
+                  className="mb-token-8"
                 >
                   → Start Your Maze
                 </Button>
@@ -89,7 +91,7 @@ export default function WordMazePublicPage() {
             </div>
             {/* Caption below the flex row */}
             <div className="mt-token-8 text-center">
-              <p className="text-token-lg token-text-primary font-medium">
+              <p className="text-token-body-lg text-token-text font-token-medium">
                 🌀 Explore a living, intelligent maze of words — personalized to how you think, learn, and speak.
               </p>
             </div>
@@ -98,12 +100,12 @@ export default function WordMazePublicPage() {
 
         {/* Feature Highlights Section */}
         <div className="py-token-20 bg-token-surface/80 backdrop-blur-sm">
-          <div className="container-token-7xl mx-auto px-token-4 sm:px-token-6 lg:px-token-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-token-16">
-              <h2 className="text-token-4xl md:text-token-5xl font-bold token-text-primary mb-token-6">
-                💡 Feature Highlights
+              <h2 className="text-token-heading-xl font-token-bold text-token-text mb-token-6">
+                💡 See How Words Become Worlds
               </h2>
-              <p className="text-token-xl token-text-secondary max-w-token-3xl mx-auto leading-relaxed">
+              <p className="text-token-body-xl text-token-text-secondary max-w-token-3xl mx-auto leading-relaxed">
                 Discover how Word Maze transforms vocabulary learning into an engaging adventure
               </p>
             </div>
@@ -114,8 +116,8 @@ export default function WordMazePublicPage() {
                 <div className="w-token-20 h-token-20 bg-gradient-to-br from-token-primary to-token-primary-light rounded-token-2xl flex items-center justify-center mx-auto mb-token-6 shadow-token-lg">
                   <span className="text-token-3xl">🕸️</span>
                 </div>
-                <h3 className="text-token-2xl font-bold token-text-primary mb-token-4">Dynamic Word Webs</h3>
-                <p className="token-text-secondary leading-relaxed">
+                <h3 className="text-token-heading-lg font-token-bold text-token-text mb-token-4">Dynamic Word Webs</h3>
+                <p className="text-token-text-secondary leading-relaxed">
                   Words connect based on meaning and usage — building a personal map of your fluency.
                 </p>
               </Card>
@@ -125,8 +127,8 @@ export default function WordMazePublicPage() {
                 <div className="w-token-20 h-token-20 bg-gradient-to-br from-token-success to-token-success-light rounded-token-2xl flex items-center justify-center mx-auto mb-token-6 shadow-token-lg">
                   <span className="text-token-3xl">📚</span>
                 </div>
-                <h3 className="text-token-2xl font-bold token-text-primary mb-token-4">Real-Source Vocabulary</h3>
-                <p className="token-text-secondary leading-relaxed">
+                <h3 className="text-token-heading-lg font-token-bold text-token-text mb-token-4">Real-Source Vocabulary</h3>
+                <p className="text-token-text-secondary leading-relaxed">
                   Your Maze grows from real conversations, lessons, and the words you choose to learn.
                 </p>
               </Card>
@@ -136,8 +138,8 @@ export default function WordMazePublicPage() {
                 <div className="w-token-20 h-token-20 bg-gradient-to-br from-token-secondary to-token-secondary-light rounded-token-2xl flex items-center justify-center mx-auto mb-token-6 shadow-token-lg">
                   <span className="text-token-3xl">🧠</span>
                 </div>
-                <h3 className="text-token-2xl font-bold token-text-primary mb-token-4">Smart Practice & Hints</h3>
-                <p className="token-text-secondary leading-relaxed">
+                <h3 className="text-token-heading-lg font-token-bold text-token-text mb-token-4">Smart Practice & Hints</h3>
+                <p className="text-token-text-secondary leading-relaxed">
                   Get timely quizzes and gentle nudges to reinforce tricky words.
                 </p>
               </Card>
@@ -147,8 +149,8 @@ export default function WordMazePublicPage() {
                 <div className="w-token-20 h-token-20 bg-gradient-to-br from-token-accent to-token-accent-light rounded-token-2xl flex items-center justify-center mx-auto mb-token-6 shadow-token-lg">
                   <span className="text-token-3xl">🎯</span>
                 </div>
-                <h3 className="text-token-2xl font-bold token-text-primary mb-token-4">Purposeful Progression</h3>
-                <p className="token-text-secondary leading-relaxed">
+                <h3 className="text-token-heading-lg font-token-bold text-token-text mb-token-4">Purposeful Progression</h3>
+                <p className="text-token-text-secondary leading-relaxed">
                   Each word you unlock fuels your next lesson, topic, or conversation.
                 </p>
               </Card>
@@ -158,8 +160,8 @@ export default function WordMazePublicPage() {
                 <div className="w-token-20 h-token-20 bg-gradient-to-br from-token-primary-light to-token-secondary-light rounded-token-2xl flex items-center justify-center mx-auto mb-token-6 shadow-token-lg">
                   <span className="text-token-3xl">👥</span>
                 </div>
-                <h3 className="text-token-2xl font-bold token-text-primary mb-token-4">Powered by Community</h3>
-                <p className="token-text-secondary leading-relaxed">
+                <h3 className="text-token-heading-lg font-token-bold text-token-text mb-token-4">Powered by Community</h3>
+                <p className="text-token-text-secondary leading-relaxed">
                   See trending words, explore shared Mazes, and become a Maze Builder yourself.
                 </p>
               </Card>
@@ -169,8 +171,8 @@ export default function WordMazePublicPage() {
                 <div className="w-token-20 h-token-20 bg-gradient-to-br from-token-accent-light to-token-primary rounded-token-2xl flex items-center justify-center mx-auto mb-token-6 shadow-token-lg">
                   <span className="text-token-3xl">🚀</span>
                 </div>
-                <h3 className="text-token-2xl font-bold token-text-primary mb-token-4">AI-Powered Insights</h3>
-                <p className="token-text-secondary leading-relaxed">
+                <h3 className="text-token-heading-lg font-token-bold text-token-text mb-token-4">AI-Powered Insights</h3>
+                <p className="text-token-text-secondary leading-relaxed">
                   Advanced AI analyzes your learning patterns to optimize your vocabulary journey.
                 </p>
               </Card>
@@ -178,17 +180,15 @@ export default function WordMazePublicPage() {
           </div>
         </div>
 
-        <WordToMazeAnimation />
-
         {/* Testimonial Section */}
         <div className="py-token-20 bg-gradient-to-r from-token-primary to-token-secondary">
-          <div className="container-token-lg mx-auto text-center px-token-4 sm:px-token-6 lg:px-token-8">
+          <div className="max-w-7xl mx-auto text-center px-4 sm:px-6 lg:px-8">
             <div className="bg-token-text-inverse/10 backdrop-blur-sm rounded-token-3xl p-token-12 border border-token-text-inverse/20 shadow-token-xl">
               <div className="text-token-6xl mb-token-6">💬</div>
-              <blockquote className="text-token-2xl md:text-token-3xl font-medium token-text-inverse mb-token-6 leading-relaxed">
+              <blockquote className="text-token-heading-xl md:text-token-heading-2xl font-token-medium text-token-text-inverse mb-token-6 leading-relaxed">
                 "Word Maze makes learning new vocabulary actually fun. I finally remember the words I used to forget!"
               </blockquote>
-              <cite className="text-token-xl token-text-inverse/80 font-semibold">
+              <cite className="text-token-body-xl text-token-text-inverse/80 font-token-semibold">
                 — Lina, Intermediate English Learner
               </cite>
             </div>
@@ -197,8 +197,8 @@ export default function WordMazePublicPage() {
 
         {/* Final CTA Section */}
         <div className="py-token-20 bg-gradient-to-br from-token-surface-dark to-token-surface-darker">
-          <div className="container-token-lg mx-auto text-center px-token-4 sm:px-token-6 lg:px-token-8">
-            <h2 className="text-token-4xl md:text-token-5xl font-bold mb-token-6">
+          <div className="max-w-7xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 className="text-token-display-lg md:text-token-display-xl font-token-bold mb-token-6">
               <span className="block text-token-primary">
                 Ready to make words stick —
               </span>
@@ -206,12 +206,13 @@ export default function WordMazePublicPage() {
                 and shape your next learning journey?
               </span>
             </h2>
-            <p className="text-token-xl token-text-inverse/70 mb-token-10 max-w-token-2xl mx-auto leading-relaxed">
+            <p className="text-token-body-xl text-token-text-inverse/70 mb-token-10 max-w-token-2xl mx-auto leading-relaxed">
               Join thousands of learners who are already exploring their personalized word mazes.
             </p>
             <Button 
+              variant="primary"
+              size="lg"
               onClick={() => router.push('/signup')}
-              className="btn-token-primary bg-gradient-to-r from-token-primary to-token-secondary hover:from-token-primary-dark hover:to-token-secondary-dark text-token-text-inverse px-token-12 py-token-4 text-token-xl font-semibold rounded-token-full shadow-token-lg hover:shadow-token-xl transform hover:scale-token-105 transition-token-normal"
             >
               → Start Exploring Your Maze Today
             </Button>

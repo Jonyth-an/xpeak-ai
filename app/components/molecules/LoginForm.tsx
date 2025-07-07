@@ -231,19 +231,19 @@ export default function LoginForm({
   };
 
   return (
-    <Card className="max-w-md mx-auto rounded-token-lg">
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <Card className="max-w-md mx-auto rounded-token-lg shadow-token-lg">
+      <form onSubmit={handleSubmit} className="space-y-token-lg">
         {/* Google Login Button */}
         <Button
           type="button"
           variant="outline"
-          className="w-full flex items-center justify-center gap-2"
+          className="w-full flex items-center justify-center gap-token-sm"
           onClick={handleGoogleLogin}
           disabled={isGoogleLoading || isLoading}
         >
           {isGoogleLoading ? (
             <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-text-muted mr-2"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-token-text-muted mr-token-sm"></div>
               Signing in with Google...
             </div>
           ) : (
@@ -252,7 +252,7 @@ export default function LoginForm({
                 width="20"
                 height="20"
                 viewBox="0 0 48 48"
-                className="mr-2"
+                className="mr-token-sm"
                 aria-hidden="true"
               >
                 <g>
@@ -279,13 +279,13 @@ export default function LoginForm({
           )}
         </Button>
         {/* Divider */}
-        <div className="flex items-center my-2">
+        <div className="flex items-center my-token-sm">
           <div className="flex-grow border-t border-token-border"></div>
-          <span className="mx-2 text-text-muted text-xs">or</span>
+          <span className="mx-token-sm text-token-text-muted text-token-xs">or</span>
           <div className="flex-grow border-t border-token-border"></div>
         </div>
         {error && (
-          <div className="bg-token-error-surface border border-token-error text-token-error px-4 py-3 rounded-lg text-sm">
+          <div className="bg-token-error-surface border border-token-error text-token-error px-token-md py-token-md rounded-token-lg text-token-sm">
             {error}
           </div>
         )}
@@ -293,7 +293,7 @@ export default function LoginForm({
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-text-secondary"
+            className="block text-token-sm font-token-medium text-token-text-secondary mb-token-xs"
           >
             Email
           </label>
@@ -307,10 +307,10 @@ export default function LoginForm({
           />
         </div>
 
-        <div>
+        <div className="mb-token-lg">
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-text-secondary"
+            className="block text-token-sm font-token-medium text-token-text-secondary mb-token-xs"
           >
             Password
           </label>
@@ -332,7 +332,7 @@ export default function LoginForm({
         >
           {isLoading ? (
             <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-token-sm"></div>
               Signing In...
             </div>
           ) : (
@@ -342,18 +342,18 @@ export default function LoginForm({
 
         {/* Unverified email actions */}
         {unverifiedEmail && (
-          <div className="bg-token-warning-surface border border-token-warning rounded-lg p-4 space-y-3">
-            <Text variant="small" className="text-token-warning font-medium">
+          <div className="bg-token-warning-surface border border-token-warning rounded-token-lg p-token-md space-y-token-md">
+            <Text variant="small" className="text-token-warning font-token-medium">
               Email verification required
             </Text>
 
             {getRateLimitMessage() && (
-              <div className="bg-token-warning-surface-light border border-token-warning text-token-warning px-3 py-2 rounded text-sm">
+              <div className="bg-token-warning-surface-light border border-token-warning text-token-warning px-token-md py-token-sm rounded-token-lg text-token-sm">
                 {getRateLimitMessage()}
               </div>
             )}
 
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-token-sm">
               <Button
                 variant="secondary"
                 size="sm"
@@ -375,10 +375,10 @@ export default function LoginForm({
           </div>
         )}
 
-        <div className="text-center mt-2">
+        <div className="text-center mt-token-sm">
           <a
             href="/password-reset"
-            className="text-sm text-text-secondary hover:text-token-primary underline transition-colors"
+            className="text-token-sm text-token-text-secondary hover:text-token-primary underline transition-colors"
           >
             Forgot your password?
           </a>

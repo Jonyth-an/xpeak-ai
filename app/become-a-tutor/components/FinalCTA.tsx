@@ -12,14 +12,14 @@ const avatars = [
 
 export default function FinalCTA() {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-token-primary via-token-accent to-token-secondary text-center">
-      <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
+    <section className="py-token-20 px-token-4 sm:px-token-6 lg:px-token-8 bg-gradient-to-r from-token-surface-accent-light via-token-surface-accent to-token-surface-accent-dark/60 text-center">
+      <h2 className="text-token-3xl md:text-token-4xl font-extrabold token-text-primary mb-token-4">
         Join a Global Community of Coaches
       </h2>
-      <p className="text-lg text-white mb-10">
+      <p className="text-token-lg token-text-secondary mb-token-10">
         Meet fellow language lovers. Share knowledge. Grow together.
       </p>
-      <div className="flex justify-center gap-8 mb-10">
+      <div className="flex justify-center gap-token-8 mb-token-10">
         {avatars.map((src, i) => (
           <img
             key={i}
@@ -30,13 +30,11 @@ export default function FinalCTA() {
         ))}
       </div>
       <Button
-        asChild
-        variant="secondary"
+        variant="primary"
         size="lg"
+        href="/become-a-tutor"
       >
-        <a href="/become-a-tutor">
-          Become a Tutor
-        </a>
+        Become a Tutor
       </Button>
     </section>
   );

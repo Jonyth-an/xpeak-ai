@@ -29,31 +29,31 @@ const animationSteps: AnimationStep[] = [
     id: 1,
     title: "Word Unlocked",
     caption: 'You learn "serendipity."',
-    icon: <Puzzle className="w-6 h-6" />, color: "from-token-primary to-token-accent", position: calculatePosition(0),
+    icon: <Puzzle className="w-6 h-6" />, color: "from-[#43cea2] to-[#185a9d]", position: calculatePosition(0),
   },
   {
     id: 2,
     title: "Maze Connection",
     caption: 'Sagea links it to "coincidence" and "chance."',
-    icon: <Link className="w-6 h-6" />, color: "from-token-accent to-token-secondary", position: calculatePosition(72),
+    icon: <Link className="w-6 h-6" />, color: "from-[#43cea2] to-[#185a9d]", position: calculatePosition(72),
   },
   {
     id: 3,
     title: "Spark Ignition",
     caption: "You're ready for a new Topic Spark.",
-    icon: <Sparkles className="w-6 h-6" />, color: "from-token-secondary to-token-primary-light", position: calculatePosition(144),
+    icon: <Sparkles className="w-6 h-6" />, color: "from-[#f7971e] to-[#ffd200]", position: calculatePosition(144),
   },
   {
     id: 4,
     title: "Trek Formed",
     caption: "Sagea plots your personalized Trek.",
-    icon: <Map className="w-6 h-6" />, color: "from-token-accent-dark to-token-accent", position: calculatePosition(216),
+    icon: <Map className="w-6 h-6" />, color: "from-[#00c6ff] to-[#0072ff]", position: calculatePosition(216),
   },
   {
     id: 5,
     title: "Tutor Touchpoint",
     caption: "Your tutor jumps in with tailored guidance.",
-    icon: <GraduationCap className="w-6 h-6" />, color: "from-token-primary-dark to-token-primary", position: calculatePosition(288),
+    icon: <GraduationCap className="w-6 h-6" />, color: "from-[#f953c6] to-[#b91d73]", position: calculatePosition(288),
   },
 ];
 
@@ -98,7 +98,7 @@ export default function SageaAnimation() {
         {/* Central Sagea */}
         <div className="absolute" style={{ left: "255px", top: "170px", transform: "translate(-50%, -50%)" }}>
           <motion.div
-            className="w-20 h-20 bg-gradient-to-r from-token-primary to-token-accent rounded-full shadow-lg border-4 border-token-surface flex items-center justify-center relative z-20"
+            className="w-20 h-20 bg-gradient-to-r from-[#ff7e5f] to-[#feb47b] rounded-full shadow-lg border-4 border-token-surface flex items-center justify-center relative z-20"
             animate={{ scale: [1, 1.1, 1], boxShadow: ["0 0 20px var(--color-primary)", "0 0 40px var(--color-accent)", "0 0 20px var(--color-primary)"] }}
             transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
           >

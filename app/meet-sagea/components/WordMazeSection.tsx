@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { Button } from '@/app/components/ui/Button';
 
 export default function WordMazeSection() {
   return (
@@ -21,11 +22,11 @@ export default function WordMazeSection() {
           <p className="text-token-lg text-token-text-secondary mb-token-6 max-w-xl">
             Sagea tracks your vocabulary, recommends reviews, and links concepts — fueling your evolving Word Maze.
           </p>
-          <Link href="/word-maze" legacyBehavior>
-            <a className="inline-flex items-center bg-gradient-to-r from-token-primary to-token-secondary text-white font-token-bold py-token-4 px-token-6 rounded-token-full text-token-lg shadow-token-lg hover:from-token-primary-dark hover:to-token-secondary-dark transition">
+          <Link href="/word-maze">
+            <Button variant="feature" feature="word-maze" size="lg">
               Explore Word Maze
               <span className="ml-token-2 text-token-2xl">→</span>
-            </a>
+            </Button>
           </Link>
         </div>
         {/* Right: Word Maze visual (placeholder SVG) */}

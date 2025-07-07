@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Map } from 'lucide-react';
-import { Button } from '@/app/components/ui';
+import { Button } from '@/app/components/ui/Button';
 
 export default function LearningTreksSection() {
   return (
@@ -47,8 +47,9 @@ export default function LearningTreksSection() {
             </div>
 
             <Button
+              variant="feature"
+              feature="learning-treks"
               size="lg"
-              className="bg-gradient-to-r from-token-accent to-token-accent-light hover:from-token-accent-dark hover:to-token-accent text-white px-token-8 py-token-3 rounded-token-full text-token-lg font-token-semibold shadow-token-lg"
             >
               See Your Trek Map
               <Map className="ml-token-2 w-token-5 h-token-5" />

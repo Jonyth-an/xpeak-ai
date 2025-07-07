@@ -63,23 +63,23 @@ export default function PasswordResetForm({ onSubmit, onSuccess, onError }: Pass
   if (success) {
     return (
       <Card className="max-w-md mx-auto rounded-token-lg">
-        <div className="text-center space-y-4">
+        <div className="text-center space-y-token-lg">
           <div className="w-12 h-12 bg-token-success-surface rounded-full flex items-center justify-center mx-auto">
             <svg className="w-6 h-6 text-token-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
           <div>
-            <h3 className="text-lg font-medium text-text mb-2">Check Your Email</h3>
-            <p className="text-sm text-text-secondary">
+            <h3 className="text-token-lg font-token-medium text-token-text mb-token-sm">Check Your Email</h3>
+            <p className="text-token-sm text-token-text-secondary">
               We've sent a password reset link to your email address. 
               Click the link in the email to reset your password.
             </p>
           </div>
-          <div className="pt-4">
+          <div className="pt-token-lg">
             <a 
               href="/login" 
-              className="text-sm text-token-primary hover:text-token-primary-dark font-medium"
+              className="text-token-sm text-token-primary hover:text-token-primary-dark font-token-semibold transition-colors"
             >
               Back to Login
             </a>
@@ -91,16 +91,16 @@ export default function PasswordResetForm({ onSubmit, onSuccess, onError }: Pass
 
   return (
     <Card className="max-w-md mx-auto rounded-token-lg">
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-token-lg">
         {error && (
-          <div className="bg-token-error-surface border border-token-error text-token-error px-4 py-3 rounded-lg text-sm">
+          <div className="bg-token-error-surface border border-token-error text-token-error px-token-md py-token-sm rounded-token-lg text-token-sm">
             {error}
           </div>
         )}
         
         {/* Email Address */}
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-text-secondary">
+        <div className="mb-token-lg">
+          <label htmlFor="email" className="block text-token-sm font-token-medium text-token-text-secondary mb-token-xs">
             Email Address
           </label>
           <Input
@@ -122,7 +122,7 @@ export default function PasswordResetForm({ onSubmit, onSuccess, onError }: Pass
         >
           {isLoading ? (
             <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-token-sm"></div>
               Sending...
             </div>
           ) : (
@@ -133,7 +133,7 @@ export default function PasswordResetForm({ onSubmit, onSuccess, onError }: Pass
         <div className="text-center">
           <a 
             href="/login" 
-            className="text-sm text-text-secondary hover:text-token-primary underline transition-colors"
+            className="text-token-sm text-token-text-secondary hover:text-token-primary underline transition-colors"
           >
             Back to Login
           </a>

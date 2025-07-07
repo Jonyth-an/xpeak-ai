@@ -2,8 +2,8 @@ import React from 'react';
 
 export default function PricingHeroSection() {
   return (
-    <section className="bg-gradient-to-r from-token-surface-subtle to-token-surface-accent py-token-20 px-token-4 sm:px-token-6 lg:px-token-8">
-      <div className="container-token-lg mx-auto text-center">
+    <section className="bg-gradient-to-r from-token-surface-subtle to-token-surface-accent py-token-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h1 className="text-token-4xl md:text-token-5xl font-extrabold token-text-primary leading-tight mb-token-6">
           Start Your Language Journey,
           <br />

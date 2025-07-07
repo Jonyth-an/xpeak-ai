@@ -39,7 +39,7 @@ export default function TutorValueCardsSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-token-8">
           <h2 className="text-token-display-lg md:text-token-display-xl font-token-bold text-token-text mb-token-4">
-            💡 Feature Highlights
+            💡 How Sagea Supports You Every Step of the Way
           </h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-token-6">

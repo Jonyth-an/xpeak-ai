@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { Button } from '@/app/components/ui/Button';
 
 export default function XpeakIntelligenceSection() {
   return (
@@ -20,11 +21,11 @@ export default function XpeakIntelligenceSection() {
           Xpeak AI is the adaptive brain that powers Sagea — generating Sparks, managing Treks, and weaving together your learning across all formats.
         </p>
         <div className="flex justify-center mt-token-6">
-          <Link href="/xpeakai" legacyBehavior>
-            <a className="inline-flex items-center border-token-2 border-token-primary-200 rounded-token-full px-token-8 py-token-4 text-token-lg font-token-semibold text-token-text hover:bg-token-primary-50 transition-shadow shadow-token-md">
+          <Link href="/xpeakai">
+            <Button variant="secondary" size="lg">
               Learn About Xpeak AI
               <span className="ml-token-2 text-token-xl">→</span>
-            </a>
+            </Button>
           </Link>
         </div>
       </div>

@@ -292,7 +292,7 @@ function PlanTiersSectionInner() {
   if (loading && user && session) {
     return (
       <section className="py-token-20 bg-token-surface-subtle">
-        <div className="container-token-7xl mx-auto px-token-4 sm:px-token-6 lg:px-token-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-token-12 w-token-12 border-b-token-2 border-token-primary mx-auto"></div>
             <p className="mt-token-4 token-text-secondary">Loading your current plan...</p>
@@ -304,16 +304,13 @@ function PlanTiersSectionInner() {
 
   return (
     <section className="py-token-20 bg-token-surface-subtle">
-      <div className="container-token-7xl mx-auto px-token-4 sm:px-token-6 lg:px-token-8">
-        <div className="text-center mb-token-16">
-          <h2 className="text-token-4xl font-bold token-text-primary mb-token-6">
-            {isUpgradeDowngrade ? 'Change Your Plan' : 'Choose Your Plan'}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-token-8">
+          <h2 className="text-token-4xl font-bold token-text-primary mb-token-2">
+            Choose Your Plan
           </h2>
           <p className="text-token-lg token-text-secondary max-w-token-2xl mx-auto leading-relaxed">
-            {isUpgradeDowngrade 
-              ? `You're currently on the ${currentPlan ? currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1) : ''} plan (${currentBillingCycle} billing). Choose a new plan and billing cycle.`
-              : 'Choose the perfect plan to start your language adventure with Xpeak AI. Upgrade, downgrade, or cancel anytime.'
-            }
+          Start Your Language adventure with Xpeak AI. Upgrade, downgrade, or cancel anytime.
           </p>
         </div>
 

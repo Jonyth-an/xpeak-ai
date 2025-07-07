@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { Button } from '@/app/components/ui/Button';
 
 export default function FinalCTASection() {
   return (
@@ -12,10 +13,10 @@ export default function FinalCTASection() {
         "Sagea will be with you — every word, every spark, every step."
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-token-4 mt-token-6">
-          <Link href="/signup" legacyBehavior>
-            <a className="bg-token-surface text-token-primary font-token-semibold py-token-3 px-token-6 rounded-token-lg hover:bg-token-surface-subtle shadow-token-md transition-colors text-center">
+          <Link href="/signup">
+            <Button variant="primary" size="lg" className="bg-white text-[var(--color-primary)] hover:bg-[var(--color-gray-50)]">
               → Start Learning with Sagea
-            </a>
+            </Button>
           </Link>
         </div>
       </div>

@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Users, Brain, Sparkles, Puzzle, GraduationCap } from 'lucide-react';
-import { Button } from '@/app/components/ui';
+import { Button } from '@/app/components/ui/Button';
 
 export default function TutorsCrewSection() {
   return (
@@ -136,8 +136,9 @@ export default function TutorsCrewSection() {
               </div>
 
               <Button
+                variant="feature"
+                feature="tutors-crew"
                 size="lg"
-                className="bg-gradient-to-r from-token-primary to-token-secondary hover:from-token-primary-dark hover:to-token-secondary-dark text-white px-token-8 py-token-3 rounded-token-full text-token-lg font-token-semibold shadow-token-lg"
               >
                 Meet Your Crew
                 <Users className="ml-token-2 w-token-5 h-token-5" />

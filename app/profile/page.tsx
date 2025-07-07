@@ -14,6 +14,8 @@ export default function ProfilePage() {
   const { user } = useAuth();
   const [avatarUpdated, setAvatarUpdated] = useState(false);
 
+  const hasProfilePhoto = !!user?.user_metadata?.avatar_url;
+
   const handleAvatarUpdate = (avatarUrl: string) => {
     setAvatarUpdated(true);
     // Reset the flag after a short delay
@@ -41,15 +43,16 @@ export default function ProfilePage() {
                   <div className="space-y-8">
                     {/* Avatar Section */}
                     <Card className="p-6">
-                      <div className="text-center mb-6">
-                        <Text variant="h3" as="h3" className="mb-2">
-                          Profile Photo
-                        </Text>
-                        <Text variant="body" className="text-text-secondary">
-                          Upload a photo to personalize your profile
-                        </Text>
-                      </div>
-                      
+                      {!hasProfilePhoto && (
+                        <div className="text-center mb-6">
+                          <Text variant="h3" as="h3" className="mb-2">
+                            Profile Photo
+                          </Text>
+                          <Text variant="body" className="text-text-secondary">
+                            Upload a photo to personalize your profile
+                          </Text>
+                        </div>
+                      )}
                       <AvatarUpload 
                         onAvatarUpdate={handleAvatarUpdate}
                         className="max-w-md mx-auto"

@@ -16,49 +16,39 @@ const cards = [
     subtitle: <><span className="text-lg">🔗</span> <span className="font-bold">Add a Website Link</span></>,
     desc: 'Paste any URL — we\'ll build a speaking session around it.',
     variant: 'secondary' as const,
-    buttonText: 'Paste Link',
+    buttonText: 'Add Link',
   },
   {
-    icon: <span className="text-4xl">🎤</span>,
-    title: 'Speak About Your Day',
-    subtitle: <><span className="text-lg">🎤</span> <span className="font-bold">Speak About Your Day</span></>,
-    desc: 'Use your voice or type it out. We\'ll help you express it naturally.',
-    variant: 'secondary' as const,
-    buttonText: 'Start Recording',
-  },
-  {
-    icon: <span className="text-4xl">✏️</span>,
+    icon: <span className="text-4xl">✍️</span>,
     title: 'Write a Prompt',
-    subtitle: <><span className="text-lg">✏️</span> <span className="font-bold">Write a Prompt</span></>,
-    desc: 'Want to talk about a news story or hobby? Type and go.',
-    variant: 'accent' as const,
+    subtitle: <><span className="text-lg">✍️</span> <span className="font-bold">Write a Prompt</span></>,
+    desc: 'Describe your dream lesson, and we\'ll make it real.',
+    variant: 'feature' as const,
     buttonText: 'Write Prompt',
   },
 ];
 
 export default function TopicGeneratorSection() {
   return (
-    <section className="bg-gradient-to-b from-[#eaf2f7] to-[#f6fafd] py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto text-center">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <span className="text-3xl md:text-4xl">🎯</span>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-[#14213d]">Design Your Perfect Lesson Topic — Powered by AI</h2>
-        </div>
-        <p className="text-lg text-[#22304a] mb-12 max-w-2xl mx-auto">
-          Start with a real moment, a curiosity, or your own voice. Xpeak will build a custom lesson around it.
+    <section className="py-token-16 px-token-4 bg-token-surface-accent-light">
+      <div className="max-w-5xl mx-auto">
+        <h2 className="text-token-display-lg font-token-bold text-token-primary mb-token-6 text-center">
+          🚀 Generate a Topic Your Way
+        </h2>
+        <p className="text-token-body-lg text-token-text-secondary mb-token-12 text-center">
+          Choose your favorite way to spark a new lesson. Upload, link, or write — Sagea adapts to you.
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-token-8">
           {cards.map((card, idx) => (
-            <Card
-              key={idx}
-              variant="elevated"
-              padding="lg"
-              className="flex flex-col items-center text-center min-h-[320px]"
-            >
-              <div className="mb-4">{card.icon}</div>
-              <div className="mb-2 text-lg font-bold text-[#14213d] flex items-center justify-center gap-2">{card.subtitle}</div>
-              <div className="text-[#22304a] text-base mb-4">{card.desc}</div>
-              <Button variant={card.variant} className="w-full mt-4">
+            <Card key={idx} className="flex flex-col items-center p-token-8 rounded-token-xl shadow-token-md bg-white">
+              <div className="mb-token-4">{card.icon}</div>
+              <h3 className="text-token-heading-lg font-token-semibold text-token-primary mb-token-2 text-center">
+                {card.title}
+              </h3>
+              <p className="text-token-body-lg text-token-text-secondary mb-token-6 text-center">
+                {card.desc}
+              </p>
+              <Button variant={card.variant} size="md" className="w-full">
                 {card.buttonText}
               </Button>
             </Card>

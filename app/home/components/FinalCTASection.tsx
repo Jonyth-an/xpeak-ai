@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/app/components/ui/Button';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
@@ -21,16 +21,14 @@ export default function FinalCTASection() {
           <p className="text-token-body-xl md:text-token-body-lg text-token-secondary mb-token-12 max-w-3xl mx-auto">
             Join Xpeak AI and unlock a universe of words, ideas, and connections. Start your journey today and see how far you can go.
           </p>
-          <Link href="/signup" passHref legacyBehavior>
+          <Link href="/signup">
             <Button
-              asChild
-              className="w-fit mx-auto bg-token-primary bg-gradient-to-r from-token-primary to-token-primary-dark text-token-inverse shadow-token-xl px-token-8 py-token-6 rounded-token-full text-token-body-xl font-token-bold transition-token-base hover:shadow-token-2xl hover:from-token-primary-dark hover:to-token-primary group"
+              variant="primary"
               size="lg"
+              className="w-fit mx-auto px-token-8 py-token-6 text-token-body-xl font-token-bold group"
             >
-              <a className="flex items-center justify-center gap-token-3">
-                Get Started
-                <ArrowRight className="w-6 h-6 ml-token-3 group-hover:translate-x-1 transition-transform" />
-              </a>
+              Get Started
+              <ArrowRight className="w-6 h-6 ml-token-3 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
         </motion.div>

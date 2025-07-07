@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@/app/components/ui';
+import { Button } from '@/app/components/ui/Button';
 
 export default function TutorHeroSection() {
   return (

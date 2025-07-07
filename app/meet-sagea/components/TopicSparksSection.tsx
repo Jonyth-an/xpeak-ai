@@ -2,8 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '@/app/components/ui';
+import { Button } from '@/app/components/ui/Button';
 
 export default function TopicSparksSection() {
   return (
@@ -132,8 +131,9 @@ export default function TopicSparksSection() {
             </p>
 
             <Button
+              variant="feature"
+              feature="topic-sparks"
               size="lg"
-              className="bg-gradient-to-r from-token-primary to-token-secondary hover:from-token-primary-dark hover:to-token-secondary-dark text-white px-token-6 py-token-3 rounded-token-full text-token-lg font-token-semibold shadow-token-lg"
             >
               Discover Sparks
               <Sparkles className="ml-token-2 w-token-5 h-token-5" />
