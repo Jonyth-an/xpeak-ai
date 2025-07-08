@@ -9,7 +9,20 @@ function CheckoutSuccessInner() {
   const sessionId = searchParams.get('session_id');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [subscriptionDetails, setSubscriptionDetails] = useState<any>(null);
+  const [subscriptionDetails, setSubscriptionDetails] = useState<{
+    subscription?: {
+      items?: {
+        data?: Array<{
+          price?: {
+            unit_amount?: number;
+          };
+        }>;
+      };
+      metadata?: {
+        change_type?: string;
+      };
+    };
+  } | null>(null);
 
   useEffect(() => {
     if (!sessionId) {

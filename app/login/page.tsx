@@ -34,7 +34,7 @@ export default function LoginPage() {
     console.log('login attempt:', data);
   };
 
-  const handleLoginSuccess = (user: any) => {
+  const handleLoginSuccess = (user: { id: string; email: string; [key: string]: any }) => {
     console.log('login successful:', user);
     // The AuthContext will handle the state update and redirect
   };

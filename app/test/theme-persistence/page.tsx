@@ -93,19 +93,19 @@ export default function ThemePersistenceTest() {
           <div className="space-y-2">
             <button
               onClick={() => setTheme('light')}
-              className="w-full px-4 py-2 bg-token-primary text-white rounded-lg hover:bg-token-primary-hover transition-colors"
+              className="w-full px-4 py-2 bg-token-primary text-token-text-inverse rounded-lg hover:bg-token-primary-hover transition-colors"
             >
               Set Light Theme
             </button>
             <button
               onClick={() => setTheme('dark')}
-              className="w-full px-4 py-2 bg-token-primary text-white rounded-lg hover:bg-token-primary-hover transition-colors"
+              className="w-full px-4 py-2 bg-token-primary text-token-text-inverse rounded-lg hover:bg-token-primary-hover transition-colors"
             >
               Set Dark Theme
             </button>
             <button
               onClick={() => setTheme('system')}
-              className="w-full px-4 py-2 bg-token-primary text-white rounded-lg hover:bg-token-primary-hover transition-colors"
+              className="w-full px-4 py-2 bg-token-primary text-token-text-inverse rounded-lg hover:bg-token-primary-hover transition-colors"
             >
               Set System Theme
             </button>
@@ -130,19 +130,19 @@ export default function ThemePersistenceTest() {
                 };
                 setCustomTheme(testTheme);
               }}
-              className="w-full px-4 py-2 bg-token-primary text-white rounded-lg hover:bg-token-primary-hover transition-colors"
+              className="w-full px-4 py-2 bg-token-primary text-token-text-inverse rounded-lg hover:bg-token-primary-hover transition-colors"
             >
               Apply Test Theme
             </button>
             <button
               onClick={clearCustomTheme}
-              className="w-full px-4 py-2 bg-token-error text-white rounded-lg hover:bg-token-error-hover transition-colors"
+              className="w-full px-4 py-2 bg-token-error text-token-text-inverse rounded-lg hover:bg-token-error-hover transition-colors"
             >
               Clear Custom Theme
             </button>
             <button
               onClick={handleClearAll}
-              className="w-full px-4 py-2 bg-token-warning text-white rounded-lg hover:bg-token-warning-hover transition-colors"
+              className="w-full px-4 py-2 bg-token-warning text-token-text-inverse rounded-lg hover:bg-token-warning-hover transition-colors"
             >
               Clear All Themes
             </button>
@@ -156,7 +156,7 @@ export default function ThemePersistenceTest() {
           <h2 className="text-xl font-semibold mb-4">Export Theme Data</h2>
           <button
             onClick={handleExport}
-            className="w-full px-4 py-2 bg-token-primary text-white rounded-lg hover:bg-token-primary-hover transition-colors mb-4"
+            className="w-full px-4 py-2 bg-token-primary text-token-text-inverse rounded-lg hover:bg-token-primary-hover transition-colors mb-4"
           >
             Export Theme Data
           </button>
@@ -180,7 +180,7 @@ export default function ThemePersistenceTest() {
           <button
             onClick={handleImport}
             disabled={!exportData}
-            className="w-full px-4 py-2 bg-token-primary text-white rounded-lg hover:bg-token-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-4 py-2 bg-token-primary text-token-text-inverse rounded-lg hover:bg-token-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Import Theme Data
           </button>

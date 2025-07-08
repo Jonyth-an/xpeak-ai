@@ -5,7 +5,7 @@ import Layout from '../../components/Layout';
 import { useAuth } from '@/lib/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Card, Button, Text } from '@/app/components/ui';
+import { Card, Button } from '@/app/components/ui';
 import SparkToTrekAnimation from './SparkToTrekAnimation';
 import ConstellationSparks from './ConstellationSparks';
 

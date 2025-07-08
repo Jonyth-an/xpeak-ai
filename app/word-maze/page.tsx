@@ -4,8 +4,7 @@ import React, { useEffect, useMemo } from 'react';
 import Layout from '../../components/Layout';
 import { useAuth } from '@/lib/AuthContext';
 import { useRouter } from 'next/navigation';
-import { Card, Button, Text } from '@/app/components/ui';
-import WordToMazeAnimation from './WordToMazeAnimation';
+import { Card, Button } from '@/app/components/ui';
 
 export default function WordMazePublicPage() {
   const { user } = useAuth();

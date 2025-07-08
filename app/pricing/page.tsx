@@ -3,7 +3,6 @@
 import React, { Suspense } from 'react';
 import Layout from '../../components/Layout';
 
-import PricingHeroSection from '@/app/pricing/components/PricingHeroSection';
 import PlanTiersSection from '@/app/pricing/components/PlanTiersSection';
 import FAQSection from '@/app/pricing/components/FAQSection';
 import FinalCTASection from '@/app/pricing/components/FinalCTASection';

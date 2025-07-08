@@ -81,15 +81,15 @@ export default function WordMazeLearnPage() {
   }, [user]);
 
   // Helper function to get the primary definition
-  function getPrimaryDefinition(word: any): string {
-    if (word.definition) {
-      return word.definition;
+  function getPrimaryDefinition(word: CompleteWordData): string {
+    if (word.definitions && word.definitions.length > 0) {
+      return word.definitions[0].text;
     }
     return 'No definition available';
   }
 
   // Helper function to get mastery status (mock for now)
-  function getMasteryStatus(word: any): { status: string; color: string } {
+  function getMasteryStatus(word: CompleteWordData): { status: string; color: string } {
     // Use a stable hash of the word to generate consistent status
     const hash = word.word.split('').reduce((a: number, b: string) => {
       a = ((a << 5) - a) + b.charCodeAt(0);
@@ -98,11 +98,11 @@ export default function WordMazeLearnPage() {
     const normalized = Math.abs(hash) % 100;
     
     if (normalized > 70) {
-      return { status: 'Mastered', color: 'bg-gray-900 text-white' };
+      return { status: 'Mastered', color: 'bg-token-surface text-token-text-inverse' };
     } else if (normalized > 40) {
-      return { status: 'Learning', color: 'bg-blue-100 text-blue-700' };
+      return { status: 'Learning', color: 'bg-token-primary-surface text-token-primary' };
     } else {
-      return { status: 'Review', color: 'bg-yellow-100 text-yellow-700' };
+      return { status: 'Review', color: 'bg-token-warning-surface text-token-warning' };
     }
   }
 
@@ -172,8 +172,8 @@ export default function WordMazeLearnPage() {
         {notification && (
           <div className={`fixed top-4 right-4 z-[9999] p-4 rounded-lg shadow-xl border-2 ${
             notification.type === 'success' 
-              ? 'bg-green-500 text-white border-green-600' 
-              : 'bg-red-500 text-white border-red-600'
+              ? 'bg-token-success text-token-text-inverse border-token-success-dark' 
+              : 'bg-token-error text-token-text-inverse border-token-error-dark'
           }`}>
             <div className="flex items-center gap-2">
               <span className="font-semibold">
@@ -182,7 +182,7 @@ export default function WordMazeLearnPage() {
               <span>{notification.message}</span>
               <button 
                 onClick={clearNotification}
-                className="ml-2 text-white hover:text-gray-200"
+                className="ml-2 text-token-text-inverse hover:text-token-text-inverse/80"
               >
                 ×
               </button>
@@ -401,8 +401,8 @@ export default function WordMazeLearnPage() {
                         key={achievement.id}
                         className={`p-6 text-center transition-all duration-300 ${
                           achievement.unlocked
-                            ? 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200'
-                            : 'bg-gray-50 border-gray-200'
+                            ? 'bg-gradient-to-br from-token-warning-surface to-token-accent-surface border-token-warning'
+                            : 'bg-token-surface-subtle border-token-border'
                         }`}
                       >
                         <div className={`text-4xl mb-4 ${
@@ -418,7 +418,7 @@ export default function WordMazeLearnPage() {
                         </p>
                         {achievement.unlocked && (
                           <div className="mt-4">
-                            <Badge className="bg-green-100 text-green-800">
+                            <Badge className="bg-token-success-surface text-token-success">
                               Unlocked
                             </Badge>
                           </div>
@@ -440,7 +440,7 @@ export default function WordMazeLearnPage() {
                   size="lg"
                   onClick={startLearningSession}
                   disabled={isLoading}
-                  className="bg-blue-600 text-white hover:bg-blue-700"
+                  className="bg-token-primary text-token-text-inverse hover:bg-token-primary-hover"
                 >
                   {isLoading ? 'Loading...' : 'Start Learning Session'}
                 </Button>

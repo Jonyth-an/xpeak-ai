@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { Button } from "@/app/components/ui/Button"
 import Card from "@/app/components/ui/Card"
 import Layout from '../../components/Layout';

@@ -104,8 +104,8 @@ export default function OptimisticUIDemo() {
           {notification && (
             <div className={`mb-6 p-4 rounded-lg shadow-lg border-2 ${
               notification.type === 'success' 
-                ? 'bg-token-success text-white border-token-success-dark' 
-                : 'bg-token-error text-white border-token-error-dark'
+                ? 'bg-token-success text-token-text-inverse border-token-success-dark' 
+                : 'bg-token-error text-token-text-inverse border-token-error-dark'
             }`}>
               <div className="flex items-center gap-2">
                 <span className="font-semibold">
@@ -114,7 +114,7 @@ export default function OptimisticUIDemo() {
                 <span>{notification.message}</span>
                 <button 
                   onClick={clearNotification}
-                  className="ml-auto text-white hover:text-gray-200"
+                  className="ml-auto text-token-text-inverse hover:text-token-text-inverse/80"
                 >
                   ×
                 </button>

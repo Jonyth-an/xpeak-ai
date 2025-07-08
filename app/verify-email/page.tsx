@@ -81,9 +81,9 @@ function VerifyEmailPageInner() {
       setTimeout(() => {
         router.push('/');
       }, 3000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Verification error:', err);
-      setError(err.message || 'Failed to verify email');
+      setError(err instanceof Error ? err.message : 'Failed to verify email');
       setVerificationStatus('error');
     }
   };
@@ -146,9 +146,9 @@ function VerifyEmailPageInner() {
       // Update rate limit status
       await loadRateLimitStatus();
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Resend error:', err);
-      setError(err.message || 'Failed to resend verification email');
+      setError(err instanceof Error ? err.message : 'Failed to resend verification email');
     } finally {
       setIsResending(false);
     }

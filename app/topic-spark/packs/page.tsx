@@ -11,7 +11,7 @@ export default function PacksPage() {
         <p className="text-lg text-gray-600 mb-8 text-center max-w-xl">
           Explore curated packs around global events, holidays, and cultural themes. More packs and features coming soon!
         </p>
-        <div className="w-full max-w-2xl h-64 bg-gray-100 rounded-token-lg flex items-center justify-center text-gray-400 text-xl">
+        <div className="w-full max-w-2xl h-64 bg-token-surface-subtle rounded-token-lg flex items-center justify-center text-token-text-tertiary text-xl">
           [Topic Packs content will appear here]
         </div>
       </main>

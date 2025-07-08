@@ -58,8 +58,8 @@ function PasswordResetConfirmPageInner() {
       setSuccess(true);
       console.log('Password updated successfully');
 
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to update password';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update password';
       setError(errorMessage);
       console.error('Password update error:', err);
     } finally {

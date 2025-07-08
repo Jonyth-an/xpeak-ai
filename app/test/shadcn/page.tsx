@@ -192,11 +192,11 @@ export default function TestShadcnPage() {
           
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 bg-token-primary text-white rounded-lg">
-                <Text variant="body" className="text-white">Primary Color Token</Text>
+              <div className="p-4 bg-token-primary text-token-text-inverse rounded-lg">
+                <Text variant="body" className="text-token-text-inverse">Primary Color Token</Text>
               </div>
-              <div className="p-4 bg-token-secondary text-white rounded-lg">
-                <Text variant="body" className="text-white">Secondary Color Token</Text>
+              <div className="p-4 bg-token-secondary text-token-text-inverse rounded-lg">
+                <Text variant="body" className="text-token-text-inverse">Secondary Color Token</Text>
               </div>
               <div className="p-4 bg-accent text-black rounded-lg">
                 <Text variant="body">Accent Color Token</Text>

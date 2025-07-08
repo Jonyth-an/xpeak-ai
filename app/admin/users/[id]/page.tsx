@@ -30,8 +30,8 @@ interface User {
   created_at: string;
   email_confirmed_at: string | null;
   last_sign_in_at: string | null;
-  user_metadata: any;
-  app_metadata: any;
+  user_metadata: Record<string, unknown>;
+  app_metadata: Record<string, unknown>;
 }
 
 interface UserSubscription {

@@ -176,7 +176,7 @@ export default function SageaAnimation() {
               {/* Central Sagea */}
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <motion.div
-                  className="w-24 h-24 bg-gradient-to-r from-token-primary to-token-accent rounded-full shadow-lg border-4 border-white flex items-center justify-center relative z-20"
+                  className="w-24 h-24 bg-gradient-to-r from-token-primary to-token-accent rounded-full shadow-lg border-4 border-token-text-inverse flex items-center justify-center relative z-20"
                   animate={{
                     scale: [1, 1.1, 1],
                     boxShadow: [
@@ -190,7 +190,7 @@ export default function SageaAnimation() {
                     repeat: Number.POSITIVE_INFINITY,
                   }}
                 >
-                  <Brain className="w-8 h-8 text-white" />
+                  <Brain className="w-8 h-8 text-token-text-inverse" />
                 </motion.div>
               </div>
 

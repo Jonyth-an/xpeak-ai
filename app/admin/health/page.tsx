@@ -181,7 +181,7 @@ export default function SystemHealthPage() {
               <Text variant="body" className="text-token-error">Error: {error}</Text>
             </div>
             <Button onClick={fetchHealthData} variant="primary" className="w-full flex items-center gap-token-2" disabled={refreshing}>
-              {refreshing ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div> : <RefreshCw className="h-4 w-4" />}
+              {refreshing ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-token-text-inverse"></div> : <RefreshCw className="h-4 w-4" />}
               Retry
             </Button>
           </Card>
@@ -202,7 +202,7 @@ export default function SystemHealthPage() {
               Please try refreshing the page.
             </Text>
             <Button onClick={fetchHealthData} variant="primary" className="w-full flex items-center gap-token-2" disabled={refreshing}>
-              {refreshing ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div> : <RefreshCw className="h-4 w-4" />}
+              {refreshing ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-token-text-inverse"></div> : <RefreshCw className="h-4 w-4" />}
               Refresh
             </Button>
           </Card>

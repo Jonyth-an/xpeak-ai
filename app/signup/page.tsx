@@ -23,7 +23,7 @@ export default function SignupPage() {
     console.log('signup attempt:', data);
   };
 
-  const handleSignupSuccess = (user: any) => {
+  const handleSignupSuccess = (user: { id: string; email: string; [key: string]: any }) => {
     console.log('signup successful:', user);
     // The form component will show the success message
     // You could also redirect here if needed

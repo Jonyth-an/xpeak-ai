@@ -1073,7 +1073,7 @@ export default function ThemePickerClient() {
                 key={key}
                 className={`text-left px-4 py-2 rounded-lg font-medium transition-colors ${
                   selectedCategory === key
-                    ? "bg-token-primary text-white"
+                    ? "bg-token-primary text-token-text-inverse"
                     : "bg-token-surface border border-token-border hover:bg-token-primary/10"
                 }`}
                 onClick={() => setSelectedCategory(key)}
@@ -1096,7 +1096,7 @@ export default function ThemePickerClient() {
               <div className="text-token-text-secondary text-xs mt-1">
                 Custom Theme: <span className="font-medium text-token-text-primary">{customTheme.name}</span>
                 {customTheme.isOfficial && (
-                  <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-token-primary text-white">
+                  <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-token-primary text-token-text-inverse">
                     Official
                   </span>
                 )}
@@ -1155,7 +1155,7 @@ export default function ThemePickerClient() {
                 {/* Official Badge */}
                 {themeOption.isOfficial && (
                   <div className="absolute top-2 right-2">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-token-primary text-white">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-token-primary text-token-text-inverse">
                       Official
                     </span>
                   </div>
@@ -1192,7 +1192,7 @@ export default function ThemePickerClient() {
                       isOfficial: themeOption.isOfficial,
                       variables: themeOption.preview
                     })}
-                    className="w-full mt-2 px-4 py-2 bg-token-primary text-white rounded-md hover:bg-token-primary-hover transition-colors"
+                    className="w-full mt-2 px-4 py-2 bg-token-primary text-token-text-inverse rounded-md hover:bg-token-primary-hover transition-colors"
                   >
                     Apply Theme
                   </button>

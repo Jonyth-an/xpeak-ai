@@ -85,23 +85,23 @@ export default function WordMazeWordsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-token-surface-subtle">
       {/* Shared Notification UI */}
       {notification && (
         <div className={`fixed top-4 right-4 z-[9999] p-4 rounded-lg shadow-xl border-2 ${
           notification.type === 'success'
-            ? 'bg-green-500 text-white border-green-600'
-            : 'bg-red-500 text-white border-red-600'
+            ? 'bg-token-success text-token-text-inverse border-token-success-dark'
+            : 'bg-token-error text-token-text-inverse border-token-error-dark'
         }`}>
           <div className="flex items-center gap-2">
             <span className="font-semibold">
               {notification.type === 'success' ? '✅' : '❌'}
             </span>
             <span>{notification.message}</span>
-            <button
-              onClick={clearNotification}
-              className="ml-2 text-white hover:text-gray-200"
-            >
+                          <button
+                onClick={clearNotification}
+                className="ml-2 text-token-text-inverse hover:text-token-text-inverse/80"
+              >
               ×
             </button>
           </div>
@@ -154,7 +154,7 @@ export default function WordMazeWordsPage() {
             }
           }
           return (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="fixed inset-0 bg-token-surface bg-opacity-50 flex items-center justify-center z-50 p-4">
               <div className="w-full max-w-lg">
                 <WordCard
                   id={word.id}

@@ -17,7 +17,6 @@ import {
   Globe,
   ArrowRight,
   Mail,
-  ExternalLink,
   Clock,
   MapPin,
   Wrench,
@@ -296,7 +295,7 @@ export default function CareerPage() {
                     >
                       {role.isDream && (
                         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                          <span className="bg-token-secondary text-white px-token-3 py-token-1 rounded-full text-token-sm font-semibold flex items-center gap-token-1">
+                          <span className="bg-token-secondary text-token-text-inverse px-token-3 py-token-1 rounded-full text-token-sm font-semibold flex items-center gap-token-1">
                             <Star className="w-4 h-4" />
                             Dream Role
                           </span>
@@ -356,7 +355,7 @@ export default function CareerPage() {
                     <Card className="p-token-8 h-full hover:shadow-lg transition-all duration-300 border-2 border-token-border hover:border-token-accent/30">
                       <div className="flex items-start gap-token-6">
                         <div
-                          className={`w-16 h-16 bg-gradient-to-r ${item.color} rounded-2xl flex items-center justify-center text-white flex-shrink-0`}
+                          className={`w-16 h-16 bg-gradient-to-r ${item.color} rounded-2xl flex items-center justify-center text-token-text-inverse flex-shrink-0`}
                         >
                           {item.icon}
                         </div>
@@ -496,7 +495,7 @@ export default function CareerPage() {
                     <p className="text-token-lg token-text-secondary mb-token-4">
                       If this works, it works big. And we'll make sure it's worth your while.
                     </p>
-                    <div className="inline-flex items-center gap-token-2 bg-token-accent text-white px-token-6 py-token-3 rounded-full">
+                    <div className="inline-flex items-center gap-token-2 bg-token-accent text-token-text-inverse px-token-6 py-token-3 rounded-full">
                       <AlertTriangle className="w-5 h-5" />
                       <span className="font-bold">
                         TL;DR: No salary today. But we're building something bigger than paychecks.
@@ -535,7 +534,7 @@ export default function CareerPage() {
                   >
                     <Card className="p-token-6 hover:shadow-lg transition-all duration-300 border-2 border-token-border hover:border-token-accent/30">
                       <div className="flex items-start gap-token-4">
-                        <div className="w-12 h-12 bg-gradient-to-r from-token-primary to-token-accent rounded-lg flex items-center justify-center text-white flex-shrink-0">
+                        <div className="w-12 h-12 bg-gradient-to-r from-token-primary to-token-accent rounded-lg flex items-center justify-center text-token-text-inverse flex-shrink-0">
                           {item.icon}
                         </div>
                         <div>
@@ -572,11 +571,11 @@ export default function CareerPage() {
                 <Button
                   variant="secondary"
                   size="lg"
-                  className="px-token-8 py-token-4 rounded-full text-token-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group bg-white text-token-primary border border-token-primary hover:bg-token-primary hover:text-white"
+                  className="px-token-8 py-token-4 rounded-full text-token-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group bg-token-surface text-token-primary border border-token-primary hover:bg-token-primary hover:text-token-text-inverse"
                 >
-                  <Mail className="mr-token-3 w-6 h-6 text-token-primary group-hover:text-white transition-colors" />
-                  <span className="text-token-primary group-hover:text-white transition-colors">monster@xpeak.ai</span>
-                  <ArrowRight className="ml-token-3 w-6 h-6 group-hover:text-white text-token-primary transition-colors" />
+                  <Mail className="mr-token-3 w-6 h-6 text-token-primary group-hover:text-token-text-inverse transition-colors" />
+                  <span className="text-token-primary group-hover:text-token-text-inverse transition-colors">monster@xpeak.ai</span>
+                  <ArrowRight className="ml-token-3 w-6 h-6 group-hover:text-token-text-inverse text-token-primary transition-colors" />
                 </Button>
               </div>
               <div className="flex flex-row gap-token-4 justify-center items-center mt-token-2">
