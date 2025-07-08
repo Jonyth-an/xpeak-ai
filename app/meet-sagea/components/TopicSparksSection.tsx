@@ -5,6 +5,25 @@ import { Sparkles } from 'lucide-react';
 import { Button } from '@/app/components/ui/Button';
 
 export default function TopicSparksSection() {
+  // Predefined positions for particles to ensure consistent server/client rendering
+  const particlePositions = [
+    { left: 15.6, top: 87.0 },
+    { left: 69.9, top: 89.6 },
+    { left: 43.5, top: 35.2 },
+    { left: 57.7, top: 66.9 },
+    { left: 28.7, top: 13.6 },
+    { left: 7.4, top: 41.0 },
+    { left: 48.5, top: 40.9 },
+    { left: 36.3, top: 87.1 },
+    { left: 19.6, top: 96.9 },
+    { left: 12.7, top: 72.4 },
+    { left: 62.5, top: 47.1 },
+    { left: 79.6, top: 83.7 },
+    { left: 72.8, top: 9.9 },
+    { left: 16.4, top: 61.2 },
+    { left: 81.0, top: 80.6 },
+  ];
+
   return (
     <section className="py-token-12 bg-gradient-to-br from-token-surface-accent-light via-token-surface-accent to-token-surface-accent-dark">
       <div className="container mx-auto px-4">
@@ -64,24 +83,24 @@ export default function TopicSparksSection() {
               })}
 
               {/* Floating particles */}
-              {[...Array(15)].map((_, i) => (
+              {particlePositions.map((position, i) => (
                 <motion.div
                   key={i}
                   className="absolute w-token-2 h-token-2 bg-gradient-to-r from-token-primary/60 to-token-secondary/60 rounded-token-full opacity-60"
                   style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
+                    left: `${position.left}%`,
+                    top: `${position.top}%`,
                   }}
                   animate={{
                     y: [0, -20, 0],
-                    x: [0, Math.random() * 10 - 5, 0],
+                    x: [0, (i % 3 - 1) * 5, 0], // Deterministic x movement based on index
                     opacity: [0.3, 0.8, 0.3],
                     scale: [1, 1.3, 1],
                   }}
                   transition={{
-                    duration: 3 + Math.random() * 2,
+                    duration: 3 + (i % 3) * 0.5, // Deterministic duration based on index
                     repeat: Number.POSITIVE_INFINITY,
-                    delay: Math.random() * 2,
+                    delay: (i % 4) * 0.5, // Deterministic delay based on index
                   }}
                 />
               ))}

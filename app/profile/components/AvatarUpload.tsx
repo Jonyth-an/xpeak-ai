@@ -35,8 +35,7 @@ export default function AvatarUpload({ onAvatarUpdate, className = '', compact =
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // New: show upload area only when uploading
-  const [showUpload, setShowUpload] = useState(false);New
+  const [showUpload, setShowUpload] = useState(false);
 
   const handleFileSelect = useCallback((file: File) => {
     setError(null);

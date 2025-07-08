@@ -23,7 +23,7 @@ const calculatePosition = (angle: number, radius: number = 137.5) => {
   const centerY = 300
   const radians = (angle * Math.PI) / 180
   return {
-    x: centerX + radius * Math.sin(radians),;
+    x: centerX + radius * Math.sin(radians),
     y: centerY - radius * Math.cos(radians)
   }
 }

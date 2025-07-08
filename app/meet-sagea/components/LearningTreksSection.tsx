@@ -5,6 +5,18 @@ import { Map } from 'lucide-react';
 import { Button } from '@/app/components/ui/Button';
 
 export default function LearningTreksSection() {
+  // Predefined positions for progress indicators to ensure consistent server/client rendering
+  const progressPositions = [
+    { left: 74.1, top: 78.6 },
+    { left: 45.1, top: 20.1 },
+    { left: 39.4, top: 72.7 },
+    { left: 26.7, top: 23.1 },
+    { left: 48.8, top: 31.7 },
+    { left: 45.3, top: 37.4 },
+    { left: 31.6, top: 31.7 },
+    { left: 48.0, top: 70.6 },
+  ];
+
   return (
     <section className="py-token-12 bg-token-surface">
       <div className="container mx-auto px-4">
@@ -123,13 +135,13 @@ export default function LearningTreksSection() {
               ))}
 
               {/* Floating progress indicators */}
-              {[...Array(8)].map((_, i) => (
+              {progressPositions.map((position, i) => (
                 <motion.div
                   key={i}
                   className="absolute w-token-1.5 h-token-1.5 bg-token-accent/60 rounded-token-full"
                   style={{
-                    left: `${20 + Math.random() * 60}%`,
-                    top: `${20 + Math.random() * 60}%`,
+                    left: `${position.left}%`,
+                    top: `${position.top}%`,
                   }}
                   animate={{
                     y: [0, -15, 0],
@@ -137,9 +149,9 @@ export default function LearningTreksSection() {
                     scale: [1, 1.2, 1],
                   }}
                   transition={{
-                    duration: 2 + Math.random() * 2,
+                    duration: 2 + (i % 3) * 0.5, // Deterministic duration based on index
                     repeat: Number.POSITIVE_INFINITY,
-                    delay: Math.random() * 2,
+                    delay: (i % 4) * 0.5, // Deterministic delay based on index
                   }}
                 />
               ))}

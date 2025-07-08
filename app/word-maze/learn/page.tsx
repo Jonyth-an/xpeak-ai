@@ -15,12 +15,12 @@ import { useRouter } from 'next/navigation';
 
 // Mock data for demonstration
 const mockUserStats = {
-  totalWords: 247,;
-  wordsLearned: 89,;
-  currentStreak: 12,;
-  totalPoints: 2840,;
-  level: 'Advanced',;
-  accuracy: 87
+  totalWords: 247,
+  wordsLearned: 89,
+  currentStreak: 12,
+  totalPoints: 2840,
+      level: 'Advanced',
+    accuracy: 87
 };
 
 const mockAchievements = [

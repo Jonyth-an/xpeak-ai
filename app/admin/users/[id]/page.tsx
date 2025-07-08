@@ -9,17 +9,17 @@ import { supabase } from '@/lib/supabaseClient';
 import AdminLayout from '../../AdminLayout';
 
 const LANGUAGE_MAP: Record<string, string> = {
-  EN: 'English',;
-  ES: 'Spanish',;
-  FR: 'French',;
-  DE: 'German',;
-  ZH: 'Chinese',;
-  JA: 'Japanese',;
-  KO: 'Korean',;
-  IT: 'Italian',;
-  PT: 'Portuguese',;
-  RU: 'Russian',;
-  AR: 'Arabic',;
+  EN: 'English',
+  ES: 'Spanish',
+  FR: 'French',
+  DE: 'German',
+  ZH: 'Chinese',
+  JA: 'Japanese',
+  KO: 'Korean',
+  IT: 'Italian',
+  PT: 'Portuguese',
+  RU: 'Russian',
+  AR: 'Arabic',
   HI: 'Hindi',
   // Add more as needed
 };
@@ -326,12 +326,12 @@ function PaymentHistoryTable({ userEmail }: { userEmail: string }) {
 
   // Stripe price ID to plan name and duration mapping
   const priceToPlan: Record<string, { name: string; duration: string }> = {
-    'price_1RessSFM2iXH8TuN4U2vQz9E': { name: 'Xpeak Plus',; duration: '1 Month' },
-    'price_1Ret11FM2iXH8TuNdLCrRIxK': { name: 'Xpeak Plus',; duration: '3 Months' },
-    'price_1Ret1bFM2iXH8TuNClhnN7c2': { name: 'Xpeak Plus',; duration: '12 Months' },
-    'price_1Rest1FM2iXH8TuNKvbhbeTG': { name: 'Xpeak Pro',; duration: '1 Month' },
-    'price_1Ret29FM2iXH8TuNKl7fICBr': { name: 'Xpeak Pro',; duration: '3 Months' },
-    'price_1Ret2RFM2iXH8TuNYQIQk9BU': { name: 'Xpeak Pro',; duration: '12 Months' },
+    'price_1RessSFM2iXH8TuN4U2vQz9E': { name: 'Xpeak Plus', duration: '1 Month' },
+    'price_1Ret11FM2iXH8TuNdLCrRIxK': { name: 'Xpeak Plus', duration: '3 Months' },
+    'price_1Ret1bFM2iXH8TuNClhnN7c2': { name: 'Xpeak Plus', duration: '12 Months' },
+    'price_1Rest1FM2iXH8TuNKvbhbeTG': { name: 'Xpeak Pro', duration: '1 Month' },
+          'price_1Ret29FM2iXH8TuNKl7fICBr': { name: 'Xpeak Pro', duration: '3 Months' },
+      'price_1Ret2RFM2iXH8TuNYQIQk9BU': { name: 'Xpeak Pro', duration: '12 Months' },
   };
 
   if (loading) return <div className="text-token-secondary">Loading payment history...</div>;

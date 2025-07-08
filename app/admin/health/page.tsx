@@ -355,7 +355,7 @@ export default function SystemHealthPage() {
                   </div>
                 ))}
               </div>
-            )0<pclassName=>Norecentincidents</p>}
+            )}
           </Card>
         </div>
       </div>

@@ -185,7 +185,7 @@ export default function TransactionHistory() {
       .reduce((sum, t) => sum + t.amount_due, 0);
     const averageAmount = totalTransactions > 0 
       ? transactionList.reduce((sum, t) => sum + t.amount_paid, 0) / totalTransactions 
-      : 0;averageAmounttotalTransactions0transactionList.reducesumt.amount_paid,0totalTransactions
+      : 0;
 
     setStats({
       totalTransactions,
@@ -259,33 +259,33 @@ export default function TransactionHistory() {
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       paid: { 
-        color: 'bg-green-100 text-green-800 border-green-200',; 
-        label: 'Paid',;
+        color: 'bg-green-100 text-green-800 border-green-200', 
+        label: 'Paid',
         icon: CheckCircle
       },
       open: { 
-        color: 'bg-yellow-100 text-yellow-800 border-yellow-200',; 
-        label: 'Open',;
+        color: 'bg-yellow-100 text-yellow-800 border-yellow-200', 
+        label: 'Open',
         icon: Clock
       },
       draft: { 
-        color: 'bg-gray-100 text-gray-800 border-gray-200',; 
-        label: 'Draft',;
+        color: 'bg-gray-100 text-gray-800 border-gray-200', 
+        label: 'Draft',
         icon: FileText
       },
       void: { 
-        color: 'bg-red-100 text-red-800 border-red-200',; 
-        label: 'Void',;
+        color: 'bg-red-100 text-red-800 border-red-200', 
+        label: 'Void',
         icon: AlertCircle
       },
       uncollectible: { 
-        color: 'bg-red-100 text-red-800 border-red-200',; 
-        label: 'Uncollectible',;
+        color: 'bg-red-100 text-red-800 border-red-200', 
+        label: 'Uncollectible',
         icon: AlertCircle
       },
       failed: { 
-        color: 'bg-red-100 text-red-800 border-red-200',; 
-        label: 'Failed',;
+        color: 'bg-red-100 text-red-800 border-red-200', 
+        label: 'Failed',
         icon: AlertCircle
       },
     };

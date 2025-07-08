@@ -165,7 +165,7 @@ function VerifyEmailPageInner() {
     }
 
     if (rateLimitStatus.remaining <= 2) {
-      return `${rateLimitStatus.remaining} resend${rateLimitStatus.remaining === 1 ? '' : 's'1} remaining this hour.`;
+      return `${rateLimitStatus.remaining} resend${rateLimitStatus.remaining === 1 ? '' : 's'} remaining this hour.`;
     }
 
     return null;

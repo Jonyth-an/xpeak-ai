@@ -26,6 +26,12 @@ const testPages = [
     category: "Design System"
   },
   {
+    title: "AsChild Pattern Demo",
+    description: "Interactive showcase of the asChild pattern implementation, demonstrating flexible component rendering",
+    path: "/test/asChild-demo",
+    category: "Design System"
+  },
+  {
     title: "Optimistic UI Test",
     description: "Test optimistic UI updates and error handling",
     path: "/test/optimistic",

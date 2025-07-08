@@ -8,9 +8,9 @@ import SmartMatchFeature, { SmartMatchFeatureItem } from '@/app/components/molec
 import LanguageSelectorMenu from '@/app/components/molecules/LanguageSelectorMenu';
 
 const tutorFeatures: SmartMatchFeatureItem[] = [
-  {;
-    icon: '🔍',;
-    title: 'Recommended Coaches',;
+  {
+    icon: '🔍',
+    title: 'Recommended Coaches',
     text: 'Based on popular picks in your country or region.'
   },
   {;

@@ -6,6 +6,7 @@ import { Button, Select, Text, Card } from '@/app/components/ui';
 import LanguageSelectorMenu from '@/app/components/molecules/LanguageSelectorMenu';
 import { useAuth } from '@/lib/AuthContext';
 import { isAdminEmail } from '@/lib/adminAuth';
+import { ThemeToggle } from '@/app/components/ThemeToggle';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -50,14 +51,14 @@ export default function Header() {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-surface shadow-md' : 'bg-surface/95 backdrop-blur-sm'
+      isScrolled ? 'bg-token-surface shadow-token-md' : 'bg-token-surface/95 backdrop-blur-sm'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href={user ? "/dashboard" : "/"} className="flex items-center">
-              <Text variant="h2" as="span" className="text-primary-600">
+              <Text variant="h2" as="span" className="text-token-primary">
                 Xpeak AI
               </Text>
             </Link>
@@ -68,19 +69,19 @@ export default function Header() {
             {user ? (
               // Logged-in navigation
               <>
-                <Link href="/dashboard" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/dashboard') ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Dashboard</Link>
-                <Link href="/meet-sagea" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/meet-sagea') ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Meet Sagea</Link>
-                <Link href="/topic-spark" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/topic-spark') ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Topic Spark</Link>
-                <Link href="/word-maze" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/word-maze') ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Word Maze</Link>
-                <Link href="/pricing" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname === '/pricing' ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Pricing</Link>
+                <Link href="/dashboard" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/dashboard') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Dashboard</Link>
+                <Link href="/meet-sagea" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/meet-sagea') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Meet Sagea</Link>
+                <Link href="/topic-spark" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/topic-spark') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Topic Spark</Link>
+                <Link href="/word-maze" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/word-maze') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Word Maze</Link>
+                <Link href="/pricing" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname === '/pricing' ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Pricing</Link>
               </>
             ) : (
               // Logged-out navigation
               <>
-                <Link href="/meet-sagea" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/meet-sagea') ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Meet Sagea</Link>
-                <Link href="/topic-spark" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/topic-spark') ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Topic Spark</Link>
-                <Link href="/word-maze" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/word-maze') ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Word Maze</Link>
-                <Link href="/pricing" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname === '/pricing' ? 'bg-primary-100 text-primary-700 font-bold' : 'text-text-secondary hover:text-primary-600'}`}>Pricing</Link>
+                <Link href="/meet-sagea" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/meet-sagea') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Meet Sagea</Link>
+                <Link href="/topic-spark" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/topic-spark') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Topic Spark</Link>
+                <Link href="/word-maze" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/word-maze') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Word Maze</Link>
+                <Link href="/pricing" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname === '/pricing' ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Pricing</Link>
               </>
             )}
           </nav>
@@ -90,7 +91,7 @@ export default function Header() {
             {/* Language Selector */}
             <div className="hidden md:block">
               <LanguageSelectorMenu
-                className="h-10 px-4 text-base font-medium rounded-lg border border-border bg-surface"
+                className="h-10 px-4 text-base font-medium rounded-lg border border-token-border bg-token-surface"
                 options={[
                   { label: 'English', code: 'EN', flag: '🇺🇸' },
                   { label: 'Español', code: 'ES', flag: '🇪🇸' },
@@ -102,13 +103,18 @@ export default function Header() {
               />
             </div>
 
+            {/* Theme Toggle */}
+            <div className="hidden md:block">
+              <ThemeToggle variant="button" />
+            </div>
+
             {/* Auth Buttons */}
             <div className="flex items-center gap-x-2">
               {/* Loading state */}
               {loading ? (
                 <div className="flex items-center gap-x-2">
-                  <div className="animate-pulse bg-gray-200 h-10 w-16 rounded-lg"></div>
-                  <div className="animate-pulse bg-gray-200 h-10 w-20 rounded-lg"></div>
+                  <div className="animate-pulse bg-token-gray-200 h-10 w-16 rounded-lg"></div>
+                  <div className="animate-pulse bg-token-gray-200 h-10 w-20 rounded-lg"></div>
                 </div>
               ) : user ? (
                 // Logged in state
@@ -121,7 +127,7 @@ export default function Header() {
                           <img
                             src={user.user_metadata?.avatar_url || '/images/default-avatar.svg'}
                             alt="User avatar"
-                            className="w-8 h-8 rounded-full object-cover border-2 border-border cursor-pointer hover:ring-2 hover:ring-primary-500 transition"
+                            className="w-8 h-8 rounded-full object-cover border-2 border-token-border cursor-pointer hover:ring-2 hover:ring-token-primary transition"
                             onError={(e) => {
                               e.currentTarget.src = '/images/default-avatar.svg';
                             }}
@@ -139,14 +145,14 @@ export default function Header() {
                           <>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem asChild>
-                              <Link href="/admin/dashboard" className="text-secondary-600 font-medium">
+                              <Link href="/admin/dashboard" className="text-token-secondary font-medium">
                                 Admin Dashboard
                               </Link>
                             </DropdownMenuItem>
                           </>
                         )}
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleSignOut} disabled={signingOut} className="text-error-600">
+                        <DropdownMenuItem onClick={handleSignOut} disabled={signingOut} className="text-token-error">
                           {signingOut ? (
                             <div className="flex items-center">
                               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
@@ -174,7 +180,7 @@ export default function Header() {
             </div>
 
             {/* Mobile Menu Button */}
-            <Button variant="ghost" size="sm" className="md:hidden">
+            <Button variant="tertiary" size="sm" className="md:hidden">
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>

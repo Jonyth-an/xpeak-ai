@@ -11,13 +11,14 @@ import {
   CreditCard, 
   ChevronRight,
   Menu,
-  X
+  X,
+  Palette
 } from 'lucide-react';
 
 interface ProfileSidebarProps {
   activeTab: string;
   onTabChange?: (tabId: string) => void; // Make optional for new routing
-  userEmail?: string;MakeoptionalfornewroutinguserEmail?
+  userEmail?: string;
 }
 
 const tabs = [
@@ -41,6 +42,13 @@ const tabs = [
     icon: Settings,
     description: 'Language and timezone settings',
     href: '/profile/preferences'
+  },
+  {
+    id: 'theme',
+    label: 'Theme',
+    icon: Palette,
+    description: 'Choose your color scheme',
+    href: '/profile/theme-picker',
   },
   { 
     id: 'billing', 
