@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/app/components/ui/Button"
-import { Card } from "@/components/ui/card"
+import Card from "@/app/components/ui/Card"
 import Layout from '../../components/Layout';
 import PlanTiersSection from '../pricing/components/PlanTiersSection';
 import BuiltWithXpeakSection from './components/BuiltWithXpeakSection';

@@ -3,7 +3,7 @@ import { Home, Users, Sparkles, Puzzle, DollarSign, User } from 'lucide-react';
 
 export function DesktopNav() {
   return (
-    <nav className="hidden md:flex fixed top-0 left-0 w-full bg-white z-50 shadow-md h-16 items-center px-6">
+    <nav className="hidden md:flex fixed top-0 left-0 w-full bg-white text-black z-50 shadow-md h-16 items-center px-6">
       {/* Logo + Home */}
       <div className="flex items-center gap-3 mr-8">
         <Link href="/">
