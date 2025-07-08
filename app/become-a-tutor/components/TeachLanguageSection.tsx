@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@/app/components/ui/Button';
+import Link from 'next/link';
 
 export default function TeachLanguageSection() {
   return (
@@ -13,29 +14,15 @@ export default function TeachLanguageSection() {
           Interested in teaching Chinese or Spanish? Join our waitlist and be the first to know when those languages open.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-token-4">
-          <Button
-            variant="primary"
-            size="lg"
-            href="/become-a-tutor?lang=en"
-          >
-            Apply for English Tutor
-          </Button>
-          <Button
-            variant="secondary"
-            size="lg"
-            className="border-token-primary text-token-primary hover:bg-token-primary/10"
-            href="/become-a-tutor?lang=zh&waitlist=true"
-          >
-            Join Chinese Waitlist
-          </Button>
-          <Button
-            variant="secondary"
-            size="lg"
-            className="border-token-primary text-token-primary hover:bg-token-primary/10"
-            href="/become-a-tutor?lang=es&waitlist=true"
-          >
-            Join Spanish Waitlist
-          </Button>
+          <Link href="/become-a-tutor?lang=en" passHref legacyBehavior>
+            <Button variant="primary" size="lg">Apply for English Tutor</Button>
+          </Link>
+          <Link href="/become-a-tutor?lang=zh&waitlist=true" passHref legacyBehavior>
+            <Button variant="secondary" size="lg" className="border-token-primary text-token-primary hover:bg-token-primary/10">Join Chinese Waitlist</Button>
+          </Link>
+          <Link href="/become-a-tutor?lang=es&waitlist=true" passHref legacyBehavior>
+            <Button variant="secondary" size="lg" className="border-token-primary text-token-primary hover:bg-token-primary/10">Join Spanish Waitlist</Button>
+          </Link>
         </div>
       </div>
     </section>

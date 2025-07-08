@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { useTheme } from "@/lib/ThemeContext";
 
 // Brand colors that should always be preserved for critical elements
 const BRAND_COLORS = {
@@ -11,8 +12,18 @@ const BRAND_COLORS = {
   info: "#3b82f6",
 };
 
-// Comprehensive theme system with brand anchoring
-const themeCategories = {
+type ThemeOption = {
+  name: string;
+  isOfficial: boolean;
+  preview: Record<string, string>;
+};
+
+type ThemeCategory = {
+  name: string;
+  themes: ThemeOption[];
+};
+
+const themeCategories: Record<string, ThemeCategory> = {
   xpeakOfficial: {
     name: "Xpeak Official",
     themes: [
@@ -1027,133 +1038,170 @@ const themeCategories = {
   },
 };
 
-function applyTheme(themeVars: Record<string, string>, isOfficial: boolean) {
-  const root = document.documentElement;
-  
-  if (isOfficial) {
-    // Official themes: Apply all colors (full theming)
-    Object.entries(themeVars).forEach(([key, value]) => {
-      root.style.setProperty(key, value);
-    });
-  } else {
-    // Community themes: Apply only themeable elements, preserve brand colors for critical elements
-    Object.entries(themeVars).forEach(([key, value]) => {
-      // Skip brand-critical colors for community themes
-      if (key === "--color-primary" || key === "--color-accent" || 
-          key === "--color-success" || key === "--color-error" || 
-          key === "--color-warning" || key === "--color-info") {
-        return; // Preserve brand colors
-      }
-      root.style.setProperty(key, value);
-    });
-    
-    // Apply brand colors for critical elements
-    root.style.setProperty("--color-primary", BRAND_COLORS.primary);
-    root.style.setProperty("--color-accent", BRAND_COLORS.accent);
-    root.style.setProperty("--color-success", BRAND_COLORS.success);
-    root.style.setProperty("--color-error", BRAND_COLORS.error);
-    root.style.setProperty("--color-warning", BRAND_COLORS.warning);
-    root.style.setProperty("--color-info", BRAND_COLORS.info);
-  }
-}
+const categoryOrder = [
+  "xpeakOfficial",
+  "nature",
+  "colorVibe",
+  "mood",
+  "minimalChic"
+];
 
 export default function ThemePickerClient() {
+  const {
+    theme,
+    setTheme,
+    customTheme,
+    setCustomTheme,
+    clearCustomTheme,
+    isSyncing,
+    lastSyncError
+  } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState("xpeakOfficial");
 
-  return (
-    <div className="max-w-6xl mx-auto py-10 px-4">
-      <h1 className="text-3xl font-bold mb-8 text-center">Theme Picker</h1>
-      
-      {/* Category Selector */}
-      <div className="flex flex-wrap justify-center gap-2 mb-8">
-        {Object.entries(themeCategories).map(([key, category]) => (
-          <button
-            key={key}
-            onClick={() => setSelectedCategory(key)}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              selectedCategory === key
-                ? "bg-token-primary text-white"
-                : "bg-token-surface border border-token-border hover:bg-token-surface-accent-light"
-            }`}
-          >
-            {category.name}
-          </button>
-        ))}
-      </div>
+  // Helper to get themes for selected category
+  const themes = themeCategories[selectedCategory]?.themes || [];
 
-      {/* Theme Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {themeCategories[selectedCategory as keyof typeof themeCategories].themes.map((theme) => (
-          <button
-            key={theme.name}
-            className="rounded-lg border border-token-border p-4 flex flex-col items-center gap-3 shadow hover:shadow-md transition bg-token-surface hover:bg-token-surface-accent-light relative"
-            onClick={() => applyTheme(theme.preview, theme.isOfficial)}
-            aria-label={`Apply ${theme.name} theme`}
-          >
-            {/* Official Badge */}
-            {theme.isOfficial && (
-              <div className="absolute top-2 right-2 z-10 bg-token-primary text-white text-xs px-2 py-1 rounded-full font-medium shadow-token-md">
-                🌟 Official
+  return (
+    <div className="flex gap-8">
+      {/* Sidebar for categories */}
+      <aside className="w-56 flex-shrink-0">
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold mb-4">Theme Categories</h2>
+          <nav className="flex flex-col gap-2">
+            {categoryOrder.map((key) => (
+              <button
+                key={key}
+                className={`text-left px-4 py-2 rounded-lg font-medium transition-colors ${
+                  selectedCategory === key
+                    ? "bg-token-primary text-white"
+                    : "bg-token-surface border border-token-border hover:bg-token-primary/10"
+                }`}
+                onClick={() => setSelectedCategory(key)}
+              >
+                {themeCategories[key]?.name}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </aside>
+
+      {/* Main content */}
+      <main className="flex-1">
+        {/* Current Theme Display */}
+        <div className="mb-6 p-4 bg-token-surface border border-token-border rounded-lg flex items-center justify-between">
+          <div>
+            <div className="text-sm text-token-text-secondary">Current Theme</div>
+            <div className="font-semibold text-token-text-primary capitalize">Base Theme: {theme}</div>
+            {customTheme && (
+              <div className="text-token-text-secondary text-xs mt-1">
+                Custom Theme: <span className="font-medium text-token-text-primary">{customTheme.name}</span>
+                {customTheme.isOfficial && (
+                  <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-token-primary text-white">
+                    Official
+                  </span>
+                )}
               </div>
             )}
+          </div>
+          {customTheme && (
+            <button
+              onClick={clearCustomTheme}
+              className="px-3 py-1 text-sm bg-token-surface-hover text-token-text-secondary hover:text-token-text-primary rounded-md transition-colors"
+            >
+              Clear Custom
+            </button>
+          )}
+        </div>
 
-            {/* Theme Preview */}
-            <div className="w-full h-20 rounded-lg mb-2 relative overflow-hidden">
-              <div
-                className="absolute inset-0 z-0"
-                style={{
-                  background: `linear-gradient(135deg, ${theme.preview["--color-primary"]}, ${theme.preview["--color-accent"]})`,
-                }}
-              />
-              <div
-                className="absolute top-2 left-2 w-8 h-6 rounded z-10"
-                style={{ background: theme.preview["--color-surface"] }}
-              />
-              <div
-                className="absolute top-2 right-2 w-6 h-6 rounded-full z-10"
-                style={{ background: theme.preview["--color-accent"] }}
-              />
+        {/* Sync Status */}
+        {(isSyncing || lastSyncError) && (
+          <div className="mb-4 bg-token-surface border border-token-border rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              {isSyncing && (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-token-primary"></div>
+                  <span className="text-sm text-token-text-secondary">
+                    Syncing theme preferences to database...
+                  </span>
+                </>
+              )}
+              {lastSyncError && (
+                <>
+                  <div className="h-4 w-4 rounded-full bg-token-error"></div>
+                  <span className="text-sm text-token-error">
+                    {lastSyncError}
+                  </span>
+                </>
+              )}
             </div>
+          </div>
+        )}
 
-            {/* Theme Name */}
-            <span className="font-semibold text-token-text-primary">{theme.name}</span>
-
-            {/* Color Palette Preview */}
-            <div className="flex gap-1 mt-1">
-              <span
-                className="w-4 h-4 rounded border border-token-border"
-                style={{ background: theme.preview["--color-primary"] }}
-              />
-              <span
-                className="w-4 h-4 rounded border border-token-border"
-                style={{ background: theme.preview["--color-accent"] }}
-              />
-              <span
-                className="w-4 h-4 rounded border border-token-border"
-                style={{ background: theme.preview["--color-bg"] }}
-              />
-              <span
-                className="w-4 h-4 rounded border border-token-border"
-                style={{ background: theme.preview["--color-surface"] }}
-              />
-            </div>
-
-            {/* Theme Type Indicator */}
-            <div className="text-xs text-token-text-secondary mt-1">
-              {theme.isOfficial ? "Full theming" : "Backgrounds & surfaces only"}
-            </div>
-          </button>
-        ))}
-      </div>
-
-      <div className="mt-8 text-center">
-        <p className="text-token-text-secondary mb-2">
-          🌟 Official themes apply full customization
-        </p>
-        <p className="text-token-text-secondary">
-          Other themes preserve brand colors for logos, navigation, and key actions
-        </p>
-      </div>
+        {/* Theme Grid */}
+        <div>
+          <h3 className="text-xl font-semibold text-token-text-primary mb-4">
+            {themeCategories[selectedCategory]?.name}
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {themes.map((themeOption) => (
+              <div
+                key={themeOption.name}
+                className={`relative bg-token-surface border rounded-lg p-4 flex flex-col items-center gap-2 transition hover:shadow-md ${
+                  customTheme?.name === themeOption.name && customTheme?.category === selectedCategory
+                    ? "border-token-primary ring-2 ring-token-primary/20"
+                    : "border-token-border hover:border-token-primary/50"
+                }`}
+              >
+                {/* Official Badge */}
+                {themeOption.isOfficial && (
+                  <div className="absolute top-2 right-2">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-token-primary text-white">
+                      Official
+                    </span>
+                  </div>
+                )}
+                <div className="flex flex-col items-center gap-1 w-full">
+                  <div className="flex gap-1 mb-2">
+                    <span
+                      className="w-4 h-4 rounded border border-token-border"
+                      style={{ background: themeOption.preview["--color-primary"] }}
+                    />
+                    <span
+                      className="w-4 h-4 rounded border border-token-border"
+                      style={{ background: themeOption.preview["--color-accent"] }}
+                    />
+                    <span
+                      className="w-4 h-4 rounded border border-token-border"
+                      style={{ background: themeOption.preview["--color-bg"] }}
+                    />
+                    <span
+                      className="w-4 h-4 rounded border border-token-border"
+                      style={{ background: themeOption.preview["--color-surface"] }}
+                    />
+                  </div>
+                  <div className="font-medium text-token-text-primary text-center">
+                    {themeOption.name}
+                  </div>
+                  <div className="text-xs text-token-text-secondary text-center mb-2">
+                    {themeOption.isOfficial ? "Full theming" : "Backgrounds & surfaces only"}
+                  </div>
+                  <button
+                    onClick={() => setCustomTheme({
+                      name: themeOption.name,
+                      category: selectedCategory,
+                      isOfficial: themeOption.isOfficial,
+                      variables: themeOption.preview
+                    })}
+                    className="w-full mt-2 px-4 py-2 bg-token-primary text-white rounded-md hover:bg-token-primary-hover transition-colors"
+                  >
+                    Apply Theme
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
     </div>
   );
 } 

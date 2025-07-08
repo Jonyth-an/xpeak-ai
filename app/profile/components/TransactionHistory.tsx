@@ -548,7 +548,7 @@ export default function TransactionHistory() {
               <Text variant="h6">Transaction Details</Text>
               <Button
                 onClick={closeTransactionModal}
-                variant="ghost"
+                variant="tertiary"
                 size="sm"
                 className="p-1"
               >

@@ -157,7 +157,7 @@ export default function AmazingCoachesShowcase() {
 
         {/* CTA Section */}
         <div className="text-center">
-          <Button variant="accent" size="lg">
+          <Button variant="feature" size="lg">
             Browse All Coaches
           </Button>
         </div>

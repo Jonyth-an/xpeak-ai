@@ -5,7 +5,7 @@ export interface PlanCardProps {
   name: string;
   price: string;
   billingCycle?: string;        // e.g. "/mo", "/yr"
-  features: string[];e.g.features
+  features: string[];
   isPopular?: boolean;
   onSelect: () => void;
 }

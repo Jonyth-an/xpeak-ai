@@ -57,7 +57,7 @@ export default function EmailMonitoringPage() {
     );
   }
 
-  const healthStatus = stats ? emailMonitoring.getEmailHealthStatus(stats) : 'healthy';healthStatusstatsemailMonitoring.getEmailHealthStatus
+  const healthStatus = stats ? emailMonitoring.getEmailHealthStatus(stats) : 'healthy';
 
   return (
     <AdminLayout>

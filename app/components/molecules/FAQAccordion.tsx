@@ -28,7 +28,7 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
           className={`card-token-interactive transition-token-normal hover:shadow-token-md ${openIndex === idx ? 'bg-token-surface-accent-light border-0' : 'bg-token-surface border-0'}`}
         >
           <Button
-            variant="ghost"
+            variant="tertiary"
             onClick={() => toggle(idx)}
             className={`w-full flex justify-between items-center py-token-4 px-token-4 min-h-0 focus:outline-none focus:ring-token-2 focus:ring-token-primary rounded-token-lg transition-token-normal hover:bg-token-surface-accent-light`}
           >

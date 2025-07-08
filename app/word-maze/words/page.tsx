@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import Button from '../../components/ui/Button';
+import { Button } from '../../components/ui/Button';
 import WordCard from '../../components/molecules/WordCard';
 import AddWordModal from '../components/AddWordModal';
 import { CompleteWordData } from '../../../lib/types/wordMaze';

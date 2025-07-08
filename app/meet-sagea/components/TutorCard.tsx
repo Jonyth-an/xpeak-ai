@@ -60,7 +60,7 @@ export default function TutorCard({ tutor }: TutorCardProps) {
         <div className="text-lg font-bold text-gray-900">
           ${tutor.price}/hr
         </div>
-        <Button variant="accent" size="sm">
+        <Button variant="feature" size="sm">
           Book Session
         </Button>
       </div>

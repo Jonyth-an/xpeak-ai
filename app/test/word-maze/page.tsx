@@ -312,7 +312,7 @@ const WordMazeTestPage = () => {
           <Text variant="body" className="text-gray-600 mb-4">{path.description}</Text>
         </div>
         <Button 
-          variant="ghost" 
+          variant="tertiary" 
           size="sm"
           onClick={() => {
             setSelectedPath(null);
@@ -400,7 +400,7 @@ const WordMazeTestPage = () => {
       <div className="flex justify-between items-start mb-4">
         <Text variant="h2">{word.word}</Text>
         <Button 
-          variant="ghost" 
+          variant="tertiary" 
           size="sm"
           onClick={() => setSelectedWord(null)}
         >

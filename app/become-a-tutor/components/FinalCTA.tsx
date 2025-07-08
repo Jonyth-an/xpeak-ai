@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@/app/components/ui';
+import Link from 'next/link';
 
 const avatars = [
   'https://randomuser.me/api/portraits/women/44.jpg',
@@ -29,13 +30,11 @@ export default function FinalCTA() {
           />
         ))}
       </div>
-      <Button
-        variant="primary"
-        size="lg"
-        href="/become-a-tutor"
-      >
-        Become a Tutor
-      </Button>
+      <Link href="/become-a-tutor" passHref legacyBehavior>
+        <Button variant="primary" size="lg">
+          Become a Tutor
+        </Button>
+      </Link>
     </section>
   );
 } 

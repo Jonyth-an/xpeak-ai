@@ -83,7 +83,7 @@ export default function CollectionSection() {
               <p className="text-sm text-gray-500 mb-4">{collection.wordCount} words</p>
 
               {/* CTA */}
-              <Button variant="accent" size="sm" className="w-full">
+              <Button variant="feature" size="sm" className="w-full">
                 Start Learning
               </Button>
             </Card>
@@ -92,7 +92,7 @@ export default function CollectionSection() {
 
         {/* CTA Section */}
         <div className="text-center">
-          <Button variant="accent" size="lg">
+          <Button variant="feature" size="lg">
             Browse All Collections
           </Button>
         </div>

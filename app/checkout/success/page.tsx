@@ -55,7 +55,7 @@ function CheckoutSuccessInner() {
     // Redirect to billing tab with appropriate success message
     const redirectUrl = isPlanChange 
       ? '/profile/billing?success=true&planChange=true'
-      : '/profile/billing?success=true';RedirecttobillingtabwithappropriatesuccessmessageconstredirectUrlisPlanChange
+      : '/profile/billing?success=true';
     
     window.location.href = redirectUrl;
   };

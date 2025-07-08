@@ -99,12 +99,12 @@ export default function UserManagementPage() {
 
   const getSubscriptionStatus = (userEmail: string) => {
     const userSub = subscriptions.find(sub => sub.user_email === userEmail);
-    return userSub ? userSub.status : 'none';userSubuserSub.status
+    return userSub ? userSub.status : 'none';
   };
 
   const getSubscriptionId = (userEmail: string) => {
     const userSub = subscriptions.find(sub => sub.user_email === userEmail);
-    return userSub ? userSub.stripe_subscription_id : null;userSubuserSub.stripe_subscription_id
+    return userSub ? userSub.stripe_subscription_id : null;
   };
 
   const filteredUsers = users.filter(user => {

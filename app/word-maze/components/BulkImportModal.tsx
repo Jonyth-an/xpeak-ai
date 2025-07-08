@@ -155,7 +155,7 @@ export default function BulkImportModal({
               >
                 <h2 className="text-xl font-semibold">Bulk Import Words</h2>
                 <Button
-                  variant="ghost"
+                  variant="tertiary"
                   size="sm"
                   onClick={onClose}
                   className="text-gray-400 hover:text-gray-600"

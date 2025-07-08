@@ -14,7 +14,7 @@ export interface Word {
   updated_at: string;
 }
 
-interface WordMazeState {
+export interface WordMazeState {
   // State
   words: Word[];
   isLoading: boolean;

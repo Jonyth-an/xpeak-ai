@@ -25,7 +25,7 @@ export default function AchievementsSection() {
             </div>
             <p className="text-text-muted text-sm mb-4">{b.desc}</p>
             {b.locked ? (
-              <Button variant="ghost" disabled>
+              <Button variant="tertiary" disabled>
                 Locked
               </Button>
             ) : b.progress ? (

@@ -195,8 +195,8 @@ export default function UIDemo() {
               <Button variant="primary">Primary</Button>
               <Button variant="secondary">Secondary</Button>
               <Button variant="outline">Outline</Button>
-              <Button variant="ghost">Ghost</Button>
-              <Button variant="accent">Accent</Button>
+              <Button variant="tertiary">Ghost</Button>
+              <Button variant="feature">Accent</Button>
             </div>
           </div>
 

@@ -14,14 +14,14 @@ export default function WordMazeAllWordsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const { words, isLoading, getPendingWords, getSyncedWords } = useWordMazeStore();
-  const { addWordWithOptimisticUpdate, loadWords: reloadWords, loadWordsloadWords } = useWordMazeService();
+  const { addWordWithOptimisticUpdate, loadWords: reloadWords } = useWordMazeService();
   const [selectedWordId, setSelectedWordId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) {
       router.push('/word-maze');
     } else {
-      loadWords(1000, 0); // Load all words (arbitrary high limit)
+      reloadWords(1000, 0); // Load all words (arbitrary high limit)
       setLoading(false);
     }
   }, [user]);

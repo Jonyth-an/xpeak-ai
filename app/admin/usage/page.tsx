@@ -334,7 +334,7 @@ export default function UsageTrackingPage() {
                 <Text variant="body" className="text-token-error">{error}</Text>
               </div>
               <Button 
-                variant="ghost" 
+                variant="outline" 
                 size="sm" 
                 onClick={() => setError(null)}
                 className="text-token-error hover:bg-token-error/10"

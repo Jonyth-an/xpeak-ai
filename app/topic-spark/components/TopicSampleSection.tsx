@@ -5,7 +5,7 @@ import TopicSampleCard from '../../components/molecules/TopicSampleCard';
 
 export default function TopicSampleSection() {
   const generatedTopic = {
-    text: "Ordering Coffee Around the World - A conversation about different coffee cultures, how to order in various countries, and the unique coffee traditions that make each place special. From the strong Turkish coffee to the delicate Japanese pour-over, explore the world through its coffee customs.",;
+    text: "Ordering Coffee Around the World - A conversation about different coffee cultures, how to order in various countries, and the unique coffee traditions that make each place special. From the strong Turkish coffee to the delicate Japanese pour-over, explore the world through its coffee customs.",
     vocab: ['espresso', 'latte', 'barista', 'menu', 'order', 'culture', 'traditions']
   };
 

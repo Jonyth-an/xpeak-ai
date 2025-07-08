@@ -123,7 +123,7 @@ export default function WordModal({
                   {mode === 'edit' ? 'Edit Word' : 'Add New Word'}
                 </h2>
                 <Button
-                  variant="ghost"
+                  variant="tertiary"
                   size="sm"
                   onClick={onClose}
                   className="token-text-secondary hover:token-text-primary"

@@ -22,39 +22,39 @@ interface AnimationStep {
 }
 
 const animationSteps: AnimationStep[] = [
-  {;
-    id: 1,;
-    title: "Word Capture",;
-    description: "You learn a new word during a lesson or reading.",;
-    icon: <PenTool className="w-6 h-6" />,;
+  {
+    id: 1,
+    title: "Word Capture",
+    description: "You learn a new word during a lesson or reading.",
+    icon: <PenTool className="w-6 h-6" />,
     color: "from-token-primary to-token-primary-light",
   },
-  {;
-    id: 2,;
-    title: "Maze Connection",;
-    description: "Word is added to your evolving Word Maze.",;
-    icon: <LinkIcon className="w-6 h-6" />,;
+  {
+    id: 2,
+    title: "Maze Connection",
+    description: "Word is added to your evolving Word Maze.",
+    icon: <LinkIcon className="w-6 h-6" />,
     color: "from-token-secondary to-token-secondary-light",
   },
-  {;
-    id: 3,;
-    title: "AI Enhancement",;
-    description: "AI adds examples, definitions, and smart review cards.",;
-    icon: <Lightbulb className="w-6 h-6" />,;
+  {
+    id: 3,
+    title: "AI Enhancement",
+    description: "AI adds examples, definitions, and smart review cards.",
+    icon: <Lightbulb className="w-6 h-6" />,
     color: "from-token-accent to-token-accent-light",
   },
-  {;
-    id: 4,;
-    title: "Review & Play",;
-    description: "You review it with mini-games and earn XP.",;
-    icon: <Gamepad2 className="w-6 h-6" />,;
+  {
+    id: 4,
+    title: "Review & Play",
+    description: "You review it with mini-games and earn XP.",
+    icon: <Gamepad2 className="w-6 h-6" />,
     color: "from-token-success to-token-success-light",
   },
-  {;
-    id: 5,;
-    title: "Maze Powers Your Next Spark",;
-    description: "Your Maze insights help unlock your next Topic Spark.",;
-    icon: <Rocket className="w-6 h-6" />,;
+  {
+    id: 5,
+    title: "Maze Powers Your Next Spark",
+    description: "Your Maze insights help unlock your next Topic Spark.",
+    icon: <Rocket className="w-6 h-6" />,
     color: "from-token-secondary-light to-token-secondary",
   },
 ];
@@ -372,7 +372,7 @@ export default function WordToMazeAnimation() {
             </Button>
           </div>
 
-          <Button variant="ghost" className="token-text-secondary hover:token-text-secondary-dark font-medium">
+          <Button variant="tertiary" className="token-text-secondary hover:token-text-secondary-dark font-medium">
             🔍 View My Vocabulary World
           </Button>
         </div>

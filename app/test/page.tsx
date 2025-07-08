@@ -60,6 +60,12 @@ const testPages = [
     description: "Test Sagea animation and orbital learning journey",
     path: "/test/sagea-animation",
     category: "Features"
+  },
+  {
+    title: "Theme Persistence Test",
+    description: "Test theme persistence, export/import functionality, and debugging tools",
+    path: "/test/theme-persistence",
+    category: "Design System"
   }
 ]
 

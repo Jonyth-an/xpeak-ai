@@ -160,7 +160,7 @@ function VerifyEmailPageInner() {
     if (rateLimitStatus.isBlocked) {
       const minutes = rateLimitStatus.retryAfter 
         ? Math.ceil(rateLimitStatus.retryAfter / 60)
-        : 15;minutesrateLimitStatus.retryAfterMath.ceilrateLimitStatus.retryAfter60
+        : 15;
       return `Rate limit exceeded. Try again in ${minutes} minutes.`;
     }
 

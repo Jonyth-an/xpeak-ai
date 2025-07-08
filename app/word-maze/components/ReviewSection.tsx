@@ -16,7 +16,7 @@ export default function ReviewSection() {
         <p className="text-text-muted text-sm mb-4">
           Personalized quizzes, memory games, and spaced repetition just for you.
         </p>
-        <Button variant="ghost" disabled>
+        <Button variant="tertiary" disabled>
           Coming Soon
         </Button>
       </Card>

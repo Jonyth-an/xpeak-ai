@@ -7,6 +7,7 @@ import WordModal from './WordModal';
 import BulkImportModal from './BulkImportModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWordMazeStore } from '../../../lib/stores/wordMazeStore';
+import type { WordMazeState } from '../../../lib/stores/wordMazeStore';
 import { useWordMazeService } from '../../../lib/services/wordMazeService';
 
 export default function MyWordBankSection() {
@@ -31,10 +32,10 @@ export default function MyWordBankSection() {
     setNotification,
     getPendingWords,
     getSyncedWords,
-    isLoading: storeLoading,;
+    isLoading: storeLoading,
     error: storeError,
     removeWord
-  } = useWordMazeStore();
+  } = useWordMazeStore() as WordMazeState;
   
   const { addWordWithOptimisticUpdate, addWordsBulkWithOptimisticUpdate, deleteWordWithOptimisticUpdate, loadWords } = useWordMazeService();
 
@@ -103,7 +104,7 @@ export default function MyWordBankSection() {
       return;
     }
     // TODO: Implement optimistic update for editing
-    showFeedback('success', 'Word updated!');TODO
+    showFeedback('success', 'Word updated!');
     setEditModalOpen(false);
     setEditingWord(null);
   }
@@ -284,19 +285,20 @@ export default function MyWordBankSection() {
             <BulkImportModal
               open={bulkImportModalOpen}
               onClose={() => setBulkImportModalOpen(false)}
-              onImport={handleBulkImportWords}
+              onImportWords={handleBulkImportWords}
+              smartCheck={smartCheck}
             />
           )}
           
           {modalOpen && (
             <ConfirmationModal
-              isOpen={modalOpen}
-              onClose={cancelDelete}
+              open={modalOpen}
+              onCancel={cancelDelete}
               onConfirm={confirmDelete}
               title="Delete Word"
-              message="Are you sure you want to delete this word? This action cannot be undone."
-              confirmText="Delete"
-              cancelText="Cancel"
+              description="Are you sure you want to delete this word? This action cannot be undone."
+              confirmLabel="Delete"
+              cancelLabel="Cancel"
             />
           )}
         </AnimatePresence>
