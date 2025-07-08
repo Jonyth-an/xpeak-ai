@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Clean config for Next.js 15.x, no experimental.appDir
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
