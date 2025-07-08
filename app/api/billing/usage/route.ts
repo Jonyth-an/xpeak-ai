@@ -2,6 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdminAuth } from '@/lib/adminAuth';
 
+interface UsageData {
+  user_email: string;
+  api_calls: number;
+  storage_used_mb: number;
+  created_at: string;
+  features_used?: string[];
+}
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -195,7 +203,7 @@ function getUsageLimits(plan: string) {
   return limits[plan as keyof typeof limits] || limits.free;
 }
 
-function calculateUsageStats(usageData: any[]) {
+function calculateUsageStats(usageData: UsageData[]) {
   const stats = {
     totalUsers: new Set(usageData.map(u => u.user_email)).size,
     totalApiCalls: usageData.reduce((sum, u) => sum + (u.api_calls || 0), 0),

@@ -81,7 +81,6 @@ export async function GET(request: NextRequest) {
       };
       return {
         ...invoice,
-        subscription: (invoice as any).subscription || null,
         lines: safeLines,
       };
     }));

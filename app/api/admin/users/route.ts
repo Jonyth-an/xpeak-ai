@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
       }
       // Fetch subscription
-      const { data: subscriptions, error: subError } = await supabase
+      const { data: subscriptions } = await supabase
         .from('user_subscriptions')
         .select('*')
         .eq('user_email', user.email)
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
     }
     const paginatedUsers = filteredUsers.slice(from, to + 1);
     const userEmails = paginatedUsers.map(user => user.email).filter(Boolean);
-    const { data: subscriptions, error: subscriptionsError } = await supabase
+    const { data: subscriptions } = await supabase
       .from('user_subscriptions')
       .select('*')
       .in('user_email', userEmails);
@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
       generatedAt: new Date().toISOString(),
       generatedBy: adminUser.email
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 } 

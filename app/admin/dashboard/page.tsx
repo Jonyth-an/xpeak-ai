@@ -23,6 +23,7 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     checkAdminAccess();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const checkAdminAccess = async () => {
@@ -90,7 +91,7 @@ export default function AdminDashboardPage() {
               Access Denied
             </Text>
             <Text variant="body" className="text-token-text-secondary mb-6">
-              You don't have permission to access the admin dashboard.
+              You don&apos;t have permission to access the admin dashboard.
             </Text>
             <Link href="/dashboard">
               <Button variant="primary">
@@ -217,28 +218,6 @@ export default function AdminDashboardPage() {
               </div>
             </Card>
 
-            {/* Email Monitoring */}
-            <Card className="p-6 bg-token-surface border border-token">
-              <div className="text-center">
-                <div className="w-14 h-14 bg-token-info-light rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-7 h-7 text-token-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <Text variant="h3" as="h3" className="mb-2 text-token-primary">Email Monitoring</Text>
-                <Text variant="body" className="text-token-text-secondary mb-4">
-                  Track email delivery rates, open rates, and performance metrics
-                </Text>
-                <Link href="/admin/email-monitoring">
-                  <div>
-                    <Button variant="primary" className="w-full">
-                      View Email Stats
-                    </Button>
-                  </div>
-                </Link>
-              </div>
-            </Card>
-
             {/* User Management */}
             <Card className="p-6 bg-token-surface border border-token">
               <div className="text-center">
@@ -255,28 +234,6 @@ export default function AdminDashboardPage() {
                   <div>
                     <Button variant="primary" className="w-full">
                       Manage Users
-                    </Button>
-                  </div>
-                </Link>
-              </div>
-            </Card>
-
-            {/* Usage Tracking */}
-            <Card className="p-6 bg-token-surface border border-token">
-              <div className="text-center">
-                <div className="w-14 h-14 bg-token-warning-light rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-7 h-7 text-token-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                </div>
-                <Text variant="h3" as="h3" className="mb-2 text-token-primary">Usage Tracking</Text>
-                <Text variant="body" className="text-token-text-secondary mb-4">
-                  Monitor API calls, storage usage, and feature utilization per user
-                </Text>
-                <Link href="/admin/usage">
-                  <div>
-                    <Button variant="primary" className="w-full">
-                      View Usage
                     </Button>
                   </div>
                 </Link>

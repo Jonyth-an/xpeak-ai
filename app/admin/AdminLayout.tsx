@@ -4,16 +4,14 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, BarChart2, FileText, Mail, Users, Activity, HeartPulse, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, BarChart2, Users, HeartPulse, LogOut, Menu, X } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { Avatar } from '@/app/components/ui';
 
 const adminNav = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart2 },
-  { label: 'Email Monitoring', href: '/admin/email-monitoring', icon: Mail },
   { label: 'User Management', href: '/admin/users', icon: Users },
-  { label: 'Usage Tracking', href: '/admin/usage', icon: Activity },
   { label: 'System Health', href: '/admin/health', icon: HeartPulse },
 ];
 

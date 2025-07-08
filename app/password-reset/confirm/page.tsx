@@ -17,10 +17,10 @@ function PasswordResetConfirmPageInner() {
 
   // Check if we have the necessary tokens in the URL
   useEffect(() => {
-    const accessToken = searchParams.get('access_token');
-    const refreshToken = searchParams.get('refresh_token');
+    const token = searchParams.get('token');
+    const type = searchParams.get('type');
     
-    if (!accessToken || !refreshToken) {
+    if (!token || type !== 'recovery') {
       setError('Invalid or missing reset link. Please request a new password reset.');
     }
   }, [searchParams]);
@@ -45,7 +45,7 @@ function PasswordResetConfirmPageInner() {
     }
 
     try {
-      // Update the user's password
+      // Update the user's password using the recovery token
       const { error: updateError } = await supabase.auth.updateUser({
         password: password
       });

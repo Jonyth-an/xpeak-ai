@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Layout from '../../../../components/Layout';
-import { Card, Button } from '@/app/components/ui';
+import { Button } from '@/app/components/ui';
 import WordCardOptimistic from '@/app/components/molecules/WordCardOptimistic';
 import { useWordMazeStore } from '../../../../lib/stores/wordMazeStore';
 import { useWordMazeService } from '../../../../lib/services/wordMazeService';
@@ -13,8 +13,8 @@ export default function WordMazeAllWordsPage() {
   const { user } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const { words, isLoading, getPendingWords, getSyncedWords } = useWordMazeStore();
-  const { addWordWithOptimisticUpdate, loadWords: reloadWords } = useWordMazeService();
+  const { words, isLoading } = useWordMazeStore();
+  const { loadWords: reloadWords } = useWordMazeService();
   const [selectedWordId, setSelectedWordId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export default function WordMazeAllWordsPage() {
       reloadWords(1000, 0); // Load all words (arbitrary high limit)
       setLoading(false);
     }
-  }, [user]);
+  }, [user, reloadWords, router]);
 
   const handleSync = async () => {
     setLoading(true);

@@ -2,6 +2,32 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdminAuth } from '@/lib/adminAuth';
 
+interface WordEntry {
+  id: string;
+  word_text: string;
+  type: string;
+  created_at: string;
+  metadata?: {
+    generated_by?: string;
+  };
+}
+
+interface SourceStats {
+  total: number;
+  percentage: number;
+}
+
+interface DailyStats {
+  total: number;
+  ai: number;
+  fallback: number;
+}
+
+interface TypeStats {
+  total: number;
+  percentage: number;
+}
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -17,11 +43,11 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const period = searchParams.get('period') || '30d';
-    const userEmail = searchParams.get('userEmail');
+    // const userEmail = searchParams.get('userEmail'); // TODO: Implement user filtering
 
     // Calculate date range based on period
     const now = new Date();
-    let startDate = new Date();
+    const startDate = new Date();
     
     switch (period) {
       case '7d':
@@ -41,7 +67,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get AI word generation usage from word_entries table
-    let query = supabase
+    const query = supabase
       .from('word_entries')
       .select('*')
       .gte('created_at', startDate.toISOString())
@@ -86,7 +112,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-function calculateAIUsageStats(data: any[]) {
+function calculateAIUsageStats(data: WordEntry[]) {
   const totalWords = data.length;
   const aiGenerated = data.filter(entry => 
     entry.metadata?.generated_by === 'openai' || 
@@ -111,8 +137,8 @@ function calculateAIUsageStats(data: any[]) {
   };
 }
 
-function calculateSourceBreakdown(data: any[]) {
-  const sourceStats: Record<string, { total: number; percentage: number }> = {};
+function calculateSourceBreakdown(data: WordEntry[]) {
+  const sourceStats: Record<string, SourceStats> = {};
   
   data.forEach(entry => {
     const source = entry.metadata?.generated_by || 'unknown';
@@ -131,8 +157,8 @@ function calculateSourceBreakdown(data: any[]) {
   return sourceStats;
 }
 
-function calculateDailyTrends(data: any[], startDate: Date, endDate: Date) {
-  const dailyStats: Record<string, { total: number; ai: number; fallback: number }> = {};
+function calculateDailyTrends(data: WordEntry[], startDate: Date, endDate: Date) {
+  const dailyStats: Record<string, DailyStats> = {};
   
   // Initialize all days in range
   const currentDate = new Date(startDate);
@@ -159,8 +185,8 @@ function calculateDailyTrends(data: any[], startDate: Date, endDate: Date) {
   return dailyStats;
 }
 
-function calculateTypeBreakdown(data: any[]) {
-  const typeStats: Record<string, { total: number; percentage: number }> = {};
+function calculateTypeBreakdown(data: WordEntry[]) {
+  const typeStats: Record<string, TypeStats> = {};
   
   data.forEach(entry => {
     const type = entry.type || 'unknown';

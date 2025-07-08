@@ -16,7 +16,7 @@ export default function ProfilePage() {
 
   const hasProfilePhoto = !!user?.user_metadata?.avatar_url;
 
-  const handleAvatarUpdate = (avatarUrl: string) => {
+  const handleAvatarUpdate = () => {
     setAvatarUpdated(true);
     // Reset the flag after a short delay
     setTimeout(() => setAvatarUpdated(false), 2000);

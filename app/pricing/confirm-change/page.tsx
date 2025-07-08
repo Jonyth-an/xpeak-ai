@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/AuthContext';
 import Layout from '../../../components/Layout';
-import { Button, Card, Text, Badge } from '@/app/components/ui';
+import { Button, Card, Text } from '@/app/components/ui';
 
 interface PlanChangeDetails {
   currentPlan: string;
@@ -45,73 +45,64 @@ function ConfirmPlanChangePageInner() {
     }
 
     // Calculate plan change details
-    calculatePlanChange();
-  }, [user, session, newPlanId, currentPlan, newBillingCycle, currentBillingCycle]);
+    const calculatePlanChange = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  const calculatePlanChange = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+        // Get current subscription details
+        const subscriptionResponse = await fetch('/api/billing/subscription', {
+          headers: {
+            'Authorization': `Bearer ${session?.access_token}`,
+          },
+        });
 
-      // Get current subscription details
-      const subscriptionResponse = await fetch('/api/billing/subscription', {
-        headers: {
-          'Authorization': `Bearer ${session?.access_token}`,
-        },
-      });
+        if (!subscriptionResponse.ok) {
+          throw new Error('Failed to fetch current subscription');
+        }
 
-      if (!subscriptionResponse.ok) {
-        throw new Error('Failed to fetch current subscription');
+        const subscriptionData = await subscriptionResponse.json();
+
+        // Calculate plan prices
+        const planPrices = {
+          'plus': { monthly: 14.99, quarterly: 40.47, yearly: 143.90 },
+          'pro': { monthly: 24.99, quarterly: 67.47, yearly: 239.90 }
+        };
+
+        const currentPlanPrice = planPrices[currentPlan as keyof typeof planPrices]?.[currentBillingCycle as keyof typeof planPrices.plus] || 0;
+        const newPlanPrice = planPrices[newPlanId as keyof typeof planPrices]?.[newBillingCycle as keyof typeof planPrices.plus] || 0;
+
+        // Calculate proration (simplified - in real implementation, this would use the proration calculator)
+        const priceDifference = Math.round((newPlanPrice - currentPlanPrice) * 100) / 100;
+        const isUpgrade = priceDifference > 0;
+        const isDowngrade = priceDifference < 0;
+        const isCrossCycleChange = currentPlan === newPlanId && currentBillingCycle !== newBillingCycle;
+
+        const details: PlanChangeDetails = {
+          currentPlan: (currentPlan || '').charAt(0).toUpperCase() + (currentPlan || '').slice(1),
+          newPlan: (newPlanId || '').charAt(0).toUpperCase() + (newPlanId || '').slice(1),
+          currentBillingCycle: currentBillingCycle.charAt(0).toUpperCase() + currentBillingCycle.slice(1),
+          newBillingCycle: newBillingCycle.charAt(0).toUpperCase() + newBillingCycle.slice(1),
+          prorationAmount: Math.abs(priceDifference),
+          creditAmount: isDowngrade ? Math.abs(priceDifference) : 0,
+          additionalCharge: isUpgrade ? priceDifference : 0,
+          nextBillingDate: subscriptionData.nextBillingDate || 'Next billing cycle',
+          currentPlanPrice,
+          newPlanPrice,
+          isCrossCycleChange
+        };
+
+        setChangeDetails(details);
+      } catch (error) {
+        console.error('Error calculating plan change:', error);
+        setError('Failed to calculate plan change details');
+      } finally {
+        setLoading(false);
       }
+    };
 
-      const subscriptionData = await subscriptionResponse.json();
-
-      // Get credits
-      const creditsResponse = await fetch('/api/billing/credits', {
-        headers: {
-          'Authorization': `Bearer ${session?.access_token}`,
-        },
-      });
-
-      const creditsData = creditsResponse.ok ? await creditsResponse.json() : { credits: 0 };
-
-      // Calculate plan prices
-      const planPrices = {
-        'plus': { monthly: 14.99, quarterly: 40.47, yearly: 143.90 },
-        'pro': { monthly: 24.99, quarterly: 67.47, yearly: 239.90 }
-      };
-
-      const currentPlanPrice = planPrices[currentPlan as keyof typeof planPrices]?.[currentBillingCycle as keyof typeof planPrices.plus] || 0;
-      const newPlanPrice = planPrices[newPlanId as keyof typeof planPrices]?.[newBillingCycle as keyof typeof planPrices.plus] || 0;
-
-      // Calculate proration (simplified - in real implementation, this would use the proration calculator)
-      const priceDifference = Math.round((newPlanPrice - currentPlanPrice) * 100) / 100;
-      const isUpgrade = priceDifference > 0;
-      const isDowngrade = priceDifference < 0;
-      const isCrossCycleChange = currentPlan === newPlanId && currentBillingCycle !== newBillingCycle;
-
-      const details: PlanChangeDetails = {
-        currentPlan: (currentPlan || '').charAt(0).toUpperCase() + (currentPlan || '').slice(1),
-        newPlan: (newPlanId || '').charAt(0).toUpperCase() + (newPlanId || '').slice(1),
-        currentBillingCycle: currentBillingCycle.charAt(0).toUpperCase() + currentBillingCycle.slice(1),
-        newBillingCycle: newBillingCycle.charAt(0).toUpperCase() + newBillingCycle.slice(1),
-        prorationAmount: Math.abs(priceDifference),
-        creditAmount: isDowngrade ? Math.abs(priceDifference) : 0,
-        additionalCharge: isUpgrade ? priceDifference : 0,
-        nextBillingDate: subscriptionData.nextBillingDate || 'Next billing cycle',
-        currentPlanPrice,
-        newPlanPrice,
-        isCrossCycleChange
-      };
-
-      setChangeDetails(details);
-    } catch (error) {
-      console.error('Error calculating plan change:', error);
-      setError('Failed to calculate plan change details');
-    } finally {
-      setLoading(false);
-    }
-  };
+    calculatePlanChange();
+  }, [user, session, newPlanId, currentPlan, newBillingCycle, currentBillingCycle, router]);
 
   const handleConfirmChange = async () => {
     if (!changeDetails) return;
@@ -153,7 +144,7 @@ function ConfirmPlanChangePageInner() {
         throw new Error(errorData.error || 'Failed to change subscription');
       }
       
-      const result = await response.json();
+      // const result = await response.json();
       
       // Redirect to billing page with success message
       const redirectUrl = `/profile/billing?success=true&planChange=true`;
@@ -289,7 +280,7 @@ function ConfirmPlanChangePageInner() {
                 </div>
                 <div className="ml-3">
                   <Text className="text-sm token-text-accent">
-                    <strong>Billing Cycle Change:</strong> You're changing your billing cycle from {changeDetails.currentBillingCycle} to {changeDetails.newBillingCycle}. 
+                    <strong>Billing Cycle Change:</strong> You&apos;re changing your billing cycle from {changeDetails.currentBillingCycle} to {changeDetails.newBillingCycle}. 
                     This will affect your billing schedule and may result in prorated charges or credits.
                   </Text>
                 </div>

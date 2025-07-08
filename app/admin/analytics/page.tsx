@@ -37,6 +37,7 @@ export default function AdminAnalyticsPage() {
 
   useEffect(() => {
     checkAdminAccess();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const checkAdminAccess = async () => {
@@ -122,7 +123,7 @@ export default function AdminAnalyticsPage() {
               Access Denied
             </Text>
             <Text variant="body" className="text-token-secondary mb-token-8">
-              You don't have permission to access the admin analytics.
+              You don&apos;t have permission to access the admin analytics.
             </Text>
             <Button variant="outline" onClick={() => window.history.back()}>
               Go Back
@@ -145,7 +146,7 @@ export default function AdminAnalyticsPage() {
                   Analytics Dashboard
                 </Text>
                 <Text variant="lead" className="text-token-secondary">
-                  Comprehensive insights into your application's performance
+                  Comprehensive insights into your application&apos;s performance
                 </Text>
               </div>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-token-4">

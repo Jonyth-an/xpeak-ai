@@ -73,8 +73,13 @@ export async function POST(request: NextRequest) {
     // Calculate proration
     const proration = calculateProration(stripeSubscription, newPrice);
     const credit = calculateCredit(stripeSubscription, newPrice);
+    const currentPrice = stripeSubscription.items.data[0]?.price;
+    if (!currentPrice) {
+      return NextResponse.json({ error: 'No current price found' }, { status: 400 });
+    }
+    
     const changeDescription = getChangeDescription(
-      stripeSubscription.items.data[0]?.price!,
+      currentPrice,
       newPrice,
       proration
     );

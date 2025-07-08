@@ -92,8 +92,6 @@ async function getBillingAnalytics(customerId: string) {
       subscriptions: subscriptions.data.map(sub => ({
         id: sub.id,
         status: sub.status,
-        current_period_start: (sub as any).current_period_start,
-        current_period_end: (sub as any).current_period_end,
         cancel_at_period_end: sub.cancel_at_period_end,
         created: sub.created,
         items: sub.items.data.map(item => ({

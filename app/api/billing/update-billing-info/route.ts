@@ -51,8 +51,9 @@ export async function POST(req: NextRequest) {
     // await serverSupabase.from('user_billing_info').upsert({ ... })
 
     return NextResponse.json({ success: true });
-  } catch (err: any) {
+  } catch (err) {
     console.error('Error updating billing info:', err);
-    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
+    const errorMessage = err instanceof Error ? err.message : 'Internal server error';
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 } 

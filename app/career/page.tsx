@@ -49,9 +49,9 @@ const roles = [
     title: "Fullstack Engineer",
     emoji: "🛠",
     requirements: [
-      "You've built and shipped real products — ideally solo or at a fast-moving startup",
-      "You can work across the stack, learn new frameworks quickly, and don't mind touching ops when needed",
-      "Bonus if you're curious about AI tools and already playing with things like LangChain, GPT-4, Whisper, etc.",
+      "You&apos;ve built and shipped real products — ideally solo or at a fast-moving startup",
+      "You can work across the stack, learn new frameworks quickly, and don&apos;t mind touching ops when needed",
+      "Bonus if you&apos;re curious about AI tools and already playing with things like LangChain, GPT-4, Whisper, etc.",
     ],
     color: "from-token-primary to-token-accent",
   },
@@ -62,7 +62,7 @@ const roles = [
     requirements: [
       "You love turning rough ideas into clean UX — and maybe even prototype it yourself",
       "Familiar with Figma? Great. Willing to test AI coding/design tools? Even better",
-      "Bonus if you've built products with gamification or learning flows",
+      "Bonus if you&apos;ve built products with gamification or learning flows",
     ],
     color: "from-token-accent to-token-secondary",
   },
@@ -71,8 +71,8 @@ const roles = [
     title: "Technical Co-Founder",
     emoji: "🤝",
     requirements: [
-      "You're excited to build a category-defining product from zero",
-      "You love languages and have a learner's mindset",
+      "You&apos;re excited to build a category-defining product from zero",
+      "You love languages and have a learner&apos;s mindset",
       "You want to shape culture, not just code",
       "You see this as your own startup, not just a gig",
     ],
@@ -86,7 +86,7 @@ const careAbouts = [
     icon: <Globe className="w-8 h-8" />,
     title: "Language learners preferred",
     description:
-      "Ideally, you've studied a foreign language — especially English, Chinese, or Spanish. Why? Empathy. We're building for learners, and it helps if you've been one.",
+      "Ideally, you&apos;ve studied a foreign language — especially English, Chinese, or Spanish. Why? Empathy. We&apos;re building for learners, and it helps if you&apos;ve been one.",
     color: "from-token-primary to-token-accent",
   },
   {
@@ -115,28 +115,28 @@ const benefits = [
   {
     icon: <Brain className="w-6 h-6" />,
     title: "Creative Freedom",
-    description: "You won't just execute specs. You'll shape the vision, design systems, and experiment wildly",
+    description: "You won&apos;t just execute specs. You&apos;ll shape the vision, design systems, and experiment wildly",
   },
   {
     icon: <MessageCircle className="w-6 h-6" />,
     title: "A Voice in the Product",
-    description: "Every pixel, line of code, or interaction matters. You'll help shape what this becomes",
+    description: "Every pixel, line of code, or interaction matters. You&apos;ll help shape what this becomes",
   },
   {
     icon: <Eye className="w-6 h-6" />,
     title: "Visibility & Recognition",
-    description: "You'll be listed publicly as part of the early founding crew. Think: About page, changelogs, credits",
+    description: "You&apos;ll be listed publicly as part of the early founding crew. Think: About page, changelogs, credits",
   },
   {
     icon: <TrendingUp className="w-6 h-6" />,
     title: "Extreme Learning Curve",
-    description: "Startups are pressure cookers for growth. You'll stretch your skills like never before",
+    description: "Startups are pressure cookers for growth. You&apos;ll stretch your skills like never before",
   },
   {
     icon: <Users className="w-6 h-6" />,
     title: "1-on-1 Collaboration with Me",
     description:
-      "I built Cambly APAC from scratch to $40M+ revenue — across product, design, marketing, ops, legal, and more. Now I'm doing it all again, from zero",
+      "I built Cambly APAC from scratch to $40M+ revenue — across product, design, marketing, ops, legal, and more. Now I&apos;m doing it all again, from zero",
   },
   {
     icon: <Target className="w-6 h-6" />,
@@ -171,7 +171,7 @@ const logistics = [
   {
     icon: <MapPin className="w-6 h-6" />,
     title: "Location",
-    detail: "Bay Area preferred. Remote is possible if you're async-pro and move fast.",
+    detail: "Bay Area preferred. Remote is possible if you&apos;re async-pro and move fast.",
   },
   {
     icon: <Wrench className="w-6 h-6" />,
@@ -232,8 +232,8 @@ export default function CareerPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                Welcome to the scrappy early days of something we believe will be huge. If you've ever wanted to help
-                build a product from the ground up — now's the time.
+                Welcome to the scrappy early days of something we believe will be huge. If you&apos;ve ever wanted to help
+                build a product from the ground up — now&apos;s the time.
               </motion.p>
 
               <motion.p
@@ -242,7 +242,7 @@ export default function CareerPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
               >
-                We're on a mission to help the world speak as one. With AI-powered tutors, personalized learning journeys,
+                We&apos;re on a mission to help the world speak as one. With AI-powered tutors, personalized learning journeys,
                 and gamified experiences that actually make studying fun, Xpeak is here to shake up language learning.
               </motion.p>
 
@@ -252,7 +252,7 @@ export default function CareerPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
               >
-                But to make this happen, I can't do it alone.
+                But to make this happen, I can&apos;t do it alone.
               </motion.p>
             </div>
           </div>
@@ -270,10 +270,10 @@ export default function CareerPage() {
               >
                 <div className="flex items-center justify-center gap-token-4 mb-token-6">
                   <Brain className="w-12 h-12 text-token-accent" />
-                  <h2 className="text-token-3xl md:text-token-4xl font-bold token-text-primary">Who We're Looking For</h2>
+                  <h2 className="text-token-3xl md:text-token-4xl font-bold token-text-primary">Who We&a  pos;re Looking For</h2>
                 </div>
                 <p className="text-token-xl token-text-tertiary">
-                  Whether you're a curious intern, a multi-hat wearing engineer, or a design wizard who vibes with our
+                Whether you&apos;re a curious intern, a multi-hat wearing engineer, or a design wizard who vibes with our
                   mission — read on.
                 </p>
               </motion.div>
@@ -384,11 +384,11 @@ export default function CareerPage() {
               >
                 <div className="flex items-center justify-center gap-token-4 mb-token-6">
                   <Zap className="w-12 h-12 text-token-primary" />
-                  <h2 className="text-token-3xl md:text-token-4xl font-bold token-text-primary">What You'll Get</h2>
+                  <h2 className="text-token-3xl md:text-token-4xl font-bold token-text-primary">What You&apos;ll Get</h2>
                 </div>
                 <p className="text-token-xl token-text-tertiary mb-token-8">
-                  We're early. Really early. But if you're looking to actually build something meaningful, here's what
-                  you'll get:
+                We&apos;re early. Really early. But if you&apos;re looking to actually build something meaningful, here&apos;s what
+                you&apos;ll get:
                 </p>
               </motion.div>
 
@@ -450,7 +450,7 @@ export default function CareerPage() {
                     <h3 className="text-token-2xl font-bold token-text-primary mb-token-4">
                       Right now, this is not a salaried role — YET.
                     </h3>
-                    <p className="text-token-lg token-text-tertiary">Here's the honest breakdown:</p>
+                    <p className="text-token-lg token-text-tertiary">Here&apos;s the honest breakdown:</p>
                   </div>
 
                   <div className="space-y-token-6 mb-token-8">
@@ -459,11 +459,11 @@ export default function CareerPage() {
                       <ul className="space-y-token-2 token-text-tertiary">
                         <li className="flex items-center gap-token-2">
                           <div className="w-2 h-2 bg-token-error rounded-full"></div>
-                          I'm bootstrapping this. No VC money yet. No salary pool.
+                          I&apos;m bootstrapping this. No VC money yet. No salary pool.
                         </li>
                         <li className="flex items-center gap-token-2">
                           <div className="w-2 h-2 bg-token-warning rounded-full"></div>
-                          If you're a student or intern, a modest stipend may be possible depending on your commitment.
+                          If you&apos;re a student or intern, a modest stipend may be possible depending on your commitment.
                         </li>
                       </ul>
                     </div>
@@ -493,12 +493,12 @@ export default function CareerPage() {
 
                   <div className="text-center">
                     <p className="text-token-lg token-text-secondary mb-token-4">
-                      If this works, it works big. And we'll make sure it's worth your while.
+                      If this works, it works big. And we&apos;ll make sure it&apos;s worth your while.
                     </p>
                     <div className="inline-flex items-center gap-token-2 bg-token-accent text-token-text-inverse px-token-6 py-token-3 rounded-full">
                       <AlertTriangle className="w-5 h-5" />
                       <span className="font-bold">
-                        TL;DR: No salary today. But we're building something bigger than paychecks.
+                        TL;DR: No salary today. But we&apos;re building something bigger than paychecks.
                       </span>
                     </div>
                   </div>
@@ -564,7 +564,7 @@ export default function CareerPage() {
                 <h2 className="text-token-3xl font-bold token-text-primary">Sound Like You?</h2>
               </div>
               <p className="text-token-lg token-text-secondary mb-token-8 max-w-2xl mx-auto">
-                Shoot me a message. Tell me what you've built, what you want to build, and why this excites you.
+                Shoot me a message. Tell me what you&apos;ve built, what you want to build, and why this excites you.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-token-6 justify-center items-center mb-token-8">
@@ -602,7 +602,7 @@ export default function CareerPage() {
               </div>
 
               <h2 className="text-token-3xl md:text-token-4xl font-bold token-text-primary mt-token-20 mb-token-4">
-                Let's build something people actually love to use.
+                Let&apos;s build something people actually love to use.
               </h2>
             </motion.div>
           </div>

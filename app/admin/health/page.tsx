@@ -52,6 +52,7 @@ export default function SystemHealthPage() {
 
   useEffect(() => {
     checkAdminAccess();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const checkAdminAccess = async () => {
@@ -160,7 +161,7 @@ export default function SystemHealthPage() {
               Access Denied
             </Text>
             <Text variant="body" className="text-token-secondary mb-token-8">
-              You don't have permission to access the admin dashboard.
+              You don&apos;t have permission to access the admin dashboard.
             </Text>
             <Button variant="outline" onClick={() => window.history.back()}>
               Go Back

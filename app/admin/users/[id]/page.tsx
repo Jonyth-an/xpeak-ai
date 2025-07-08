@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import Image from 'next/image';
 import Layout from '../../../../components/Layout';
 import { Card, Button, Text } from '@/app/components/ui';
 import Link from 'next/link';
@@ -45,11 +46,30 @@ interface UserSubscription {
   total_amount_paid?: number;
   last_payment_date?: string;
   next_billing_date?: string;
+  stripe_price_id?: string;
+}
+
+interface Invoice {
+  id: string;
+  number?: string;
+  created: number;
+  amount_paid: number;
+  status: string;
+  hosted_invoice_url?: string;
+  subscription?: string;
+  lines?: {
+    data: Array<{
+      price?: {
+        id: string;
+        interval?: string;
+      };
+      subscription?: string;
+    }>;
+  };
 }
 
 export default function StudentDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const userId = params?.id as string;
   const [user, setUser] = useState<User | null>(null);
   const [subscription, setSubscription] = useState<UserSubscription | null>(null);
@@ -116,7 +136,7 @@ export default function StudentDetailPage() {
     );
   }
 
-  const meta = user.user_metadata || {};
+  const meta = (user.user_metadata as Record<string, unknown>) || {};
 
   return (
     <AdminLayout>
@@ -139,14 +159,16 @@ export default function StudentDetailPage() {
           {/* Profile Overview */}
           <Card className="p-token-8 mb-token-4 bg-token-elevated border border-token">
             <div className="flex items-center gap-token-8">
-              <img
-                src={meta.avatar_url || meta.picture || '/images/default-avatar.svg'}
+              <Image
+                src={(meta.avatar_url as string) || (meta.picture as string) || '/images/default-avatar.svg'}
                 alt="Avatar"
+                width={96}
+                height={96}
                 className="w-24 h-24 rounded-full border border-token object-cover"
               />
               <div>
                 <Text variant="h2" as="h2" className="mb-token-1 text-token-primary">
-                  {meta.full_name || meta.name || user.email}
+                  {(meta.full_name as string) || (meta.name as string) || user.email}
                 </Text>
                 <div className="text-token-accent mb-token-1">{user.email}</div>
                 <div className="flex gap-token-2 mb-token-1 flex-wrap">
@@ -155,7 +177,7 @@ export default function StudentDetailPage() {
                   ) : (
                     <span className="px-token-2 py-token-1 text-xs rounded bg-token-warning/20 text-token-warning">Email Not Verified</span>
                   )}
-                  {meta.phone_verified ? (
+                  {(meta.phone_verified as boolean) ? (
                     <span className="px-token-2 py-token-1 text-xs rounded bg-token-success/20 text-token-success">Phone Verified</span>
                   ) : (
                     <span className="px-token-2 py-token-1 text-xs rounded bg-token-secondary/10 text-token-secondary">Phone Not Verified</span>
@@ -229,9 +251,9 @@ export default function StudentDetailPage() {
                     'price_1Ret2RFM2iXH8TuNYQIQk9BU': 'Xpeak Pro',
                   };
                   // Try to get the price ID from subscription (if available)
-                  let priceId = (subscription as any)?.stripe_price_id;
+                  let priceId = subscription?.stripe_price_id;
                   // If not present, try to get from plan_features (if API ever adds it)
-                  if (!priceId && (subscription as any)?.plan_features && Array.isArray((subscription as any).plan_features)) {
+                  if (!priceId && subscription?.plan_features && Array.isArray(subscription.plan_features)) {
                     // No-op for now
                   }
                   // Fallback: try to get from stripe_subscription_id (not ideal, but for future-proofing)
@@ -240,7 +262,7 @@ export default function StudentDetailPage() {
                   if (!priceId && subscription.stripe_subscription_id === 'sub_1RfBGoFM2iXH8TuNtp2xgSri') {
                     priceId = 'price_1RessSFM2iXH8TuN4U2vQz9E';
                   }
-                  const planName = priceToPlanName[priceId] || 'Unknown';
+                  const planName = priceToPlanName[priceId || ''] || 'Unknown';
                   return (
                     <div className="mb-token-2"><b>Current Plan:</b> {planName}</div>
                   );
@@ -295,7 +317,7 @@ export default function StudentDetailPage() {
 }
 
 function PaymentHistoryTable({ userEmail }: { userEmail: string }) {
-  const [invoices, setInvoices] = React.useState<any[]>([]);
+  const [invoices, setInvoices] = React.useState<Invoice[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -315,8 +337,9 @@ function PaymentHistoryTable({ userEmail }: { userEmail: string }) {
         if (!response.ok) throw new Error('Failed to fetch invoices');
         const data = await response.json();
         setInvoices(Array.isArray(data.invoices) ? data.invoices : []);
-      } catch (err: any) {
-        setError(err.message || 'Failed to load invoices');
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load invoices';
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -330,8 +353,8 @@ function PaymentHistoryTable({ userEmail }: { userEmail: string }) {
     'price_1Ret11FM2iXH8TuNdLCrRIxK': { name: 'Xpeak Plus', duration: '3 Months' },
     'price_1Ret1bFM2iXH8TuNClhnN7c2': { name: 'Xpeak Plus', duration: '12 Months' },
     'price_1Rest1FM2iXH8TuNKvbhbeTG': { name: 'Xpeak Pro', duration: '1 Month' },
-          'price_1Ret29FM2iXH8TuNKl7fICBr': { name: 'Xpeak Pro', duration: '3 Months' },
-      'price_1Ret2RFM2iXH8TuNYQIQk9BU': { name: 'Xpeak Pro', duration: '12 Months' },
+    'price_1Ret29FM2iXH8TuNKl7fICBr': { name: 'Xpeak Pro', duration: '3 Months' },
+    'price_1Ret2RFM2iXH8TuNYQIQk9BU': { name: 'Xpeak Pro', duration: '12 Months' },
   };
 
   if (loading) return <div className="text-token-secondary">Loading payment history...</div>;
@@ -358,7 +381,7 @@ function PaymentHistoryTable({ userEmail }: { userEmail: string }) {
             // Use first paid line item for plan mapping
             const line = inv.lines && inv.lines.data && inv.lines.data.length > 0 ? inv.lines.data[0] : null;
             // Try to get connected subscription from invoice.subscription or line.subscription
-            let connectedSubscription = inv.subscription || (line && line.subscription);
+            const connectedSubscription = inv.subscription || (line && line.subscription);
             if (connectedSubscription) {
               // Map known subscription IDs to plan names if possible
               // If you have a mapping, use it here. Otherwise, fallback to price ID mapping.

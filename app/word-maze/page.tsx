@@ -185,7 +185,7 @@ export default function WordMazePublicPage() {
             <div className="bg-token-text-inverse/10 backdrop-blur-sm rounded-token-3xl p-token-12 border border-token-text-inverse/20 shadow-token-xl">
               <div className="text-token-6xl mb-token-6">💬</div>
               <blockquote className="text-token-heading-xl md:text-token-heading-2xl font-token-medium text-token-text-inverse mb-token-6 leading-relaxed">
-                "Word Maze makes learning new vocabulary actually fun. I finally remember the words I used to forget!"
+                &ldquo;Word Maze makes learning new vocabulary actually fun. I finally remember the words I used to forget!&rdquo;
               </blockquote>
               <cite className="text-token-body-xl text-token-text-inverse/80 font-token-semibold">
                 — Lina, Intermediate English Learner

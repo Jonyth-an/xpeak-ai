@@ -138,7 +138,7 @@ export async function GET(request: NextRequest) {
     const customerId = subscriptions[0].stripe_customer_id;
 
     // Build Stripe payment intent list parameters
-    const listParams: any = {
+    const listParams: Stripe.PaymentIntentListParams & { status?: string } = {
       customer: customerId,
       limit: Math.min(limit, 100), // Cap at 100 for performance
     };
@@ -185,7 +185,7 @@ export async function GET(request: NextRequest) {
       }
 
       // Get the first successful charge (we'll need to fetch charges separately)
-      const charge = (paymentIntent as any).charges?.data?.[0];
+      const charge = (paymentIntent as Stripe.PaymentIntent & { charges?: { data: Stripe.Charge[] } }).charges?.data?.[0];
 
       return {
         id: paymentIntent.id,

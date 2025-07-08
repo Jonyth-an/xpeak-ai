@@ -2,13 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Layout from '../../../components/Layout';
-import { Card, Button, Text, Badge } from '@/app/components/ui';
+import { Card, Button, Badge } from '@/app/components/ui';
 import AddWordModal from '../components/AddWordModal';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { CompleteWordData } from '../../../lib/types/wordMaze';
 import { useWordMazeStore } from '../../../lib/stores/wordMazeStore';
 import { useWordMazeService } from '../../../lib/services/wordMazeService';
-import WordModal from '../components/WordModal';
 import WordCardOptimistic from '../../components/molecules/WordCardOptimistic';
 import { useAuth } from '@/lib/AuthContext';
 import { useRouter } from 'next/navigation';
@@ -41,7 +39,6 @@ export default function WordMazeLearnPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [isLoading, setIsLoading] = useState(false);
   const [showAddWordModal, setShowAddWordModal] = useState(false);
-  const [loadingWords, setLoadingWords] = useState(true);
   const [selectedWordId, setSelectedWordId] = useState<string | null>(null);
   
   // Optimistic UI integration
@@ -49,11 +46,9 @@ export default function WordMazeLearnPage() {
     words, 
     notification, 
     clearNotification, 
-    setNotification,
     getPendingWords,
     getSyncedWords,
     isLoading: storeLoading,
-    error: storeError
   } = useWordMazeStore();
   
   const { addWordWithOptimisticUpdate, loadWords } = useWordMazeService();
@@ -78,33 +73,7 @@ export default function WordMazeLearnPage() {
     if (user) {
       loadWords(12, 0);
     }
-  }, [user]);
-
-  // Helper function to get the primary definition
-  function getPrimaryDefinition(word: CompleteWordData): string {
-    if (word.definitions && word.definitions.length > 0) {
-      return word.definitions[0].text;
-    }
-    return 'No definition available';
-  }
-
-  // Helper function to get mastery status (mock for now)
-  function getMasteryStatus(word: CompleteWordData): { status: string; color: string } {
-    // Use a stable hash of the word to generate consistent status
-    const hash = word.word.split('').reduce((a: number, b: string) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-    const normalized = Math.abs(hash) % 100;
-    
-    if (normalized > 70) {
-      return { status: 'Mastered', color: 'bg-token-surface text-token-text-inverse' };
-    } else if (normalized > 40) {
-      return { status: 'Learning', color: 'bg-token-primary-surface text-token-primary' };
-    } else {
-      return { status: 'Review', color: 'bg-token-warning-surface text-token-warning' };
-    }
-  }
+  }, [user, loadWords]);
 
   const startLearningSession = async () => {
     setIsLoading(true);
@@ -126,25 +95,6 @@ export default function WordMazeLearnPage() {
 
     } catch (error) {
       console.error('Error adding words:', error);
-    }
-  };
-
-  const handleDeleteWord = async (wordId: string) => {
-    try {
-      const response = await fetch(`/api/word-maze/words/${wordId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        // Show success notification
-        setNotification({ type: 'success', message: 'Word deleted successfully!' });
-      } else {
-        console.error('Failed to delete word');
-        setNotification({ type: 'error', message: 'Failed to delete word' });
-      }
-    } catch (error) {
-      console.error('Error deleting word:', error);
-      setNotification({ type: 'error', message: 'Error deleting word' });
     }
   };
 

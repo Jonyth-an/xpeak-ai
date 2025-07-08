@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 
       // Try to get product info from payment intent metadata
       if (charge.payment_intent && typeof charge.payment_intent === 'object') {
-        const paymentIntent = charge.payment_intent as any;
+        const paymentIntent = charge.payment_intent as Stripe.PaymentIntent;
         if (paymentIntent.metadata?.product) {
           product = paymentIntent.metadata.product;
         }

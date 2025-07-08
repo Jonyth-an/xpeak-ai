@@ -124,7 +124,7 @@ async function getSubscriptionStats(start: Date, end: Date) {
   };
 
   // Calculate plan distribution
-  subscriptions?.forEach(sub => {
+  subscriptions?.forEach(() => {
     // You'll need to add plan information to your subscription data
     const plan = 'pro'; // This should come from your subscription data
     stats.byPlan[plan] = (stats.byPlan[plan] || 0) + 1;
@@ -247,7 +247,7 @@ async function getUsageStats(start: Date, end: Date) {
     totalStorageUsed: 0,
     averageApiCallsPerUser: 0,
     averageStoragePerUser: 0,
-    topUsers: [] as any[],
+    topUsers: [] as Array<{ email: string; apiCalls: number; storageUsed: number }>,
     byFeature: {} as Record<string, number>
   };
 
