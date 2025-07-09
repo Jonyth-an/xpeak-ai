@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Layout from '../../../components/Layout';
 import { Card, Button, Badge } from '@/app/components/ui';
 import AddWordModal from '../components/AddWordModal';
@@ -53,6 +53,13 @@ export default function WordMazeLearnPage() {
   
   const { addWordWithOptimisticUpdate, loadWords } = useWordMazeService();
 
+  // Memoize loadWords to prevent infinite loops
+  const memoizedLoadWords = useCallback(async () => {
+    if (user) {
+      await loadWords(12, 0);
+    }
+  }, [user, loadWords]);
+
   const tabs = [
     { id: 'overview', label: 'Overview', icon: '📊' },
     { id: 'learn', label: 'Learn', icon: '🎯' },
@@ -68,12 +75,12 @@ export default function WordMazeLearnPage() {
     }
   }, [user, router]);
 
-  // Load words on component mount
+  // Load words on component mount - only once when user is available
   useEffect(() => {
     if (user) {
-      loadWords(12, 0);
+      memoizedLoadWords();
     }
-  }, [user, loadWords]);
+  }, [user]); // Remove loadWords from dependencies to prevent infinite loop
 
   const startLearningSession = async () => {
     setIsLoading(true);
