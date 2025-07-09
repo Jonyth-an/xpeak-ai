@@ -11,7 +11,7 @@ import StayConnectedSection from './components/StayConnectedSection';
 
 export default function CommunityPage() {
   return (
-    <Layout>
+    <Layout seamlessHeader>
       <div className="min-h-screen">
         <CommunityHeroSection />
         <FeedbackSection />

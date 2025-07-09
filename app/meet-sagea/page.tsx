@@ -14,7 +14,7 @@ import TutorsCrewSection from './components/TutorsCrewSection';
 
 function MeetSageaPageInner() {
   return (
-    <Layout>
+    <Layout heroBackgroundColor="linear-gradient(to bottom right, var(--color-surface-accent-light), var(--color-surface-accent))">
       <TutorHeroSection />
       {/* How Sagea works? Section */}
       <section className="pt-token-8 pb-0 bg-token-surface-subtle">

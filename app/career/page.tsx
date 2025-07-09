@@ -185,7 +185,7 @@ export default function CareerPage() {
   const [hoveredBenefit, setHoveredBenefit] = useState<number | null>(null)
 
   return (
-    <Layout>
+    <Layout seamlessHeader>
       <div className="min-h-screen bg-gradient-to-br from-token-surface-accent-light via-token-surface-accent to-token-surface-accent-dark">
         {/* Hero Section */}
         <section className="relative py-token-20 lg:py-token-32 overflow-hidden">

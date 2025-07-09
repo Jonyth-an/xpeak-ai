@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import Link from 'next/link';
 import { Button, Select, Text, Card } from '@/app/components/ui';
 import LanguageSelectorMenu from '@/app/components/molecules/LanguageSelectorMenu';
@@ -16,7 +16,16 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { usePathname } from 'next/navigation';
 
-export default function Header() {
+// Context for hero background color
+export const HeroBackgroundContext = createContext<string | null>(null);
+
+export const useHeroBackground = () => useContext(HeroBackgroundContext);
+
+interface HeaderProps {
+  heroBackgroundColor?: string;
+}
+
+export default function Header({ heroBackgroundColor }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState({ label: 'English', code: 'EN', flag: '🇺🇸' });
   const { user, loading, signOut } = useAuth();
@@ -49,10 +58,40 @@ export default function Header() {
   // Check if current user is an admin
   const isAdmin = user ? isAdminEmail(user.email) : false;
 
+  // Get hero background color from context or props
+  const contextHeroColor = useHeroBackground();
+  const finalHeroColor = heroBackgroundColor || contextHeroColor;
+
+  // Determine header background based on scroll state and hero color
+  const getHeaderBackground = () => {
+    if (isScrolled) {
+      return 'bg-white shadow-token-md';
+    }
+    
+    if (finalHeroColor) {
+      return 'backdrop-blur-sm';
+    }
+    
+    return 'bg-transparent backdrop-blur-sm';
+  };
+
+  const getHeaderStyle = () => {
+    if (isScrolled) {
+      return {};
+    }
+    
+    if (finalHeroColor) {
+      return { background: finalHeroColor };
+    }
+    
+    return {};
+  };
+
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-token-surface shadow-token-md' : 'bg-token-surface/95 backdrop-blur-sm'
-    }`}>
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${getHeaderBackground()}`}
+      style={getHeaderStyle()}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -190,4 +229,4 @@ export default function Header() {
       </div>
     </header>
   );
-} 
+}

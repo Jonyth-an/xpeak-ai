@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Word, useWordMazeStore } from '../../../lib/stores/wordMazeStore';
 import { WordStatusIndicator, CompactWordStatusIndicator } from './WordStatusIndicator';
 import { useWordMazeService } from '../../../lib/services/wordMazeService';
+import { Trash2 } from 'lucide-react';
 
 export interface WordCardOptimisticProps {
   word: Word;
@@ -100,13 +101,22 @@ export default function WordCardOptimistic({
 
   return (
     <Card
-      className={`relative h-64 flex flex-col justify-between p-token-6 rounded-token-lg transition-all duration-200 bg-white shadow-token-md cursor-pointer hover:shadow-lg hover:ring-2 hover:ring-token-primary/20 ${cardClassName} ${showModal ? 'z-40' : ''}`}
+      className={`relative h-64 flex flex-col justify-between p-token-6 rounded-token-lg transition-all duration-200 bg-white shadow-token-md cursor-pointer hover:shadow-lg hover:ring-2 hover:ring-token-primary/20 group ${cardClassName} ${showModal ? 'z-40' : ''}`}
       onClick={() => setShowModalId(word.id)}
       tabIndex={0}
       role="button"
       aria-label={`Open details for ${word.word}`}
       onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setShowModalId(word.id); }}
     >
+      {/* Delete button (top-right, only visible on hover/focus) */}
+      <button
+        onClick={e => { e.stopPropagation(); handleDelete(); }}
+        className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity bg-token-surface-subtle hover:bg-token-error/10 rounded-full p-1 shadow-sm border border-token-border"
+        aria-label="Delete word"
+        tabIndex={-1}
+      >
+        <Trash2 className="w-5 h-5 text-token-error" />
+      </button>
       <div>
         <div className="flex justify-between items-start mb-token-2">
           <h3 className="text-token-heading-lg font-token-bold text-token-primary">{word.word}</h3>
@@ -116,11 +126,16 @@ export default function WordCardOptimistic({
             className="ml-token-2"
           />
         </div>
-        <div className="text-token-text-secondary text-token-body-base line-clamp-4">
-          {displayDefinition || 'Loading definition...'}
+        <div className="text-token-text-secondary text-token-body-base line-clamp-4 min-h-[2.5rem] flex items-center">
+          {isLoadingDetails ? (
+            <span className="inline-block w-full h-4 bg-token-surface-subtle rounded animate-pulse" />
+          ) : displayDefinition ? (
+            displayDefinition
+          ) : (
+            <span className="text-token-text-tertiary">No definition available</span>
+          )}
         </div>
       </div>
-      
       <div className="flex justify-between items-center text-token-body-sm text-token-text-tertiary mt-token-2">
         <span>Added: {new Date(word.created_at).toLocaleDateString()}</span>
         {word.status === 'error' && (
@@ -135,7 +150,6 @@ export default function WordCardOptimistic({
           </button>
         )}
       </div>
-
       {/* Modal for full details */}
       <AnimatePresence>
         {showModal && (

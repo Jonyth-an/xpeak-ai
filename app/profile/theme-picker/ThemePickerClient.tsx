@@ -25,7 +25,7 @@ type ThemeCategory = {
 
 const themeCategories: Record<string, ThemeCategory> = {
   xpeakOfficial: {
-    name: "Xpeak Official",
+    name: "Brand",
     themes: [
       {
         name: "Classic",
@@ -117,7 +117,7 @@ const themeCategories: Record<string, ThemeCategory> = {
     ],
   },
   nature: {
-    name: "Nature Themes",
+    name: "Nature",
     themes: [
       {
         name: "Ocean",
@@ -347,7 +347,7 @@ const themeCategories: Record<string, ThemeCategory> = {
     ],
   },
   colorVibe: {
-    name: "Color Vibe Themes",
+    name: "Color Vibe",
     themes: [
       {
         name: "Berry Pop",
@@ -577,7 +577,7 @@ const themeCategories: Record<string, ThemeCategory> = {
     ],
   },
   mood: {
-    name: "Mood Themes",
+    name: "Mood",
     themes: [
       {
         name: "Fairy Dust",
@@ -807,7 +807,7 @@ const themeCategories: Record<string, ThemeCategory> = {
     ],
   },
   minimalChic: {
-    name: "Minimal Chic Themes",
+    name: "Minimal",
     themes: [
       {
         name: "Creamy Latte",
@@ -1142,63 +1142,84 @@ export default function ThemePickerClient() {
           <h3 className="text-xl font-semibold text-token-text-primary mb-4">
             {themeCategories[selectedCategory]?.name}
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {themes.map((themeOption) => (
-              <div
-                key={themeOption.name}
-                className={`relative bg-token-surface border rounded-lg p-4 flex flex-col items-center gap-2 transition hover:shadow-md ${
-                  customTheme?.name === themeOption.name && customTheme?.category === selectedCategory
-                    ? "border-token-primary ring-2 ring-token-primary/20"
-                    : "border-token-border hover:border-token-primary/50"
-                }`}
-              >
-                {/* Official Badge */}
-                {themeOption.isOfficial && (
-                  <div className="absolute top-2 right-2">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-token-primary text-token-text-inverse">
-                      Official
-                    </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {themes.map((themeOption) => {
+              const isCurrent = customTheme?.name === themeOption.name && customTheme?.category === selectedCategory;
+              return (
+                <div
+                  key={themeOption.name}
+                  className={`relative bg-token-surface border rounded-lg p-0 flex flex-col items-center transition hover:shadow-md overflow-hidden ${
+                    isCurrent
+                      ? "border-token-primary ring-2 ring-token-primary/20"
+                      : "border-token-border hover:border-token-primary/50"
+                  }`}
+                  style={{ minHeight: 220, minWidth: 200 }}
+                >
+                  {/* Official Badge */}
+                  {themeOption.isOfficial && (
+                    <div className="absolute top-2 right-2 z-10">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-token-primary text-token-text-inverse">
+                        Official
+                      </span>
+                    </div>
+                  )}
+                  {/* Color Preview Area */}
+                  <div
+                    className="w-full h-20 rounded-t-lg"
+                    style={{
+                      background: `linear-gradient(135deg, ${themeOption.preview["--color-primary"]}, ${themeOption.preview["--color-accent"]})`,
+                    }}
+                  />
+                  {/* Theme Name */}
+                  <div className="font-medium text-token-text-primary text-center mt-4 mb-1 text-base">
+                    {themeOption.name}
                   </div>
-                )}
-                <div className="flex flex-col items-center gap-1 w-full">
-                  <div className="flex gap-1 mb-2">
+                  {/* Only show info on current card */}
+                  {isCurrent && (
+                    <div className="text-xs text-token-text-secondary text-center mb-1">
+                      {themeOption.isOfficial ? "Full theming" : "Backgrounds & surfaces only"}
+                    </div>
+                  )}
+                  {/* Color Dots */}
+                  <div className="flex gap-2 mt-auto mb-4">
                     <span
-                      className="w-4 h-4 rounded border border-token-border"
+                      className="w-4 h-4 rounded-full border border-token-border"
                       style={{ background: themeOption.preview["--color-primary"] }}
                     />
                     <span
-                      className="w-4 h-4 rounded border border-token-border"
+                      className="w-4 h-4 rounded-full border border-token-border"
                       style={{ background: themeOption.preview["--color-accent"] }}
                     />
                     <span
-                      className="w-4 h-4 rounded border border-token-border"
+                      className="w-4 h-4 rounded-full border border-token-border"
                       style={{ background: themeOption.preview["--color-bg"] }}
                     />
                     <span
-                      className="w-4 h-4 rounded border border-token-border"
+                      className="w-4 h-4 rounded-full border border-token-border"
                       style={{ background: themeOption.preview["--color-surface"] }}
                     />
                   </div>
-                  <div className="font-medium text-token-text-primary text-center">
-                    {themeOption.name}
+                  {/* Button or Current Label */}
+                  <div className="mb-3">
+                    {isCurrent ? (
+                      <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-token-primary/10 text-token-primary border border-token-primary/30">Current</span>
+                    ) : (
+                      <button
+                        onClick={() => setCustomTheme({
+                          name: themeOption.name,
+                          category: selectedCategory,
+                          isOfficial: themeOption.isOfficial,
+                          variables: themeOption.preview
+                        })}
+                        className="px-4 py-1 text-xs bg-token-primary text-token-text-inverse rounded-md hover:bg-token-primary-hover transition-colors shadow-sm"
+                      >
+                        Apply
+                      </button>
+                    )}
                   </div>
-                  <div className="text-xs text-token-text-secondary text-center mb-2">
-                    {themeOption.isOfficial ? "Full theming" : "Backgrounds & surfaces only"}
-                  </div>
-                  <button
-                    onClick={() => setCustomTheme({
-                      name: themeOption.name,
-                      category: selectedCategory,
-                      isOfficial: themeOption.isOfficial,
-                      variables: themeOption.preview
-                    })}
-                    className="w-full mt-2 px-4 py-2 bg-token-primary text-token-text-inverse rounded-md hover:bg-token-primary-hover transition-colors"
-                  >
-                    Apply Theme
-                  </button>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </main>

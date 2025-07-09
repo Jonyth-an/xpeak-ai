@@ -144,11 +144,6 @@ export default function TopicSparksSection() {
               ))}
             </div>
 
-            <p className="text-token-lg text-token-text-secondary mb-token-6 leading-token-relaxed">
-              Based on your progress and interests, Sagea suggests timely, personalized sparks — ready for AI practice
-              or tutor sessions.
-            </p>
-
             <Button
               variant="feature"
               feature="topic-sparks"

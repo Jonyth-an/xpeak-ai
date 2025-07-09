@@ -20,7 +20,7 @@ export default function TopicSparkPage() {
   }, [user]);
 
   return (
-    <Layout>
+    <Layout heroBackgroundColor="linear-gradient(to bottom right, var(--color-surface-accent-light), var(--color-surface-accent), var(--color-surface-accent-dark))">
       <div className="min-h-screen bg-gradient-to-br from-token-surface-accent-light via-token-surface-accent to-token-surface-accent-dark">
         {/* Hero Section */}
         <div className="relative overflow-hidden">
@@ -42,7 +42,7 @@ export default function TopicSparkPage() {
                   Ignite Your Next Conversation
                 </span>
               </h1>
-              <p className="text-token-xl md:text-token-2xl token-text-secondary mb-token-12 max-w-token-2xl leading-relaxed">
+              <p className="text-token-body-xl md:text-token-body-2xl text-token-text-secondary mb-token-12 max-w-token-2xl leading-relaxed">
                 Every journey begins with a spark. Topic Spark suggests personalized lesson ideas, cultural themes, and speaking challenges based on your goals — and your Word Maze.
               </p>
               <Button 
