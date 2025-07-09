@@ -1,9 +1,14 @@
 import Link from 'next/link';
 import { Home, Users, Sparkles, Puzzle, DollarSign } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 export function MobileBottomNav() {
   const pathname = usePathname();
+
+  useEffect(() => {
+    console.log('MobileBottomNav rendered, pathname:', pathname);
+  }, [pathname]);
 
   const isActive = (path: string) => {
     if (path === '/') {
@@ -13,14 +18,14 @@ export function MobileBottomNav() {
   };
 
   return (
-    <nav className="block md:hidden fixed bottom-0 left-0 w-full bg-token-surface border-t border-token-border z-50 h-16 shadow-lg">
+    <nav className="block md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 z-50 h-16 shadow-lg" style={{ backgroundColor: 'white', borderTop: '1px solid #e5e7eb' }}>
       <div className="flex justify-around items-center w-full h-full text-xs">
         <Link 
           href="/" 
           className={`flex flex-col items-center justify-center flex-1 py-2 transition-colors ${
             isActive('/') 
-              ? 'text-token-primary' 
-              : 'text-token-text-secondary hover:text-token-primary'
+              ? 'text-red-500' 
+              : 'text-gray-600 hover:text-red-500'
           }`}
         >
           <Home className="w-6 h-6 mb-1" />
@@ -30,8 +35,8 @@ export function MobileBottomNav() {
           href="/meet-sagea" 
           className={`flex flex-col items-center justify-center flex-1 py-2 transition-colors ${
             isActive('/meet-sagea') 
-              ? 'text-token-primary' 
-              : 'text-token-text-secondary hover:text-token-primary'
+              ? 'text-red-500' 
+              : 'text-gray-600 hover:text-red-500'
           }`}
         >
           <Users className="w-6 h-6 mb-1" />
@@ -41,8 +46,8 @@ export function MobileBottomNav() {
           href="/topic-spark" 
           className={`flex flex-col items-center justify-center flex-1 py-2 transition-colors ${
             isActive('/topic-spark') 
-              ? 'text-token-primary' 
-              : 'text-token-text-secondary hover:text-token-primary'
+              ? 'text-red-500' 
+              : 'text-gray-600 hover:text-red-500'
           }`}
         >
           <Sparkles className="w-6 h-6 mb-1" />
@@ -52,8 +57,8 @@ export function MobileBottomNav() {
           href="/word-maze" 
           className={`flex flex-col items-center justify-center flex-1 py-2 transition-colors ${
             isActive('/word-maze') 
-              ? 'text-token-primary' 
-              : 'text-token-text-secondary hover:text-token-primary'
+              ? 'text-red-500' 
+              : 'text-gray-600 hover:text-red-500'
           }`}
         >
           <Puzzle className="w-6 h-6 mb-1" />
@@ -63,8 +68,8 @@ export function MobileBottomNav() {
           href="/pricing" 
           className={`flex flex-col items-center justify-center flex-1 py-2 transition-colors ${
             isActive('/pricing') 
-              ? 'text-token-primary' 
-              : 'text-token-text-secondary hover:text-token-primary'
+              ? 'text-red-500' 
+              : 'text-gray-600 hover:text-red-500'
           }`}
         >
           <DollarSign className="w-6 h-6 mb-1" />

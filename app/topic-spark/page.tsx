@@ -6,8 +6,7 @@ import { useEffect } from 'react';
 import { Card, Button } from '@/app/components/ui';
 import SparkToTrekAnimation from './SparkToTrekAnimation';
 import ConstellationSparks from './ConstellationSparks';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import Layout from '@/components/Layout';
 
 export default function TopicSparkPage() {
   const { user } = useAuth();
@@ -21,9 +20,8 @@ export default function TopicSparkPage() {
   }, [user]);
 
   return (
-    <>
-      <Header />
-      <div className="min-h-screen bg-gradient-to-br from-token-surface-accent-light via-token-surface-accent to-token-surface-accent-dark pt-16">
+    <Layout>
+      <div className="min-h-screen bg-gradient-to-br from-token-surface-accent-light via-token-surface-accent to-token-surface-accent-dark">
         {/* Hero Section */}
         <div className="relative overflow-hidden">
         {/* Animated background elements - Spark themed */}
@@ -191,7 +189,6 @@ export default function TopicSparkPage() {
         </div>
       </div>
       </div>
-      <Footer />
-    </>
+    </Layout>
   );
 } 

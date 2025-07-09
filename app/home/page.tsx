@@ -10,8 +10,7 @@ import Link from 'next/link';
 import { Brain, ArrowRight } from "lucide-react"
 import TrustedByLearnersSection from './components/TrustedByLearnersSection';
 import FinalCTASection from './components/FinalCTASection';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import Layout from '@/components/Layout';
 
 export default function HomePage() {
   useEffect(() => {
@@ -20,9 +19,8 @@ export default function HomePage() {
   }, [])
 
   return (
-    <>
-      <Header />
-      <div className="min-h-screen bg-gradient-to-br from-token-surface-subtle via-token-surface to-token-surface-accent pt-16">
+    <Layout>
+      <div className="min-h-screen bg-gradient-to-br from-token-surface-subtle via-token-surface to-token-surface-accent">
         {/* Hero Section */}
         <section className="relative py-20 lg:py-32 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
@@ -116,7 +114,6 @@ export default function HomePage() {
       {/* Final CTA Section */}
       <FinalCTASection />
       </div>
-      <Footer />
-    </>
+    </Layout>
   )
 } 
