@@ -19,11 +19,89 @@ function PasswordResetConfirmPageInner() {
   useEffect(() => {
     const token = searchParams.get('token');
     const type = searchParams.get('type');
+    const accessToken = searchParams.get('access_token');
+    const refreshToken = searchParams.get('refresh_token');
     
-    if (!token || type !== 'recovery') {
-      setError('Invalid or missing reset link. Please request a new password reset.');
+    // Check for error parameters in the URL hash
+    const hash = window.location.hash;
+    if (hash) {
+      const errorMatch = hash.match(/error=([^&]+)/);
+      const errorCodeMatch = hash.match(/error_code=([^&]+)/);
+      const errorDescMatch = hash.match(/error_description=([^&]+)/);
+      
+      if (errorMatch) {
+        const error = decodeURIComponent(errorMatch[1]);
+        const errorCode = errorCodeMatch ? decodeURIComponent(errorCodeMatch[1]) : '';
+        const errorDesc = errorDescMatch ? decodeURIComponent(errorDescMatch[1]) : '';
+        
+        console.log('Error in URL hash:', { error, errorCode, errorDesc });
+        
+        if (error === 'access_denied' && errorCode === 'otp_expired') {
+          setError('This password reset link has expired. Please request a new password reset.');
+          return;
+        } else if (error === 'access_denied') {
+          setError('This password reset link is invalid. Please request a new password reset.');
+          return;
+        }
+      }
     }
+    
+    console.log('Password reset URL parameters:', {
+      token,
+      type,
+      accessToken,
+      refreshToken,
+      allParams: Object.fromEntries(searchParams.entries()),
+      hash
+    });
+    
+    // If we have access_token and refresh_token, we're already authenticated
+    if (accessToken && refreshToken) {
+      console.log('User is already authenticated with access_token/refresh_token');
+      return;
+    }
+    
+    // If we have a token and type=recovery, we need to verify it first
+    if (token && type === 'recovery') {
+      console.log('Verifying recovery token with Supabase');
+      verifyRecoveryToken(token);
+      return;
+    }
+    
+    // If we have just a token (without type), that's also valid
+    if (token) {
+      console.log('Using token without type parameter');
+      verifyRecoveryToken(token);
+      return;
+    }
+    
+    setError('Invalid or missing reset link. Please request a new password reset.');
   }, [searchParams]);
+
+  const verifyRecoveryToken = async (token: string) => {
+    try {
+      console.log('Verifying token:', token);
+      
+      // Verify the recovery token with Supabase
+      const { data, error } = await supabase.auth.verifyOtp({
+        token_hash: token,
+        type: 'recovery'
+      });
+      
+      if (error) {
+        console.error('Token verification error:', error);
+        setError('Invalid or expired reset link. Please request a new password reset.');
+        return;
+      }
+      
+      console.log('Token verified successfully:', data);
+      // User is now authenticated and can update their password
+      
+    } catch (err) {
+      console.error('Error verifying token:', err);
+      setError('Failed to verify reset link. Please try again.');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,8 +196,14 @@ function PasswordResetConfirmPageInner() {
           <Card className="max-w-md mx-auto rounded-token-lg">
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="bg-token-error-surface border border-token-error text-token-error px-4 py-2 rounded mb-4 text-sm">
-                  {error}
+                <div className="bg-token-error-surface border border-token-error text-token-error px-4 py-3 rounded mb-4 text-sm">
+                  <div className="mb-2">{error}</div>
+                  <a 
+                    href="/password-reset" 
+                    className="text-token-error underline hover:no-underline"
+                  >
+                    Request a new password reset
+                  </a>
                 </div>
               )}
               
