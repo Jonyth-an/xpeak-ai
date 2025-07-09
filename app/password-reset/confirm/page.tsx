@@ -24,6 +24,10 @@ function PasswordResetConfirmPageInner() {
     
     // Check for error parameters in the URL hash
     const hash = window.location.hash;
+    console.log('Full URL:', window.location.href);
+    console.log('Hash fragment:', hash);
+    console.log('Search params:', Object.fromEntries(searchParams.entries()));
+    
     if (hash) {
       const errorMatch = hash.match(/error=([^&]+)/);
       const errorCodeMatch = hash.match(/error_code=([^&]+)/);
@@ -55,6 +59,13 @@ function PasswordResetConfirmPageInner() {
       hash
     });
     
+    // If we have no parameters and no hash, this is likely a direct access
+    if (!token && !accessToken && !refreshToken && !hash) {
+      console.log('No parameters found - likely direct access to page');
+      setError('Invalid or missing reset link. Please request a new password reset.');
+      return;
+    }
+    
     // If we have access_token and refresh_token, we're already authenticated
     if (accessToken && refreshToken) {
       console.log('User is already authenticated with access_token/refresh_token');
@@ -73,6 +84,17 @@ function PasswordResetConfirmPageInner() {
       console.log('Using token without type parameter');
       verifyRecoveryToken(token);
       return;
+    }
+    
+    // If we have a hash but no other parameters, check if it contains a token
+    if (hash && !token && !accessToken) {
+      const tokenMatch = hash.match(/token=([^&]+)/);
+      if (tokenMatch) {
+        const hashToken = decodeURIComponent(tokenMatch[1]);
+        console.log('Found token in hash:', hashToken);
+        verifyRecoveryToken(hashToken);
+        return;
+      }
     }
     
     setError('Invalid or missing reset link. Please request a new password reset.');
