@@ -80,8 +80,8 @@ export async function POST(request: NextRequest) {
 
     if (existingApplication) {
       // Update existing application
-      if (action === 'submit' && existingApplication.status === 'drafting') {
-        // Submit the application
+      if (action === 'submit' && (existingApplication.status === 'drafting' || existingApplication.status === 'pending')) {
+        // Submit the application (allow resubmission of pending applications)
         result = await supabase
           .from('tutor_applications')
           .update({
@@ -92,8 +92,8 @@ export async function POST(request: NextRequest) {
           .eq('user_id', user.id)
           .select()
           .single();
-      } else if (existingApplication.status === 'drafting') {
-        // Save draft
+      } else if (existingApplication.status === 'drafting' || existingApplication.status === 'pending') {
+        // Save draft (allow saving pending applications)
         result = await supabase
           .from('tutor_applications')
           .update({

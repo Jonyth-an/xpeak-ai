@@ -40,6 +40,7 @@ import { useAuth } from "@/lib/AuthContext"
 import { useRouter } from "next/navigation"
 import CustomSelect from '@/app/components/ui/CustomSelect';
 import { supabaseClient } from "@/lib/supabaseClient";
+import { uploadProfilePhoto, uploadCertificateFile, uploadTeachingScreenshot, uploadDemoVideo } from "@/lib/uploadToSupabase";
 
 const languages = [
   "English",
@@ -232,15 +233,13 @@ function TutorApplicationContent() {
   })
 
   const [languagesSpoken, setLanguagesSpoken] = useState<{ language: string; fluency: string }[]>([]);
-  const [profilePhotos, setProfilePhotos] = useState<File[]>([]);
-  const [certificates, setCertificates] = useState<string[]>([]);
+  const [profilePhotos, setProfilePhotos] = useState<string[]>([]);
+  const [certificateUrls, setCertificateUrls] = useState<string[]>([]);
   const [certificateOther, setCertificateOther] = useState("");
-  const [certificateFiles, setCertificateFiles] = useState<File[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [teachingScreenshot, setTeachingScreenshot] = useState<File | null>(null);
-  const teachingScreenshotInputRef = useRef<HTMLInputElement>(null);
-  const [demoVideo, setDemoVideo] = useState<File | null>(null);
+  const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
+  const [demoVideoUrl, setDemoVideoUrl] = useState<string | null>(null);
   const demoVideoInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const availableLanguages = (currentIdx: number) =>
     languages.filter(
@@ -291,11 +290,12 @@ function TutorApplicationContent() {
           });
           setLanguagesSpoken(application.application_data?.languagesSpoken || []);
           setProfilePhotos(application.application_data?.profilePhotos || []);
-          setCertificates(application.application_data?.certificates || []);
+          setCertificateUrls(application.application_data?.certificates || []);
           setCertificateOther(application.application_data?.certificateOther || '');
-          setCertificateFiles(application.application_data?.certificateFiles || []);
-          setTeachingScreenshot(application.application_data?.teachingScreenshot || null);
-          setDemoVideo(application.application_data?.demoVideo || null);
+          // Ensure teachingScreenshot is a string URL or null
+          const screenshot = application.application_data?.teachingScreenshot;
+          setScreenshotUrl(typeof screenshot === 'string' ? screenshot : null);
+          setDemoVideoUrl(application.application_data?.demoVideo || null);
           setApplicationStatus(application.status);
           setMode('readonly');
         } else {
@@ -352,6 +352,11 @@ function TutorApplicationContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    // Prevent submission if in readonly mode
+    if (mode === 'readonly') {
+      return
+    }
+    
     if (!validateForm()) {
       showToast({
         type: 'error',
@@ -376,11 +381,10 @@ function TutorApplicationContent() {
             ...formData,
             languagesSpoken,
             profilePhotos,
-            certificates,
+            certificates: certificateUrls,
             certificateOther,
-            certificateFiles,
-            teachingScreenshot,
-            demoVideo,
+            teachingScreenshot: screenshotUrl,
+            demoVideo: demoVideoUrl,
           },
           action: 'submit',
         }),
@@ -427,11 +431,10 @@ function TutorApplicationContent() {
             ...formData,
             languagesSpoken,
             profilePhotos,
-            certificates,
+            certificates: certificateUrls,
             certificateOther,
-            certificateFiles,
-            teachingScreenshot,
-            demoVideo,
+            teachingScreenshot: screenshotUrl,
+            demoVideo: demoVideoUrl,
           },
           action: 'save',
         }),
@@ -495,7 +498,7 @@ function TutorApplicationContent() {
         <div className="mb-2"><b>Social Media:</b> {formData.socialMedia}</div>
         {/* Add more fields as needed, including uploads */}
         {applicationStatus === 'pending' && (
-          <Button className="mt-6" onClick={() => setMode('edit')}>Edit Application</Button>
+          <Button type="button" className="mt-6" onClick={(e) => { e.preventDefault(); setMode('edit'); }}>Edit Application</Button>
         )}
       </Card>
     );
@@ -561,7 +564,7 @@ function TutorApplicationContent() {
 
   // Button logic
   const bottomButton = isReadOnly
-    ? <Button onClick={() => setMode('edit')}>Edit Application</Button>
+    ? <Button type="button" onClick={(e) => { e.preventDefault(); setMode('edit'); }}>Edit Application</Button>
     : <Button type="submit">Submit Application</Button>;
 
   return (
@@ -601,7 +604,7 @@ function TutorApplicationContent() {
 
         {/* Application Form */}
         <AnimationWrapper type="slide-up" duration={0.8} delay={0.4}>
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter' && mode === 'readonly') e.preventDefault(); }} className="space-y-8">
             {/* Native Language */}
             <Card className="p-8 bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg">
               <div className="flex items-center gap-3 mb-6">
@@ -808,14 +811,14 @@ function TutorApplicationContent() {
               </Text>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
                 {certificateOptions.map(option => (
-                  <label key={option} className={`flex items-center gap-3 border rounded-lg px-4 py-3 cursor-pointer transition-all ${certificates.includes(option) ? 'border-[var(--color-accent)] bg-[var(--color-accent-light)]' : 'border-gray-200 bg-white hover:bg-gray-50'}`}>
+                  <label key={option} className={`flex items-center gap-3 border rounded-lg px-4 py-3 cursor-pointer transition-all ${certificateUrls.includes(option) ? 'border-[var(--color-accent)] bg-[var(--color-accent-light)]' : 'border-gray-200 bg-white hover:bg-gray-50'}`}>
                     <input
                       type="checkbox"
                       className="form-checkbox h-5 w-5 text-[var(--color-accent)]"
-                      checked={certificates.includes(option)}
+                      checked={certificateUrls.includes(option)}
                       onChange={e => {
-                        if (e.target.checked) setCertificates(prev => [...prev, option]);
-                        else setCertificates(prev => prev.filter(c => c !== option));
+                        if (e.target.checked) setCertificateUrls(prev => [...prev, option]);
+                        else setCertificateUrls(prev => prev.filter(c => c !== option));
                       }}
                       disabled={isReadOnly}
                     />
@@ -823,7 +826,7 @@ function TutorApplicationContent() {
                   </label>
                 ))}
               </div>
-              {certificates.includes('Other') && (
+              {certificateUrls.includes('Other') && (
                 <FormField label="Other Certificate (please explain)" className="mb-6">
                   <Input
                     value={certificateOther}
@@ -833,75 +836,11 @@ function TutorApplicationContent() {
                   />
                 </FormField>
               )}
-              {certificates.length > 0 && (
-                <div className="mt-6">
-                  <Text variant="h3" className="mb-2">Upload Certificate Files</Text>
-                  <Text variant="body" className="text-gray-600 mb-4">
-                    Upload proof of your selected certifications (PDF, JPG, or PNG)
-                  </Text>
-                  <div
-                    className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-colors ${isReadOnly ? 'border-gray-300 bg-white' : 'border-gray-300 bg-white hover:bg-gray-50'}`}
-                    onClick={!isReadOnly ? () => fileInputRef.current?.click() : undefined}
-                    style={{ cursor: isReadOnly ? 'default' : 'pointer', minHeight: 120 }}
-                  >
-                    <Upload className="w-10 h-10 text-gray-400 mb-2" />
-                    <Text variant="body" className="text-gray-500 mb-2 text-center">
-                      Upload your certificate files
-                    </Text>
-                    {!isReadOnly && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="border-2 border-[var(--color-accent)] text-[var(--color-accent)]"
-                        onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }}
-                      >
-                        Choose Files
-                      </Button>
-                    )}
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="application/pdf,image/jpeg,image/png"
-                      multiple
-                      style={{ display: 'none' }}
-                      onChange={e => {
-                        if (!e.target.files) return;
-                        const validFiles = Array.from(e.target.files).filter(
-                          file => file.type === 'application/pdf' || file.type.startsWith('image/')
-                        );
-                        setCertificateFiles(prev => [...prev, ...validFiles].slice(0, 10));
-                        e.target.value = '';
-                      }}
-                      disabled={isReadOnly}
-                    />
-                  </div>
-                  {certificateFiles.length > 0 && (
-                    <div className="flex flex-wrap gap-4 mt-2">
-                      {certificateFiles.map((file, idx) => (
-                        <div key={idx} className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
-                          {getFileUrl(file) && (
-                            <img
-                              src={getFileUrl(file)!}
-                              alt={`Certificate ${idx + 1}`}
-                              className="object-cover w-full h-full"
-                            />
-                          )}
-                          {!isReadOnly && (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              className="absolute top-1 right-1 px-2 py-0.5 text-xs text-red-500 border border-red-200 bg-white hover:bg-red-50"
-                              onClick={e => { e.stopPropagation(); setCertificateFiles(prev => prev.filter((_, i) => i !== idx)); }}
-                            >
-                              Remove
-                            </Button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
+              <TeachingCertificatesUploadSection
+                certificateUrls={certificateUrls}
+                setCertificateUrls={setCertificateUrls}
+                isReadOnly={isReadOnly}
+              />
             </Card>
 
             {/* Teaching Experience */}
@@ -928,70 +867,13 @@ function TutorApplicationContent() {
               </FormField>
 
               {/* Upload Screenshot (Optional) */}
-              <div className="mt-8">
-                <Text variant="h3" className="mb-2">Upload Screenshot (Optional)</Text>
-                <Text variant="body" className="text-gray-600 mb-4">
-                  Upload a screenshot of your teaching hours or profile from another platform to help speed up your review process.
-                </Text>
-                <div
-                  className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-colors ${isReadOnly ? 'border-gray-300 bg-white' : 'border-gray-300 bg-white hover:bg-gray-50'}`}
-                  onClick={!isReadOnly ? () => teachingScreenshotInputRef.current?.click() : undefined}
-                  style={{ cursor: isReadOnly ? 'default' : 'pointer', minHeight: 120 }}
-                >
-                  <Upload className="w-10 h-10 text-gray-400 mb-2" />
-                  <Text variant="body" className="text-gray-500 mb-2 text-center">
-                    Upload screenshot (JPG, PNG)
-                  </Text>
-                  {!isReadOnly && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="border-2 border-[var(--color-accent)] text-[var(--color-accent)]"
-                      onClick={e => { e.stopPropagation(); teachingScreenshotInputRef.current?.click(); }}
-                    >
-                      Choose Screenshot
-                    </Button>
-                  )}
-                  <input
-                    ref={teachingScreenshotInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png"
-                    style={{ display: 'none' }}
-                    onChange={e => {
-                      if (!e.target.files || e.target.files.length === 0) return;
-                      const file = e.target.files[0];
-                      if (file.type.startsWith('image/')) {
-                        setTeachingScreenshot(file);
-                      }
-                      e.target.value = '';
-                    }}
-                    disabled={isReadOnly}
-                  />
-                </div>
-                {teachingScreenshot && (
-                  <div className="flex flex-wrap gap-4 mt-2">
-                    <div className="relative w-40 h-40 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
-                      {getFileUrl(teachingScreenshot) && (
-                        <img
-                          src={getFileUrl(teachingScreenshot)!}
-                          alt="Teaching Screenshot"
-                          className="object-cover w-full h-full"
-                        />
-                      )}
-                      {!isReadOnly && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="absolute top-1 right-1 px-2 py-0.5 text-xs text-red-500 border border-red-200 bg-white hover:bg-red-50"
-                          onClick={e => { e.stopPropagation(); setTeachingScreenshot(null); }}
-                        >
-                          Remove
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
+              <TeachingExperienceScreenshotSection
+                screenshotUrl={screenshotUrl}
+                setScreenshotUrl={setScreenshotUrl}
+                isReadOnly={isReadOnly}
+                showToast={showToast}
+                userId={user?.id || ''}
+              />
             </Card>
 
             {/* Weekly Commitment */}
@@ -1019,77 +901,13 @@ function TutorApplicationContent() {
 
             {/* Demo Video */}
             <Card className="p-8 bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg">
-              <div className="flex items-center gap-3 mb-6">
-                <Video className="w-6 h-6 text-[var(--color-accent)]" />
-                <Text variant="h2" className="text-gray-800">Demo Video <span className="text-red-500">*</span></Text>
-              </div>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-                <Text variant="h3" className="text-blue-700 mb-2">Record a short video to introduce yourself</Text>
-                <ul className="text-blue-700 text-base list-disc pl-6 space-y-1">
-                  <li>This helps us understand your communication and teaching style</li>
-                  <li>Be yourself — no need to over-prepare. You can update the video later before students see your profile</li>
-                  <li>Speak clearly. If you're not a native English speaker, include a short English segment</li>
-                  <li>Recommended: 1–3 minutes, filmed in a well-lit and quiet space</li>
-                </ul>
-              </div>
-              <div
-                className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-colors ${isReadOnly ? 'border-gray-300 bg-white' : 'border-gray-300 bg-white hover:bg-gray-50'}`}
-                onClick={!isReadOnly ? () => demoVideoInputRef.current?.click() : undefined}
-                style={{ cursor: isReadOnly ? 'default' : 'pointer', minHeight: 180 }}
-              >
-                <Video className="w-12 h-12 text-gray-400 mb-4" />
-                <Text variant="body" className="text-gray-500 mb-4 text-center">
-                  Upload your demo video (MP4, MOV, or AVI)
-                </Text>
-                {!isReadOnly && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="border-2 border-[var(--color-accent)] text-[var(--color-accent)]"
-                    onClick={e => { e.stopPropagation(); demoVideoInputRef.current?.click(); }}
-                  >
-                    Choose Video
-                  </Button>
-                )}
-                <input
-                  ref={demoVideoInputRef}
-                  type="file"
-                  accept="video/mp4,video/quicktime,video/x-msvideo"
-                  style={{ display: 'none' }}
-                  onChange={e => {
-                    if (!e.target.files || e.target.files.length === 0) return;
-                    const file = e.target.files[0];
-                    if (file.type.startsWith('video/')) {
-                      setDemoVideo(file);
-                    }
-                    e.target.value = '';
-                  }}
-                  disabled={isReadOnly}
-                />
-              </div>
-              {demoVideo && (
-                <div className="flex flex-wrap gap-4 mt-2">
-                  <div className="relative w-64 h-40 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
-                    {getFileUrl(demoVideo) && (
-                      <video
-                        src={getFileUrl(demoVideo)!}
-                        controls
-                        className="object-cover w-full h-full"
-                      />
-                    )}
-                    {!isReadOnly && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="absolute top-1 right-1 px-2 py-0.5 text-xs text-red-500 border border-red-200 bg-white hover:bg-red-50"
-                        onClick={e => { e.stopPropagation(); setDemoVideo(null); }}
-                      >
-                        Remove
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              )}
+              <DemoVideoUploadSection
+                demoVideoUrl={demoVideoUrl}
+                setDemoVideoUrl={setDemoVideoUrl}
+                isReadOnly={isReadOnly}
+                showToast={showToast}
+                userId={user?.id || ''}
+              />
             </Card>
 
             {/* Motivation Letter */}
@@ -1303,29 +1121,40 @@ function LanguagesYouSpeakSection({ languagesSpoken, setLanguagesSpoken, availab
 }
 
 function ProfilePhotoUploadSection({ profilePhotos, setProfilePhotos, isReadOnly }: {
-  profilePhotos: File[];
-  setProfilePhotos: React.Dispatch<React.SetStateAction<File[]>>;
+  profilePhotos: string[];
+  setProfilePhotos: React.Dispatch<React.SetStateAction<string[]>>;
   isReadOnly: boolean;
 }) {
+  const { user } = useAuth();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
-  const handleFiles = (files: FileList | null) => {
-    if (!files) return;
-    const validFiles = Array.from(files).filter(
-      (file) => file.type.startsWith('image/')
-    );
-    // Limit to 5
-    setProfilePhotos((prev) => {
-      const combined = [...prev, ...validFiles];
-      return combined.slice(0, 5);
-    });
+  const handleFiles = async (files: FileList | null) => {
+    if (!files || !user?.id) return;
+    setUploading(true);
+    const urls: string[] = [];
+    for (const file of Array.from(files)) {
+      if (file.type.startsWith("image/")) {
+        try {
+          const url = await uploadProfilePhoto(file, user.id);
+          if (!url) throw new Error("No URL returned from upload");
+          urls.push(url);
+        } catch (err) {
+          console.error("Upload failed:", err);
+          alert("Failed to upload image: " + (err instanceof Error ? err.message : String(err)));
+        }
+      }
+    }
+    console.log("Uploaded URLs:", urls);
+    setProfilePhotos((prev) => [...prev, ...urls].slice(0, 5));
+    setUploading(false);
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setDragActive(false);
-    handleFiles(e.dataTransfer.files);
+    await handleFiles(e.dataTransfer.files);
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -1342,8 +1171,8 @@ function ProfilePhotoUploadSection({ profilePhotos, setProfilePhotos, isReadOnly
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleFiles(e.target.files);
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    await handleFiles(e.target.files);
     e.target.value = '';
   };
 
@@ -1377,9 +1206,9 @@ function ProfilePhotoUploadSection({ profilePhotos, setProfilePhotos, isReadOnly
           variant="outline"
           className="border-2 border-[var(--color-accent)] text-[var(--color-accent)]"
           onClick={(e) => { e.stopPropagation(); handleChoosePhotos(); }}
-          disabled={isReadOnly}
+          disabled={isReadOnly || uploading || profilePhotos.length >= 5}
         >
-          Choose Photos
+          {uploading ? 'Uploading...' : 'Choose Photos'}
         </Button>
         <input
           ref={fileInputRef}
@@ -1388,20 +1217,18 @@ function ProfilePhotoUploadSection({ profilePhotos, setProfilePhotos, isReadOnly
           multiple
           style={{ display: 'none' }}
           onChange={handleFileChange}
-          disabled={isReadOnly}
+          disabled={isReadOnly || uploading || profilePhotos.length >= 5}
         />
       </div>
       {profilePhotos.length > 0 && (
         <div className="flex flex-wrap gap-4 mt-6">
-          {profilePhotos.map((file, idx) => (
+          {profilePhotos.map((url, idx) => (
             <div key={idx} className="relative w-28 h-28 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
-              {getFileUrl(file) && (
-                <img
-                  src={getFileUrl(file)!}
-                  alt={`Profile ${idx + 1}`}
-                  className="object-cover w-full h-full"
-                />
-              )}
+              <img
+                src={url}
+                alt={`Profile ${idx + 1}`}
+                className="object-cover w-full h-full"
+              />
               <Button
                 type="button"
                 variant="outline"
@@ -1416,36 +1243,549 @@ function ProfilePhotoUploadSection({ profilePhotos, setProfilePhotos, isReadOnly
         </div>
       )}
       <Text variant="small" className="text-gray-400 mt-4">
-        You can upload up to 5 photos. In the future, we’ll use AI to help polish your profile photo for a professional look.
+        You can upload up to 5 photos. In the future, we'll use AI to help polish your profile photo for a professional look.
       </Text>
     </Card>
   );
 }
 
-function FilePreview({ file, onRemove, editable }: { file: File | string, onRemove?: () => void, editable?: boolean }) {
-  const url = getFileUrl(file);
-  if (!url) return null;
-  if (isImageFile(file)) {
-    return (
-      <div className="relative w-28 h-28 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
-        <img src={url} alt="Uploaded" className="object-cover w-full h-full" />
-        {editable && onRemove && (
-          <button type="button" className="absolute top-1 right-1 px-2 py-0.5 text-xs text-red-600 bg-white rounded shadow" onClick={onRemove}>Remove</button>
-        )}
+function TeachingCertificatesUploadSection({ certificateUrls, setCertificateUrls, isReadOnly }: {
+  certificateUrls: string[];
+  setCertificateUrls: React.Dispatch<React.SetStateAction<string[]>>;
+  isReadOnly: boolean;
+}) {
+  const { user } = useAuth();
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [dragActive, setDragActive] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  const handleFiles = async (files: FileList | null) => {
+    if (!files || !user?.id) return;
+    setUploading(true);
+    const urls: string[] = [];
+    for (const file of Array.from(files)) {
+      if (file.type.startsWith("image/") || file.type === "application/pdf") {
+        try {
+          const url = await uploadCertificateFile(file, user.id);
+          if (!url) throw new Error("No URL returned from upload");
+          urls.push(url);
+        } catch (err) {
+          console.error("Upload failed:", err);
+          alert("Failed to upload certificate: " + (err instanceof Error ? err.message : String(err)));
+        }
+      }
+    }
+    console.log("Uploaded certificate URLs:", urls);
+    setCertificateUrls((prev) => [...prev, ...urls].slice(0, 10)); // Allow up to 10 certificates
+    setUploading(false);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFiles(e.target.files);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleChooseFiles = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    handleFiles(e.dataTransfer.files);
+  };
+
+  const removeCertificate = (index: number) => {
+    setCertificateUrls((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const getFileName = (url: string) => {
+    if (typeof url !== 'string') {
+      console.warn('getFileName received non-string url:', url);
+      return 'unknown-file';
+    }
+    const urlParts = url.split("/");
+    return urlParts[urlParts.length - 1].split("?")[0];
+  };
+
+  const isImage = (url: string) => {
+    const fileName = getFileName(url).toLowerCase();
+    return fileName.match(/\.(jpg|jpeg|png|gif|webp)$/);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-2">
+          Teaching Certificates
+        </label>
+        <p className="text-sm text-[var(--color-text-secondary)] mb-4">
+          Upload your teaching certificates, qualifications, or relevant documents (PDF, JPG, PNG). Max 10 files.
+        </p>
       </div>
-    );
-  }
-  if (isVideoFile(file)) {
-    return (
-      <div className="relative w-28 h-28 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
-        <video src={url} controls className="object-cover w-full h-full" />
-        {editable && onRemove && (
-          <button type="button" className="absolute top-1 right-1 px-2 py-0.5 text-xs text-red-600 bg-white rounded shadow" onClick={onRemove}>Remove</button>
-        )}
+
+      {/* Upload Area */}
+      <div
+        className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+          dragActive
+            ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10"
+            : "border-[var(--color-border)] hover:border-[var(--color-accent)]"
+        } ${isReadOnly || uploading || certificateUrls.length >= 10 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+        onDragEnter={handleDrag}
+        onDragLeave={handleDrag}
+        onDragOver={handleDrag}
+        onDrop={handleDrop}
+        onClick={!isReadOnly && !uploading && certificateUrls.length < 10 ? handleChooseFiles : undefined}
+      >
+        <div className="space-y-2">
+          <div className="text-[var(--color-text-secondary)]">
+            <svg className="mx-auto h-12 w-12" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+              <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <div className="text-[var(--color-text-primary)]">
+            <Button
+              type="button"
+              variant="outline"
+              className="border-2 border-[var(--color-accent)] text-[var(--color-accent)]"
+              onClick={(e) => { e.stopPropagation(); handleChooseFiles(); }}
+              disabled={isReadOnly || uploading || certificateUrls.length >= 10}
+            >
+              {uploading ? 'Uploading...' : 'Choose Files'}
+            </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,.pdf"
+              multiple
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+              disabled={isReadOnly || uploading || certificateUrls.length >= 10}
+            />
+          </div>
+          <p className="text-xs text-[var(--color-text-secondary)]">
+            Drag and drop files here, or click to select
+          </p>
+        </div>
       </div>
-    );
-  }
-  return null;
+
+      {/* Preview Section */}
+      {certificateUrls.length > 0 && (
+        <div className="space-y-3">
+          <h4 className="text-sm font-medium text-[var(--color-text-primary)]">Uploaded Certificates:</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {certificateUrls.map((url, index) => (
+              <div key={index} className="relative group border rounded-lg overflow-hidden bg-[var(--color-background-secondary)]">
+                {isImage(url) ? (
+                  <img
+                    src={url}
+                    alt={`Certificate ${index + 1}`}
+                    className="w-full h-32 object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-32 flex items-center justify-center bg-[var(--color-background-tertiary)]">
+                    <svg className="w-12 h-12 text-[var(--color-text-secondary)]" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                )}
+                <div className="p-2">
+                  <p className="text-xs text-[var(--color-text-secondary)] truncate">
+                    {getFileName(url)}
+                  </p>
+                </div>
+                {!isReadOnly && (
+                  <button
+                    type="button"
+                    onClick={() => removeCertificate(index)}
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TeachingExperienceScreenshotSection({ screenshotUrl, setScreenshotUrl, isReadOnly, showToast, userId }: {
+  screenshotUrl: string | null;
+  setScreenshotUrl: React.Dispatch<React.SetStateAction<string | null>>;
+  isReadOnly: boolean;
+  showToast: (args: { type: 'success' | 'error' | 'warning' | 'info'; title: string; message: string }) => void;
+  userId: string;
+}) {
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = async (file: File | null) => {
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Please select an image file (JPG, PNG, GIF, etc.)');
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('File size must be less than 5MB');
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadError(null);
+
+    try {
+      if (!userId) throw new Error('User ID is required to upload screenshot.');
+      const url = await uploadTeachingScreenshot(file, userId);
+      setScreenshotUrl(url);
+      showToast({
+        type: 'success',
+        title: 'Screenshot uploaded successfully!',
+        message: 'Your teaching experience screenshot has been uploaded.'
+      });
+    } catch (error) {
+      setUploadError('Failed to upload screenshot. Please try again.');
+      showToast({
+        type: 'error',
+        title: 'Upload Failed',
+        message: 'Failed to upload screenshot. Please try again.'
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    handleFile(file);
+    e.target.value = '';
+  };
+
+  const handleChooseFile = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleFile(files[0]);
+    }
+  };
+
+  const removeScreenshot = () => {
+    setScreenshotUrl(null);
+    setUploadError(null);
+  };
+
+  const getFileName = (url: string) => {
+    if (typeof url !== 'string') return 'Unknown file';
+    try {
+      const pathParts = url.split('/');
+      const fileName = pathParts[pathParts.length - 1];
+      return decodeURIComponent(fileName);
+    } catch (error) {
+      return 'Unknown file';
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+        <Text variant="h3" className="text-blue-700 mb-2">Share your teaching experience</Text>
+        <ul className="text-blue-700 text-base list-disc pl-6 space-y-1">
+          <li>Upload a screenshot showing your teaching experience (e.g., online platform, classroom, etc.)</li>
+          <li>This helps us verify your teaching background</li>
+          <li>Accepted formats: JPG, PNG, GIF (max 5MB)</li>
+        </ul>
+      </div>
+
+      {!screenshotUrl ? (
+        <div
+          className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-colors ${
+            isReadOnly 
+              ? 'border-gray-300 bg-gray-50' 
+              : 'border-gray-300 bg-white hover:bg-gray-50 cursor-pointer'
+          }`}
+          onClick={!isReadOnly ? handleChooseFile : undefined}
+          onDragOver={!isReadOnly ? handleDragOver : undefined}
+          onDragEnter={!isReadOnly ? handleDrag : undefined}
+          onDragLeave={!isReadOnly ? handleDrag : undefined}
+          onDrop={!isReadOnly ? handleDrop : undefined}
+        >
+          <Upload className="w-12 h-12 text-gray-400 mb-4" />
+          <Text variant="body" className="text-gray-500 mb-4 text-center">
+            {isReadOnly 
+              ? 'No screenshot uploaded' 
+              : 'Drag & drop your screenshot here or click to browse'
+            }
+          </Text>
+          {!isReadOnly && (
+            <Button
+              type="button"
+              variant="outline"
+              className="border-2 border-[var(--color-accent)] text-[var(--color-accent)]"
+              onClick={e => { e.stopPropagation(); handleChooseFile(); }}
+              disabled={isUploading}
+            >
+              {isUploading ? 'Uploading...' : 'Choose Screenshot'}
+            </Button>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+            disabled={isReadOnly || isUploading}
+          />
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="relative w-full max-w-md h-64 rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+            <img
+              src={screenshotUrl}
+              alt="Teaching experience screenshot"
+              className="object-cover w-full h-full"
+            />
+            {!isReadOnly && (
+              <Button
+                type="button"
+                variant="outline"
+                className="absolute top-2 right-2 px-2 py-1 text-xs text-red-500 border border-red-200 bg-white hover:bg-red-50"
+                onClick={removeScreenshot}
+              >
+                Remove
+              </Button>
+            )}
+          </div>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <FileText className="w-4 h-4" />
+            <span>{getFileName(screenshotUrl)}</span>
+          </div>
+        </div>
+      )}
+
+      {uploadError && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <Text variant="body" className="text-red-700">{uploadError}</Text>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DemoVideoUploadSection({ demoVideoUrl, setDemoVideoUrl, isReadOnly, showToast, userId }: {
+  demoVideoUrl: string | null;
+  setDemoVideoUrl: React.Dispatch<React.SetStateAction<string | null>>;
+  isReadOnly: boolean;
+  showToast: (args: { type: 'success' | 'error' | 'warning' | 'info'; title: string; message: string }) => void;
+  userId: string;
+}) {
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = async (file: File | null) => {
+    if (!file) return;
+    // Validate file type
+    if (!file.type.startsWith('video/')) {
+      showToast({
+        type: 'error',
+        title: 'Invalid file type',
+        message: 'Please select a video file (MP4, MOV, etc.)',
+      });
+      return;
+    }
+    // Validate file size (100MB limit)
+    if (file.size > 100 * 1024 * 1024) {
+      showToast({
+        type: 'error',
+        title: 'File too large',
+        message: 'Please select a video smaller than 100MB.',
+      });
+      return;
+    }
+    setIsUploading(true);
+    setUploadError(null);
+    try {
+      if (!userId) throw new Error('User ID is required to upload demo video.');
+      const url = await uploadDemoVideo(file, userId);
+      setDemoVideoUrl(url);
+      showToast({
+        type: 'success',
+        title: 'Demo Video uploaded successfully!',
+        message: 'Your demo video has been uploaded.'
+      });
+    } catch (err) {
+      setUploadError('Failed to upload demo video. Please try again.');
+      showToast({
+        type: 'error',
+        title: 'Upload Failed',
+        message: 'Failed to upload demo video. Please try again.'
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    handleFile(file);
+    e.target.value = '';
+  };
+
+  const handleChooseFile = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleFile(files[0]);
+    }
+  };
+
+  const removeDemoVideo = () => {
+    setDemoVideoUrl(null);
+    setUploadError(null);
+  };
+
+  const getFileName = (url: string) => {
+    if (typeof url !== 'string') return 'Unknown file';
+    try {
+      const pathParts = url.split('/');
+      const fileName = pathParts[pathParts.length - 1];
+      return decodeURIComponent(fileName);
+    } catch (error) {
+      return 'Unknown file';
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+        <Text variant="h3" className="text-blue-700 mb-2">Share your teaching experience</Text>
+        <ul className="text-blue-700 text-base list-disc pl-6 space-y-1">
+          <li>Upload a screenshot showing your teaching experience (e.g., online platform, classroom, etc.)</li>
+          <li>This helps us verify your teaching background</li>
+          <li>Accepted formats: JPG, PNG, GIF (max 5MB)</li>
+        </ul>
+      </div>
+
+      {!demoVideoUrl ? (
+        <div
+          className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-colors ${
+            isReadOnly 
+              ? 'border-gray-300 bg-gray-50' 
+              : 'border-gray-300 bg-white hover:bg-gray-50 cursor-pointer'
+          }`}
+          onClick={!isReadOnly ? handleChooseFile : undefined}
+          onDragOver={!isReadOnly ? handleDragOver : undefined}
+          onDragEnter={!isReadOnly ? handleDrag : undefined}
+          onDragLeave={!isReadOnly ? handleDrag : undefined}
+          onDrop={!isReadOnly ? handleDrop : undefined}
+        >
+          <Upload className="w-12 h-12 text-gray-400 mb-4" />
+          <Text variant="body" className="text-gray-500 mb-4 text-center">
+            {isReadOnly 
+              ? 'No demo video uploaded' 
+              : 'Drag & drop your demo video here or click to browse'
+            }
+          </Text>
+          {!isReadOnly && (
+            <Button
+              type="button"
+              variant="outline"
+              className="border-2 border-[var(--color-accent)] text-[var(--color-accent)]"
+              onClick={e => { e.stopPropagation(); handleChooseFile(); }}
+              disabled={isUploading}
+            >
+              {isUploading ? 'Uploading...' : 'Choose Demo Video'}
+            </Button>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="video/*"
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+            disabled={isReadOnly || isUploading}
+          />
+        </div>
+      ) : (
+        <div className="relative w-full max-w-xl aspect-video rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
+          <video
+            src={demoVideoUrl}
+            controls
+            className="w-full h-full object-cover"
+            style={{ background: '#000' }}
+          >
+            Your browser does not support the video tag.
+          </video>
+          {!isReadOnly && (
+            <Button
+              type="button"
+              variant="outline"
+              className="absolute top-2 right-2 px-2 py-1 text-xs text-red-500 border border-red-200 bg-white hover:bg-red-50"
+              onClick={removeDemoVideo}
+            >
+              Remove
+            </Button>
+          )}
+        </div>
+      )}
+
+      {uploadError && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <Text variant="body" className="text-red-700">{uploadError}</Text>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function TutorApplication() {

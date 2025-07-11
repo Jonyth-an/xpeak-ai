@@ -4,7 +4,7 @@ import { requireAdminAuth } from '@/lib/adminAuth';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
@@ -14,7 +14,7 @@ export async function GET(
     }
 
     const supabase = serverSupabase;
-    const { id } = params;
+    const { id } = await params;
 
     // Get the application
     const { data: application, error } = await supabase
@@ -38,7 +38,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
@@ -49,7 +49,7 @@ export async function POST(
     const adminUser = authResult.user;
 
     const supabase = serverSupabase;
-    const { id } = params;
+    const { id } = await params;
 
     // Get request body
     const { status, reviewNotes, rejectionReason, waitlistReason } = await request.json();
