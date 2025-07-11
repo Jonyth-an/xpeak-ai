@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../AdminLayout';
 import { useAuth } from '@/lib/AuthContext';
-import { isAdminEmail } from '@/lib/adminAuth';
+import { useRoles } from '@/lib/RolesContext';
 import { supabase } from '@/lib/supabaseClient';
 import { Card, Button, Text } from '@/app/components/ui';
 
@@ -28,6 +28,7 @@ interface AnalyticsData {
 
 export default function AdminAnalyticsPage() {
   const { user } = useAuth();
+  const { roles } = useRoles();
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -36,11 +37,11 @@ export default function AdminAnalyticsPage() {
   const [period, setPeriod] = useState('30d');
 
   useEffect(() => {
-    checkAdminAccess();
+    checkAdminAccess(roles);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user, roles]);
 
-  const checkAdminAccess = async () => {
+  const checkAdminAccess = async (roles: string[]) => {
     if (!user) {
       setIsAdmin(false);
       setLoading(false);
@@ -48,7 +49,7 @@ export default function AdminAnalyticsPage() {
     }
 
     try {
-      const adminStatus = isAdminEmail(user.email);
+      const adminStatus = roles.includes('admin');
       setIsAdmin(adminStatus);
       
       if (adminStatus) {

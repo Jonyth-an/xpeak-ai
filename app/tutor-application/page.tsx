@@ -39,6 +39,7 @@ import {
 import { useAuth } from "@/lib/AuthContext"
 import { useRouter } from "next/navigation"
 import CustomSelect from '@/app/components/ui/CustomSelect';
+import { supabaseClient } from "@/lib/supabaseClient";
 
 const languages = [
   "English",
@@ -163,10 +164,55 @@ const certificateOptions = [
   'TEFL', 'CELTA', 'TESOL', 'DELTA', 'DELE', 'HSK', 'JLPT', 'DELF/DALF', 'Goethe Certificate', 'CILS', 'Other'
 ];
 
+// Helper function to safely get file URL for display
+export const getFileUrl = (file: File | string | null): string | null => {
+  if (!file) return null;
+  if (typeof file === 'string') {
+    // If it's already a URL string, return it directly
+    return file;
+  }
+  if (file instanceof File) {
+    // If it's a File object, create object URL
+    return URL.createObjectURL(file);
+  }
+  return null;
+}
+
+// Helper function to check if file is an image
+export const isImageFile = (file: File | string | null): boolean => {
+  if (!file) return false;
+  if (typeof file === 'string') {
+    // If it's a string, check if it looks like an image URL
+    return /\.(jpg|jpeg|png|gif|webp)$/i.test(file) || file.startsWith('data:image/');
+  }
+  if (file instanceof File) {
+    return file.type.startsWith('image/');
+  }
+  return false;
+}
+
+// Helper function to check if file is a video
+export const isVideoFile = (file: File | string | null): boolean => {
+  if (!file) return false;
+  if (typeof file === 'string') {
+    // If it's a string, check if it looks like a video URL
+    return /\.(mp4|mov|avi|webm)$/i.test(file) || file.startsWith('data:video/');
+  }
+  if (file instanceof File) {
+    return file.type.startsWith('video/');
+  }
+  return false;
+}
+
 function TutorApplicationContent() {
   const { user } = useAuth()
   const router = useRouter()
   const { showToast } = useToast()
+
+  // Add mode: 'summary' | 'edit'
+  const [mode, setMode] = useState<'readonly' | 'edit'>('edit');
+  const [applicationStatus, setApplicationStatus] = useState<string>('drafting');
+  const [loaded, setLoaded] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     nativeLanguage: "",
@@ -225,6 +271,46 @@ function TutorApplicationContent() {
     }
   }, [])
 
+  // Fetch application on mount
+  useEffect(() => {
+    async function fetchApplication() {
+      const session = await supabaseClient.auth.getSession();
+      const response = await fetch('/api/tutor-applications', {
+        headers: {
+          'Authorization': `Bearer ${session.data.session?.access_token}`,
+        },
+      });
+      if (response.ok) {
+        const { application } = await response.json();
+        const fetchedStatus = application?.status || 'drafting';
+        if (application && fetchedStatus === 'pending') {
+          // Populate formData and all related state from application_data
+          setFormData({
+            ...formData,
+            ...application.application_data,
+          });
+          setLanguagesSpoken(application.application_data?.languagesSpoken || []);
+          setProfilePhotos(application.application_data?.profilePhotos || []);
+          setCertificates(application.application_data?.certificates || []);
+          setCertificateOther(application.application_data?.certificateOther || '');
+          setCertificateFiles(application.application_data?.certificateFiles || []);
+          setTeachingScreenshot(application.application_data?.teachingScreenshot || null);
+          setDemoVideo(application.application_data?.demoVideo || null);
+          setApplicationStatus(application.status);
+          setMode('readonly');
+        } else {
+          setMode('edit');
+          setApplicationStatus(fetchedStatus);
+        }
+      } else {
+        setMode('edit');
+      }
+      setLoaded(true);
+    }
+    fetchApplication();
+    // eslint-disable-next-line
+  }, []);
+
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
 
@@ -278,27 +364,32 @@ function TutorApplicationContent() {
     setIsSubmitting(true)
     
     try {
+      const session = await supabaseClient.auth.getSession()
       const response = await fetch('/api/tutor-applications', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.data.session?.access_token}`,
         },
         body: JSON.stringify({
-          ...formData,
-          languagesSpoken, // <-- include in payload
-          profilePhotos, // <-- include in payload
-          certificates, // <-- include in payload
-          certificateOther, // <-- include in payload
-          certificateFiles, // <-- include in payload
-          teachingScreenshot, // <-- include in payload
-          demoVideo, // <-- include in payload
-          status: 'pending',
-          submitted_at: new Date().toISOString(),
+          applicationData: {
+            ...formData,
+            languagesSpoken,
+            profilePhotos,
+            certificates,
+            certificateOther,
+            certificateFiles,
+            teachingScreenshot,
+            demoVideo,
+          },
+          action: 'submit',
         }),
       })
 
       if (response.ok) {
         setIsSubmitted(true)
+        setMode('readonly');
+        setApplicationStatus('pending');
         showToast({
           type: 'success',
           title: 'Application Submitted!',
@@ -324,14 +415,25 @@ function TutorApplicationContent() {
     setIsLoading(true)
     
     try {
+      const session = await supabaseClient.auth.getSession()
       const response = await fetch('/api/tutor-applications', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.data.session?.access_token}`,
         },
         body: JSON.stringify({
-          ...formData,
-          status: 'drafting',
+          applicationData: {
+            ...formData,
+            languagesSpoken,
+            profilePhotos,
+            certificates,
+            certificateOther,
+            certificateFiles,
+            teachingScreenshot,
+            demoVideo,
+          },
+          action: 'save',
         }),
       })
 
@@ -368,6 +470,39 @@ function TutorApplicationContent() {
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }))
     }
+  }
+
+  // Summary view component
+  function ApplicationSummary() {
+    return (
+      <Card className="p-8 bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg">
+        <Text variant="h2" className="text-gray-800 mb-4">Your Submitted Application</Text>
+        <div className="mb-4"><b>Status:</b> {applicationStatus.charAt(0).toUpperCase() + applicationStatus.slice(1)}</div>
+        <div className="mb-2"><b>Native Language:</b> {formData.nativeLanguage}</div>
+        <div className="mb-2"><b>Accent:</b> {formData.accent}</div>
+        <div className="mb-2"><b>Languages You Speak:</b> {languagesSpoken.map(l => `${l.language} (${l.fluency})`).join(', ')}</div>
+        <div className="mb-2"><b>Full Name:</b> {formData.fullName}</div>
+        <div className="mb-2"><b>Display Name:</b> {formData.displayName}</div>
+        <div className="mb-2"><b>Birth Country:</b> {formData.birthCountry}</div>
+        <div className="mb-2"><b>Current Country:</b> {formData.currentCountry}</div>
+        <div className="mb-2"><b>Timezone:</b> {formData.timezone}</div>
+        <div className="mb-2"><b>Introduction:</b> {formData.introduction}</div>
+        <div className="mb-2"><b>Education:</b> {formData.education}</div>
+        <div className="mb-2"><b>Teaching Experience:</b> {formData.teachingExperience}</div>
+        <div className="mb-2"><b>Weekly Hours:</b> {formData.weeklyHours}</div>
+        <div className="mb-2"><b>Motivation:</b> {formData.motivation}</div>
+        <div className="mb-2"><b>LinkedIn:</b> {formData.linkedin}</div>
+        <div className="mb-2"><b>Social Media:</b> {formData.socialMedia}</div>
+        {/* Add more fields as needed, including uploads */}
+        {applicationStatus === 'pending' && (
+          <Button className="mt-6" onClick={() => setMode('edit')}>Edit Application</Button>
+        )}
+      </Card>
+    );
+  }
+
+  if (!loaded) {
+    return <LoadingSpinner />;
   }
 
   if (isSubmitted) {
@@ -413,6 +548,22 @@ function TutorApplicationContent() {
     )
   }
 
+  // 1. Progress bar logic
+  const step = applicationStatus === 'pending' ? 2 : 1;
+  const totalSteps = 3;
+  const stepIndicator = applicationStatus === 'pending'
+    ? 'Step 2 of 3 – Under Review'
+    : 'Step 1 of 3 – Tutor Application';
+  const progressPercent = (step / totalSteps) * 100;
+
+  // 2. Enforce read-only mode
+  const isReadOnly = mode === 'readonly';
+
+  // Button logic
+  const bottomButton = isReadOnly
+    ? <Button onClick={() => setMode('edit')}>Edit Application</Button>
+    : <Button type="submit">Submit Application</Button>;
+
   return (
     <>
       <div className="max-w-4xl mx-auto">
@@ -436,14 +587,14 @@ function TutorApplicationContent() {
         <AnimationWrapper type="slide-up" duration={0.6} delay={0.2}>
           <Card className="p-6 bg-white/80 backdrop-blur-sm border border-gray-200 mb-12">
             <div className="flex items-center justify-between mb-4">
-              <Text variant="h3" className="font-semibold text-gray-800">Step 1 of 3 — Tutor Application</Text>
+              <Text variant="h3" className="font-semibold text-gray-800">{stepIndicator}</Text>
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <Save className="w-4 h-4" />
                 {savedProgress ? "Progress saved!" : "Your progress is saved automatically"}
               </div>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3">
-              <div className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] h-3 rounded-full w-1/3 transition-all duration-500"></div>
+              <div className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] h-3 rounded-full w-1/3 transition-all duration-500" style={{ width: `${progressPercent}%` }}></div>
             </div>
           </Card>
         </AnimationWrapper>
@@ -471,6 +622,7 @@ function TutorApplicationContent() {
                   onValueChange={(val) => handleInputChange('nativeLanguage', val)}
                   options={toOptions(languages, 'Select your native language')}
                   placeholder="Select your native language"
+                  disabled={isReadOnly}
                 />
               </FormField>
               {['English', 'Spanish', 'Chinese (Mandarin)'].includes(formData.nativeLanguage) && (
@@ -486,6 +638,7 @@ function TutorApplicationContent() {
                     onValueChange={(val) => handleInputChange('accent', val)}
                     options={accentOptions[formData.nativeLanguage] || []}
                     placeholder="Select accent/variant"
+                    disabled={isReadOnly}
                   />
                 </FormField>
               )}
@@ -505,6 +658,7 @@ function TutorApplicationContent() {
                 languagesSpoken={languagesSpoken}
                 setLanguagesSpoken={setLanguagesSpoken}
                 availableLanguages={availableLanguages}
+                isReadOnly={isReadOnly}
               />
             </Card>
 
@@ -527,6 +681,7 @@ function TutorApplicationContent() {
                     onChange={(e) => handleInputChange('fullName', e.target.value)}
                     className="h-12"
                     placeholder="Enter your full legal name"
+                    readOnly={isReadOnly}
                   />
                 </FormField>
 
@@ -541,6 +696,7 @@ function TutorApplicationContent() {
                     onChange={(e) => handleInputChange('displayName', e.target.value)}
                     className="h-12"
                     placeholder="Enter your display name"
+                    readOnly={isReadOnly}
                   />
                 </FormField>
               </div>
@@ -557,6 +713,7 @@ function TutorApplicationContent() {
                     onValueChange={(val) => handleInputChange('birthCountry', val)}
                     options={toOptions(countries)}
                     placeholder="Select country of birth"
+                    disabled={isReadOnly}
                   />
                 </FormField>
 
@@ -571,6 +728,7 @@ function TutorApplicationContent() {
                     onValueChange={(val) => handleInputChange('currentCountry', val)}
                     options={toOptions(countries)}
                     placeholder="Select current country"
+                    disabled={isReadOnly}
                   />
                 </FormField>
               </div>
@@ -586,7 +744,7 @@ function TutorApplicationContent() {
             </Card>
 
             {/* Profile Photo Upload */}
-            <ProfilePhotoUploadSection profilePhotos={profilePhotos} setProfilePhotos={setProfilePhotos} />
+            <ProfilePhotoUploadSection profilePhotos={profilePhotos} setProfilePhotos={setProfilePhotos} isReadOnly={isReadOnly} />
 
             {/* Self Introduction */}
             <Card className="p-8 bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg">
@@ -611,6 +769,7 @@ function TutorApplicationContent() {
                   placeholder="Tell us about yourself, your teaching approach, and how you help students succeed..."
                   showCharacterCount
                   maxLength={400}
+                  readOnly={isReadOnly}
                 />
               </FormField>
             </Card>
@@ -633,6 +792,7 @@ function TutorApplicationContent() {
                   onChange={(e) => handleInputChange('education', e.target.value)}
                   className="min-h-[120px] resize-none"
                   placeholder="Share your educational background, degrees, and institutions..."
+                  readOnly={isReadOnly}
                 />
               </FormField>
             </Card>
@@ -657,6 +817,7 @@ function TutorApplicationContent() {
                         if (e.target.checked) setCertificates(prev => [...prev, option]);
                         else setCertificates(prev => prev.filter(c => c !== option));
                       }}
+                      disabled={isReadOnly}
                     />
                     <span className="font-semibold text-gray-800">{option}</span>
                   </label>
@@ -668,6 +829,7 @@ function TutorApplicationContent() {
                     value={certificateOther}
                     onChange={e => setCertificateOther(e.target.value)}
                     placeholder="Please specify your certificate and a brief explanation"
+                    readOnly={isReadOnly}
                   />
                 </FormField>
               )}
@@ -678,22 +840,24 @@ function TutorApplicationContent() {
                     Upload proof of your selected certifications (PDF, JPG, or PNG)
                   </Text>
                   <div
-                    className="border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center bg-white mb-4"
-                    onClick={() => fileInputRef.current?.click()}
-                    style={{ cursor: 'pointer', minHeight: 120 }}
+                    className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-colors ${isReadOnly ? 'border-gray-300 bg-white' : 'border-gray-300 bg-white hover:bg-gray-50'}`}
+                    onClick={!isReadOnly ? () => fileInputRef.current?.click() : undefined}
+                    style={{ cursor: isReadOnly ? 'default' : 'pointer', minHeight: 120 }}
                   >
                     <Upload className="w-10 h-10 text-gray-400 mb-2" />
                     <Text variant="body" className="text-gray-500 mb-2 text-center">
                       Upload your certificate files
                     </Text>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="border-2 border-[var(--color-accent)] text-[var(--color-accent)]"
-                      onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }}
-                    >
-                      Choose Files
-                    </Button>
+                    {!isReadOnly && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="border-2 border-[var(--color-accent)] text-[var(--color-accent)]"
+                        onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }}
+                      >
+                        Choose Files
+                      </Button>
+                    )}
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -708,32 +872,30 @@ function TutorApplicationContent() {
                         setCertificateFiles(prev => [...prev, ...validFiles].slice(0, 10));
                         e.target.value = '';
                       }}
+                      disabled={isReadOnly}
                     />
                   </div>
                   {certificateFiles.length > 0 && (
                     <div className="flex flex-wrap gap-4 mt-2">
                       {certificateFiles.map((file, idx) => (
                         <div key={idx} className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
-                          {file.type === 'application/pdf' ? (
-                            <div className="flex flex-col items-center justify-center w-full h-full">
-                              <FileText className="w-8 h-8 text-gray-400 mb-2" />
-                              <span className="text-xs text-gray-700">{file.name}</span>
-                            </div>
-                          ) : (
+                          {getFileUrl(file) && (
                             <img
-                              src={URL.createObjectURL(file)}
+                              src={getFileUrl(file)!}
                               alt={`Certificate ${idx + 1}`}
                               className="object-cover w-full h-full"
                             />
                           )}
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className="absolute top-1 right-1 px-2 py-0.5 text-xs text-red-500 border border-red-200 bg-white hover:bg-red-50"
-                            onClick={e => { e.stopPropagation(); setCertificateFiles(prev => prev.filter((_, i) => i !== idx)); }}
-                          >
-                            Remove
-                          </Button>
+                          {!isReadOnly && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="absolute top-1 right-1 px-2 py-0.5 text-xs text-red-500 border border-red-200 bg-white hover:bg-red-50"
+                              onClick={e => { e.stopPropagation(); setCertificateFiles(prev => prev.filter((_, i) => i !== idx)); }}
+                            >
+                              Remove
+                            </Button>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -761,6 +923,7 @@ function TutorApplicationContent() {
                   onChange={(e) => handleInputChange('teachingExperience', e.target.value)}
                   className="min-h-[120px] resize-none"
                   placeholder="Describe your teaching experience, platforms you've used, and any relevant background..."
+                  readOnly={isReadOnly}
                 />
               </FormField>
 
@@ -771,22 +934,24 @@ function TutorApplicationContent() {
                   Upload a screenshot of your teaching hours or profile from another platform to help speed up your review process.
                 </Text>
                 <div
-                  className="border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center bg-white mb-4"
-                  onClick={() => teachingScreenshotInputRef.current?.click()}
-                  style={{ cursor: 'pointer', minHeight: 120 }}
+                  className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-colors ${isReadOnly ? 'border-gray-300 bg-white' : 'border-gray-300 bg-white hover:bg-gray-50'}`}
+                  onClick={!isReadOnly ? () => teachingScreenshotInputRef.current?.click() : undefined}
+                  style={{ cursor: isReadOnly ? 'default' : 'pointer', minHeight: 120 }}
                 >
                   <Upload className="w-10 h-10 text-gray-400 mb-2" />
                   <Text variant="body" className="text-gray-500 mb-2 text-center">
                     Upload screenshot (JPG, PNG)
                   </Text>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="border-2 border-[var(--color-accent)] text-[var(--color-accent)]"
-                    onClick={e => { e.stopPropagation(); teachingScreenshotInputRef.current?.click(); }}
-                  >
-                    Choose Screenshot
-                  </Button>
+                  {!isReadOnly && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="border-2 border-[var(--color-accent)] text-[var(--color-accent)]"
+                      onClick={e => { e.stopPropagation(); teachingScreenshotInputRef.current?.click(); }}
+                    >
+                      Choose Screenshot
+                    </Button>
+                  )}
                   <input
                     ref={teachingScreenshotInputRef}
                     type="file"
@@ -800,24 +965,29 @@ function TutorApplicationContent() {
                       }
                       e.target.value = '';
                     }}
+                    disabled={isReadOnly}
                   />
                 </div>
                 {teachingScreenshot && (
                   <div className="flex flex-wrap gap-4 mt-2">
                     <div className="relative w-40 h-40 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
-                      <img
-                        src={URL.createObjectURL(teachingScreenshot)}
-                        alt="Teaching Screenshot"
-                        className="object-cover w-full h-full"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="absolute top-1 right-1 px-2 py-0.5 text-xs text-red-500 border border-red-200 bg-white hover:bg-red-50"
-                        onClick={e => { e.stopPropagation(); setTeachingScreenshot(null); }}
-                      >
-                        Remove
-                      </Button>
+                      {getFileUrl(teachingScreenshot) && (
+                        <img
+                          src={getFileUrl(teachingScreenshot)!}
+                          alt="Teaching Screenshot"
+                          className="object-cover w-full h-full"
+                        />
+                      )}
+                      {!isReadOnly && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="absolute top-1 right-1 px-2 py-0.5 text-xs text-red-500 border border-red-200 bg-white hover:bg-red-50"
+                          onClick={e => { e.stopPropagation(); setTeachingScreenshot(null); }}
+                        >
+                          Remove
+                        </Button>
+                      )}
                     </div>
                   </div>
                 )}
@@ -842,6 +1012,7 @@ function TutorApplicationContent() {
                   onValueChange={(val) => handleInputChange('weeklyHours', val)}
                   options={weeklyHoursOptions}
                   placeholder="Select weekly hours"
+                  disabled={isReadOnly}
                 />
               </FormField>
             </Card>
@@ -862,22 +1033,24 @@ function TutorApplicationContent() {
                 </ul>
               </div>
               <div
-                className="border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center bg-white mb-4"
-                onClick={() => demoVideoInputRef.current?.click()}
-                style={{ cursor: 'pointer', minHeight: 180 }}
+                className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-colors ${isReadOnly ? 'border-gray-300 bg-white' : 'border-gray-300 bg-white hover:bg-gray-50'}`}
+                onClick={!isReadOnly ? () => demoVideoInputRef.current?.click() : undefined}
+                style={{ cursor: isReadOnly ? 'default' : 'pointer', minHeight: 180 }}
               >
                 <Video className="w-12 h-12 text-gray-400 mb-4" />
                 <Text variant="body" className="text-gray-500 mb-4 text-center">
                   Upload your demo video (MP4, MOV, or AVI)
                 </Text>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="border-2 border-[var(--color-accent)] text-[var(--color-accent)]"
-                  onClick={e => { e.stopPropagation(); demoVideoInputRef.current?.click(); }}
-                >
-                  Choose Video
-                </Button>
+                {!isReadOnly && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="border-2 border-[var(--color-accent)] text-[var(--color-accent)]"
+                    onClick={e => { e.stopPropagation(); demoVideoInputRef.current?.click(); }}
+                  >
+                    Choose Video
+                  </Button>
+                )}
                 <input
                   ref={demoVideoInputRef}
                   type="file"
@@ -891,24 +1064,29 @@ function TutorApplicationContent() {
                     }
                     e.target.value = '';
                   }}
+                  disabled={isReadOnly}
                 />
               </div>
               {demoVideo && (
                 <div className="flex flex-wrap gap-4 mt-2">
                   <div className="relative w-64 h-40 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
-                    <video
-                      src={URL.createObjectURL(demoVideo)}
-                      controls
-                      className="object-cover w-full h-full"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="absolute top-1 right-1 px-2 py-0.5 text-xs text-red-500 border border-red-200 bg-white hover:bg-red-50"
-                      onClick={e => { e.stopPropagation(); setDemoVideo(null); }}
-                    >
-                      Remove
-                    </Button>
+                    {getFileUrl(demoVideo) && (
+                      <video
+                        src={getFileUrl(demoVideo)!}
+                        controls
+                        className="object-cover w-full h-full"
+                      />
+                    )}
+                    {!isReadOnly && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="absolute top-1 right-1 px-2 py-0.5 text-xs text-red-500 border border-red-200 bg-white hover:bg-red-50"
+                        onClick={e => { e.stopPropagation(); setDemoVideo(null); }}
+                      >
+                        Remove
+                      </Button>
+                    )}
                   </div>
                 </div>
               )}
@@ -935,6 +1113,7 @@ function TutorApplicationContent() {
                   onChange={(e) => handleInputChange('motivation', e.target.value)}
                   className="min-h-[150px] resize-none"
                   placeholder="Share your motivation for teaching on our platform and your goals..."
+                  readOnly={isReadOnly}
                 />
               </FormField>
             </Card>
@@ -957,6 +1136,7 @@ function TutorApplicationContent() {
                     onChange={(e) => handleInputChange('linkedin', e.target.value)}
                     className="h-12"
                     placeholder="https://linkedin.com/in/yourprofile"
+                    readOnly={isReadOnly}
                   />
                 </FormField>
 
@@ -969,6 +1149,7 @@ function TutorApplicationContent() {
                     onChange={(e) => handleInputChange('socialMedia', e.target.value)}
                     className="h-12"
                     placeholder="Instagram, YouTube, etc."
+                    readOnly={isReadOnly}
                   />
                 </FormField>
               </div>
@@ -983,40 +1164,7 @@ function TutorApplicationContent() {
                 </Text>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button
-                    type="button"
-                    onClick={handleSaveProgress}
-                    variant="outline"
-                    size="lg"
-                    disabled={isLoading}
-                    className="bg-white/20 border-2 border-white/50 text-white hover:bg-white/30 px-8 py-4 rounded-full text-lg font-semibold backdrop-blur-sm"
-                  >
-                    {isLoading ? (
-                      <LoadingSpinner size={20} color="white" className="mr-2" />
-                    ) : (
-                      <Save className="mr-2 w-5 h-5" />
-                    )}
-                    {savedProgress ? "Saved!" : "Save Progress"}
-                  </Button>
-
-                  <Button
-                    type="submit"
-                    size="lg"
-                    disabled={isSubmitting}
-                    className="bg-white text-[var(--color-primary)] hover:bg-gray-100 px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <LoadingSpinner size={20} color="var(--color-primary)" className="mr-2" />
-                        Submitting...
-                      </>
-                    ) : (
-                      <>
-                        Submit Application
-                        <ArrowRight className="ml-2 w-5 h-5" />
-                      </>
-                    )}
-                  </Button>
+                  {bottomButton}
                 </div>
                 <Text variant="small" className="text-white/80 mt-6 text-center">
                   By submitting, you agree to our Terms of Service and Privacy Policy.
@@ -1067,10 +1215,11 @@ function TutorApplicationContent() {
 }
 
 // Move LanguagesYouSpeakSection here so it is in scope
-function LanguagesYouSpeakSection({ languagesSpoken, setLanguagesSpoken, availableLanguages }: {
+function LanguagesYouSpeakSection({ languagesSpoken, setLanguagesSpoken, availableLanguages, isReadOnly }: {
   languagesSpoken: { language: string; fluency: string }[];
   setLanguagesSpoken: React.Dispatch<React.SetStateAction<{ language: string; fluency: string }[]>>;
   availableLanguages: (currentIdx: number) => string[];
+  isReadOnly: boolean;
 }) {
   const handleChange = (idx: number, field: 'language' | 'fluency', value: string) => {
     setLanguagesSpoken((prev) =>
@@ -1094,6 +1243,7 @@ function LanguagesYouSpeakSection({ languagesSpoken, setLanguagesSpoken, availab
           variant="outline"
           className="w-full h-16 border-2 border-[var(--color-accent)] text-[var(--color-accent)]"
           onClick={handleAdd}
+          disabled={isReadOnly}
         >
           + Add Another Language
         </Button>
@@ -1109,6 +1259,7 @@ function LanguagesYouSpeakSection({ languagesSpoken, setLanguagesSpoken, availab
                     onValueChange={(val) => handleChange(idx, 'language', val)}
                     options={toOptions(availableLanguages(idx), 'Select language')}
                     placeholder="Select language"
+                    disabled={isReadOnly}
                   />
                 </FormField>
               </div>
@@ -1119,6 +1270,7 @@ function LanguagesYouSpeakSection({ languagesSpoken, setLanguagesSpoken, availab
                     onValueChange={(val) => handleChange(idx, 'fluency', val)}
                     options={fluencyOptions}
                     placeholder="Select fluency"
+                    disabled={isReadOnly}
                   />
                 </FormField>
               </div>
@@ -1128,6 +1280,7 @@ function LanguagesYouSpeakSection({ languagesSpoken, setLanguagesSpoken, availab
                   variant="outline"
                   className="text-red-500 border border-red-200 hover:bg-red-50"
                   onClick={() => handleRemove(idx)}
+                  disabled={isReadOnly}
                 >
                   Remove
                 </Button>
@@ -1139,6 +1292,7 @@ function LanguagesYouSpeakSection({ languagesSpoken, setLanguagesSpoken, availab
             variant="outline"
             className="w-full h-16 border-2 border-[var(--color-accent)] text-[var(--color-accent)] mt-2"
             onClick={handleAdd}
+            disabled={isReadOnly}
           >
             + Add Another Language
           </Button>
@@ -1148,9 +1302,10 @@ function LanguagesYouSpeakSection({ languagesSpoken, setLanguagesSpoken, availab
   );
 }
 
-function ProfilePhotoUploadSection({ profilePhotos, setProfilePhotos }: {
+function ProfilePhotoUploadSection({ profilePhotos, setProfilePhotos, isReadOnly }: {
   profilePhotos: File[];
   setProfilePhotos: React.Dispatch<React.SetStateAction<File[]>>;
+  isReadOnly: boolean;
 }) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
@@ -1206,12 +1361,12 @@ function ProfilePhotoUploadSection({ profilePhotos, setProfilePhotos }: {
         Upload 3 clear headshots. Friendly, high-quality photos help students connect with you. (No filters, sunglasses, or group pictures please.)
       </Text>
       <div
-        className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-colors ${dragActive ? 'border-[var(--color-accent)] bg-[var(--color-accent-light)]' : 'border-gray-300 bg-white'}`}
+        className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-colors ${isReadOnly ? 'border-gray-300 bg-white' : 'border-gray-300 bg-white hover:bg-gray-50'}`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onClick={handleChoosePhotos}
-        style={{ cursor: 'pointer', minHeight: 180 }}
+        style={{ cursor: isReadOnly ? 'default' : 'pointer', minHeight: 180 }}
       >
         <Upload className="w-12 h-12 text-gray-400 mb-4" />
         <Text variant="body" className="text-gray-500 mb-4 text-center">
@@ -1222,6 +1377,7 @@ function ProfilePhotoUploadSection({ profilePhotos, setProfilePhotos }: {
           variant="outline"
           className="border-2 border-[var(--color-accent)] text-[var(--color-accent)]"
           onClick={(e) => { e.stopPropagation(); handleChoosePhotos(); }}
+          disabled={isReadOnly}
         >
           Choose Photos
         </Button>
@@ -1232,22 +1388,26 @@ function ProfilePhotoUploadSection({ profilePhotos, setProfilePhotos }: {
           multiple
           style={{ display: 'none' }}
           onChange={handleFileChange}
+          disabled={isReadOnly}
         />
       </div>
       {profilePhotos.length > 0 && (
         <div className="flex flex-wrap gap-4 mt-6">
           {profilePhotos.map((file, idx) => (
             <div key={idx} className="relative w-28 h-28 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
-              <img
-                src={URL.createObjectURL(file)}
-                alt={`Profile ${idx + 1}`}
-                className="object-cover w-full h-full"
-              />
+              {getFileUrl(file) && (
+                <img
+                  src={getFileUrl(file)!}
+                  alt={`Profile ${idx + 1}`}
+                  className="object-cover w-full h-full"
+                />
+              )}
               <Button
                 type="button"
                 variant="outline"
                 className="absolute top-1 right-1 px-2 py-0.5 text-xs text-red-500 border border-red-200 bg-white hover:bg-red-50"
                 onClick={(e) => { e.stopPropagation(); handleRemovePhoto(idx); }}
+                disabled={isReadOnly}
               >
                 Remove
               </Button>
@@ -1260,6 +1420,32 @@ function ProfilePhotoUploadSection({ profilePhotos, setProfilePhotos }: {
       </Text>
     </Card>
   );
+}
+
+function FilePreview({ file, onRemove, editable }: { file: File | string, onRemove?: () => void, editable?: boolean }) {
+  const url = getFileUrl(file);
+  if (!url) return null;
+  if (isImageFile(file)) {
+    return (
+      <div className="relative w-28 h-28 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
+        <img src={url} alt="Uploaded" className="object-cover w-full h-full" />
+        {editable && onRemove && (
+          <button type="button" className="absolute top-1 right-1 px-2 py-0.5 text-xs text-red-600 bg-white rounded shadow" onClick={onRemove}>Remove</button>
+        )}
+      </div>
+    );
+  }
+  if (isVideoFile(file)) {
+    return (
+      <div className="relative w-28 h-28 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
+        <video src={url} controls className="object-cover w-full h-full" />
+        {editable && onRemove && (
+          <button type="button" className="absolute top-1 right-1 px-2 py-0.5 text-xs text-red-600 bg-white rounded shadow" onClick={onRemove}>Remove</button>
+        )}
+      </div>
+    );
+  }
+  return null;
 }
 
 export default function TutorApplication() {

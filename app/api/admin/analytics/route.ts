@@ -66,13 +66,15 @@ export async function GET(request: NextRequest) {
       revenueData,
       userStats,
       billingEvents,
-      usageStats
+      usageStats,
+      tutorApplications
     ] = await Promise.all([
       getSubscriptionStats(start, end),
       getRevenueData(start, end),
       getUserStats(start, end),
       getBillingEvents(start, end),
-      getUsageStats(start, end)
+      getUsageStats(start, end),
+      getTutorApplications(start, end)
     ]);
 
     const analytics = {
@@ -86,6 +88,7 @@ export async function GET(request: NextRequest) {
       users: userStats,
       billingEvents,
       usage: usageStats,
+      tutorApplications,
       generatedAt: new Date().toISOString(),
       generatedBy: adminUser.email
     };
@@ -268,6 +271,31 @@ async function getUsageStats(start: Date, end: Date) {
       storageUsed: u.storage_used_mb || 0
     }));
   }
+
+  return stats;
+}
+
+async function getTutorApplications(start: Date, end: Date) {
+  // Get tutor applications statistics from database
+  const { data: applications, error } = await supabase
+    .from('tutor_applications')
+    .select('status, created_at')
+    .gte('created_at', start.toISOString())
+    .lte('created_at', end.toISOString());
+
+  if (error) {
+    console.error('Error fetching tutor applications:', error);
+    return null;
+  }
+
+  const stats = {
+    total: applications?.length || 0,
+    pending: applications?.filter(app => app.status === 'pending').length || 0,
+    reviewing: applications?.filter(app => app.status === 'reviewing').length || 0,
+    approved: applications?.filter(app => app.status === 'approved').length || 0,
+    rejected: applications?.filter(app => app.status === 'rejected').length || 0,
+    waitlist: applications?.filter(app => app.status === 'waitlist').length || 0
+  };
 
   return stats;
 } 

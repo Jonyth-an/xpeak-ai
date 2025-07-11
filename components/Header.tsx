@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Button, Select, Text, Card } from '@/app/components/ui';
 import LanguageSelectorMenu from '@/app/components/molecules/LanguageSelectorMenu';
 import { useAuth } from '@/lib/AuthContext';
-import { isAdminEmail } from '@/lib/adminAuth';
+import { useRoles } from '@/lib/RolesContext';
 import { ThemeToggle } from '@/app/components/ThemeToggle';
 import {
   DropdownMenu,
@@ -56,7 +56,8 @@ export default function Header({ heroBackgroundColor }: HeaderProps) {
   };
 
   // Check if current user is an admin
-  const isAdmin = user ? isAdminEmail(user.email) : false;
+  const { roles } = useRoles();
+  const isAdmin = roles.includes('admin');
 
   // Get hero background color from context or props
   const contextHeroColor = useHeroBackground();
@@ -186,6 +187,11 @@ export default function Header({ heroBackgroundColor }: HeaderProps) {
                             <DropdownMenuItem asChild>
                               <Link href="/admin/dashboard" className="text-token-secondary font-medium">
                                 Admin Dashboard
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                              <Link href="/admin/roles" className="text-token-secondary font-medium">
+                                Manage Roles
                               </Link>
                             </DropdownMenuItem>
                           </>

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../AdminLayout';
 import { useAuth } from '@/lib/AuthContext';
-import { isAdminEmail } from '@/lib/adminAuth';
+import { useRoles } from '@/lib/RolesContext';
 import { supabase } from '@/lib/supabaseClient';
 import { Card, Button, Text, Badge } from '@/app/components/ui';
 import { RefreshCw, CheckCircle, AlertTriangle, XCircle, Info } from 'lucide-react';
@@ -44,6 +44,7 @@ interface HealthData {
 
 export default function SystemHealthPage() {
   const { user } = useAuth();
+  const { roles } = useRoles();
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
   const [healthData, setHealthData] = useState<HealthData | null>(null);
@@ -51,11 +52,11 @@ export default function SystemHealthPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    checkAdminAccess();
+    checkAdminAccess(roles);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user, roles]);
 
-  const checkAdminAccess = async () => {
+  const checkAdminAccess = async (roles: string[]) => {
     if (!user) {
       setIsAdmin(false);
       setLoading(false);
@@ -63,7 +64,7 @@ export default function SystemHealthPage() {
     }
 
     try {
-      const adminStatus = isAdminEmail(user.email);
+      const adminStatus = roles.includes('admin');
       setIsAdmin(adminStatus);
       
       if (adminStatus) {

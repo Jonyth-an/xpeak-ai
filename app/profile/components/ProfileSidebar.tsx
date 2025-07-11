@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Card, Text, Button } from '@/app/components/ui';
@@ -12,13 +12,28 @@ import {
   ChevronRight,
   Menu,
   X,
-  Palette
+  Palette,
+  GraduationCap,
+  Clock,
+  CheckCircle,
+  XCircle,
+  AlertCircle
 } from 'lucide-react';
+import { useAuth } from '@/lib/AuthContext';
+import { useRoles } from '@/lib/RolesContext';
+import { supabase } from '@/lib/supabaseClient';
 
 interface ProfileSidebarProps {
   activeTab: string;
   onTabChange?: (tabId: string) => void; // Make optional for new routing
   userEmail?: string;
+}
+
+interface TutorApplication {
+  id: string;
+  status: 'drafting' | 'pending' | 'reviewing' | 'waitlist' | 'rejected' | 'approved';
+  submitted_at?: string;
+  application_data?: any;
 }
 
 const tabs = [
@@ -59,13 +74,113 @@ const tabs = [
   },
 ];
 
+const getStatusInfo = (status: string) => {
+  switch (status) {
+    case 'drafting':
+      return {
+        icon: Clock,
+        color: 'text-token-warning',
+        bgColor: 'bg-token-warning-surface',
+        message: 'Finish your tutor application to get started.',
+        buttonText: 'Continue Application',
+        buttonVariant: 'primary' as const
+      };
+    case 'pending':
+      return {
+        icon: Clock,
+        color: 'text-token-info',
+        bgColor: 'bg-token-info-surface',
+        message: 'Your application is under review.',
+        buttonText: 'View Status',
+        buttonVariant: 'secondary' as const
+      };
+    case 'reviewing':
+      return {
+        icon: AlertCircle,
+        color: 'text-token-warning',
+        bgColor: 'bg-token-warning-surface',
+        message: 'Your application is being reviewed.',
+        buttonText: 'View Status',
+        buttonVariant: 'secondary' as const
+      };
+    case 'waitlist':
+      return {
+        icon: Clock,
+        color: 'text-token-info',
+        bgColor: 'bg-token-info-surface',
+        message: 'You\'re on the waitlist. We\'ll notify you soon.',
+        buttonText: 'View Status',
+        buttonVariant: 'secondary' as const
+      };
+    case 'rejected':
+      return {
+        icon: XCircle,
+        color: 'text-token-error',
+        bgColor: 'bg-token-error-surface',
+        message: 'Application rejected. You may reapply later.',
+        buttonText: 'Reapply',
+        buttonVariant: 'primary' as const
+      };
+    default:
+      return {
+        icon: Clock,
+        color: 'text-token-text-secondary',
+        bgColor: 'bg-token-surface-accent-light',
+        message: 'Start your tutor application.',
+        buttonText: 'Apply Now',
+        buttonVariant: 'primary' as const
+      };
+  }
+};
+
 export default function ProfileSidebar({ 
   activeTab, 
   onTabChange, 
   userEmail 
 }: ProfileSidebarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [tutorApplication, setTutorApplication] = useState<TutorApplication | null>(null);
+  const [loadingApplication, setLoadingApplication] = useState(true);
   const pathname = usePathname();
+  const { user } = useAuth();
+  const { roles } = useRoles();
+
+  const isApprovedTutor = roles.includes('tutor');
+
+  useEffect(() => {
+    if (user && !isApprovedTutor) {
+      fetchTutorApplication();
+    } else {
+      setLoadingApplication(false);
+    }
+  }, [user, isApprovedTutor]);
+
+  const fetchTutorApplication = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const response = await fetch('/api/tutor-applications', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
+
+      if (response.ok) {
+        const { application } = await response.json();
+        setTutorApplication(application);
+      }
+    } catch (error) {
+      console.error('Error fetching tutor application:', error);
+    } finally {
+      setLoadingApplication(false);
+    }
+  };
+
+  const handleTutorApplicationClick = () => {
+    // Navigate to tutor application page
+    window.location.href = '/tutor-application';
+  };
 
   const handleTabClick = (tabId: string) => {
     if (onTabChange) {
@@ -96,7 +211,7 @@ export default function ProfileSidebar({
       </div>
 
       {/* Navigation */}
-      <nav className="space-y-2">
+      <nav className="space-y-2 mb-8">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = pathname === tab.href || (pathname === '/profile' && tab.id === 'profile');
@@ -148,8 +263,63 @@ export default function ProfileSidebar({
         })}
       </nav>
 
+      {/* Tutor Application Card - Only show if user is not an approved tutor */}
+      {!isApprovedTutor && (
+        <div className="mb-8 pt-6 border-t border-token-border">
+          <div className="bg-token-surface-accent-light rounded-lg p-4">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-8 h-8 bg-token-primary-surface rounded-full flex items-center justify-center">
+                <GraduationCap className="w-4 h-4 text-token-primary" />
+              </div>
+              <Text variant="body" className="font-semibold text-text">
+                Become a Tutor
+              </Text>
+            </div>
+            
+            {loadingApplication ? (
+              <div className="text-sm text-text-secondary mb-3">
+                Loading application status...
+              </div>
+            ) : tutorApplication ? (
+              <>
+                <div className="flex items-center space-x-2 mb-3">
+                  {(() => {
+                    const statusInfo = getStatusInfo(tutorApplication.status);
+                    const StatusIcon = statusInfo.icon;
+                    return (
+                      <>
+                        <StatusIcon className={`w-4 h-4 ${statusInfo.color}`} />
+                        <Text variant="small" className={`font-medium ${statusInfo.color}`}>
+                          {tutorApplication.status.charAt(0).toUpperCase() + tutorApplication.status.slice(1)}
+                        </Text>
+                      </>
+                    );
+                  })()}
+                </div>
+                <Text variant="small" className="text-text-secondary mb-3">
+                  {getStatusInfo(tutorApplication.status).message}
+                </Text>
+              </>
+            ) : (
+              <Text variant="small" className="text-text-secondary mb-3">
+                Start your tutor application to help others learn.
+              </Text>
+            )}
+            
+            <Button 
+              variant={tutorApplication ? getStatusInfo(tutorApplication.status).buttonVariant : 'primary'}
+              size="sm"
+              onClick={handleTutorApplicationClick}
+              className="w-full"
+            >
+              {tutorApplication ? getStatusInfo(tutorApplication.status).buttonText : 'Apply Now'}
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Help Section */}
-      <div className="mt-8 pt-6 border-t border-token-border">
+      <div className="pt-6 border-t border-token-border">
         <div className="bg-token-surface-accent-light rounded-lg p-4">
           <Text variant="body" className="text-sm text-text-secondary mb-2">
             Need help?

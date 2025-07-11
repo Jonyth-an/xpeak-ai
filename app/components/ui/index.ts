@@ -15,4 +15,14 @@ export { default as Typography,
   BodyXL, BodyLG, BodyMD, BodySM, BodyXS
 } from './Typography';
 export { default as UIDemo } from './UIDemo';
-// Add further exports as you extract more atoms 
+
+// New components
+export { default as FormField } from './FormField';
+export { default as AnimationWrapper } from './AnimationWrapper';
+export { default as LoadingSpinner } from './LoadingSpinner';
+export { default as Modal } from './Modal';
+export { default as Toast, type ToastProps } from './Toast';
+export { default as ToastContainer, useToast, toast } from './ToastContainer';
+export { default as ErrorBoundary } from './ErrorBoundary';
+export { default as EmptyState } from './EmptyState';
+export { default as LayoutSidebarContent } from './LayoutSidebarContent'; 

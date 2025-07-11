@@ -3,8 +3,9 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, BarChart2, Users, HeartPulse, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, BarChart2, Users, HeartPulse, LogOut, Menu, X, Shield } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { Avatar } from '@/app/components/ui';
 
@@ -13,15 +14,22 @@ const adminNav = [
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart2 },
   { label: 'User Management', href: '/admin/users', icon: Users },
   { label: 'System Health', href: '/admin/health', icon: HeartPulse },
+  { label: 'Roles & Access', href: '/admin/roles', icon: Shield },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, signOut } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
 
   const handleNavClick = () => {
     setIsMobileMenuOpen(false);
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+    router.push('/login');
   };
 
   return (
@@ -95,7 +103,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <span className="text-gray-700 text-sm font-medium">{user.email}</span>
                 </div>
                 <button
-                  onClick={signOut}
+                  onClick={handleLogout}
                   className="flex items-center gap-1 px-2 lg:px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium"
                   title="Logout"
                 >

@@ -20,9 +20,9 @@ export default function Select({
   const baseClasses = 'w-full transition-all duration-token-base focus:outline-none focus:ring-2 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed appearance-none bg-no-repeat';
   
   const variants = {
-    default: 'border border-token-text-muted bg-token-surface text-token-text focus:border-token-primary focus:ring-token-primary',
-    outlined: 'border-2 border-token-text-muted bg-transparent text-token-text focus:border-token-primary focus:ring-token-primary',
-    filled: 'border border-transparent bg-token-surface-alt text-token-text focus:bg-token-surface focus:border-token-primary focus:ring-token-primary'
+    default: 'border border-token-text-muted bg-white text-token-text focus:border-token-primary focus:ring-token-primary',
+    outlined: 'border-2 border-token-text-muted bg-white text-token-text focus:border-token-primary focus:ring-token-primary',
+    filled: 'border border-transparent bg-white text-token-text focus:bg-token-surface focus:border-token-primary focus:ring-token-primary'
   };
   
   const sizes = {

@@ -68,16 +68,24 @@ interface Invoice {
   };
 }
 
+const AVAILABLE_ROLES = ['admin', 'tutor', 'reviewer', 'marketer'];
+
 export default function StudentDetailPage() {
   const params = useParams();
   const userId = params?.id as string;
   const [user, setUser] = useState<User | null>(null);
   const [subscription, setSubscription] = useState<UserSubscription | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userRoles, setUserRoles] = useState<string[]>([]);
+  const [rolesLoading, setRolesLoading] = useState(true);
+  const [roleError, setRoleError] = useState<string | null>(null);
+  const [addRole, setAddRole] = useState('');
+  const [roleActionLoading, setRoleActionLoading] = useState(false);
 
   useEffect(() => {
     if (userId) {
       fetchUser();
+      fetchUserRoles();
     }
     // eslint-disable-next-line
   }, [userId]);
@@ -103,6 +111,44 @@ export default function StudentDetailPage() {
       setLoading(false);
     }
   };
+
+  async function fetchUserRoles() {
+    setRolesLoading(true);
+    setRoleError(null);
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId);
+    if (!error && data) {
+      setUserRoles(data.map((r: { role: string }) => r.role.toLowerCase()));
+    } else {
+      setUserRoles([]);
+      setRoleError('Failed to fetch roles');
+    }
+    setRolesLoading(false);
+  }
+
+  async function handleAddRole() {
+    if (!addRole) return;
+    setRoleActionLoading(true);
+    const { error } = await supabase
+      .from('user_roles')
+      .insert([{ user_id: userId, role: addRole.toLowerCase() }]);
+    setRoleActionLoading(false);
+    setAddRole('');
+    fetchUserRoles();
+  }
+
+  async function handleRemoveRole(role: string) {
+    setRoleActionLoading(true);
+    const { error } = await supabase
+      .from('user_roles')
+      .delete()
+      .eq('user_id', userId)
+      .eq('role', role.toLowerCase());
+    setRoleActionLoading(false);
+    fetchUserRoles();
+  }
 
   if (loading) {
     return (
@@ -292,6 +338,57 @@ export default function StudentDetailPage() {
             ) : (
               <div className="text-token-tertiary">No subscription found.</div>
             )}
+          </Card>
+
+          {/* Roles & Access */}
+          <Card className="p-token-8 mb-token-4 bg-token-elevated border border-token">
+            <Text variant="h3" as="h3" className="mb-token-4 text-token-primary">Roles & Access</Text>
+            {rolesLoading ? (
+              <div className="text-token-secondary">Loading roles...</div>
+            ) : roleError ? (
+              <div className="text-token-error">{roleError}</div>
+            ) : (
+              <div className="mb-token-4 flex flex-wrap gap-2">
+                {userRoles.length === 0 && <span className="text-token-tertiary">No roles assigned.</span>}
+                {userRoles.map(role => (
+                  <span key={role} className="inline-flex items-center bg-token-info/20 text-token-info px-2 py-1 rounded text-xs mr-2 mb-1">
+                    {role.charAt(0).toUpperCase() + role.slice(1)}
+                    <button
+                      className="ml-1 text-red-500 hover:text-red-700"
+                      disabled={roleActionLoading}
+                      onClick={() => handleRemoveRole(role)}
+                      title="Remove role"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <select
+                className="border rounded px-2 py-1 text-sm"
+                value={addRole}
+                onChange={e => setAddRole(e.target.value)}
+                disabled={roleActionLoading || AVAILABLE_ROLES.filter(r => !userRoles.includes(r)).length === 0}
+              >
+                <option value="">Add role...</option>
+                {AVAILABLE_ROLES.filter(r => !userRoles.includes(r)).map(role => (
+                  <option key={role} value={role}>{role.charAt(0).toUpperCase() + role.slice(1)}</option>
+                ))}
+              </select>
+              <Button
+                variant="primary"
+                size="sm"
+                disabled={!addRole || roleActionLoading || AVAILABLE_ROLES.filter(r => !userRoles.includes(r)).length === 0}
+                onClick={handleAddRole}
+              >
+                Add
+              </Button>
+              {AVAILABLE_ROLES.filter(r => !userRoles.includes(r)).length === 0 ? (
+                <span className="text-token-tertiary text-xs ml-2">All roles assigned</span>
+              ) : null}
+            </div>
           </Card>
 
           {/* Account Actions */}

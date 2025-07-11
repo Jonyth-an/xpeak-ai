@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/app/components/ui/Button';
 import { useAuth } from '@/lib/AuthContext';
-import { isAdminEmail } from '@/lib/adminAuth';
+import { useRoles } from '@/lib/RolesContext';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -31,7 +31,8 @@ export default function MobileHeader() {
   };
 
   // Check if current user is an admin
-  const isAdmin = user ? isAdminEmail(user.email) : false;
+  const { roles } = useRoles();
+  const isAdmin = roles.includes('admin');
 
   return (
     <header className="block md:hidden fixed top-0 left-0 right-0 z-50 bg-white text-black border-b border-gray-200 h-14">

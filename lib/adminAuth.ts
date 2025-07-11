@@ -13,40 +13,32 @@ const createServerSupabase = () => {
   );
 };
 
-// Admin email addresses - in production, this should be stored in the database
-const ADMIN_EMAILS = [
-  'clshou@gmail.com', // Your email
-  // Add other admin emails here
-];
-
 export interface AdminUser extends User {
   isAdmin: boolean;
+}
+
+/**
+ * Check if a user has a specific role (server-side only)
+ */
+export async function userHasRole(userId: string, role: string): Promise<boolean> {
+  const supabase = createServerSupabase();
+  const { data, error } = await supabase
+    .from('user_roles')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('role', role.toLowerCase())
+    .single();
+  return !!data && !error;
 }
 
 /**
  * Check if a user has admin privileges (server-side only)
  */
 export async function checkAdminStatus(user: User | null): Promise<boolean> {
-  if (!user || !user.email) {
+  if (!user || !user.id) {
     return false;
   }
-
-  // Check against hardcoded admin emails
-  if (ADMIN_EMAILS.includes(user.email)) {
-    return true;
-  }
-
-  // In the future, you can check against a database table
-  // const supabase = createServerSupabase();
-  // const { data: adminUser } = await supabase
-  //   .from('admin_users')
-  //   .select('*')
-  //   .eq('user_email', user.email)
-  //   .single();
-  
-  // return !!adminUser;
-
-  return false;
+  return await userHasRole(user.id, 'admin');
 }
 
 /**
@@ -56,9 +48,7 @@ export async function getAdminUser(user: User | null): Promise<AdminUser | null>
   if (!user) {
     return null;
   }
-
   const isAdmin = await checkAdminStatus(user);
-  
   return {
     ...user,
     isAdmin,
@@ -74,20 +64,16 @@ export async function requireAdminAuth(request: Request): Promise<{ user: AdminU
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return { error: new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 }) };
     }
-
     const token = authHeader.substring(7);
     const supabase = createServerSupabase();
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
     if (authError || !user) {
       return { error: new Response(JSON.stringify({ error: 'Invalid token' }), { status: 401 }) };
     }
-
     const adminUser = await getAdminUser(user);
     if (!adminUser?.isAdmin) {
       return { error: new Response(JSON.stringify({ error: 'Admin access required' }), { status: 403 }) };
     }
-
     return { user: adminUser };
   } catch (error) {
     console.error('Admin auth error:', error);
@@ -97,8 +83,8 @@ export async function requireAdminAuth(request: Request): Promise<{ user: AdminU
 
 /**
  * Simple client-side admin check (for UI purposes only)
+ * NOTE: This should be replaced with a secure API call in production
  */
-export function isAdminEmail(email: string | null | undefined): boolean {
-  if (!email) return false;
-  return ADMIN_EMAILS.includes(email);
+export async function isAdminUser(userId: string): Promise<boolean> {
+  return await userHasRole(userId, 'admin');
 } 
