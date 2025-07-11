@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { Card, Button, Text, Input, Select } from "@/app/components/ui";
 import { Search, Download, Eye, CheckCircle, XCircle, Clock, Globe, Calendar } from "lucide-react";
 import Link from "next/link";
+import { StatusBadge } from "@/app/components/StatusBadge";
 
 interface TutorApplication {
   id: string;
@@ -15,12 +16,16 @@ interface TutorApplication {
   full_name: string;
   native_language: string;
   current_country: string;
+  weekly_hours: string;
+  certificates: string[];
+  certificate_count: number;
   status: "pending" | "reviewing" | "approved" | "rejected" | "waitlist";
   created_at: string;
   updated_at: string;
   reviewer_notes?: string;
   rejection_reason?: string;
   waitlist_reason?: string;
+  avatar_url?: string;
 }
 
 interface ApplicationStats {
@@ -78,16 +83,25 @@ export default function TutorApplicationsPage() {
         sortBy,
         sortOrder,
       });
+      console.log("Loading applications with params:", params.toString());
       const response = await fetch(`/api/admin/tutor-applications?${params}`, {
         headers: {
           Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
         },
       });
+      console.log("API response status:", response.status);
       if (response.ok) {
         const data = await response.json();
+        console.log("API applications response:", data); // Debug log
+        console.log("Applications array length:", data.applications?.length || 0);
+        console.log("Applications array:", data.applications);
         setApplications(data.applications || []);
+      } else {
+        console.error("API response not ok:", response.status, response.statusText);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error loading applications:", error); // Debug error
+    }
   };
 
   const loadStats = async () => {
@@ -138,40 +152,6 @@ export default function TutorApplicationsPage() {
     } catch (error) {}
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending":
-        return "text-token-warning";
-      case "reviewing":
-        return "text-token-info";
-      case "approved":
-        return "text-token-success";
-      case "rejected":
-        return "text-token-error";
-      case "waitlist":
-        return "text-token-accent";
-      default:
-        return "text-token-text-secondary";
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "pending":
-        return <Clock className="w-4 h-4" />;
-      case "reviewing":
-        return <Eye className="w-4 h-4" />;
-      case "approved":
-        return <CheckCircle className="w-4 h-4" />;
-      case "rejected":
-        return <XCircle className="w-4 h-4" />;
-      case "waitlist":
-        return <Clock className="w-4 h-4" />;
-      default:
-        return <Clock className="w-4 h-4" />;
-    }
-  };
-
   if (loading) {
     return (
       <AdminLayout>
@@ -211,7 +191,7 @@ export default function TutorApplicationsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <Text variant="h1" as="h1" className="mb-2 text-token-primary">
-                  Tutor Applications
+                  Tutor Application Review
                 </Text>
                 <Text variant="lead" className="text-token-text-secondary">
                   Review and manage tutor applications
@@ -321,75 +301,69 @@ export default function TutorApplicationsPage() {
 
           {/* Applications List */}
           <Card className="bg-token-surface border border-token">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-token-border">
-                    <th className="text-left p-4">
-                      <Text variant="small" className="font-semibold text-token-text-secondary">Applicant</Text>
-                    </th>
-                    <th className="text-left p-4">
-                      <Text variant="small" className="font-semibold text-token-text-secondary">Language</Text>
-                    </th>
-                    <th className="text-left p-4">
-                      <Text variant="small" className="font-semibold text-token-text-secondary">Location</Text>
-                    </th>
-                    <th className="text-left p-4">
-                      <Text variant="small" className="font-semibold text-token-text-secondary">Status</Text>
-                    </th>
-                    <th className="text-left p-4">
-                      <Text variant="small" className="font-semibold text-token-text-secondary">Date</Text>
-                    </th>
-                    <th className="text-left p-4">
-                      <Text variant="small" className="font-semibold text-token-text-secondary">Actions</Text>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {applications.map((application) => (
-                    <tr key={application.id} className="border-b border-token-border hover:bg-token-surface-hover">
-                      <td className="p-4">
-                        <div>
-                          <Text variant="body" className="font-medium text-token-primary">{application.full_name}</Text>
-                          <Text variant="small" className="text-token-text-secondary">{application.user_email}</Text>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center">
-                          <Globe className="w-4 h-4 text-token-text-muted mr-2" />
-                          <Text variant="body">{application.native_language}</Text>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <Text variant="body">{application.current_country}</Text>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center">
-                          <span className={`mr-2 ${getStatusColor(application.status)}`}>{getStatusIcon(application.status)}</span>
-                          <Text variant="body" className={getStatusColor(application.status)}>
-                            {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
-                          </Text>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center">
-                          <Calendar className="w-4 h-4 text-token-text-muted mr-2" />
-                          <Text variant="small" className="text-token-text-secondary">{new Date(application.created_at).toLocaleDateString()}</Text>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center space-x-2">
-                          <Link href={`/admin/tutor-applications/${application.id}`}>
-                            <Button variant="outline" size="sm">
-                              <Eye className="w-4 h-4 mr-1" />View
-                            </Button>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="space-y-4">
+              {applications.map((application) => (
+                <div
+                  key={application.id}
+                  className="flex items-center justify-between bg-white rounded-xl shadow-sm border border-token p-6 hover:shadow-md transition cursor-pointer"
+                  onClick={() => window.location.href = `/admin/tutor-applications/${application.id}`}
+                >
+                  <div className="flex items-center gap-4">
+                    {/* Profile image/avatar */}
+                    {application.avatar_url ? (
+                      <img
+                        src={application.avatar_url}
+                        alt={application.full_name}
+                        className="w-14 h-14 rounded-full object-cover border border-token-border bg-token-surface"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full bg-token-surface flex items-center justify-center text-token-text-muted text-2xl font-bold">
+                        {application.full_name
+                          .split(' ')
+                          .map((n) => n[0])
+                          .join('')
+                          .slice(0, 2)
+                          .toUpperCase()}
+                      </div>
+                    )}
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg font-bold text-token-primary">{application.full_name}</span>
+                        {/* Status badge */}
+                        <StatusBadge status={application.status} />
+                      </div>
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-token-text-secondary">
+                        {/* Native Language */}
+                        <span className="flex items-center gap-1">
+                          <Globe className="w-4 h-4" /> {application.native_language}
+                        </span>
+                        {/* Location */}
+                        <span className="flex items-center gap-1">
+                          <span role="img" aria-label="location">🌍</span> {application.current_country}
+                        </span>
+                        {/* Time Commitment */}
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-4 h-4" /> {application.weekly_hours || 'Not specified'}
+                        </span>
+                        {/* Date (updated_at, date only) */}
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4" /> {new Date(application.updated_at).toLocaleDateString()}
+                        </span>
+                        {/* Certificate count */}
+                        <span className="flex items-center gap-1">
+                          <CheckCircle className="w-4 h-4" /> {application.certificate_count} cert{application.certificate_count !== 1 ? 's' : ''}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-2 min-w-[100px]">
+                    <span className="text-xs text-token-text-secondary">ID: {application.id.slice(0, 8).toUpperCase()}</span>
+                    <Button variant="outline" size="sm" className="text-token-primary">
+                      <Eye className="w-5 h-5" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
               {applications.length === 0 && (
                 <div className="text-center py-12">
                   <Text variant="body" className="text-token-text-secondary">No applications found matching your criteria.</Text>

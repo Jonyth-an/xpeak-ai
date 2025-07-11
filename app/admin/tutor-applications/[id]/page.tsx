@@ -62,6 +62,7 @@ interface TutorApplication {
   reviewer_id?: string;
   reviewer_email?: string;
   reviewed_at?: string;
+  avatar_url?: string;
 }
 
 export default function TutorApplicationDetailPage() {

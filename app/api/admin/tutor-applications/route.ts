@@ -73,12 +73,16 @@ export async function GET(request: NextRequest) {
       full_name: app.application_data?.fullName || '',
       native_language: app.application_data?.nativeLanguage || '',
       current_country: app.application_data?.currentCountry || '',
+      weekly_hours: app.application_data?.weeklyHours ? `${app.application_data.weeklyHours} hours/week` : '',
+      certificates: app.application_data?.certificates || [],
+      certificate_count: (app.application_data?.certificates || []).length,
       status: app.status,
       created_at: app.created_at,
       updated_at: app.updated_at,
       reviewer_notes: app.review_notes,
       rejection_reason: app.rejection_reason,
-      waitlist_reason: app.waitlist_reason
+      waitlist_reason: app.waitlist_reason,
+      avatar_url: null // Avatar URL will be fetched separately if needed
     }));
 
     // Get total count for pagination

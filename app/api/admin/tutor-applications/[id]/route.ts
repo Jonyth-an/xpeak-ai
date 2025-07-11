@@ -16,10 +16,13 @@ export async function GET(
     const supabase = serverSupabase;
     const { id } = await params;
 
-    // Get the application
+    // Get the application with profile avatar
     const { data: application, error } = await supabase
       .from('tutor_applications')
-      .select('*')
+      .select(`
+        *,
+        profiles!user_id(avatar_url)
+      `)
       .eq('id', id)
       .single();
 
@@ -28,7 +31,46 @@ export async function GET(
       return NextResponse.json({ error: 'Application not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ application });
+    // Process the application data to extract fields from JSONB
+    const processedApplication = {
+      id: application.id,
+      user_id: application.user_id,
+      user_email: application.application_data?.userEmail || '',
+      full_name: application.application_data?.fullName || '',
+      display_name: application.application_data?.displayName || '',
+      native_language: application.application_data?.nativeLanguage || '',
+      accent: application.application_data?.accent || '',
+      birth_country: application.application_data?.birthCountry || '',
+      current_country: application.application_data?.currentCountry || '',
+      timezone: application.application_data?.timezone || '',
+      introduction: application.application_data?.introduction || '',
+      education: application.application_data?.education || '',
+      teaching_experience: application.application_data?.teachingExperience || '',
+      weekly_hours: application.application_data?.weeklyHours || '',
+      motivation: application.application_data?.motivation || '',
+      linkedin: application.application_data?.linkedin || '',
+      social_media: application.application_data?.socialMedia || '',
+      languages_spoken: application.application_data?.languagesSpoken || [],
+      profile_photos: application.application_data?.profilePhotos || [],
+      certificates: application.application_data?.certificates || [],
+      certificate_other: application.application_data?.certificateOther || '',
+      certificate_files: application.application_data?.certificateFiles || [],
+      teaching_screenshot: application.application_data?.teachingScreenshot || '',
+      demo_video: application.application_data?.demoVideo || '',
+      status: application.status,
+      created_at: application.created_at,
+      updated_at: application.updated_at,
+      submitted_at: application.submitted_at,
+      reviewed_at: application.reviewed_at,
+      reviewer_notes: application.review_notes,
+      rejection_reason: application.rejection_reason,
+      waitlist_reason: application.waitlist_reason,
+      reviewer_id: application.reviewer_id,
+      reviewer_email: application.reviewer_email,
+      avatar_url: application.profiles?.avatar_url || null
+    };
+
+    return NextResponse.json({ application: processedApplication });
 
   } catch (error) {
     console.error('Error in tutor application detail API:', error);
