@@ -102,9 +102,42 @@ export async function POST(request: NextRequest) {
           .eq('user_id', user.id)
           .select()
           .single();
+      } else if (existingApplication.status === 'rejected') {
+        // Check if enough time has passed for reapplication (30 days)
+        const { data: fullApplication } = await supabase
+          .from('tutor_applications')
+          .select('reviewed_at')
+          .eq('user_id', user.id)
+          .single();
+        
+        if (fullApplication?.reviewed_at) {
+          const reviewDate = new Date(fullApplication.reviewed_at);
+          const now = new Date();
+          const daysSinceReview = (now.getTime() - reviewDate.getTime()) / (1000 * 60 * 60 * 24);
+          
+          if (daysSinceReview < 30) {
+            return NextResponse.json({ 
+              error: `You can reapply after ${Math.ceil(30 - daysSinceReview)} more days. Please wait before resubmitting.` 
+            }, { status: 400 });
+          }
+        }
+        
+        // Allow updating rejected applications after 30 days
+        const updateData = {
+          application_data: applicationData,
+          status: action === 'submit' ? 'pending' : 'rejected',
+          submitted_at: action === 'submit' ? new Date().toISOString() : null
+        };
+        
+        result = await supabase
+          .from('tutor_applications')
+          .update(updateData)
+          .eq('user_id', user.id)
+          .select()
+          .single();
       } else {
         return NextResponse.json({ 
-          error: 'Cannot update submitted application' 
+          error: 'Cannot update application that is being reviewed or has been processed' 
         }, { status: 400 });
       }
     } else {

@@ -16,13 +16,10 @@ export async function GET(
     const supabase = serverSupabase;
     const { id } = await params;
 
-    // Get the application with profile avatar
+    // Get the application
     const { data: application, error } = await supabase
       .from('tutor_applications')
-      .select(`
-        *,
-        profiles!user_id(avatar_url)
-      `)
+      .select('*')
       .eq('id', id)
       .single();
 
@@ -30,6 +27,10 @@ export async function GET(
       console.error('Error fetching tutor application:', error);
       return NextResponse.json({ error: 'Application not found' }, { status: 404 });
     }
+
+    // For now, let's just use the original URLs without processing
+    // The JWT token issue might be resolved by using the original URLs directly
+    console.log('Original demo video URL:', application.application_data?.demoVideo); // Debug log
 
     // Process the application data to extract fields from JSONB
     const processedApplication = {
@@ -67,7 +68,8 @@ export async function GET(
       waitlist_reason: application.waitlist_reason,
       reviewer_id: application.reviewer_id,
       reviewer_email: application.reviewer_email,
-      avatar_url: application.profiles?.avatar_url || null
+      admin_action_history: application.admin_action_history || [],
+      avatar_url: null // Avatar URL will be fetched separately if needed
     };
 
     return NextResponse.json({ application: processedApplication });
@@ -94,7 +96,39 @@ export async function POST(
     const { id } = await params;
 
     // Get request body
-    const { status, reviewNotes, rejectionReason, waitlistReason } = await request.json();
+    const { status, reviewNotes, rejectionReason, waitlistReason, notesOnly } = await request.json();
+
+    // If notesOnly is true, we're just updating notes without changing status
+    if (notesOnly) {
+      if (reviewNotes === undefined) {
+        return NextResponse.json({ error: 'Review notes are required for notes-only update' }, { status: 400 });
+      }
+
+      // Update only the review notes
+      const updateData = {
+        review_notes: reviewNotes,
+        reviewer_id: adminUser.id,
+        reviewer_email: adminUser.email,
+        reviewed_at: new Date().toISOString()
+      };
+
+      const { data: application, error } = await supabase
+        .from('tutor_applications')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating review notes:', error);
+        return NextResponse.json({ error: 'Failed to update review notes' }, { status: 500 });
+      }
+
+      return NextResponse.json({
+        application,
+        message: 'Review notes updated successfully'
+      });
+    }
 
     if (!status) {
       return NextResponse.json({ error: 'Status is required' }, { status: 400 });
@@ -115,7 +149,7 @@ export async function POST(
     };
 
     if (reviewNotes !== undefined) {
-      updateData.reviewer_notes = reviewNotes;
+      updateData.review_notes = reviewNotes;
     }
 
     if (rejectionReason !== undefined) {

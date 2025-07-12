@@ -23,6 +23,7 @@ import {
   FileText,
   Heart,
   CheckCircle,
+  XCircle,
   AlertCircle,
   Star,
   Languages,
@@ -205,6 +206,29 @@ export const isVideoFile = (file: File | string | null): boolean => {
   return false;
 }
 
+// Helper function to determine if user can edit application based on status and reapplication rules
+const canEditApplication = (status: string, reviewedAt?: string): boolean => {
+  switch (status) {
+    case 'drafting':
+    case 'pending':
+      return true; // Can always edit drafts and pending applications
+    
+    case 'rejected':
+      // For rejected applications, allow editing after 30 days
+      if (!reviewedAt) return true; // If no review date, allow editing
+      const reviewDate = new Date(reviewedAt);
+      const now = new Date();
+      const daysSinceReview = (now.getTime() - reviewDate.getTime()) / (1000 * 60 * 60 * 24);
+      return daysSinceReview >= 30; // Allow reapplication after 30 days
+    
+    case 'reviewing':
+    case 'waitlist':
+    case 'approved':
+    default:
+      return false; // Cannot edit applications under review, waitlisted, or approved
+  }
+}
+
 function TutorApplicationContent() {
   const { user } = useAuth()
   const router = useRouter()
@@ -214,6 +238,7 @@ function TutorApplicationContent() {
   const [mode, setMode] = useState<'readonly' | 'edit'>('edit');
   const [applicationStatus, setApplicationStatus] = useState<string>('drafting');
   const [loaded, setLoaded] = useState(false);
+  const [application, setApplication] = useState<any>(null);
 
   const [formData, setFormData] = useState<FormData>({
     nativeLanguage: "",
@@ -282,7 +307,10 @@ function TutorApplicationContent() {
       if (response.ok) {
         const { application } = await response.json();
         const fetchedStatus = application?.status || 'drafting';
-        if (application && fetchedStatus === 'pending') {
+        setApplication(application); // Store the application data
+        
+        if (application && fetchedStatus !== 'drafting') {
+          // If application has been submitted (status is not 'drafting'), populate all data
           // Populate formData and all related state from application_data
           setFormData({
             ...formData,
@@ -297,8 +325,12 @@ function TutorApplicationContent() {
           setScreenshotUrl(typeof screenshot === 'string' ? screenshot : null);
           setDemoVideoUrl(application.application_data?.demoVideo || null);
           setApplicationStatus(application.status);
-          setMode('readonly');
+          
+          // Determine if user can edit based on status and reapplication rules
+          const canEdit = canEditApplication(application.status, application.reviewed_at);
+          setMode(canEdit ? 'edit' : 'readonly');
         } else {
+          // Application is still in drafting mode, allow editing
           setMode('edit');
           setApplicationStatus(fetchedStatus);
         }
@@ -396,8 +428,8 @@ function TutorApplicationContent() {
         setApplicationStatus('pending');
         showToast({
           type: 'success',
-          title: 'Application Submitted!',
-          message: 'Your tutor application has been submitted successfully.'
+          title: isReapplication ? 'Application Resubmitted!' : 'Application Submitted!',
+          message: isReapplication ? 'Your updated tutor application has been resubmitted successfully.' : 'Your tutor application has been submitted successfully.'
         })
       } else {
         const errorData = await response.json().catch(() => ({}))
@@ -445,7 +477,7 @@ function TutorApplicationContent() {
         showToast({
           type: 'success',
           title: 'Progress Saved',
-          message: 'Your application progress has been saved successfully.'
+          message: isReapplication ? 'Your reapplication progress has been saved successfully.' : 'Your application progress has been saved successfully.'
         })
         setTimeout(() => setSavedProgress(false), 2000)
       } else {
@@ -497,7 +529,7 @@ function TutorApplicationContent() {
         <div className="mb-2"><b>LinkedIn:</b> {formData.linkedin}</div>
         <div className="mb-2"><b>Social Media:</b> {formData.socialMedia}</div>
         {/* Add more fields as needed, including uploads */}
-        {applicationStatus === 'pending' && (
+        {canEditApplication(applicationStatus, application?.reviewed_at) && (
           <Button type="button" className="mt-6" onClick={(e) => { e.preventDefault(); setMode('edit'); }}>Edit Application</Button>
         )}
       </Card>
@@ -552,20 +584,45 @@ function TutorApplicationContent() {
   }
 
   // 1. Progress bar logic
-  const step = applicationStatus === 'pending' ? 2 : 1;
+  const getStepInfo = (status: string) => {
+    switch (status) {
+      case 'pending':
+      case 'reviewing':
+      case 'waitlist':
+        return {
+          step: 2,
+          indicator: 'Step 2 of 3 – Under Review',
+          description: 'Your application is being reviewed by our team'
+        };
+      case 'approved':
+      case 'rejected':
+        return {
+          step: 3,
+          indicator: 'Step 3 of 3 – Decision Complete',
+          description: 'The review process is complete'
+        };
+      default: // 'drafting'
+        return {
+          step: 1,
+          indicator: 'Step 1 of 3 – Tutor Application',
+          description: 'Complete your application to get started'
+        };
+    }
+  };
+  
+  const stepInfo = getStepInfo(applicationStatus);
   const totalSteps = 3;
-  const stepIndicator = applicationStatus === 'pending'
-    ? 'Step 2 of 3 – Under Review'
-    : 'Step 1 of 3 – Tutor Application';
-  const progressPercent = (step / totalSteps) * 100;
+  const progressPercent = (stepInfo.step / totalSteps) * 100;
 
   // 2. Enforce read-only mode
   const isReadOnly = mode === 'readonly';
 
   // Button logic
+  const canEdit = canEditApplication(applicationStatus, application?.reviewed_at);
+  const isReapplication = applicationStatus === 'rejected' && canEdit;
   const bottomButton = isReadOnly
-    ? <Button type="button" onClick={(e) => { e.preventDefault(); setMode('edit'); }}>Edit Application</Button>
-    : <Button type="submit">Submit Application</Button>;
+    ? (canEdit ? <Button type="button" onClick={(e) => { e.preventDefault(); setMode('edit'); }}>{isReapplication ? 'Update & Reapply' : 'Edit Application'}</Button> : null)
+    : <Button type="submit">{isReapplication ? 'Resubmit Application' : 'Submit Application'}</Button>;
 
   return (
     <>
@@ -590,7 +647,7 @@ function TutorApplicationContent() {
         <AnimationWrapper type="slide-up" duration={0.6} delay={0.2}>
           <Card className="p-6 bg-white/80 backdrop-blur-sm border border-gray-200 mb-12">
             <div className="flex items-center justify-between mb-4">
-              <Text variant="h3" className="font-semibold text-gray-800">{stepIndicator}</Text>
+              <Text variant="h3" className="font-semibold text-gray-800">{stepInfo.indicator}</Text>
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <Save className="w-4 h-4" />
                 {savedProgress ? "Progress saved!" : "Your progress is saved automatically"}
@@ -599,6 +656,42 @@ function TutorApplicationContent() {
             <div className="w-full bg-gray-200 rounded-full h-3">
               <div className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] h-3 rounded-full w-1/3 transition-all duration-500" style={{ width: `${progressPercent}%` }}></div>
             </div>
+            <Text variant="small" className="text-gray-600 mt-2">{stepInfo.description}</Text>
+            
+            {/* Status Message */}
+            {isReadOnly && (
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    {applicationStatus === 'pending' && <Clock className="w-5 h-5 text-blue-600" />}
+                    {applicationStatus === 'reviewing' && <Eye className="w-5 h-5 text-yellow-600" />}
+                    {applicationStatus === 'waitlist' && <Clock className="w-5 h-5 text-purple-600" />}
+                    {applicationStatus === 'approved' && <CheckCircle className="w-5 h-5 text-green-600" />}
+                    {applicationStatus === 'rejected' && <XCircle className="w-5 h-5 text-red-600" />}
+                  </div>
+                  <div className="ml-3">
+                    <Text variant="small" className="font-medium text-gray-900">
+                      {applicationStatus === 'pending' && 'Application Under Review'}
+                      {applicationStatus === 'reviewing' && 'Currently Being Reviewed'}
+                      {applicationStatus === 'waitlist' && 'You\'re on the Waitlist'}
+                      {applicationStatus === 'approved' && 'Application Approved!'}
+                      {applicationStatus === 'rejected' && 'Application Not Approved'}
+                    </Text>
+                    <Text variant="small" className="text-gray-600 mt-1">
+                      {applicationStatus === 'pending' && 'Your application is in the review queue. You can still make edits if needed.'}
+                      {applicationStatus === 'reviewing' && 'Our team is currently reviewing your application. Please check back soon for updates.'}
+                      {applicationStatus === 'waitlist' && 'We\'ll notify you as soon as a spot becomes available. Thank you for your patience!'}
+                      {applicationStatus === 'approved' && 'Congratulations! Your application has been approved. Welcome to the team!'}
+                      {applicationStatus === 'rejected' && (
+                        canEditApplication(applicationStatus, application?.reviewed_at) 
+                          ? 'You can now update your application and reapply. Please review the feedback and make improvements before resubmitting.'
+                          : `You may reapply after ${application?.reviewed_at ? Math.ceil(30 - (new Date().getTime() - new Date(application.reviewed_at).getTime()) / (1000 * 60 * 60 * 24)) : 30} days. Use this time to improve your qualifications.`
+                      )}
+                    </Text>
+                  </div>
+                </div>
+              </div>
+            )}
           </Card>
         </AnimationWrapper>
 
@@ -976,9 +1069,14 @@ function TutorApplicationContent() {
             {/* Submit Section */}
             <Card className="p-8 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] text-white shadow-2xl">
               <div className="text-center">
-                <Text variant="h2" className="mb-4">Ready to Submit?</Text>
+                <Text variant="h2" className="mb-4">
+                  {isReapplication ? 'Ready to Reapply?' : 'Ready to Submit?'}
+                </Text>
                 <Text variant="lead" className="mb-8 opacity-90">
-                  Review your application and submit when you're ready. You can always come back and make changes later.
+                  {isReapplication 
+                    ? 'Review your updated application and resubmit when you\'re ready. Make sure you\'ve addressed any previous feedback.'
+                    : 'Review your application and submit when you\'re ready. You can always come back and make changes later.'
+                  }
                 </Text>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -1224,11 +1322,11 @@ function ProfilePhotoUploadSection({ profilePhotos, setProfilePhotos, isReadOnly
         <div className="flex flex-wrap gap-4 mt-6">
           {profilePhotos.map((url, idx) => (
             <div key={idx} className="relative w-28 h-28 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
-              <img
+                <img
                 src={url}
-                alt={`Profile ${idx + 1}`}
-                className="object-cover w-full h-full"
-              />
+                  alt={`Profile ${idx + 1}`}
+                  className="object-cover w-full h-full"
+                />
               <Button
                 type="button"
                 variant="outline"
@@ -1324,7 +1422,7 @@ function TeachingCertificatesUploadSection({ certificateUrls, setCertificateUrls
     return fileName.match(/\.(jpg|jpeg|png|gif|webp)$/);
   };
 
-  return (
+    return (
     <div className="space-y-4">
       <div>
         <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-2">
@@ -1418,10 +1516,10 @@ function TeachingCertificatesUploadSection({ certificateUrls, setCertificateUrls
             ))}
           </div>
         </div>
-      )}
-    </div>
-  );
-}
+        )}
+      </div>
+    );
+  }
 
 function TeachingExperienceScreenshotSection({ screenshotUrl, setScreenshotUrl, isReadOnly, showToast, userId }: {
   screenshotUrl: string | null;
@@ -1519,7 +1617,7 @@ function TeachingExperienceScreenshotSection({ screenshotUrl, setScreenshotUrl, 
     }
   };
 
-  return (
+    return (
     <div className="space-y-4">
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
         <Text variant="h3" className="text-blue-700 mb-2">Share your teaching experience</Text>
@@ -1600,10 +1698,10 @@ function TeachingExperienceScreenshotSection({ screenshotUrl, setScreenshotUrl, 
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <Text variant="body" className="text-red-700">{uploadError}</Text>
         </div>
-      )}
-    </div>
-  );
-}
+        )}
+      </div>
+    );
+  }
 
 function DemoVideoUploadSection({ demoVideoUrl, setDemoVideoUrl, isReadOnly, showToast, userId }: {
   demoVideoUrl: string | null;
