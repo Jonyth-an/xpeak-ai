@@ -641,50 +641,60 @@ export default function TutorApplicationDetailPage() {
                 </div>
                 {application.admin_action_history && application.admin_action_history.filter(action => action.action_type === 'notes_update' && action.new_review_notes).length > 0 ? (
                   <div className="space-y-4">
-                    {application.admin_action_history
-                      .filter(action => action.action_type === 'notes_update' && action.new_review_notes)
-                      .reverse() // Show newest first
-                      .map((action, index) => (
-                        <div key={index} className="border-l-4 border-blue-200 pl-4 py-3 bg-token-surface-subtle rounded-r-lg">
-                          <div className="flex items-center justify-between mb-3">
-                            <Text variant="body" className="text-token-text-primary font-medium">
-                              {action.reviewer_email || 'Admin'}
-                            </Text>
-                            <Text variant="small" className="text-token-text-secondary">
-                              {formatDate(action.timestamp)}
+                    {(() => {
+                      // Get all notes from history
+                      const historyNotes = application.admin_action_history
+                        .filter(action => action.action_type === 'notes_update' && action.new_review_notes)
+                        .map(action => ({
+                          ...action,
+                          isFromHistory: true
+                        }));
+                      
+                      // Add current note if it exists and is different from history
+                      const allNotes = [...historyNotes];
+                      if (application.reviewer_notes && application.reviewer_notes.trim() && 
+                          !application.admin_action_history.some(action => 
+                            action.action_type === 'notes_update' && 
+                            action.new_review_notes === application.reviewer_notes
+                          )) {
+                        allNotes.push({
+                          action_type: 'notes_update',
+                          new_review_notes: application.reviewer_notes,
+                          reviewer_email: application.reviewer_email,
+                          timestamp: application.reviewed_at || new Date().toISOString(),
+                          isFromHistory: false
+                        });
+                      }
+                      
+                      // Sort all notes by timestamp (newest first)
+                      return allNotes
+                        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+                        .map((note, index) => (
+                          <div 
+                            key={index} 
+                            className={`border-l-4 ${note.isFromHistory ? 'border-blue-200' : 'border-green-200'} pl-4 py-3 bg-token-surface-subtle rounded-r-lg`}
+                          >
+                            <div className="flex items-center justify-between mb-3">
+                              <Text variant="body" className="text-token-text-primary font-medium">
+                                {note.reviewer_email || 'Admin'}
+                              </Text>
+                              <div className="flex items-center">
+                                {!note.isFromHistory && (
+                                  <span className="px-2 py-1 bg-token-success-light text-token-success rounded text-xs font-medium mr-2">
+                                    Current
+                                  </span>
+                                )}
+                                <Text variant="small" className="text-token-text-secondary">
+                                  {formatDate(note.timestamp)}
+                                </Text>
+                              </div>
+                            </div>
+                            <Text variant="body" className="text-token-text-primary leading-relaxed whitespace-pre-wrap">
+                              {note.new_review_notes}
                             </Text>
                           </div>
-                          <Text variant="body" className="text-token-text-primary leading-relaxed whitespace-pre-wrap">
-                            {action.new_review_notes}
-                          </Text>
-                        </div>
-                      ))}
-                    
-                    {/* Show current notes if they exist and are different from history */}
-                    {application.reviewer_notes && application.reviewer_notes.trim() && 
-                     !application.admin_action_history.some(action => 
-                       action.action_type === 'notes_update' && 
-                       action.new_review_notes === application.reviewer_notes
-                     ) && (
-                      <div className="border-l-4 border-green-200 pl-4 py-3 bg-token-surface-subtle rounded-r-lg">
-                        <div className="flex items-center justify-between mb-3">
-                          <Text variant="body" className="text-token-text-primary font-medium">
-                            {application.reviewer_email || 'Admin'}
-                          </Text>
-                          <div className="flex items-center">
-                            <span className="px-2 py-1 bg-token-success-light text-token-success rounded text-xs font-medium mr-2">
-                              Current
-                            </span>
-                            <Text variant="small" className="text-token-text-secondary">
-                              {application.reviewed_at ? formatDate(application.reviewed_at) : 'Latest'}
-                            </Text>
-                          </div>
-                        </div>
-                        <Text variant="body" className="text-token-text-primary leading-relaxed whitespace-pre-wrap">
-                          {application.reviewer_notes}
-                        </Text>
-                      </div>
-                    )}
+                        ));
+                    })()}
                   </div>
                 ) : (
                   <div className="text-center py-8">
@@ -693,42 +703,6 @@ export default function TutorApplicationDetailPage() {
                     <Text variant="small" className="text-token-text-muted mt-1">Notes will appear here as they are added by reviewers.</Text>
                   </div>
                 )}
-              </Card>
-
-              {/* External Links */}
-              <Card className="p-6 bg-token-surface border border-token">
-                <Text variant="h3" as="h3" className="text-token-primary mb-4">External Links</Text>
-                <div className="space-y-3">
-                  {application.linkedin && (
-                    <div>
-                      <Text variant="small" className="text-token-text-secondary">LinkedIn</Text>
-                      <Link 
-                        href={application.linkedin} 
-                        target="_blank" 
-                        className="text-token-primary hover:underline flex items-center"
-                      >
-                        View Profile
-                        <ExternalLink className="w-3 h-3 ml-1" />
-                      </Link>
-                    </div>
-                  )}
-                  {application.social_media && (
-                    <div>
-                      <Text variant="small" className="text-token-text-secondary">Social Media</Text>
-                      <Link 
-                        href={application.social_media} 
-                        target="_blank" 
-                        className="text-token-primary hover:underline flex items-center"
-                      >
-                        View Profile
-                        <ExternalLink className="w-3 h-3 ml-1" />
-                      </Link>
-                    </div>
-                  )}
-                  {!application.linkedin && !application.social_media && (
-                    <Text variant="small" className="text-token-text-secondary">No external links provided</Text>
-                  )}
-                </div>
               </Card>
             </div>
 
@@ -750,6 +724,20 @@ export default function TutorApplicationDetailPage() {
                       {formatDate(application.submitted_at || application.created_at)}
                     </Text>
                   </div>
+                  {/* Show Last Reviewed for all statuses except drafting/pending */}
+                  {application.status !== 'pending' && application.reviewed_at && (
+                    <div>
+                      <Text variant="small" className="text-token-text-secondary">Last Reviewed</Text>
+                      <Text variant="body" className="font-medium">
+                        {formatDate(application.reviewed_at)}
+                      </Text>
+                      {application.reviewer_email && (
+                        <Text variant="small" className="text-token-text-secondary">
+                          by {application.reviewer_email}
+                        </Text>
+                      )}
+                    </div>
+                  )}
                 </div>
               </Card>
 
@@ -850,16 +838,27 @@ export default function TutorApplicationDetailPage() {
                 </div>
 
                 {/* Notes History Summary */}
-                {application.admin_action_history && application.admin_action_history.filter(action => action.action_type === 'notes_update' && action.new_review_notes).length > 0 && (
-                  <div className="mt-4 pt-4 border-t border-token">
-                    <Text variant="small" className="text-token-text-secondary">
-                      Notes History ({application.admin_action_history.filter(action => action.action_type === 'notes_update' && action.new_review_notes).length} {application.admin_action_history.filter(action => action.action_type === 'notes_update' && action.new_review_notes).length === 1 ? 'entry' : 'entries'})
-                    </Text>
-                    <Text variant="small" className="text-token-text-muted mt-1">
-                      View full history below in main content
-                    </Text>
-                  </div>
-                )}
+                {(() => {
+                  // Calculate total notes count (same logic as in main content)
+                  const historyNotesCount = application.admin_action_history?.filter(action => action.action_type === 'notes_update' && action.new_review_notes).length || 0;
+                  const hasCurrentNote = application.reviewer_notes && application.reviewer_notes.trim() && 
+                    !application.admin_action_history?.some(action => 
+                      action.action_type === 'notes_update' && 
+                      action.new_review_notes === application.reviewer_notes
+                    );
+                  const totalNotesCount = historyNotesCount + (hasCurrentNote ? 1 : 0);
+                  
+                  return totalNotesCount > 0 ? (
+                    <div className="mt-4 pt-4 border-t border-token">
+                      <Text variant="small" className="text-token-text-secondary">
+                        Notes History ({totalNotesCount} {totalNotesCount === 1 ? 'entry' : 'entries'})
+                      </Text>
+                      <Text variant="small" className="text-token-text-muted mt-1">
+                        View full history below in main content
+                      </Text>
+                    </div>
+                  ) : null;
+                })()}
 
                 {application.submitted_at && (
                   <div className="mt-4 pt-4 border-t border-token">
