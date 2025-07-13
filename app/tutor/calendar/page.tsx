@@ -2,7 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import TutorLayout from '../TutorLayout';
-import { Card, Text, Button } from '@/app/components/ui';
+import { 
+  Card, 
+  Text, 
+  Button, 
+  TutorPageLayout, 
+  TutorPageHeader, 
+  MetricsGrid, 
+  LoadingState, 
+  ErrorState 
+} from '@/app/components/ui';
 import { supabase } from '@/lib/supabaseClient';
 import { 
   Calendar,
@@ -101,7 +110,8 @@ function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTim
             <select
               value={dayOfWeek}
               onChange={(e) => setDayOfWeek(Number(e.target.value))}
-              className="w-full p-2 border border-token rounded-md bg-token-surface"
+              className="w-full p-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
+              aria-label="Select day of week"
             >
               {daysOfWeek.map((day, index) => (
                 <option key={index} value={index}>{day}</option>
@@ -118,8 +128,9 @@ function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTim
                 type="time"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className="w-full p-2 border border-token rounded-md bg-token-surface"
+                className="w-full p-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
                 required
+                aria-label="Start time"
               />
             </div>
             <div>
@@ -130,8 +141,9 @@ function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTim
                 type="time"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
-                className="w-full p-2 border border-token rounded-md bg-token-surface"
+                className="w-full p-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
                 required
+                aria-label="End time"
               />
             </div>
           </div>
@@ -353,9 +365,13 @@ export default function TutorCalendar() {
   if (loading) {
     return (
       <TutorLayout>
-        <div className="min-h-screen bg-token-surface-subtle flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-token-primary"></div>
-        </div>
+        <TutorPageLayout containerWidth="xl" padding="lg">
+          <LoadingState 
+            message="Loading your calendar..." 
+            size="lg" 
+            variant="spinner"
+          />
+        </TutorPageLayout>
       </TutorLayout>
     );
   }
@@ -363,212 +379,196 @@ export default function TutorCalendar() {
   if (error || !calendarData) {
     return (
       <TutorLayout>
-        <div className="min-h-screen bg-token-surface-subtle flex items-center justify-center">
-          <div className="text-center">
-            <AlertCircle className="w-12 h-12 text-token-error mx-auto mb-4" />
-            <Text variant="h2" className="text-token-error mb-2">
-              Unable to Load Calendar
-            </Text>
-            <Text variant="body" className="text-token-text-secondary mb-4">
-              {error || 'Please try refreshing the page'}
-            </Text>
-            <Button variant="primary" onClick={fetchCalendarData}>
-              Retry
-            </Button>
-          </div>
-        </div>
+        <TutorPageLayout containerWidth="lg" padding="lg">
+          <ErrorState
+            title="Unable to Load Calendar"
+            message={error || 'Please try refreshing the page'}
+            onRetry={fetchCalendarData}
+            showDetails={false}
+          />
+        </TutorPageLayout>
       </TutorLayout>
     );
   }
 
   const weekStart = getWeekStart(currentWeek);
 
+  // Prepare metrics for MetricsGrid
+  const metrics = [
+    {
+      title: 'Available Slots',
+      value: calendarData.week_stats.available_slots,
+      icon: <Clock className="w-6 h-6" />,
+      iconBgColor: 'bg-green-100',
+      iconColor: 'text-green-600'
+    },
+    {
+      title: 'Booked Lessons',
+      value: calendarData.week_stats.booked_lessons,
+      icon: <Calendar className="w-6 h-6" />,
+      iconBgColor: 'bg-blue-100',
+      iconColor: 'text-blue-600'
+    },
+    {
+      title: 'Booking Rate',
+      value: `${calendarData.week_stats.booking_rate}%`,
+      icon: <div className="w-6 h-6 font-bold text-center">%</div>,
+      iconBgColor: 'bg-purple-100',
+      iconColor: 'text-purple-600'
+    }
+  ];
+
   return (
     <TutorLayout>
-      <div className="min-h-screen bg-token-surface-subtle">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Header */}
-          <div className="mb-8">
-            <Text variant="h1" as="h1" className="text-token-primary mb-2">
-              My Teaching Calendar
-            </Text>
-            <Text variant="body" className="text-token-text-secondary">
-              Set your availability. Students can book lessons based on the time slots you open.
-            </Text>
-          </div>
+      <TutorPageLayout containerWidth="xl" padding="lg">
+        <TutorPageHeader
+          title="My Teaching Calendar"
+          subtitle="Set your availability. Students can book lessons based on the time slots you open."
+          titleVariant="h1"
+          subtitleVariant="body"
+          actions={
+            <Button 
+              variant="primary" 
+              size="sm" 
+              onClick={() => setShowAddModal(true)}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Availability
+            </Button>
+          }
+        />
 
-          {/* Timezone Notice */}
-          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-center">
+        {/* Timezone Notice */}
+        <Card className="p-4 mb-6 bg-blue-50 border border-blue-200" variant="outlined">
+          <div className="flex items-center">
             <Info className="w-5 h-5 text-blue-600 mr-2 flex-shrink-0" />
             <Text variant="small" className="text-blue-800">
               All times shown in your local timezone ({calendarData.tutor_timezone}). You can adjust your timezone in settings.
             </Text>
           </div>
+        </Card>
 
-          {/* Calendar Header */}
-          <Card className="p-6 bg-token-surface border border-token mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-4">
-                <Calendar className="w-6 h-6 text-token-primary" />
-                <Text variant="h3" className="text-token-primary">
-                  Week of {formatWeekRange(weekStart)}
-                </Text>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" onClick={() => navigateWeek('prev')}>
-                  <ChevronLeft className="w-4 h-4" />
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => navigateWeek('next')}>
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-                <Button 
-                  variant="primary" 
-                  size="sm" 
-                  onClick={() => setShowAddModal(true)}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Availability
-                </Button>
-              </div>
+        {/* Calendar Header */}
+        <Card className="p-6 mb-6" variant="default">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+            <div className="flex items-center space-x-4">
+              <Calendar className="w-6 h-6 text-token-primary" />
+              <Text variant="h3" className="text-token-primary">
+                Week of {formatWeekRange(weekStart)}
+              </Text>
             </div>
-
-            {/* Legend */}
-            <div className="flex items-center space-x-6 text-sm">
-              <div className="flex items-center">
-                <div className="w-4 h-4 bg-green-100 border border-green-300 rounded mr-2"></div>
-                <span className="text-token-text-secondary">Available</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-4 h-4 bg-blue-100 border border-blue-300 rounded mr-2"></div>
-                <span className="text-token-text-secondary">Booked</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-4 h-4 bg-gray-50 border border-gray-200 rounded mr-2"></div>
-                <span className="text-token-text-secondary">Unavailable</span>
-              </div>
+            <div className="flex items-center space-x-2">
+              <Button variant="outline" size="sm" onClick={() => navigateWeek('prev')}>
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => navigateWeek('next')}>
+                <ChevronRight className="w-4 h-4" />
+              </Button>
             </div>
-          </Card>
+          </div>
 
-          {/* Calendar Grid */}
-          <Card className="p-6 bg-token-surface border border-token mb-6">
-            <div className="overflow-x-auto">
-              <div className="min-w-full">
-                {/* Header Row */}
-                <div className="grid grid-cols-8 gap-2 mb-4">
-                  <div className="p-2 text-center font-medium text-token-text-secondary">Time</div>
-                  {daysOfWeek.map((day, index) => {
-                    const date = new Date(weekStart);
-                    date.setDate(weekStart.getDate() + index);
+          {/* Legend */}
+          <div className="flex flex-wrap items-center gap-6 text-sm">
+            <div className="flex items-center">
+              <div className="w-4 h-4 bg-green-100 border border-green-300 rounded mr-2"></div>
+              <span className="text-token-text-secondary">Available</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-4 h-4 bg-blue-100 border border-blue-300 rounded mr-2"></div>
+              <span className="text-token-text-secondary">Booked</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-4 h-4 bg-gray-50 border border-gray-200 rounded mr-2"></div>
+              <span className="text-token-text-secondary">Unavailable</span>
+            </div>
+          </div>
+        </Card>
+
+        {/* Calendar Grid */}
+        <Card className="p-6 mb-6" variant="default">
+          <div className="overflow-x-auto">
+            <div className="min-w-full">
+              {/* Header Row */}
+              <div className="grid grid-cols-8 gap-2 mb-4">
+                <div className="p-2 text-center font-medium text-token-text-secondary">Time</div>
+                {daysOfWeek.map((day, index) => {
+                  const date = new Date(weekStart);
+                  date.setDate(weekStart.getDate() + index);
+                  return (
+                    <div key={day} className="p-2 text-center">
+                      <div className="font-medium text-token-text-primary">{day}</div>
+                      <div className="text-sm text-token-text-secondary">
+                        {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Time Slots */}
+              {timeSlots.map((timeSlot) => (
+                <div key={timeSlot} className="grid grid-cols-8 gap-2 mb-2">
+                  <div className="p-2 text-center text-sm text-token-text-secondary font-medium">
+                    {timeSlot}
+                  </div>
+                  {daysOfWeek.map((_, dayIndex) => {
+                    const status = getSlotStatus(dayIndex, timeSlot);
                     return (
-                      <div key={day} className="p-2 text-center">
-                        <div className="font-medium text-token-text-primary">{day}</div>
-                        <div className="text-sm text-token-text-secondary">
-                          {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                        </div>
+                      <div
+                        key={`${dayIndex}-${timeSlot}`}
+                        className={`p-2 h-12 border rounded cursor-pointer transition-colors ${getSlotColor(status)}`}
+                        onClick={() => handleSlotClick(dayIndex, timeSlot)}
+                        title={
+                          status === 'available' ? 'Available for booking' :
+                          status === 'booked' ? 'Lesson booked' :
+                          'Click to add availability'
+                        }
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handleSlotClick(dayIndex, timeSlot);
+                          }
+                        }}
+                      >
+                        {status === 'available' && (
+                          <div className="text-center text-xs text-green-700 font-medium">Open</div>
+                        )}
+                        {status === 'booked' && (
+                          <div className="text-center text-xs text-blue-700 font-medium">Booked</div>
+                        )}
                       </div>
                     );
                   })}
                 </div>
-
-                {/* Time Slots */}
-                {timeSlots.map((timeSlot) => (
-                  <div key={timeSlot} className="grid grid-cols-8 gap-2 mb-2">
-                    <div className="p-2 text-center text-sm text-token-text-secondary font-medium">
-                      {timeSlot}
-                    </div>
-                    {daysOfWeek.map((_, dayIndex) => {
-                      const status = getSlotStatus(dayIndex, timeSlot);
-                      return (
-                        <div
-                          key={`${dayIndex}-${timeSlot}`}
-                          className={`p-2 h-12 border rounded cursor-pointer transition-colors ${getSlotColor(status)}`}
-                          onClick={() => handleSlotClick(dayIndex, timeSlot)}
-                          title={
-                            status === 'available' ? 'Available for booking' :
-                            status === 'booked' ? 'Lesson booked' :
-                            'Click to add availability'
-                          }
-                        >
-                          {status === 'available' && (
-                            <div className="text-center text-xs text-green-700 font-medium">Open</div>
-                          )}
-                          {status === 'booked' && (
-                            <div className="text-center text-xs text-blue-700 font-medium">Booked</div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
-          </Card>
-
-          {/* Weekly Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="p-6 bg-token-surface border border-token">
-              <div className="flex items-center">
-                <div className="p-3 bg-green-100 rounded-lg">
-                  <Clock className="w-6 h-6 text-green-600" />
-                </div>
-                <div className="ml-4">
-                  <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
-                    {calendarData.week_stats.available_slots}
-                  </Text>
-                  <Text variant="small" className="text-token-text-secondary">
-                    Available Slots
-                  </Text>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-6 bg-token-surface border border-token">
-              <div className="flex items-center">
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <Calendar className="w-6 h-6 text-blue-600" />
-                </div>
-                <div className="ml-4">
-                  <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
-                    {calendarData.week_stats.booked_lessons}
-                  </Text>
-                  <Text variant="small" className="text-token-text-secondary">
-                    Booked Lessons
-                  </Text>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-6 bg-token-surface border border-token">
-              <div className="flex items-center">
-                <div className="p-3 bg-purple-100 rounded-lg">
-                  <div className="w-6 h-6 text-purple-600 font-bold text-center">%</div>
-                </div>
-                <div className="ml-4">
-                  <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
-                    {calendarData.week_stats.booking_rate}%
-                  </Text>
-                  <Text variant="small" className="text-token-text-secondary">
-                    Booking Rate
-                  </Text>
-                </div>
-              </div>
-            </Card>
           </div>
+        </Card>
 
-          {/* Add Availability Modal */}
-          <AddAvailabilityModal
-            isOpen={showAddModal}
-            onClose={() => {
-              setShowAddModal(false);
-              setSelectedDay(undefined);
-              setSelectedTime(undefined);
-            }}
-            onAdd={handleAddAvailability}
-            selectedDay={selectedDay}
-            selectedTime={selectedTime}
-          />
-        </div>
-      </div>
+        {/* Weekly Stats */}
+        <MetricsGrid 
+          metrics={metrics} 
+          columns={3} 
+          className="mb-6"
+          cardVariant="default"
+          cardPadding="lg"
+        />
+
+        {/* Add Availability Modal */}
+        <AddAvailabilityModal
+          isOpen={showAddModal}
+          onClose={() => {
+            setShowAddModal(false);
+            setSelectedDay(undefined);
+            setSelectedTime(undefined);
+          }}
+          onAdd={handleAddAvailability}
+          selectedDay={selectedDay}
+          selectedTime={selectedTime}
+        />
+      </TutorPageLayout>
     </TutorLayout>
   );
 } 

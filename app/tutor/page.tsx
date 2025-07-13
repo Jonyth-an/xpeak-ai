@@ -2,7 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import TutorLayout from './TutorLayout';
-import { Card, Text, Button } from '@/app/components/ui';
+import { 
+  Card, 
+  Text, 
+  Button, 
+  TutorPageLayout, 
+  TutorPageHeader, 
+  MetricsGrid, 
+  LoadingState, 
+  ErrorState 
+} from '@/app/components/ui';
 import { supabase } from '@/lib/supabaseClient';
 import { 
   Calendar,
@@ -141,355 +150,315 @@ export default function TutorDashboard() {
     }
   };
 
+  // Loading state
   if (loading) {
     return (
       <TutorLayout>
-        <div className="min-h-screen bg-token-surface-subtle flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-token-primary"></div>
-        </div>
+        <LoadingState 
+          message="Loading your dashboard..." 
+          fullScreen 
+        />
       </TutorLayout>
     );
   }
 
+  // Error state
   if (error || !dashboardData) {
     return (
       <TutorLayout>
-        <div className="min-h-screen bg-token-surface-subtle flex items-center justify-center">
-          <div className="text-center">
-            <AlertCircle className="w-12 h-12 text-token-error mx-auto mb-4" />
-            <Text variant="h2" className="text-token-error mb-2">
-              Unable to Load Dashboard
-            </Text>
-            <Text variant="body" className="text-token-text-secondary mb-4">
-              {error || 'Please try refreshing the page'}
-            </Text>
-            <Button variant="primary" onClick={fetchDashboardData}>
-              Retry
-            </Button>
-          </div>
-        </div>
+        <ErrorState 
+          title="Unable to Load Dashboard"
+          message={error || 'Please try refreshing the page'}
+          onRetry={fetchDashboardData}
+          fullScreen
+        />
       </TutorLayout>
     );
   }
 
+  // Prepare metrics for the standardized grid
+  const metrics = [
+    {
+      title: "Today's Lessons",
+      value: dashboardData.metrics.today_lessons,
+      icon: <Calendar className="w-6 h-6" />,
+      iconBgColor: 'bg-blue-100',
+      iconColor: 'text-blue-600'
+    },
+    {
+      title: "This Month",
+      value: dashboardData.metrics.monthly_lessons,
+      icon: <CheckCircle className="w-6 h-6" />,
+      iconBgColor: 'bg-green-100',
+      iconColor: 'text-green-600'
+    },
+    {
+      title: "Active Students",
+      value: dashboardData.metrics.active_students,
+      icon: <Users className="w-6 h-6" />,
+      iconBgColor: 'bg-purple-100',
+      iconColor: 'text-purple-600'
+    },
+    {
+      title: "This Month",
+      value: formatCurrency(dashboardData.metrics.monthly_earnings),
+      icon: <DollarSign className="w-6 h-6" />,
+      iconBgColor: 'bg-orange-100',
+      iconColor: 'text-orange-600'
+    }
+  ];
+
   return (
     <TutorLayout>
-      <div className="min-h-screen bg-token-surface-subtle">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Welcome Header */}
-          <div className="mb-8">
-            <Text variant="h1" as="h1" className="text-token-primary mb-2">
-              Welcome back, {dashboardData.tutor.name}!
-            </Text>
-            <Text variant="body" className="text-token-text-secondary">
-              Here's your teaching overview for today
-            </Text>
-          </div>
+      <TutorPageLayout
+        header={
+          <TutorPageHeader
+            title={`Welcome back, ${dashboardData.tutor.name}!`}
+            subtitle="Here's your teaching overview for today"
+          />
+        }
+      >
+        {/* Metrics Grid */}
+        <div className="mb-8">
+          <MetricsGrid metrics={metrics} columns={4} />
+        </div>
 
-          {/* Metrics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Next Lesson Card */}
             <Card className="p-6 bg-token-surface border border-token">
-              <div className="flex items-center">
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <Calendar className="w-6 h-6 text-blue-600" />
-                </div>
-                <div className="ml-4">
-                  <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
-                    {dashboardData.metrics.today_lessons}
-                  </Text>
-                  <Text variant="small" className="text-token-text-secondary">
-                    Today's Lessons
-                  </Text>
-                </div>
+              <div className="flex items-center mb-4">
+                <Clock className="w-5 h-5 text-token-primary mr-2" />
+                <Text variant="h3" as="h3" className="text-token-primary">
+                  Next Lesson
+                </Text>
               </div>
+              {dashboardData.next_lesson ? (
+                <div className="bg-token-surface-subtle rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-token-primary rounded-full flex items-center justify-center text-white font-medium mr-3">
+                        {dashboardData.next_lesson.student_avatar ? (
+                          <img
+                            src={dashboardData.next_lesson.student_avatar}
+                            alt={dashboardData.next_lesson.student_name}
+                            className="w-full h-full rounded-full object-cover"
+                          />
+                        ) : (
+                          dashboardData.next_lesson.student_name.split(' ').map(n => n[0]).join('')
+                        )}
+                      </div>
+                      <div>
+                        <Text variant="body" className="font-medium text-token-text-primary">
+                          {dashboardData.next_lesson.lesson_type} with {dashboardData.next_lesson.student_name}
+                        </Text>
+                        <Text variant="small" className="text-token-text-secondary">
+                          {getCountryFlag(dashboardData.next_lesson.student_country)} {dashboardData.next_lesson.student_country}
+                        </Text>
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <Text variant="small" className="text-token-text-secondary">
+                        {dashboardData.next_lesson.minutes_until > 0 ? 'Ready in' : 'Starting now'}
+                      </Text>
+                      <Text variant="body" className="font-medium text-token-primary">
+                        {dashboardData.next_lesson.minutes_until > 0 
+                          ? `${dashboardData.next_lesson.minutes_until} minutes`
+                          : 'Now'
+                        }
+                      </Text>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Text variant="small" className="text-token-text-secondary">
+                        {new Date(dashboardData.next_lesson.scheduled_start).toLocaleTimeString('en-US', { 
+                          hour: 'numeric', 
+                          minute: '2-digit',
+                          hour12: true 
+                        })} - {new Date(dashboardData.next_lesson.scheduled_end).toLocaleTimeString('en-US', { 
+                          hour: 'numeric', 
+                          minute: '2-digit',
+                          hour12: true 
+                        })} • {dashboardData.next_lesson.duration} min
+                      </Text>
+                    </div>
+                    <Button
+                      variant={dashboardData.next_lesson.can_join ? "primary" : "outline"}
+                      size="sm"
+                      disabled={!dashboardData.next_lesson.can_join}
+                    >
+                      <Video className="w-4 h-4 mr-2" />
+                      {dashboardData.next_lesson.can_join ? 'Join Lesson' : `Join in ${dashboardData.next_lesson.minutes_until} min`}
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-token-surface-subtle rounded-lg p-8 text-center">
+                  <Calendar className="w-12 h-12 text-token-text-muted mx-auto mb-3" />
+                  <Text variant="body" className="text-token-text-secondary">
+                    No upcoming lessons scheduled
+                  </Text>
+                  <Text variant="small" className="text-token-text-muted mt-1">
+                    Set your availability to start receiving bookings
+                  </Text>
+                </div>
+              )}
             </Card>
 
+            {/* Today's Schedule */}
             <Card className="p-6 bg-token-surface border border-token">
-              <div className="flex items-center">
-                <div className="p-3 bg-green-100 rounded-lg">
-                  <CheckCircle className="w-6 h-6 text-green-600" />
-                </div>
-                <div className="ml-4">
-                  <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
-                    {dashboardData.metrics.monthly_lessons}
-                  </Text>
-                  <Text variant="small" className="text-token-text-secondary">
-                    This Month
-                  </Text>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-6 bg-token-surface border border-token">
-              <div className="flex items-center">
-                <div className="p-3 bg-purple-100 rounded-lg">
-                  <Users className="w-6 h-6 text-purple-600" />
-                </div>
-                <div className="ml-4">
-                  <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
-                    {dashboardData.metrics.active_students}
-                  </Text>
-                  <Text variant="small" className="text-token-text-secondary">
-                    Active Students
-                  </Text>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-6 bg-token-surface border border-token">
-              <div className="flex items-center">
-                <div className="p-3 bg-orange-100 rounded-lg">
-                  <DollarSign className="w-6 h-6 text-orange-600" />
-                </div>
-                <div className="ml-4">
-                  <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
-                    {formatCurrency(dashboardData.metrics.monthly_earnings)}
-                  </Text>
-                  <Text variant="small" className="text-token-text-secondary">
-                    This Month
-                  </Text>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {/* Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main Content */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Next Lesson Card */}
-              <Card className="p-6 bg-token-surface border border-token">
-                <div className="flex items-center mb-4">
-                  <Clock className="w-5 h-5 text-token-primary mr-2" />
-                  <Text variant="h3" as="h3" className="text-token-primary">
-                    Next Lesson
-                  </Text>
-                </div>
-                {dashboardData.next_lesson ? (
-                  <div className="bg-token-surface-subtle rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-4">
+              <Text variant="h3" as="h3" className="text-token-primary mb-4">
+                Today's Schedule
+              </Text>
+              {dashboardData.today_schedule.length > 0 ? (
+                <div className="space-y-4">
+                  {dashboardData.today_schedule.map((lesson, index) => (
+                    <div key={lesson.id} className="flex items-center justify-between p-3 bg-token-surface-subtle rounded-lg">
                       <div className="flex items-center">
-                        <div className="w-10 h-10 bg-token-primary rounded-full flex items-center justify-center text-white font-medium mr-3">
-                          {dashboardData.next_lesson.student_avatar ? (
+                        <div className="w-12 h-12 bg-token-primary rounded-full flex items-center justify-center text-white font-medium">
+                          {lesson.student_avatar ? (
                             <img
-                              src={dashboardData.next_lesson.student_avatar}
-                              alt={dashboardData.next_lesson.student_name}
+                              src={lesson.student_avatar}
+                              alt={lesson.student_name}
                               className="w-full h-full rounded-full object-cover"
                             />
                           ) : (
-                            dashboardData.next_lesson.student_name.split(' ').map(n => n[0]).join('')
+                            lesson.student_name.split(' ').map(n => n[0]).join('')
                           )}
                         </div>
-                        <div>
+                        <div className="ml-3">
                           <Text variant="body" className="font-medium text-token-text-primary">
-                            {dashboardData.next_lesson.lesson_type} with {dashboardData.next_lesson.student_name}
+                            {lesson.time}
                           </Text>
                           <Text variant="small" className="text-token-text-secondary">
-                            {getCountryFlag(dashboardData.next_lesson.student_country)} {dashboardData.next_lesson.student_country}
+                            {getCountryFlag(lesson.student_country)} {lesson.student_name} • {lesson.lesson_type}
                           </Text>
                         </div>
                       </div>
-                      <div className="text-center">
-                        <Text variant="small" className="text-token-text-secondary">
-                          {dashboardData.next_lesson.minutes_until > 0 ? 'Ready in' : 'Starting now'}
-                        </Text>
-                        <Text variant="body" className="font-medium text-token-primary">
-                          {dashboardData.next_lesson.minutes_until > 0 
-                            ? `${dashboardData.next_lesson.minutes_until} minutes`
-                            : 'Now'
-                          }
-                        </Text>
+                      <div className="flex items-center space-x-2">
+                        {lesson.has_reschedule_request && (
+                          <span className="px-2 py-1 bg-token-warning-light text-token-warning rounded text-xs font-medium">
+                            Reschedule Request
+                          </span>
+                        )}
+                        <span className={`px-2 py-1 rounded text-xs font-medium ${
+                          lesson.status === 'confirmed' 
+                            ? 'bg-token-success-light text-token-success' 
+                            : lesson.status === 'completed'
+                            ? 'bg-token-info-light text-token-info'
+                            : 'bg-token-surface-subtle text-token-text-secondary'
+                        }`}>
+                          {lesson.status === 'confirmed' ? 'Confirmed' : 
+                           lesson.status === 'completed' ? 'Completed' : 
+                           lesson.status}
+                        </span>
+                        <Button variant="outline" size="sm">
+                          <Eye className="w-4 h-4 mr-1" />
+                          View Details
+                        </Button>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Text variant="small" className="text-token-text-secondary">
-                          {new Date(dashboardData.next_lesson.scheduled_start).toLocaleTimeString('en-US', { 
-                            hour: 'numeric', 
-                            minute: '2-digit',
-                            hour12: true 
-                          })} - {new Date(dashboardData.next_lesson.scheduled_end).toLocaleTimeString('en-US', { 
-                            hour: 'numeric', 
-                            minute: '2-digit',
-                            hour12: true 
-                          })} • {dashboardData.next_lesson.duration} min
-                        </Text>
-                      </div>
-                      <Button
-                        variant={dashboardData.next_lesson.can_join ? "primary" : "outline"}
-                        size="sm"
-                        disabled={!dashboardData.next_lesson.can_join}
-                      >
-                        <Video className="w-4 h-4 mr-2" />
-                        {dashboardData.next_lesson.can_join ? 'Join Lesson' : `Join in ${dashboardData.next_lesson.minutes_until} min`}
-                      </Button>
-                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Calendar className="w-12 h-12 text-token-text-muted mx-auto mb-3" />
+                  <Text variant="body" className="text-token-text-secondary">
+                    No lessons scheduled for today
+                  </Text>
+                  <Text variant="small" className="text-token-text-muted mt-1">
+                    Your next lessons will appear here
+                  </Text>
+                </div>
+              )}
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Performance Card */}
+            <Card className="p-6 bg-token-surface border border-token">
+              <div className="flex items-center mb-4">
+                <TrendingUp className="w-5 h-5 text-token-success mr-2" />
+                <Text variant="h3" as="h3" className="text-token-primary">
+                  Performance
+                </Text>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Text variant="small" className="text-token-text-secondary">
+                    Rating
+                  </Text>
+                  <div className="flex items-center">
+                    <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                    <Text variant="body" className="font-medium text-token-text-primary">
+                      {dashboardData.performance.rating > 0 ? dashboardData.performance.rating.toFixed(1) : 'N/A'}
+                    </Text>
                   </div>
-                ) : (
-                  <div className="bg-token-surface-subtle rounded-lg p-8 text-center">
-                    <Calendar className="w-12 h-12 text-token-text-muted mx-auto mb-3" />
-                    <Text variant="body" className="text-token-text-secondary">
-                      No upcoming lessons scheduled
+                </div>
+                <div className="flex items-center justify-between">
+                  <Text variant="small" className="text-token-text-secondary">
+                    Attendance
+                  </Text>
+                  <Text variant="body" className={`font-medium ${
+                    dashboardData.performance.attendance_rate >= 95 ? 'text-token-success' :
+                    dashboardData.performance.attendance_rate >= 90 ? 'text-token-warning' :
+                    'text-token-error'
+                  }`}>
+                    {dashboardData.performance.attendance_rate}%
+                  </Text>
+                </div>
+                <div className="flex items-center justify-between">
+                  <Text variant="small" className="text-token-text-secondary">
+                    Bonus Tier
+                  </Text>
+                  <span className={`px-2 py-1 rounded text-xs font-medium ${getBonusTierColor(dashboardData.performance.bonus_tier)}`}>
+                    {getBonusTierText(dashboardData.performance.bonus_tier)}
+                  </span>
+                </div>
+                {dashboardData.performance.top_strengths.length > 0 && (
+                  <div>
+                    <Text variant="small" className="text-token-text-secondary mb-2">
+                      Top Strengths
                     </Text>
-                    <Text variant="small" className="text-token-text-muted mt-1">
-                      Set your availability to start receiving bookings
-                    </Text>
+                    <div className="flex flex-wrap gap-1">
+                      {dashboardData.performance.top_strengths.map((strength, index) => (
+                        <span key={index} className="px-2 py-1 bg-token-info-light text-token-info rounded text-xs">
+                          {strength}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 )}
-              </Card>
+              </div>
+            </Card>
 
-              {/* Today's Schedule */}
-              <Card className="p-6 bg-token-surface border border-token">
-                <Text variant="h3" as="h3" className="text-token-primary mb-4">
-                  Today's Schedule
+            {/* Quick Actions */}
+            <Card className="p-6 bg-token-surface border border-token">
+              <Text variant="h3" as="h3" className="text-token-primary mb-4">
+                Quick Actions
+              </Text>
+              <div className="space-y-3">
+                <Text variant="small" className="text-token-text-secondary">
+                  🎯 Set availability for next week
                 </Text>
-                {dashboardData.today_schedule.length > 0 ? (
-                  <div className="space-y-4">
-                    {dashboardData.today_schedule.map((lesson, index) => (
-                      <div key={lesson.id} className="flex items-center justify-between p-3 bg-token-surface-subtle rounded-lg">
-                        <div className="flex items-center">
-                          <div className="w-12 h-12 bg-token-primary rounded-full flex items-center justify-center text-white font-medium">
-                            {lesson.student_avatar ? (
-                              <img
-                                src={lesson.student_avatar}
-                                alt={lesson.student_name}
-                                className="w-full h-full rounded-full object-cover"
-                              />
-                            ) : (
-                              lesson.student_name.split(' ').map(n => n[0]).join('')
-                            )}
-                          </div>
-                          <div className="ml-3">
-                            <Text variant="body" className="font-medium text-token-text-primary">
-                              {lesson.time}
-                            </Text>
-                            <Text variant="small" className="text-token-text-secondary">
-                              {getCountryFlag(lesson.student_country)} {lesson.student_name} • {lesson.lesson_type}
-                            </Text>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          {lesson.has_reschedule_request && (
-                            <span className="px-2 py-1 bg-token-warning-light text-token-warning rounded text-xs font-medium">
-                              Reschedule Request
-                            </span>
-                          )}
-                          <span className={`px-2 py-1 rounded text-xs font-medium ${
-                            lesson.status === 'confirmed' 
-                              ? 'bg-token-success-light text-token-success' 
-                              : lesson.status === 'completed'
-                              ? 'bg-token-info-light text-token-info'
-                              : 'bg-token-surface-subtle text-token-text-secondary'
-                          }`}>
-                            {lesson.status === 'confirmed' ? 'Confirmed' : 
-                             lesson.status === 'completed' ? 'Completed' : 
-                             lesson.status}
-                          </span>
-                          <Button variant="outline" size="sm">
-                            <Eye className="w-4 h-4 mr-1" />
-                            View Details
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Calendar className="w-12 h-12 text-token-text-muted mx-auto mb-3" />
-                    <Text variant="body" className="text-token-text-secondary">
-                      No lessons scheduled for today
-                    </Text>
-                    <Text variant="small" className="text-token-text-muted mt-1">
-                      Your next lessons will appear here
-                    </Text>
-                  </div>
-                )}
-              </Card>
-            </div>
-
-            {/* Sidebar */}
-            <div className="space-y-6">
-              {/* Performance Card */}
-              <Card className="p-6 bg-token-surface border border-token">
-                <div className="flex items-center mb-4">
-                  <TrendingUp className="w-5 h-5 text-token-success mr-2" />
-                  <Text variant="h3" as="h3" className="text-token-primary">
-                    Performance
-                  </Text>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Text variant="small" className="text-token-text-secondary">
-                      Rating
-                    </Text>
-                    <div className="flex items-center">
-                      <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                      <Text variant="body" className="font-medium text-token-text-primary">
-                        {dashboardData.performance.rating > 0 ? dashboardData.performance.rating.toFixed(1) : 'N/A'}
-                      </Text>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Text variant="small" className="text-token-text-secondary">
-                      Attendance
-                    </Text>
-                    <Text variant="body" className={`font-medium ${
-                      dashboardData.performance.attendance_rate >= 95 ? 'text-token-success' :
-                      dashboardData.performance.attendance_rate >= 90 ? 'text-token-warning' :
-                      'text-token-error'
-                    }`}>
-                      {dashboardData.performance.attendance_rate}%
-                    </Text>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Text variant="small" className="text-token-text-secondary">
-                      Bonus Tier
-                    </Text>
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${getBonusTierColor(dashboardData.performance.bonus_tier)}`}>
-                      {getBonusTierText(dashboardData.performance.bonus_tier)}
-                    </span>
-                  </div>
-                  {dashboardData.performance.top_strengths.length > 0 && (
-                    <div>
-                      <Text variant="small" className="text-token-text-secondary mb-2">
-                        Top Strengths
-                      </Text>
-                      <div className="flex flex-wrap gap-1">
-                        {dashboardData.performance.top_strengths.map((strength, index) => (
-                          <span key={index} className="px-2 py-1 bg-token-info-light text-token-info rounded text-xs">
-                            {strength}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </Card>
-
-              {/* Quick Actions */}
-              <Card className="p-6 bg-token-surface border border-token">
-                <Text variant="h3" as="h3" className="text-token-primary mb-4">
-                  Quick Actions
+                <Text variant="small" className="text-token-text-secondary">
+                  📝 Review lesson notes
                 </Text>
-                <div className="space-y-3">
-                  <Text variant="small" className="text-token-text-secondary">
-                    🎯 Set availability for next week
-                  </Text>
-                  <Text variant="small" className="text-token-text-secondary">
-                    📝 Review lesson notes
-                  </Text>
-                  <Text variant="small" className="text-token-text-secondary">
-                    💰 Check earnings summary
-                  </Text>
-                  <Text variant="small" className="text-token-text-secondary">
-                    🔧 Test video connection
-                  </Text>
-                </div>
-              </Card>
-            </div>
+                <Text variant="small" className="text-token-text-secondary">
+                  💰 Check earnings summary
+                </Text>
+                <Text variant="small" className="text-token-text-secondary">
+                  🔧 Test video connection
+                </Text>
+              </div>
+            </Card>
           </div>
         </div>
-      </div>
+      </TutorPageLayout>
     </TutorLayout>
   );
 } 

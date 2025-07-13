@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import TutorLayout from '../TutorLayout';
-import { Card, Text, Button } from '@/app/components/ui';
+import { Card, Button } from '@/app/components/ui';
+import Text from '@/app/components/ui/Text';
 import { supabase } from '@/lib/supabaseClient';
 import { 
   Search,

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Layout from '../../components/Layout';
 import LoginForm from '@/app/components/molecules/LoginForm';
-import { Text } from '@/app/components/ui';
+import Text from '@/app/components/ui/Text';
 import { useAuth } from '@/lib/AuthContext';
 
 export default function LoginPage() {

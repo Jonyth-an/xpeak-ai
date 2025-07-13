@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Layout from '../../components/Layout';
 import SignupForm from '@/app/components/molecules/SignupForm';
-import { Text } from '@/app/components/ui';
+import Text from '@/app/components/ui/Text';
 import { useAuth } from '@/lib/AuthContext';
 
 export default function SignupPage() {

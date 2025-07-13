@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from '@/app/components/ui';
+import Text from '@/app/components/ui/Text';
 import FeatureCard from '../../components/ui/FeatureCard';
 
 const features = [

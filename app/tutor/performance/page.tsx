@@ -2,7 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import TutorLayout from '../TutorLayout';
-import { Card, Text, Button } from '@/app/components/ui';
+import { 
+  Card, 
+  Text, 
+  Button, 
+  TutorPageLayout, 
+  TutorPageHeader, 
+  MetricsGrid, 
+  LoadingState, 
+  ErrorState 
+} from '@/app/components/ui';
 import { supabase } from '@/lib/supabaseClient';
 import { 
   TrendingUp,
@@ -157,9 +166,13 @@ export default function PerformanceDashboard() {
   if (loading) {
     return (
       <TutorLayout>
-        <div className="min-h-screen bg-token-surface-subtle flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-token-primary"></div>
-        </div>
+        <TutorPageLayout containerWidth="xl" padding="lg">
+          <LoadingState 
+            message="Loading your performance data..." 
+            size="lg" 
+            variant="spinner"
+          />
+        </TutorPageLayout>
       </TutorLayout>
     );
   }
@@ -167,407 +180,373 @@ export default function PerformanceDashboard() {
   if (error || !performanceData) {
     return (
       <TutorLayout>
-        <div className="min-h-screen bg-token-surface-subtle flex items-center justify-center">
-          <div className="text-center">
-            <Text variant="h2" className="text-token-error mb-2">Unable to Load Performance Data</Text>
-            <Text variant="body" className="text-token-text-secondary mb-4">{error}</Text>
-            <Button variant="primary" onClick={fetchPerformanceData}>Retry</Button>
-          </div>
-        </div>
+        <TutorPageLayout containerWidth="lg" padding="lg">
+          <ErrorState
+            title="Unable to Load Performance Data"
+            message={error || 'No data available'}
+            onRetry={fetchPerformanceData}
+            showDetails={false}
+          />
+        </TutorPageLayout>
       </TutorLayout>
     );
   }
 
   const bonusTierInfo = getBonusTierInfo(performanceData.overview.current_bonus_tier);
 
+  // Prepare metrics for MetricsGrid
+  const metrics = [
+    {
+      title: 'Total Lessons',
+      value: performanceData.overview.total_lessons,
+      icon: <Calendar className="w-6 h-6" />,
+      iconBgColor: 'bg-blue-100',
+      iconColor: 'text-blue-600'
+    },
+    {
+      title: 'Average Rating',
+      value: performanceData.ratings.average_rating,
+      subtitle: `${performanceData.ratings.total_ratings} reviews`,
+      icon: <Star className="w-6 h-6" />,
+      iconBgColor: 'bg-yellow-100',
+      iconColor: 'text-yellow-600'
+    },
+    {
+      title: 'Completion Rate',
+      value: `${performanceData.performance.completion_rate}%`,
+      icon: <CheckCircle className="w-6 h-6" />,
+      iconBgColor: 'bg-green-100',
+      iconColor: 'text-green-600'
+    },
+    {
+      title: 'Total Students',
+      value: performanceData.overview.total_students,
+      icon: <Users className="w-6 h-6" />,
+      iconBgColor: 'bg-purple-100',
+      iconColor: 'text-purple-600'
+    }
+  ];
+
   return (
     <TutorLayout>
-      <div className="min-h-screen bg-token-surface-subtle">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <Text variant="h1" as="h1" className="text-token-primary mb-2">
-                Performance Dashboard
-              </Text>
-              <Text variant="body" className="text-token-text-secondary">
-                Track your teaching metrics and student feedback
-              </Text>
+      <TutorPageLayout containerWidth="xl" padding="lg">
+        <TutorPageHeader
+          title="Performance Dashboard"
+          subtitle="Track your teaching metrics and student feedback"
+          titleVariant="h1"
+          subtitleVariant="body"
+          actions={
+            <select
+              value={timeRange}
+              onChange={(e) => setTimeRange(e.target.value)}
+              className="px-4 py-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
+              aria-label="Select time range"
+            >
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="quarter">This Quarter</option>
+              <option value="year">This Year</option>
+              <option value="all">All Time</option>
+            </select>
+          }
+        />
+
+        {/* Bonus Tier Banner */}
+        <Card className="p-6 mb-8 bg-gradient-to-r from-blue-50 to-purple-50 border border-token" variant="outlined">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex items-center">
+              <div className="text-4xl mr-4">{bonusTierInfo.icon}</div>
+              <div>
+                <Text variant="h3" className="text-token-primary mb-1">
+                  Current Tier: {bonusTierInfo.name}
+                </Text>
+                <Text variant="body" className="text-token-text-secondary">
+                  Earning {bonusTierInfo.bonus} bonus on all lessons
+                </Text>
+              </div>
             </div>
-            
-            <div className="flex items-center space-x-4">
-              <select
-                value={timeRange}
-                onChange={(e) => setTimeRange(e.target.value)}
-                className="px-4 py-2 border border-token rounded-md bg-token-surface"
-              >
-                <option value="week">This Week</option>
-                <option value="month">This Month</option>
-                <option value="quarter">This Quarter</option>
-                <option value="year">This Year</option>
-                <option value="all">All Time</option>
-              </select>
+            <div className="text-right">
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${bonusTierInfo.color}`}>
+                {bonusTierInfo.name} Tier
+              </span>
             </div>
           </div>
+        </Card>
 
-          {/* Bonus Tier Banner */}
-          <Card className="p-6 mb-8 bg-gradient-to-r from-blue-50 to-purple-50 border border-token">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="text-4xl mr-4">{bonusTierInfo.icon}</div>
-                <div>
-                  <Text variant="h3" className="text-token-primary mb-1">
-                    Current Tier: {bonusTierInfo.name}
-                  </Text>
-                  <Text variant="body" className="text-token-text-secondary">
-                    Earning {bonusTierInfo.bonus} bonus on all lessons
-                  </Text>
+        {/* Key Metrics Cards */}
+        <MetricsGrid 
+          metrics={metrics} 
+          columns={4} 
+          className="mb-8"
+          cardVariant="default"
+          cardPadding="lg"
+        />
+
+        {/* Performance Metrics */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Performance Overview */}
+          <Card className="p-6" variant="default">
+            <div className="flex items-center mb-4">
+              <BarChart3 className="w-5 h-5 text-token-primary mr-2" />
+              <Text variant="h3" className="text-token-primary">Performance Metrics</Text>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
+                  <Text variant="body" className="text-token-text-secondary">Completion Rate</Text>
                 </div>
+                <Text variant="body" className={`font-medium ${getPerformanceColor(performanceData.performance.completion_rate)}`}>
+                  {performanceData.performance.completion_rate}%
+                </Text>
               </div>
-              <div className="text-right">
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${bonusTierInfo.color}`}>
-                  {bonusTierInfo.name} Tier
-                </span>
+              
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Users className="w-4 h-4 text-blue-600 mr-2" />
+                  <Text variant="body" className="text-token-text-secondary">Attendance Rate</Text>
+                </div>
+                <Text variant="body" className={`font-medium ${getPerformanceColor(performanceData.performance.attendance_rate)}`}>
+                  {performanceData.performance.attendance_rate}%
+                </Text>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <XCircle className="w-4 h-4 text-red-600 mr-2" />
+                  <Text variant="body" className="text-token-text-secondary">Cancellation Rate</Text>
+                </div>
+                <Text variant="body" className={`font-medium ${getPerformanceColor(performanceData.performance.cancellation_rate, false)}`}>
+                  {performanceData.performance.cancellation_rate}%
+                </Text>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Target className="w-4 h-4 text-purple-600 mr-2" />
+                  <Text variant="body" className="text-token-text-secondary">Avg Lessons/Student</Text>
+                </div>
+                <Text variant="body" className="font-medium text-token-text-primary">
+                  {performanceData.performance.avg_lessons_per_student}
+                </Text>
               </div>
             </div>
           </Card>
 
-          {/* Key Metrics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="p-6 bg-token-surface border border-token">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Text variant="small" className="text-token-text-secondary mb-1">
-                    Total Lessons
-                  </Text>
-                  <Text variant="h2" className="text-2xl font-bold text-token-text-primary">
-                    {performanceData.overview.total_lessons}
-                  </Text>
-                </div>
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <Calendar className="w-6 h-6 text-blue-600" />
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-6 bg-token-surface border border-token">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Text variant="small" className="text-token-text-secondary mb-1">
-                    Average Rating
-                  </Text>
-                  <div className="flex items-center">
-                    <Text variant="h2" className="text-2xl font-bold text-token-text-primary mr-2">
-                      {performanceData.ratings.average_rating}
-                    </Text>
-                    <Star className="w-5 h-5 text-yellow-500 fill-current" />
-                  </div>
-                </div>
-                <div className="p-3 bg-yellow-100 rounded-lg">
-                  <Star className="w-6 h-6 text-yellow-600" />
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-6 bg-token-surface border border-token">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Text variant="small" className="text-token-text-secondary mb-1">
-                    Completion Rate
-                  </Text>
-                  <Text variant="h2" className={`text-2xl font-bold ${getPerformanceColor(performanceData.performance.completion_rate)}`}>
-                    {performanceData.performance.completion_rate}%
-                  </Text>
-                </div>
-                <div className="p-3 bg-green-100 rounded-lg">
-                  <CheckCircle className="w-6 h-6 text-green-600" />
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-6 bg-token-surface border border-token">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Text variant="small" className="text-token-text-secondary mb-1">
-                    Total Students
-                  </Text>
-                  <Text variant="h2" className="text-2xl font-bold text-token-text-primary">
-                    {performanceData.overview.total_students}
-                  </Text>
-                </div>
-                <div className="p-3 bg-purple-100 rounded-lg">
-                  <Users className="w-6 h-6 text-purple-600" />
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {/* Performance Metrics */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            {/* Performance Overview */}
-            <Card className="p-6 bg-token-surface border border-token">
-              <div className="flex items-center mb-4">
-                <BarChart3 className="w-5 h-5 text-token-primary mr-2" />
-                <Text variant="h3" className="text-token-primary">Performance Metrics</Text>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-                    <Text variant="body" className="text-token-text-secondary">Completion Rate</Text>
-                  </div>
-                  <Text variant="body" className={`font-medium ${getPerformanceColor(performanceData.performance.completion_rate)}`}>
-                    {performanceData.performance.completion_rate}%
-                  </Text>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Users className="w-4 h-4 text-blue-600 mr-2" />
-                    <Text variant="body" className="text-token-text-secondary">Attendance Rate</Text>
-                  </div>
-                  <Text variant="body" className={`font-medium ${getPerformanceColor(performanceData.performance.attendance_rate)}`}>
-                    {performanceData.performance.attendance_rate}%
-                  </Text>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <XCircle className="w-4 h-4 text-red-600 mr-2" />
-                    <Text variant="body" className="text-token-text-secondary">Cancellation Rate</Text>
-                  </div>
-                  <Text variant="body" className={`font-medium ${getPerformanceColor(performanceData.performance.cancellation_rate, false)}`}>
-                    {performanceData.performance.cancellation_rate}%
-                  </Text>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Target className="w-4 h-4 text-purple-600 mr-2" />
-                    <Text variant="body" className="text-token-text-secondary">Avg Lessons/Student</Text>
-                  </div>
-                  <Text variant="body" className="font-medium text-token-text-primary">
-                    {performanceData.performance.avg_lessons_per_student}
-                  </Text>
-                </div>
-              </div>
-            </Card>
-
-            {/* Rating Distribution */}
-            <Card className="p-6 bg-token-surface border border-token">
-              <div className="flex items-center mb-4">
-                <Star className="w-5 h-5 text-token-primary mr-2" />
-                <Text variant="h3" className="text-token-primary">Rating Distribution</Text>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="flex">
-                      {[1,2,3,4,5].map(i => (
-                        <Star key={i} className="w-4 h-4 text-yellow-500 fill-current" />
-                      ))}
-                    </div>
-                    <Text variant="body" className="text-token-text-secondary ml-2">5 Stars</Text>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-24 bg-gray-200 rounded-full h-2 mr-2">
-                      <div 
-                        className="bg-yellow-500 h-2 rounded-full" 
-                        style={{ 
-                          width: `${performanceData.ratings.total_ratings > 0 ? (performanceData.ratings.distribution[5] / performanceData.ratings.total_ratings) * 100 : 0}%` 
-                        }}
-                      ></div>
-                    </div>
-                    <Text variant="small" className="text-token-text-primary font-medium">
-                      {performanceData.ratings.distribution[5]}
-                    </Text>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="flex">
-                      {[1,2,3,4].map(i => (
-                        <Star key={i} className="w-4 h-4 text-yellow-500 fill-current" />
-                      ))}
-                      <Star className="w-4 h-4 text-gray-300" />
-                    </div>
-                    <Text variant="body" className="text-token-text-secondary ml-2">4 Stars</Text>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-24 bg-gray-200 rounded-full h-2 mr-2">
-                      <div 
-                        className="bg-blue-500 h-2 rounded-full" 
-                        style={{ 
-                          width: `${performanceData.ratings.total_ratings > 0 ? (performanceData.ratings.distribution[4] / performanceData.ratings.total_ratings) * 100 : 0}%` 
-                        }}
-                      ></div>
-                    </div>
-                    <Text variant="small" className="text-token-text-primary font-medium">
-                      {performanceData.ratings.distribution[4]}
-                    </Text>
-                  </div>
-                </div>
-                
-                <div className="pt-4 border-t border-token">
-                  <div className="flex items-center justify-between">
-                    <Text variant="body" className="text-token-text-secondary">Total Reviews</Text>
-                    <Text variant="body" className="font-medium text-token-text-primary">
-                      {performanceData.ratings.total_ratings}
-                    </Text>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {/* Recent Feedback & Top Tags */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            {/* Recent Feedback */}
-            <Card className="p-6 bg-token-surface border border-token">
-              <div className="flex items-center mb-4">
-                <MessageSquare className="w-5 h-5 text-token-primary mr-2" />
-                <Text variant="h3" className="text-token-primary">Recent Feedback</Text>
-              </div>
-              
-              <div className="space-y-4">
-                {performanceData.ratings.recent_feedback.length === 0 ? (
-                  <Text variant="body" className="text-token-text-secondary text-center py-4">
-                    No feedback yet
-                  </Text>
-                ) : (
-                  performanceData.ratings.recent_feedback.slice(0, 3).map((feedback, index) => (
-                    <div key={index} className="border-b border-token pb-3 last:border-b-0">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center">
-                          {[1,2,3,4,5].map(i => (
-                            <Star 
-                              key={i} 
-                              className={`w-4 h-4 ${i <= feedback.rating ? 'text-yellow-500 fill-current' : 'text-gray-300'}`} 
-                            />
-                          ))}
-                        </div>
-                        <Text variant="small" className="text-token-text-muted">
-                          {formatDate(feedback.created_at)}
-                        </Text>
-                      </div>
-                      {feedback.comment && (
-                        <Text variant="body" className="text-token-text-secondary mb-2">
-                          "{feedback.comment}"
-                        </Text>
-                      )}
-                      {feedback.tags && feedback.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {feedback.tags.slice(0, 3).map((tag, tagIndex) => (
-                            <span key={tagIndex} className="px-2 py-1 bg-token-info-light text-token-info rounded text-xs">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))
-                )}
-              </div>
-            </Card>
-
-            {/* Top Feedback Tags */}
-            <Card className="p-6 bg-token-surface border border-token">
-              <div className="flex items-center mb-4">
-                <Award className="w-5 h-5 text-token-primary mr-2" />
-                <Text variant="h3" className="text-token-primary">Top Strengths</Text>
-              </div>
-              
-              <div className="space-y-3">
-                {performanceData.performance.top_feedback_tags.length === 0 ? (
-                  <Text variant="body" className="text-token-text-secondary text-center py-4">
-                    No feedback tags yet
-                  </Text>
-                ) : (
-                  performanceData.performance.top_feedback_tags.slice(0, 8).map((tag, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <Text variant="body" className="text-token-text-secondary capitalize">
-                        {tag.tag.replace(/_/g, ' ')}
-                      </Text>
-                      <div className="flex items-center">
-                        <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                          <div 
-                            className="bg-green-500 h-2 rounded-full" 
-                            style={{ 
-                              width: `${(tag.count / Math.max(...performanceData.performance.top_feedback_tags.map(t => t.count))) * 100}%` 
-                            }}
-                          ></div>
-                        </div>
-                        <Text variant="small" className="text-token-text-primary font-medium">
-                          {tag.count}
-                        </Text>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </Card>
-          </div>
-
-          {/* Monthly Trends */}
-          <Card className="p-6 bg-token-surface border border-token">
+          {/* Rating Distribution */}
+          <Card className="p-6" variant="default">
             <div className="flex items-center mb-4">
-              <TrendingUp className="w-5 h-5 text-token-primary mr-2" />
-              <Text variant="h3" className="text-token-primary">Monthly Trends</Text>
+              <Star className="w-5 h-5 text-token-primary mr-2" />
+              <Text variant="h3" className="text-token-primary">Rating Distribution</Text>
             </div>
             
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-token">
-                    <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Month</th>
-                    <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Lessons</th>
-                    <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Rating</th>
-                    <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Completion</th>
-                    <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Feedback</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {performanceData.trends.monthly_data.map((month, index) => (
-                    <tr key={index} className="border-b border-token hover:bg-token-surface-subtle">
-                      <td className="py-3 px-4">
-                        <Text variant="body" className="font-medium text-token-text-primary">
-                          {month.month_name}
-                        </Text>
-                      </td>
-                      <td className="py-3 px-4">
-                        <Text variant="body" className="text-token-text-primary">
-                          {month.lessons_taught}
-                        </Text>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center">
-                          <Star className="w-4 h-4 text-yellow-500 fill-current mr-1" />
-                          <Text variant="body" className="text-token-text-primary">
-                            {month.average_rating || 'N/A'}
-                          </Text>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <Text variant="body" className={`font-medium ${getPerformanceColor(month.completion_rate)}`}>
-                          {Math.round(month.completion_rate)}%
-                        </Text>
-                      </td>
-                      <td className="py-3 px-4">
-                        <Text variant="body" className="text-token-text-primary">
-                          {month.total_feedback}
-                        </Text>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="flex">
+                    {[1,2,3,4,5].map(i => (
+                      <Star key={i} className="w-4 h-4 text-yellow-500 fill-current" />
+                    ))}
+                  </div>
+                  <Text variant="body" className="text-token-text-secondary ml-2">5 Stars</Text>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                    <div 
+                      className="bg-yellow-500 h-2 rounded-full" 
+                      style={{ 
+                        width: `${performanceData.ratings.total_ratings > 0 ? (performanceData.ratings.distribution[5] / performanceData.ratings.total_ratings) * 100 : 0}%` 
+                      }}
+                    ></div>
+                  </div>
+                  <Text variant="small" className="text-token-text-primary font-medium">
+                    {performanceData.ratings.distribution[5]}
+                  </Text>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="flex">
+                    {[1,2,3,4].map(i => (
+                      <Star key={i} className="w-4 h-4 text-yellow-500 fill-current" />
+                    ))}
+                    <Star className="w-4 h-4 text-gray-300" />
+                  </div>
+                  <Text variant="body" className="text-token-text-secondary ml-2">4 Stars</Text>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                    <div 
+                      className="bg-blue-500 h-2 rounded-full" 
+                      style={{ 
+                        width: `${performanceData.ratings.total_ratings > 0 ? (performanceData.ratings.distribution[4] / performanceData.ratings.total_ratings) * 100 : 0}%` 
+                      }}
+                    ></div>
+                  </div>
+                  <Text variant="small" className="text-token-text-primary font-medium">
+                    {performanceData.ratings.distribution[4]}
+                  </Text>
+                </div>
+              </div>
+              
+              <div className="pt-4 border-t border-token">
+                <div className="flex items-center justify-between">
+                  <Text variant="body" className="text-token-text-secondary">Total Reviews</Text>
+                  <Text variant="body" className="font-medium text-token-text-primary">
+                    {performanceData.ratings.total_ratings}
+                  </Text>
+                </div>
+              </div>
             </div>
           </Card>
         </div>
-      </div>
+
+        {/* Recent Feedback & Top Tags */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Recent Feedback */}
+          <Card className="p-6" variant="default">
+            <div className="flex items-center mb-4">
+              <MessageSquare className="w-5 h-5 text-token-primary mr-2" />
+              <Text variant="h3" className="text-token-primary">Recent Feedback</Text>
+            </div>
+            
+            <div className="space-y-4">
+              {performanceData.ratings.recent_feedback.length === 0 ? (
+                <Text variant="body" className="text-token-text-secondary text-center py-4">
+                  No feedback yet
+                </Text>
+              ) : (
+                performanceData.ratings.recent_feedback.slice(0, 3).map((feedback, index) => (
+                  <div key={index} className="border-b border-token pb-3 last:border-b-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center">
+                        {[1,2,3,4,5].map(i => (
+                          <Star 
+                            key={i} 
+                            className={`w-4 h-4 ${i <= feedback.rating ? 'text-yellow-500 fill-current' : 'text-gray-300'}`} 
+                          />
+                        ))}
+                      </div>
+                      <Text variant="small" className="text-token-text-muted">
+                        {formatDate(feedback.created_at)}
+                      </Text>
+                    </div>
+                    {feedback.comment && (
+                      <Text variant="body" className="text-token-text-secondary mb-2">
+                        "{feedback.comment}"
+                      </Text>
+                    )}
+                    {feedback.tags && feedback.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {feedback.tags.slice(0, 3).map((tag, tagIndex) => (
+                          <span key={tagIndex} className="px-2 py-1 bg-token-info-light text-token-info rounded text-xs">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          </Card>
+
+          {/* Top Feedback Tags */}
+          <Card className="p-6" variant="default">
+            <div className="flex items-center mb-4">
+              <Award className="w-5 h-5 text-token-primary mr-2" />
+              <Text variant="h3" className="text-token-primary">Top Strengths</Text>
+            </div>
+            
+            <div className="space-y-3">
+              {performanceData.performance.top_feedback_tags.length === 0 ? (
+                <Text variant="body" className="text-token-text-secondary text-center py-4">
+                  No feedback tags yet
+                </Text>
+              ) : (
+                performanceData.performance.top_feedback_tags.slice(0, 8).map((tag, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <Text variant="body" className="text-token-text-secondary capitalize">
+                      {tag.tag.replace(/_/g, ' ')}
+                    </Text>
+                    <div className="flex items-center">
+                      <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                        <div 
+                          className="bg-green-500 h-2 rounded-full" 
+                          style={{ 
+                            width: `${(tag.count / Math.max(...performanceData.performance.top_feedback_tags.map(t => t.count))) * 100}%` 
+                          }}
+                        ></div>
+                      </div>
+                      <Text variant="small" className="text-token-text-primary font-medium">
+                        {tag.count}
+                      </Text>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </Card>
+        </div>
+
+        {/* Monthly Trends */}
+        <Card className="p-6" variant="default">
+          <div className="flex items-center mb-4">
+            <TrendingUp className="w-5 h-5 text-token-primary mr-2" />
+            <Text variant="h3" className="text-token-primary">Monthly Trends</Text>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-token">
+                  <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Month</th>
+                  <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Lessons</th>
+                  <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Rating</th>
+                  <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Completion</th>
+                  <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Feedback</th>
+                </tr>
+              </thead>
+              <tbody>
+                {performanceData.trends.monthly_data.map((month, index) => (
+                  <tr key={index} className="border-b border-token hover:bg-token-surface-subtle">
+                    <td className="py-3 px-4">
+                      <Text variant="body" className="font-medium text-token-text-primary">
+                        {month.month_name}
+                      </Text>
+                    </td>
+                    <td className="py-3 px-4">
+                      <Text variant="body" className="text-token-text-primary">
+                        {month.lessons_taught}
+                      </Text>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center">
+                        <Star className="w-4 h-4 text-yellow-500 fill-current mr-1" />
+                        <Text variant="body" className="text-token-text-primary">
+                          {month.average_rating || 'N/A'}
+                        </Text>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <Text variant="body" className={`font-medium ${getPerformanceColor(month.completion_rate)}`}>
+                        {Math.round(month.completion_rate)}%
+                      </Text>
+                    </td>
+                    <td className="py-3 px-4">
+                      <Text variant="body" className="text-token-text-primary">
+                        {month.total_feedback}
+                      </Text>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      </TutorPageLayout>
     </TutorLayout>
   );
 } 

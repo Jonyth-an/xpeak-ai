@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Layout from '../../components/Layout';
 import PasswordResetForm from '@/app/components/molecules/PasswordResetForm';
-import { Text } from '@/app/components/ui';
+import Text from '@/app/components/ui/Text';
 
 export default function PasswordResetPage() {
   const [pageError, setPageError] = useState<string | null>(null);

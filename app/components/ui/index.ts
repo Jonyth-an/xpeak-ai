@@ -20,9 +20,21 @@ export { default as UIDemo } from './UIDemo';
 export { default as FormField } from './FormField';
 export { default as AnimationWrapper } from './AnimationWrapper';
 export { default as LoadingSpinner } from './LoadingSpinner';
-export { default as Modal } from './Modal';
 export { default as Toast, type ToastProps } from './Toast';
 export { default as ToastContainer, useToast, toast } from './ToastContainer';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as EmptyState } from './EmptyState';
-export { default as LayoutSidebarContent } from './LayoutSidebarContent'; 
+export { default as LayoutSidebarContent } from './LayoutSidebarContent';
+
+// Tutor Dashboard Components
+export { default as TutorPageLayout } from './TutorPageLayout';
+export { default as TutorPageHeader } from './TutorPageHeader';
+export { default as MetricsGrid } from './MetricsGrid';
+export { default as LoadingState } from './LoadingState';
+export { default as ErrorState } from './ErrorState';
+
+// Advanced UI Components
+export { default as DataTable } from './DataTable';
+export * from './Form';
+export * from './Modal';
+export * from './Navigation'; 

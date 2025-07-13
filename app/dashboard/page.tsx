@@ -4,7 +4,7 @@ import React from 'react';
 import Layout from '../../components/Layout';
 import ProtectedRoute from '../../components/ProtectedRoute';
 import RequireEmailVerification from '../components/RequireEmailVerification';
-import { Text } from '@/app/components/ui';
+import Text from '@/app/components/ui/Text';
 import { Button } from '@/app/components/ui/Button';
 import { Sparkles, BookOpen, Users, Trophy, ArrowRight } from 'lucide-react';
 import Link from 'next/link';

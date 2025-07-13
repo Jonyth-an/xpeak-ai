@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/AuthContext';
 import { useRoles } from '@/lib/RolesContext';
 import { supabase } from '@/lib/supabaseClient';
-import { Button, Text } from '@/app/components/ui';
+import { Button } from '@/app/components/ui';
+import Text from '@/app/components/ui/Text';
 import { 
   Home,
   Calendar,
