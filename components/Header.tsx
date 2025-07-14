@@ -176,11 +176,13 @@ export default function Header({ heroBackgroundColor }: HeaderProps) {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
-                          <Link href="/dashboard">Dashboard</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
                           <Link href="/profile">Profile</Link>
                         </DropdownMenuItem>
+                        {roles.includes('tutor') && (
+                          <DropdownMenuItem asChild>
+                            <Link href="/tutor">Tutor Dashboard</Link>
+                          </DropdownMenuItem>
+                        )}
                         {isAdmin && (
                           <>
                             <DropdownMenuSeparator />

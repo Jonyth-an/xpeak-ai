@@ -71,6 +71,16 @@ function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTim
     'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
   ];
 
+  // Helper to generate 15-min increment time options for dropdowns
+  const timeOptions = [];
+  for (let hour = 0; hour < 24; hour++) {
+    for (let min = 0; min < 60; min += 15) {
+      const h = hour.toString().padStart(2, '0');
+      const m = min.toString().padStart(2, '0');
+      timeOptions.push(`${h}:${m}`);
+    }
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -124,27 +134,33 @@ function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTim
               <label className="block text-sm font-medium text-token-text-secondary mb-1">
                 Start Time
               </label>
-              <input
-                type="time"
+              <select
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
                 className="w-full p-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
                 required
                 aria-label="Start time"
-              />
+              >
+                {timeOptions.map((option) => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-token-text-secondary mb-1">
                 End Time
               </label>
-              <input
-                type="time"
+              <select
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
                 className="w-full p-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
                 required
                 aria-label="End time"
-              />
+              >
+                {timeOptions.map((option) => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
             </div>
           </div>
           
@@ -184,15 +200,49 @@ export default function TutorCalendar() {
   const [selectedDay, setSelectedDay] = useState<number>();
   const [selectedTime, setSelectedTime] = useState<string>();
 
-  // Generate time slots (8 AM to 10 PM in 30-minute increments)
-  const timeSlots = [];
-  for (let hour = 8; hour < 22; hour++) {
+  // Generate time slots (00:00 to 23:00 in 1-hour increments)
+  const timeSlots: string[] = [];
+  for (let hour = 0; hour < 24; hour++) {
     timeSlots.push(`${hour.toString().padStart(2, '0')}:00`);
-    timeSlots.push(`${hour.toString().padStart(2, '0')}:30`);
   }
 
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const fullDaysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+  // Drag-to-select state
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState<{ dayIndex: number; slotIndex: number } | null>(null);
+  const [dragEnd, setDragEnd] = useState<{ dayIndex: number; slotIndex: number } | null>(null);
+
+  // Helper to determine if a slot is in the current drag selection
+  const isSlotInDragSelection = (dayIndex: number, slotIndex: number) => {
+    if (!isDragging || !dragStart || !dragEnd) return false;
+    if (dayIndex !== dragStart.dayIndex) return false;
+    const [start, end] = [dragStart.slotIndex, dragEnd.slotIndex].sort((a, b) => a - b);
+    return slotIndex >= start && slotIndex <= end;
+  };
+
+  // When drag ends, open modal with selected range
+  useEffect(() => {
+    if (!isDragging && dragStart && dragEnd && dragStart.dayIndex === dragEnd.dayIndex) {
+      const dayOfWeek = dragStart.dayIndex === 6 ? 0 : dragStart.dayIndex + 1;
+      const startIdx = Math.min(dragStart.slotIndex, dragEnd.slotIndex);
+      const endIdx = Math.max(dragStart.slotIndex, dragEnd.slotIndex) + 1;
+      setSelectedDay(dayOfWeek);
+      setSelectedTime(timeSlots[startIdx]);
+      setShowAddModal(true);
+      // Pre-fill modal with start and end time
+      setTimeout(() => {
+        setSelectedTime(timeSlots[startIdx]);
+        // End time is exclusive, so use next slot or last slot
+        const endTime = timeSlots[endIdx] || '23:59';
+        const endInput = document.querySelector('select[aria-label="End time"]') as HTMLSelectElement;
+        if (endInput) endInput.value = endTime;
+      }, 0);
+      setDragStart(null);
+      setDragEnd(null);
+    }
+  }, [isDragging, dragStart, dragEnd, timeSlots]);
 
   useEffect(() => {
     fetchCalendarData();
@@ -506,22 +556,57 @@ export default function TutorCalendar() {
               </div>
 
               {/* Time Slots */}
-              {timeSlots.map((timeSlot) => (
+              {timeSlots.map((timeSlot, slotIndex) => (
                 <div key={timeSlot} className="grid grid-cols-8 gap-2 mb-2">
                   <div className="p-2 text-center text-sm text-token-text-secondary font-medium">
                     {timeSlot}
                   </div>
                   {daysOfWeek.map((_, dayIndex) => {
                     const status = getSlotStatus(dayIndex, timeSlot);
+                    const isSelected = isSlotInDragSelection(dayIndex, slotIndex);
                     return (
                       <div
                         key={`${dayIndex}-${timeSlot}`}
-                        className={`p-2 h-12 border rounded cursor-pointer transition-colors ${getSlotColor(status)}`}
-                        onClick={() => handleSlotClick(dayIndex, timeSlot)}
+                        className={`p-2 h-12 border rounded cursor-pointer transition-colors ${getSlotColor(status)} ${isSelected ? 'ring-2 ring-token-primary bg-token-primary/10' : ''}`}
+                        onMouseDown={() => {
+                          setIsDragging(true);
+                          setDragStart({ dayIndex, slotIndex });
+                          setDragEnd({ dayIndex, slotIndex });
+                        }}
+                        onMouseEnter={() => {
+                          if (isDragging && dragStart && dragStart.dayIndex === dayIndex) {
+                            setDragEnd({ dayIndex, slotIndex });
+                          }
+                        }}
+                        onMouseUp={() => {
+                          setIsDragging(false);
+                        }}
+                        // Mobile touch support
+                        data-day-index={dayIndex}
+                        data-slot-index={slotIndex}
+                        onTouchStart={e => {
+                          setIsDragging(true);
+                          setDragStart({ dayIndex, slotIndex });
+                          setDragEnd({ dayIndex, slotIndex });
+                        }}
+                        onTouchMove={e => {
+                          const touch = e.touches[0];
+                          const target = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement;
+                          if (target && target.dataset.dayIndex && target.dataset.slotIndex) {
+                            const d = parseInt(target.dataset.dayIndex, 10);
+                            const s = parseInt(target.dataset.slotIndex, 10);
+                            if (isDragging && dragStart && dragStart.dayIndex === d) {
+                              setDragEnd({ dayIndex: d, slotIndex: s });
+                            }
+                          }
+                        }}
+                        onTouchEnd={() => {
+                          setIsDragging(false);
+                        }}
                         title={
                           status === 'available' ? 'Available for booking' :
                           status === 'booked' ? 'Lesson booked' :
-                          'Click to add availability'
+                          'Click or drag to add availability'
                         }
                         role="button"
                         tabIndex={0}

@@ -273,26 +273,37 @@ export async function GET(request: NextRequest) {
       ];
     }
 
+    // Build response in dashboard's expected format
     return NextResponse.json({
       tutor: {
         id: tutorId,
         name: tutorProfile.display_name,
         timezone: tutorProfile.timezone
       },
-      metrics: {
-        today_lessons: todayLessonsCount,
-        monthly_lessons: monthlyLessonsCount,
-        active_students: activeStudentsCount,
-        monthly_earnings: monthlyEarnings
+      summary: {
+        total_lessons: monthlyLessonsCount,
+        completed_lessons: todayLessonsCount, // You may want to adjust this if you have a true completed count
+        upcoming_lessons: todaySchedule.filter(l => l.status === 'confirmed').length,
+        total_students: activeStudentsCount,
+        average_rating: performance.average_rating,
+        total_earnings: monthlyEarnings,
+        currency: 'USD', // Adjust if you have multi-currency
       },
-      next_lesson: nextLesson,
-      today_schedule: todaySchedule,
-      performance: {
-        rating: performance.average_rating,
-        attendance_rate: performance.attendance_rate,
-        bonus_tier: performance.bonus_tier,
-        top_strengths: performance.top_strengths
-      }
+      recent_activity: [], // Placeholder, populate if you have activity data
+      performance_metrics: {
+        completion_rate: performance.attendance_rate,
+        student_satisfaction: performance.average_rating * 20, // Example: scale 0-5 to 0-100
+        response_time: 5, // Placeholder, replace with real data if available
+        availability_score: 100 // Placeholder, replace with real data if available
+      },
+      upcoming_schedule: todaySchedule.map(l => ({
+        id: l.id,
+        student_name: l.student_name,
+        lesson_type: l.lesson_type,
+        start_time: l.scheduled_start,
+        duration: l.duration,
+        status: l.status
+      }))
     });
 
   } catch (error) {

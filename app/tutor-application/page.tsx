@@ -10,7 +10,7 @@ import DashboardSidebar from "../dashboard/components/DashboardSidebar"
 import FormField from "@/app/components/ui/FormField"
 import AnimationWrapper from "@/app/components/ui/AnimationWrapper"
 import LoadingSpinner from "@/app/components/ui/LoadingSpinner"
-import Modal from "@/app/components/ui/Modal"
+import { Modal } from "@/app/components/ui/Modal"
 import ToastContainer, { useToast } from "@/app/components/ui/ToastContainer"
 import ErrorBoundary from "@/app/components/ui/ErrorBoundary"
 import {

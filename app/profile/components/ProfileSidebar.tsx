@@ -148,12 +148,12 @@ export default function ProfileSidebar({
   const isApprovedTutor = roles.includes('tutor');
 
   useEffect(() => {
-    if (user && !isApprovedTutor) {
+    if (user) {
       fetchTutorApplication();
     } else {
       setLoadingApplication(false);
     }
-  }, [user, isApprovedTutor]);
+  }, [user]);
 
   const fetchTutorApplication = async () => {
     try {
@@ -263,60 +263,64 @@ export default function ProfileSidebar({
         })}
       </nav>
 
-      {/* Tutor Application Card - Only show if user is not an approved tutor */}
-      {!isApprovedTutor && (
-        <div className="mb-8 pt-6 border-t border-token-border">
-          <div className="bg-token-surface-accent-light rounded-lg p-4">
-            <div className="flex items-center space-x-3 mb-3">
-              <div className="w-8 h-8 bg-token-primary-surface rounded-full flex items-center justify-center">
-                <GraduationCap className="w-4 h-4 text-token-primary" />
-              </div>
-              <Text variant="body" className="font-semibold text-text">
-                Become a Tutor
-              </Text>
+      {/* Tutor Application Card - Always show for all users */}
+      <div className="mb-8 pt-6 border-t border-token-border">
+        <div className="bg-token-surface-accent-light rounded-lg p-4">
+          <div className="flex items-center space-x-3 mb-3">
+            <div className="w-8 h-8 bg-token-primary-surface rounded-full flex items-center justify-center">
+              <GraduationCap className="w-4 h-4 text-token-primary" />
             </div>
-            
-            {loadingApplication ? (
-              <div className="text-sm text-text-secondary mb-3">
-                Loading application status...
-              </div>
-            ) : tutorApplication ? (
-              <>
-                <div className="flex items-center space-x-2 mb-3">
-                  {(() => {
-                    const statusInfo = getStatusInfo(tutorApplication.status);
-                    const StatusIcon = statusInfo.icon;
-                    return (
-                      <>
-                        <StatusIcon className={`w-4 h-4 ${statusInfo.color}`} />
-                        <Text variant="small" className={`font-medium ${statusInfo.color}`}>
-                          {tutorApplication.status.charAt(0).toUpperCase() + tutorApplication.status.slice(1)}
-                        </Text>
-                      </>
-                    );
-                  })()}
-                </div>
-                <Text variant="small" className="text-text-secondary mb-3">
-                  {getStatusInfo(tutorApplication.status).message}
-                </Text>
-              </>
-            ) : (
-              <Text variant="small" className="text-text-secondary mb-3">
-                Start your tutor application to help others learn.
-              </Text>
-            )}
-            
-            <Button 
-              variant={tutorApplication ? getStatusInfo(tutorApplication.status).buttonVariant : 'primary'}
-              size="sm"
-              onClick={handleTutorApplicationClick}
-              className="w-full"
-            >
-              {tutorApplication ? getStatusInfo(tutorApplication.status).buttonText : 'Apply Now'}
-            </Button>
+            <Text variant="body" className="font-semibold text-text">
+              Become a Tutor
+            </Text>
           </div>
+          
+          {loadingApplication ? (
+            <div className="text-sm text-text-secondary mb-3">
+              Loading application status...
+            </div>
+          ) : tutorApplication ? (
+            <>
+              <div className="flex items-center space-x-2 mb-3">
+                {(() => {
+                  const statusInfo = getStatusInfo(tutorApplication.status);
+                  const StatusIcon = statusInfo.icon;
+                  return (
+                    <>
+                      <StatusIcon className={`w-4 h-4 ${statusInfo.color}`} />
+                      <Text variant="small" className={`font-medium ${statusInfo.color}`}>
+                        {tutorApplication.status.charAt(0).toUpperCase() + tutorApplication.status.slice(1)}
+                      </Text>
+                    </>
+                  );
+                })()}
+              </div>
+              <Text variant="small" className="text-text-secondary mb-3">
+                {tutorApplication.status === 'approved'
+                  ? 'Your application has been approved. You can review your submission below.'
+                  : getStatusInfo(tutorApplication.status).message}
+              </Text>
+            </>
+          ) : (
+            <Text variant="small" className="text-text-secondary mb-3">
+              Start your tutor application to help others learn.
+            </Text>
+          )}
+          
+          <Button 
+            variant={tutorApplication ? getStatusInfo(tutorApplication.status).buttonVariant : 'primary'}
+            size="sm"
+            onClick={handleTutorApplicationClick}
+            className="w-full"
+          >
+            {tutorApplication && tutorApplication.status === 'approved'
+              ? 'View Application'
+              : tutorApplication
+                ? getStatusInfo(tutorApplication.status).buttonText
+                : 'Apply Now'}
+          </Button>
         </div>
-      )}
+      </div>
 
       {/* Help Section */}
       <div className="pt-6 border-t border-token-border">

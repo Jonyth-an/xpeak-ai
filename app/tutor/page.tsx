@@ -33,11 +33,11 @@ interface DashboardData {
     name: string;
     timezone: string;
   };
-  metrics: {
-    today_lessons: number;
-    monthly_lessons: number;
-    active_students: number;
-    monthly_earnings: number;
+  summary: {
+    completed_lessons: number;
+    total_lessons: number;
+    total_students: number;
+    total_earnings: number;
   };
   next_lesson: {
     id: string;
@@ -52,7 +52,7 @@ interface DashboardData {
     can_join: boolean;
     status: string;
   } | null;
-  today_schedule: Array<{
+  upcoming_schedule: Array<{
     id: string;
     time: string;
     student_name: string;
@@ -65,11 +65,11 @@ interface DashboardData {
     reschedule_requested_at?: string;
     scheduled_start: string;
   }>;
-  performance: {
-    rating: number;
-    attendance_rate: number;
-    bonus_tier: string;
-    top_strengths: string[];
+  performance_metrics: {
+    student_satisfaction: number;
+    completion_rate: number;
+    // bonus_tier: string; // This field is no longer returned by the API
+    // top_strengths: string[]; // This field is no longer returned by the API
   };
 }
 
@@ -180,29 +180,29 @@ export default function TutorDashboard() {
   const metrics = [
     {
       title: "Today's Lessons",
-      value: dashboardData.metrics.today_lessons,
-      icon: <Calendar className="w-6 h-6" />,
+      value: dashboardData.summary.completed_lessons,
+      icon: <Calendar className="w-6 h-6" />, 
       iconBgColor: 'bg-blue-100',
       iconColor: 'text-blue-600'
     },
     {
       title: "This Month",
-      value: dashboardData.metrics.monthly_lessons,
-      icon: <CheckCircle className="w-6 h-6" />,
+      value: dashboardData.summary.total_lessons,
+      icon: <CheckCircle className="w-6 h-6" />, 
       iconBgColor: 'bg-green-100',
       iconColor: 'text-green-600'
     },
     {
       title: "Active Students",
-      value: dashboardData.metrics.active_students,
-      icon: <Users className="w-6 h-6" />,
+      value: dashboardData.summary.total_students,
+      icon: <Users className="w-6 h-6" />, 
       iconBgColor: 'bg-purple-100',
       iconColor: 'text-purple-600'
     },
     {
       title: "This Month",
-      value: formatCurrency(dashboardData.metrics.monthly_earnings),
-      icon: <DollarSign className="w-6 h-6" />,
+      value: formatCurrency(dashboardData.summary.total_earnings),
+      icon: <DollarSign className="w-6 h-6" />, 
       iconBgColor: 'bg-orange-100',
       iconColor: 'text-orange-600'
     }
@@ -313,9 +313,9 @@ export default function TutorDashboard() {
               <Text variant="h3" as="h3" className="text-token-primary mb-4">
                 Today's Schedule
               </Text>
-              {dashboardData.today_schedule.length > 0 ? (
+              {dashboardData.upcoming_schedule.length > 0 ? (
                 <div className="space-y-4">
-                  {dashboardData.today_schedule.map((lesson, index) => (
+                  {dashboardData.upcoming_schedule.map((lesson, index) => (
                     <div key={lesson.id} className="flex items-center justify-between p-3 bg-token-surface-subtle rounded-lg">
                       <div className="flex items-center">
                         <div className="w-12 h-12 bg-token-primary rounded-full flex items-center justify-center text-white font-medium">
@@ -395,7 +395,7 @@ export default function TutorDashboard() {
                   <div className="flex items-center">
                     <Star className="w-4 h-4 text-yellow-500 mr-1" />
                     <Text variant="body" className="font-medium text-token-text-primary">
-                      {dashboardData.performance.rating > 0 ? dashboardData.performance.rating.toFixed(1) : 'N/A'}
+                      {dashboardData.performance_metrics.student_satisfaction > 0 ? (dashboardData.performance_metrics.student_satisfaction / 20).toFixed(1) : 'N/A'}
                     </Text>
                   </div>
                 </div>
@@ -404,14 +404,15 @@ export default function TutorDashboard() {
                     Attendance
                   </Text>
                   <Text variant="body" className={`font-medium ${
-                    dashboardData.performance.attendance_rate >= 95 ? 'text-token-success' :
-                    dashboardData.performance.attendance_rate >= 90 ? 'text-token-warning' :
+                    dashboardData.performance_metrics.completion_rate >= 95 ? 'text-token-success' :
+                    dashboardData.performance_metrics.completion_rate >= 90 ? 'text-token-warning' :
                     'text-token-error'
                   }`}>
-                    {dashboardData.performance.attendance_rate}%
+                    {dashboardData.performance_metrics.completion_rate}%
                   </Text>
                 </div>
-                <div className="flex items-center justify-between">
+                {/* Bonus Tier and Top Strengths are no longer returned by the API */}
+                {/* <div className="flex items-center justify-between">
                   <Text variant="small" className="text-token-text-secondary">
                     Bonus Tier
                   </Text>
@@ -432,7 +433,7 @@ export default function TutorDashboard() {
                       ))}
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
             </Card>
 
