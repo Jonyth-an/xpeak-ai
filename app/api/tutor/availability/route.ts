@@ -41,16 +41,22 @@ export async function GET(request: NextRequest) {
     const endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + 6);
 
-    // Get availability for the week
-    const { data: availability, error: availabilityError } = await serverSupabase
+    // Get both recurring slots and specific date slots for the week
+    const weekStartStr = weekStart;
+    const weekEndStr = endDate.toISOString().split('T')[0];
+    console.log('Fetching availability for tutor_id:', tutorProfile.id, 'week:', weekStartStr, 'to', weekEndStr);
+    
+    // Fetch only slots with specific_date within the week
+    const { data: weekSlots, error: weekSlotsError } = await serverSupabase
       .from('tutor_availability')
       .select('*')
       .eq('tutor_id', tutorProfile.id)
-      .or(`is_recurring.eq.true,and(specific_date.gte.${weekStart},specific_date.lte.${endDate.toISOString().split('T')[0]})`);
+      .gte('specific_date', weekStartStr)
+      .lte('specific_date', weekEndStr);
 
-    if (availabilityError) {
-      console.error('Error fetching availability:', availabilityError);
-      return NextResponse.json({ error: 'Failed to fetch availability' }, { status: 500 });
+    if (weekSlotsError) {
+      console.error('Error fetching week slots:', weekSlotsError);
+      return NextResponse.json({ error: 'Failed to fetch week availability', details: weekSlotsError }, { status: 500 });
     }
 
     // Get booked lessons for the week
@@ -68,7 +74,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Process availability data
-    const processedAvailability = availability || [];
+    const processedAvailability = weekSlots || [];
     const processedBookedLessons = bookedLessons || [];
 
     // Calculate weekly stats
@@ -122,111 +128,40 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Tutor profile not found' }, { status: 404 });
     }
 
-    const { 
-      day_of_week, 
-      start_time, 
-      end_time, 
-      is_recurring = true, 
-      specific_date 
-    } = await request.json();
-
-    // Validate required fields
-    if (day_of_week === undefined || !start_time || !end_time) {
-      return NextResponse.json({ 
-        error: 'day_of_week, start_time, and end_time are required' 
-      }, { status: 400 });
+    const slots = await request.json();
+    if (!Array.isArray(slots) || slots.length === 0) {
+      return NextResponse.json({ error: 'No slots provided' }, { status: 400 });
     }
-
-    // Validate day_of_week range
-    if (day_of_week < 0 || day_of_week > 6) {
-      return NextResponse.json({ 
-        error: 'day_of_week must be between 0 (Sunday) and 6 (Saturday)' 
-      }, { status: 400 });
+    // Validate all slots
+    for (const slot of slots) {
+      if (!slot.specific_date || !slot.start_time || !slot.end_time) {
+        return NextResponse.json({ error: 'Each slot must have specific_date, start_time, and end_time' }, { status: 400 });
+      }
     }
-
-    // Validate time format and logic
-    const startTimeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
-    const endTimeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
-    
-    if (!startTimeRegex.test(start_time) || !endTimeRegex.test(end_time)) {
-      return NextResponse.json({ 
-        error: 'start_time and end_time must be in HH:MM format' 
-      }, { status: 400 });
-    }
-
-    // Check if end time is after start time
-    const [startHour, startMin] = start_time.split(':').map(Number);
-    const [endHour, endMin] = end_time.split(':').map(Number);
-    const startMinutes = startHour * 60 + startMin;
-    const endMinutes = endHour * 60 + endMin;
-
-    if (endMinutes <= startMinutes) {
-      return NextResponse.json({ 
-        error: 'end_time must be after start_time' 
-      }, { status: 400 });
-    }
-
-    // Check for conflicts with existing availability
-    const { data: existingAvailability, error: conflictError } = await serverSupabase
-      .from('tutor_availability')
-      .select('*')
-      .eq('tutor_id', tutorProfile.id)
-      .eq('day_of_week', day_of_week)
-      .eq('is_recurring', is_recurring);
-
-    if (conflictError) {
-      console.error('Error checking conflicts:', conflictError);
-      return NextResponse.json({ error: 'Failed to check conflicts' }, { status: 500 });
-    }
-
-    // Check for time overlaps
-    const hasConflict = existingAvailability?.some(slot => {
-      const existingStart = slot.start_time;
-      const existingEnd = slot.end_time;
-      
-      return (
-        (start_time >= existingStart && start_time < existingEnd) ||
-        (end_time > existingStart && end_time <= existingEnd) ||
-        (start_time <= existingStart && end_time >= existingEnd)
-      );
-    });
-
-    if (hasConflict) {
-      return NextResponse.json({ 
-        error: 'Time slot conflicts with existing availability' 
-      }, { status: 409 });
-    }
-
-    // Create new availability slot
-    const newSlot = {
+    // Insert all slots
+    const newSlots = slots.map(slot => ({
       tutor_id: tutorProfile.id,
-      day_of_week,
-      start_time,
-      end_time,
-      is_recurring,
-      specific_date,
+      day_of_week: slot.day_of_week,
+      start_time: slot.start_time,
+      end_time: slot.end_time,
+      specific_date: slot.specific_date,
       timezone: tutorProfile.timezone
-    };
-
-    const { data: createdSlot, error: createError } = await serverSupabase
+    }));
+    const { data: createdSlots, error: createError } = await serverSupabase
       .from('tutor_availability')
-      .insert([newSlot])
-      .select()
-      .single();
-
+      .insert(newSlots)
+      .select();
     if (createError) {
-      console.error('Error creating availability slot:', createError);
-      return NextResponse.json({ error: 'Failed to create availability slot' }, { status: 500 });
+      console.error('Error creating slots:', createError);
+      return NextResponse.json({ error: 'Failed to create slots' }, { status: 500 });
     }
-
     return NextResponse.json({
-      availability: createdSlot,
-      message: 'Availability slot created successfully'
+      availability: createdSlots,
+      message: 'Slots created successfully'
     });
-
   } catch (error) {
     console.error('Error in availability POST:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
   }
 }
 

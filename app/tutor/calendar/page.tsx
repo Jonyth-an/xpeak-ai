@@ -22,7 +22,9 @@ import {
   Trash2,
   Clock,
   Info,
-  AlertCircle
+  AlertCircle,
+  CheckCircle,
+  XCircle
 } from 'lucide-react';
 
 interface AvailabilitySlot {
@@ -56,16 +58,50 @@ interface CalendarData {
 interface AddAvailabilityModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (slot: Omit<AvailabilitySlot, 'id' | 'timezone'>) => void;
+  onAdd: (slots: Array<{ day_of_week: number; start_time: string; end_time: string; specific_date: string }>) => void;
   selectedDay?: number;
   selectedTime?: string;
+  initialEndTime?: string;
+  initialSpecificDate?: string | null;
+  calendarData?: CalendarData | null;
+  onDeleteSlot?: (slot: AvailabilitySlot) => void;
 }
 
-function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTime }: AddAvailabilityModalProps) {
+function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTime, initialEndTime, initialSpecificDate, calendarData, onDeleteSlot }: AddAvailabilityModalProps) {
   const [dayOfWeek, setDayOfWeek] = useState(selectedDay ?? 1);
+  const [specificDate, setSpecificDate] = useState(initialSpecificDate ?? '');
   const [startTime, setStartTime] = useState(selectedTime ?? '09:00');
-  const [endTime, setEndTime] = useState('10:00');
+  const [endTime, setEndTime] = useState(initialEndTime ?? '10:00');
   const [isRecurring, setIsRecurring] = useState(true);
+  const [recurringStartDate, setRecurringStartDate] = useState('');
+  const [recurringWeeks, setRecurringWeeks] = useState(4);
+
+  useEffect(() => {
+    console.log('🔍 Modal useEffect triggered with props:', {
+      isOpen,
+      selectedDay,
+      selectedTime,
+      initialEndTime,
+      initialSpecificDate
+    });
+    
+    if (isOpen) {
+      console.log('🔍 Setting modal form values:');
+      console.log('  - dayOfWeek:', selectedDay ?? 1);
+      console.log('  - specificDate:', initialSpecificDate ?? '');
+      console.log('  - startTime:', selectedTime ?? '09:00');
+      console.log('  - endTime:', initialEndTime ?? '10:00');
+      console.log('  - recurringStartDate:', initialSpecificDate ?? '');
+      
+      setDayOfWeek(selectedDay ?? 1);
+      setSpecificDate(initialSpecificDate ?? '');
+      setStartTime(selectedTime ?? '09:00');
+      setEndTime(initialEndTime ?? '10:00');
+      // If we have an initial specific date, use it as the recurring start date
+      setRecurringStartDate(initialSpecificDate ?? '');
+      setRecurringWeeks(4);
+    }
+  }, [isOpen, selectedDay, selectedTime, initialEndTime, initialSpecificDate]);
 
   const daysOfWeek = [
     'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
@@ -75,29 +111,56 @@ function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTim
   const timeOptions = [];
   for (let hour = 0; hour < 24; hour++) {
     for (let min = 0; min < 60; min += 15) {
-      const h = hour.toString().padStart(2, '0');
-      const m = min.toString().padStart(2, '0');
-      timeOptions.push(`${h}:${m}`);
+      timeOptions.push(`${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`);
     }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validate times
     if (startTime >= endTime) {
       alert('End time must be after start time');
       return;
     }
-
-    onAdd({
-      day_of_week: dayOfWeek,
-      start_time: startTime,
-      end_time: endTime,
-      is_recurring: isRecurring
-    });
-    
-    onClose();
+    if (isRecurring) {
+      if (!recurringStartDate) {
+        alert('Please select a start date');
+        return;
+      }
+      if (recurringWeeks < 1 || recurringWeeks > 52) {
+        alert('Number of weeks must be between 1 and 52');
+        return;
+      }
+      // Generate all dates for the selected day of week, from start date, for N weeks
+      const start = new Date(recurringStartDate);
+      const slots = [];
+      for (let i = 0; i < recurringWeeks; i++) {
+        const d = new Date(start);
+        d.setDate(d.getDate() + ((7 + dayOfWeek - d.getDay()) % 7) + i * 7);
+        const dateStr = d.toISOString().split('T')[0];
+        slots.push({
+          day_of_week: dayOfWeek,
+          start_time: startTime,
+          end_time: endTime,
+          specific_date: dateStr
+        });
+      }
+      onAdd(slots);
+    } else {
+      if (!specificDate) {
+        alert('Please select a date');
+        return;
+      }
+      const date = new Date(specificDate);
+      const dayOfWeekForDate = date.getDay();
+      onAdd([
+        {
+          day_of_week: dayOfWeekForDate,
+          start_time: startTime,
+          end_time: endTime,
+          specific_date: specificDate
+        }
+      ]);
+    }
   };
 
   if (!isOpen) return null;
@@ -111,24 +174,65 @@ function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTim
             ×
           </Button>
         </div>
-        
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-token-text-secondary mb-1">
-              Day of Week
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="recurring"
+              checked={isRecurring}
+              onChange={(e) => setIsRecurring(e.target.checked)}
+              className="mr-2"
+            />
+            <label htmlFor="recurring" className="text-sm text-token-text-secondary">
+              Recurring weekly
             </label>
-            <select
-              value={dayOfWeek}
-              onChange={(e) => setDayOfWeek(Number(e.target.value))}
-              className="w-full p-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
-              aria-label="Select day of week"
-            >
-              {daysOfWeek.map((day, index) => (
-                <option key={index} value={index}>{day}</option>
-              ))}
-            </select>
           </div>
-          
+          {isRecurring ? (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-token-text-secondary mb-1">
+                  Start Date
+                </label>
+                <input
+                  type="date"
+                  value={recurringStartDate}
+                  onChange={(e) => setRecurringStartDate(e.target.value)}
+                  className="w-full p-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
+                  aria-label="Select start date"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-token-text-secondary mb-1">
+                  Number of Weeks
+                </label>
+                <input
+                  type="number"
+                  value={recurringWeeks}
+                  onChange={(e) => setRecurringWeeks(Number(e.target.value))}
+                  className="w-full p-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
+                  aria-label="Number of weeks"
+                  min="1"
+                  max="52"
+                  required
+                />
+              </div>
+            </>
+          ) : (
+            <div>
+              <label className="block text-sm font-medium text-token-text-secondary mb-1">
+                Date
+              </label>
+              <input
+                type="date"
+                value={specificDate}
+                onChange={(e) => setSpecificDate(e.target.value)}
+                className="w-full p-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
+                aria-label="Select date"
+                required
+              />
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-token-text-secondary mb-1">
@@ -163,24 +267,37 @@ function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTim
               </select>
             </div>
           </div>
-          
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="recurring"
-              checked={isRecurring}
-              onChange={(e) => setIsRecurring(e.target.checked)}
-              className="mr-2"
-            />
-            <label htmlFor="recurring" className="text-sm text-token-text-secondary">
-              Recurring weekly
-            </label>
-          </div>
-          
           <div className="flex space-x-2 pt-4">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">
               Cancel
             </Button>
+            {/* Only show Delete button if there's an existing slot */}
+            {(() => {
+              const existingSlot = calendarData?.availability.find((s: AvailabilitySlot) => 
+                s.specific_date === initialSpecificDate && 
+                s.start_time.split(':').slice(0, 2).join(':') === selectedTime
+              );
+              
+              if (existingSlot) {
+                return (
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => {
+                      console.log('🔍 Delete button clicked with existing slot:', existingSlot);
+                      if (onDeleteSlot) {
+                        onDeleteSlot(existingSlot);
+                        onClose();
+                      }
+                    }} 
+                    className="flex-1"
+                  >
+                    Delete
+                  </Button>
+                );
+              }
+              return null;
+            })()}
             <Button type="submit" variant="primary" className="flex-1">
               Add Availability
             </Button>
@@ -190,6 +307,35 @@ function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTim
     </div>
   );
 }
+
+// Delete modal component
+function DeleteSlotModal({ open, slot, onClose, onDelete }: { open: boolean, slot: AvailabilitySlot | null, onClose: () => void, onDelete: (slotId: string) => void }) {
+  if (!open || !slot) return null;
+  const dateStr = slot.specific_date || '';
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-token-surface rounded-lg p-6 w-full max-w-md">
+        <div className="flex items-center justify-between mb-4">
+          <Text variant="h3" className="text-token-primary">Delete Availability</Text>
+          <Button variant="outline" size="sm" onClick={onClose}>×</Button>
+        </div>
+        <div className="mb-4">
+          <Text variant="body">Are you sure you want to delete this slot?</Text>
+          <div className="mt-2 text-sm text-token-text-secondary">
+            <div>Date: {dateStr}</div>
+            <div>Time: {slot.start_time} - {slot.end_time}</div>
+          </div>
+        </div>
+        <div className="flex space-x-2 pt-4">
+          <Button type="button" variant="outline" onClick={onClose} className="flex-1">Cancel</Button>
+          <Button type="button" variant="primary" onClick={() => onDelete(slot.id)} className="flex-1">Delete</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 
 export default function TutorCalendar() {
   const [calendarData, setCalendarData] = useState<CalendarData | null>(null);
@@ -213,6 +359,20 @@ export default function TutorCalendar() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<{ dayIndex: number; slotIndex: number } | null>(null);
   const [dragEnd, setDragEnd] = useState<{ dayIndex: number; slotIndex: number } | null>(null);
+  
+  // Notification state
+  const [notification, setNotification] = useState<{
+    type: 'success' | 'error';
+    message: string;
+    show: boolean;
+  } | null>(null);
+  
+  // Track newly added slots for highlighting
+  const [newlyAddedSlots, setNewlyAddedSlots] = useState<Set<string>>(new Set());
+
+  // Add state for delete modal
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [slotToDelete, setSlotToDelete] = useState<AvailabilitySlot | null>(null);
 
   // Helper to determine if a slot is in the current drag selection
   const isSlotInDragSelection = (dayIndex: number, slotIndex: number) => {
@@ -270,6 +430,8 @@ export default function TutorCalendar() {
 
       const weekStart = getWeekStart(currentWeek);
       const weekStartStr = weekStart.toISOString().split('T')[0];
+      
+      console.log('Fetching calendar data for week:', weekStartStr);
 
       const response = await fetch(`/api/tutor/availability?week_start=${weekStartStr}`, {
         headers: {
@@ -277,11 +439,27 @@ export default function TutorCalendar() {
         }
       });
 
+      console.log('Calendar API response status:', response.status);
+
       if (response.ok) {
         const data = await response.json();
+        console.log('Calendar data received:', data);
+        console.log('Availability slots count:', data.availability?.length || 0);
         setCalendarData(data);
       } else {
-        setError('Failed to load calendar data');
+        console.error('Calendar API error status:', response.status);
+        console.error('Calendar API error headers:', Object.fromEntries(response.headers.entries()));
+        
+        try {
+          const errorData = await response.json();
+          console.error('Calendar API error:', errorData);
+          setError(`Failed to load calendar data: ${errorData.error || 'Unknown error'}`);
+        } catch (jsonError) {
+          console.error('Failed to parse error response as JSON:', jsonError);
+          const errorText = await response.text();
+          console.error('Raw error response:', errorText);
+          setError(`Failed to load calendar data (Status: ${response.status})`);
+        }
       }
     } catch (error) {
       console.error('Error fetching calendar data:', error);
@@ -297,10 +475,55 @@ export default function TutorCalendar() {
     setCurrentWeek(newWeek);
   };
 
-  const handleAddAvailability = async (slot: Omit<AvailabilitySlot, 'id' | 'timezone'>) => {
+  const handleDeleteAvailability = async (slotId: string) => {
+    if (!slotId) return;
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
+      const response = await fetch(`/api/tutor/availability?slot_id=${slotId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
+      if (response.ok) {
+        setNotification({
+          type: 'success',
+          message: 'Successfully deleted availability slot',
+          show: true
+        });
+        await fetchCalendarData();
+        setDeleteModalOpen(false);
+        setSlotToDelete(null);
+        setTimeout(() => setNotification(null), 3000);
+      } else {
+        const errorData = await response.json();
+        setNotification({
+          type: 'error',
+          message: errorData.error || 'Failed to delete availability',
+          show: true
+        });
+        setTimeout(() => setNotification(null), 5000);
+      }
+    } catch (error) {
+      setNotification({
+        type: 'error',
+        message: 'An error occurred while deleting availability',
+        show: true
+      });
+      setTimeout(() => setNotification(null), 5000);
+    }
+  };
+
+  const handleAddAvailability = async (slots: Array<{ day_of_week: number; start_time: string; end_time: string; specific_date: string }>) => {
+    try {
+      console.log('Adding availability slots:', slots);
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        console.error('No session found');
+        return;
+      }
 
       const response = await fetch('/api/tutor/availability', {
         method: 'POST',
@@ -308,109 +531,217 @@ export default function TutorCalendar() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`
         },
-        body: JSON.stringify(slot)
+        body: JSON.stringify(slots)
       });
 
+      console.log('API response status:', response.status);
+      
       if (response.ok) {
+        const responseData = await response.json();
+        console.log('API response data:', responseData);
+        
+        // Show success notification
+        setNotification({
+          type: 'success',
+          message: `Successfully added availability for ${fullDaysOfWeek[slots[0].day_of_week]} from ${slots[0].start_time} to ${slots[0].end_time}`,
+          show: true
+        });
+        
+        // Close modal
+        setShowAddModal(false);
+        
+        // Track newly added slots for highlighting
+        const newSlotKey = `${slots[0].day_of_week}-${slots[0].start_time}-${slots[0].end_time}`;
+        setNewlyAddedSlots(prev => new Set(Array.from(prev).concat(newSlotKey)));
+        
+        console.log('Refreshing calendar data...');
+        // Refresh calendar data
         await fetchCalendarData();
+        console.log('Calendar data refreshed');
+        
+        // Auto-hide notification after 3 seconds
+        setTimeout(() => {
+          setNotification(null);
+        }, 3000);
+        
+        // Remove highlight after 5 seconds
+        setTimeout(() => {
+          setNewlyAddedSlots(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(newSlotKey);
+            return newSet;
+          });
+        }, 5000);
       } else {
         const errorData = await response.json();
-        alert(errorData.error || 'Failed to add availability');
+        console.error('API error:', errorData);
+        setNotification({
+          type: 'error',
+          message: errorData.error || 'Failed to add availability',
+          show: true
+        });
+        
+        // Auto-hide error notification after 5 seconds
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
       }
     } catch (error) {
       console.error('Error adding availability:', error);
-      alert('An error occurred while adding availability');
-    }
-  };
-
-  const handleDeleteAvailability = async (slotId: string) => {
-    if (!confirm('Are you sure you want to delete this availability slot?')) {
-      return;
-    }
-
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
-      const response = await fetch(`/api/tutor/availability?slot_id=${slotId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`
-        }
+      setNotification({
+        type: 'error',
+        message: 'An error occurred while adding availability',
+        show: true
       });
-
-      if (response.ok) {
-        await fetchCalendarData();
-      } else {
-        const errorData = await response.json();
-        alert(errorData.error || 'Failed to delete availability');
-      }
-    } catch (error) {
-      console.error('Error deleting availability:', error);
-      alert('An error occurred while deleting availability');
+      
+      // Auto-hide error notification after 5 seconds
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
     }
   };
 
-  const isSlotAvailable = (dayIndex: number, timeSlot: string) => {
-    if (!calendarData) return false;
-    
-    return calendarData.availability.some(slot => {
-      const slotDay = slot.day_of_week === 0 ? 6 : slot.day_of_week - 1; // Convert to Mon=0, Sun=6
-      return slotDay === dayIndex && timeSlot >= slot.start_time && timeSlot < slot.end_time;
-    });
+  // Find slot by dayIndex and timeSlot
+  const findSlotByDayAndTime = (dayIndex: number, timeSlot: string) => {
+    if (!calendarData) return null;
+    const weekStart = getWeekStart(currentWeek);
+    const targetDate = new Date(weekStart);
+    targetDate.setDate(weekStart.getDate() + dayIndex);
+    const targetDateStr = targetDate.toISOString().split('T')[0];
+    return calendarData.availability.find(slot => {
+      return (
+        slot.specific_date === targetDateStr &&
+        timeSlot >= slot.start_time.split(':').slice(0, 2).join(':') &&
+        timeSlot < slot.end_time.split(':').slice(0, 2).join(':')
+      );
+    }) || null;
   };
 
-  const isSlotBooked = (dayIndex: number, timeSlot: string) => {
-    if (!calendarData) return false;
+  // Get the status of a slot (available, booked, or unavailable)
+  const getSlotStatus = (dayIndex: number, timeSlot: string) => {
+    if (!calendarData) return 'unavailable';
     
     const weekStart = getWeekStart(currentWeek);
     const targetDate = new Date(weekStart);
     targetDate.setDate(weekStart.getDate() + dayIndex);
+    const targetDateStr = targetDate.toISOString().split('T')[0];
     
-    return calendarData.booked_lessons.some(lesson => {
+    // Check if there's a booked lesson at this time
+    const hasBookedLesson = calendarData.booked_lessons.some(lesson => {
       const lessonDate = new Date(lesson.scheduled_start);
-      const lessonTime = lessonDate.toTimeString().slice(0, 5);
+      const lessonDateString = lessonDate.toISOString().split('T')[0];
+      const lessonStartTime = lessonDate.toTimeString().substring(0, 5);
+      const lessonEndTime = new Date(lesson.scheduled_end).toTimeString().substring(0, 5);
       
+      // Check if the time slot overlaps with the lesson
+      const timeInMinutes = parseInt(timeSlot.split(':')[0]) * 60 + parseInt(timeSlot.split(':')[1]);
+      const lessonStartInMinutes = parseInt(lessonStartTime.split(':')[0]) * 60 + parseInt(lessonStartTime.split(':')[1]);
+      const lessonEndInMinutes = parseInt(lessonEndTime.split(':')[0]) * 60 + parseInt(lessonEndTime.split(':')[1]);
+      
+      return lessonDateString === targetDateStr && 
+             timeInMinutes >= lessonStartInMinutes && 
+             timeInMinutes < lessonEndInMinutes;
+    });
+    
+    if (hasBookedLesson) {
+      return 'booked';
+    }
+    
+    // Check if there's an availability slot at this time
+    const hasAvailability = calendarData.availability.some(slot => {
       return (
-        lessonDate.toDateString() === targetDate.toDateString() &&
-        lessonTime === timeSlot
+        slot.specific_date === targetDateStr &&
+        timeSlot >= slot.start_time.split(':').slice(0, 2).join(':') &&
+        timeSlot < slot.end_time.split(':').slice(0, 2).join(':')
       );
     });
-  };
-
-  const getSlotStatus = (dayIndex: number, timeSlot: string) => {
-    if (isSlotBooked(dayIndex, timeSlot)) {
-      return 'booked';
-    } else if (isSlotAvailable(dayIndex, timeSlot)) {
+    
+    if (hasAvailability) {
       return 'available';
-    } else {
-      return 'unavailable';
     }
+    
+    return 'unavailable';
   };
 
-  const getSlotColor = (status: string) => {
+  // Get the CSS classes for a slot based on its status
+  const getSlotColor = (status: string, dayIndex: number, timeSlot: string) => {
     switch (status) {
       case 'available':
         return 'bg-green-100 border-green-300 hover:bg-green-200';
       case 'booked':
-        return 'bg-blue-100 border-blue-300';
+        return 'bg-blue-100 border-blue-300 hover:bg-blue-200';
       case 'unavailable':
       default:
-        return 'bg-gray-50 border-gray-200';
+        return 'bg-gray-50 border-gray-200 hover:bg-gray-100';
     }
   };
 
+  // Update slot click handler - handle both unavailable and available slots
   const handleSlotClick = (dayIndex: number, timeSlot: string) => {
+    console.log('🔍 handleSlotClick called with:', { dayIndex, timeSlot });
+    
     const status = getSlotStatus(dayIndex, timeSlot);
+    console.log('🔍 Slot status:', status);
+    
+    // Get the target date for this slot
+    const weekStart = getWeekStart(currentWeek);
+    const targetDate = new Date(weekStart);
+    targetDate.setDate(weekStart.getDate() + dayIndex);
+    const targetDateStr = targetDate.toISOString().split('T')[0];
+    
+    console.log('🔍 Date calculations:', {
+      weekStart: weekStart.toISOString(),
+      dayIndex,
+      targetDate: targetDate.toISOString(),
+      targetDateStr
+    });
+    
+    // Convert dayIndex (Mon=0, Sun=6) to day_of_week (Sun=0, Sat=6)
+    const dayOfWeek = dayIndex === 6 ? 0 : dayIndex + 1;
+    setSelectedDay(dayOfWeek);
+    setSelectedTime(timeSlot);
     
     if (status === 'unavailable') {
-      // Convert dayIndex (Mon=0, Sun=6) to day_of_week (Sun=0, Sat=6)
-      const dayOfWeek = dayIndex === 6 ? 0 : dayIndex + 1;
-      setSelectedDay(dayOfWeek);
-      setSelectedTime(timeSlot);
+      // For unavailable slots, compute end time (+1 hour)
+      const [hour, min] = timeSlot.split(':').map(Number);
+      let endHour = hour + 1;
+      let endTime = endHour < 24 ? `${endHour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}` : '23:59';
+      
+      const modalInitialsData = {
+        dayOfWeek,
+        startTime: timeSlot,
+        endTime,
+        specificDate: targetDateStr
+      };
+      
+      console.log('🔍 Setting modal initials for unavailable slot:', modalInitialsData);
+      
+      // Store as state for modal with the actual clicked date
+      setModalInitials(modalInitialsData);
       setShowAddModal(true);
+    } else if (status === 'available') {
+      // For available slots, find the existing slot and use its data
+      const existingSlot = findSlotByDayAndTime(dayIndex, timeSlot);
+      if (existingSlot) {
+        const modalInitialsData = {
+          dayOfWeek,
+          startTime: existingSlot.start_time.split(':').slice(0, 2).join(':'),
+          endTime: existingSlot.end_time.split(':').slice(0, 2).join(':'),
+          specificDate: existingSlot.specific_date
+        };
+        
+        console.log('🔍 Setting modal initials for available slot:', modalInitialsData);
+        
+        // Store as state for modal with existing slot data
+        setModalInitials(modalInitialsData);
+        setShowAddModal(true);
+      }
     }
+    // Booked slots don't do anything when clicked
   };
+
+  // Add state for modal initial values
+  const [modalInitials, setModalInitials] = useState<{dayOfWeek?: number, startTime?: string, endTime?: string, specificDate?: string | null}>({});
 
   if (loading) {
     return (
@@ -487,6 +818,39 @@ export default function TutorCalendar() {
             </Button>
           }
         />
+
+        {/* Notification */}
+        {notification && (
+          <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg border max-w-md transition-all duration-300 ${
+            notification.type === 'success' 
+              ? 'bg-green-50 border-green-200 text-green-800' 
+              : 'bg-red-50 border-red-200 text-red-800'
+          }`}>
+            <div className="flex items-start space-x-3">
+              <div className="flex-shrink-0">
+                {notification.type === 'success' ? (
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                ) : (
+                  <XCircle className="w-5 h-5 text-red-600" />
+                )}
+              </div>
+              <div className="flex-1">
+                <Text variant="small" className="font-medium">
+                  {notification.type === 'success' ? 'Success' : 'Error'}
+                </Text>
+                <Text variant="small" className="mt-1">
+                  {notification.message}
+                </Text>
+              </div>
+              <button
+                onClick={() => setNotification(null)}
+                className="flex-shrink-0 text-gray-400 hover:text-gray-600"
+              >
+                <XCircle className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Timezone Notice */}
         <Card className="p-4 mb-6 bg-blue-50 border border-blue-200" variant="outlined">
@@ -567,7 +931,8 @@ export default function TutorCalendar() {
                     return (
                       <div
                         key={`${dayIndex}-${timeSlot}`}
-                        className={`p-2 h-12 border rounded cursor-pointer transition-colors ${getSlotColor(status)} ${isSelected ? 'ring-2 ring-token-primary bg-token-primary/10' : ''}`}
+                        className={`p-2 h-12 border rounded cursor-pointer transition-colors ${getSlotColor(status, dayIndex, timeSlot)} ${isSelected ? 'ring-2 ring-token-primary bg-token-primary/10' : ''}`}
+                        onClick={() => handleSlotClick(dayIndex, timeSlot)}
                         onMouseDown={() => {
                           setIsDragging(true);
                           setDragStart({ dayIndex, slotIndex });
@@ -606,7 +971,7 @@ export default function TutorCalendar() {
                         title={
                           status === 'available' ? 'Available for booking' :
                           status === 'booked' ? 'Lesson booked' :
-                          'Click or drag to add availability'
+                          'Click to add availability or drag to select multiple time slots'
                         }
                         role="button"
                         tabIndex={0}
@@ -648,10 +1013,31 @@ export default function TutorCalendar() {
             setShowAddModal(false);
             setSelectedDay(undefined);
             setSelectedTime(undefined);
+            setModalInitials({});
           }}
           onAdd={handleAddAvailability}
-          selectedDay={selectedDay}
-          selectedTime={selectedTime}
+          selectedDay={modalInitials.dayOfWeek}
+          selectedTime={modalInitials.startTime}
+          initialEndTime={modalInitials.endTime}
+          initialSpecificDate={modalInitials.specificDate}
+          calendarData={calendarData}
+          onDeleteSlot={(slot) => {
+            console.log('🔍 onDeleteSlot called with slot:', slot);
+            setSlotToDelete(slot);
+            setDeleteModalOpen(true);
+            setShowAddModal(false);
+            console.log('🔍 Set delete modal state:', { slotToDelete: slot, deleteModalOpen: true });
+          }}
+        />
+        
+
+
+        {/* Delete Slot Modal */}
+        <DeleteSlotModal
+          open={deleteModalOpen}
+          slot={slotToDelete}
+          onClose={() => { setDeleteModalOpen(false); setSlotToDelete(null); }}
+          onDelete={handleDeleteAvailability}
         />
       </TutorPageLayout>
     </TutorLayout>

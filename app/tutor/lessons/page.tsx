@@ -68,31 +68,31 @@ export default function UpcomingLessons() {
       if (response.ok) {
         const data = await response.json();
         
-        // Convert today's schedule to upcoming lessons format
-        const upcomingLessons = data.today_schedule.map((lesson: any) => {
+        // Convert upcoming schedule to upcoming lessons format
+        const upcomingLessons = (data.upcoming_schedule || []).map((lesson: any) => {
           const now = new Date();
-          const scheduledStart = new Date(lesson.scheduled_start);
+          const scheduledStart = new Date(lesson.start_time);
           const minutesUntil = Math.max(0, Math.floor((scheduledStart.getTime() - now.getTime()) / (1000 * 60)));
           
           return {
             id: lesson.id,
             student_name: lesson.student_name,
-            student_country: lesson.student_country,
-            student_avatar: lesson.student_avatar,
+            student_country: 'Unknown', // Not provided in dashboard API
+            student_avatar: undefined, // Not provided in dashboard API
             lesson_type: lesson.lesson_type,
             duration: lesson.duration,
-            scheduled_start: lesson.scheduled_start,
-            scheduled_end: lesson.scheduled_start, // Will be calculated
+            scheduled_start: lesson.start_time,
+            scheduled_end: lesson.start_time, // Will be calculated
             status: lesson.status,
-            has_reschedule_request: lesson.has_reschedule_request,
-            reschedule_requested_at: lesson.reschedule_requested_at,
+            has_reschedule_request: false, // Not provided in dashboard API
+            reschedule_requested_at: undefined,
             minutes_until: minutesUntil,
             can_join: minutesUntil <= 15 && minutesUntil >= 0
           };
         });
 
-        // Add next lesson if it exists
-        if (data.next_lesson) {
+        // Add next lesson if it exists and not already in upcoming schedule
+        if (data.next_lesson && !upcomingLessons.find((l: any) => l.id === data.next_lesson.id)) {
           const nextLesson = {
             id: data.next_lesson.id,
             student_name: data.next_lesson.student_name,
@@ -108,10 +108,7 @@ export default function UpcomingLessons() {
             can_join: data.next_lesson.can_join
           };
 
-          // Add to lessons if not already in today's schedule
-          if (!upcomingLessons.find((l: any) => l.id === nextLesson.id)) {
-            upcomingLessons.unshift(nextLesson);
-          }
+          upcomingLessons.unshift(nextLesson);
         }
 
         // Sort by scheduled start time
@@ -121,6 +118,7 @@ export default function UpcomingLessons() {
 
         setLessons(upcomingLessons);
       } else {
+        console.error('Dashboard API error:', response.status, response.statusText);
         setError('Failed to load upcoming lessons');
       }
     } catch (error) {

@@ -1,10 +1,15 @@
+'use client';
 import Link from 'next/link';
-import { Home, Users, Sparkles, Puzzle, DollarSign } from 'lucide-react';
+import { Home, Users, Sparkles, Puzzle, DollarSign, User } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
+import { useAuth } from '@/lib/AuthContext';
+import { useRoles } from '@/lib/RolesContext';
 
 export function MobileBottomNav() {
   const pathname = usePathname();
+  const { user } = useAuth();
+  const { roles } = useRoles();
 
   useEffect(() => {
     console.log('MobileBottomNav rendered, pathname:', pathname);
@@ -31,6 +36,19 @@ export function MobileBottomNav() {
           <Home className="w-6 h-6 mb-1" />
           <span>Home</span>
         </Link>
+        {user && roles.includes('student') && (
+          <Link 
+            href="/tutors" 
+            className={`flex flex-col items-center justify-center flex-1 py-2 transition-colors ${
+              isActive('/tutors') 
+                ? 'text-red-500' 
+                : 'text-gray-600 hover:text-red-500'
+            }`}
+          >
+            <User className="w-6 h-6 mb-1" />
+            <span>Tutors</span>
+          </Link>
+        )}
         <Link 
           href="/meet-sagea" 
           className={`flex flex-col items-center justify-center flex-1 py-2 transition-colors ${

@@ -248,6 +248,11 @@ export class TutorApiService {
   static async updateStudentNotes(studentId: string, notes: string) {
     return apiClient.patch(`/api/tutor/students/${studentId}`, { notes });
   }
+
+  // Fetch all tutors for students
+  static async getAllTutorsForStudents() {
+    return apiClient.get('/api/tutors');
+  }
 }
 
 // Admin API Service

@@ -110,6 +110,9 @@ export default function Header({ heroBackgroundColor }: HeaderProps) {
               // Logged-in navigation
               <>
                 <Link href="/dashboard" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/dashboard') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Dashboard</Link>
+                {roles.includes('student') && (
+                  <Link href="/tutors" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/tutors') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Book Tutors</Link>
+                )}
                 <Link href="/meet-sagea" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/meet-sagea') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Meet Sagea</Link>
                 <Link href="/topic-spark" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/topic-spark') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Topic Spark</Link>
                 <Link href="/word-maze" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/word-maze') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Word Maze</Link>
@@ -178,6 +181,11 @@ export default function Header({ heroBackgroundColor }: HeaderProps) {
                         <DropdownMenuItem asChild>
                           <Link href="/profile">Profile</Link>
                         </DropdownMenuItem>
+                        {roles.includes('student') && (
+                          <DropdownMenuItem asChild>
+                            <Link href="/tutors">Book Tutors</Link>
+                          </DropdownMenuItem>
+                        )}
                         {roles.includes('tutor') && (
                           <DropdownMenuItem asChild>
                             <Link href="/tutor">Tutor Dashboard</Link>

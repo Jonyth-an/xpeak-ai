@@ -1,3 +1,4 @@
+'use client';
 import React, { Suspense } from 'react';
 import Layout from '../../components/Layout';
 import TutorHeroSection from './components/TutorHeroSection';
