@@ -16,7 +16,9 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  AlertCircle
+  AlertCircle,
+  BookOpen,
+  DollarSign
 } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { useRoles } from '@/lib/RolesContext';
@@ -42,6 +44,13 @@ const navigationItems = [
     href: '/dashboard'
   },
   { 
+    id: 'tutors', 
+    label: 'Tutors', 
+    icon: BookOpen,
+    description: 'Find and book tutors',
+    href: '/tutors'
+  },
+  { 
     id: 'meet-sagea', 
     label: 'Meet Sagea', 
     icon: Users,
@@ -61,6 +70,13 @@ const navigationItems = [
     icon: Puzzle,
     description: 'Vocabulary learning game',
     href: '/word-maze'
+  },
+  { 
+    id: 'pricing', 
+    label: 'Pricing', 
+    icon: DollarSign,
+    description: 'View plans and pricing',
+    href: '/pricing'
   },
 ];
 
@@ -222,6 +238,12 @@ export default function DashboardSidebar({ userEmail }: DashboardSidebarProps) {
                       className={`font-medium transition-colors duration-300 ${isActive ? 'text-token-primary' : 'text-text-secondary'}`}
                     >
                       {item.label}
+                    </Text>
+                    <Text 
+                      variant="small" 
+                      className="text-text-muted text-xs"
+                    >
+                      {item.description}
                     </Text>
                   </div>
                 </div>

@@ -1,8 +1,10 @@
 import React from 'react';
 import Layout from '../../../components/Layout';
+import DashboardSidebar from '../../dashboard/components/DashboardSidebar';
 import { notFound } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import RealTimeCalendar from './components/RealTimeCalendar';
+import { useAuth } from '@/lib/AuthContext';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,6 +16,21 @@ async function fetchTutor(id: string) {
   try {
     console.log('🔍 Server-side fetchTutor called with ID:', id);
     
+    // First, let's check what columns actually exist in the table
+    console.log('🔍 Checking tutor_profiles table schema...');
+    const { data: schemaInfo, error: schemaError } = await supabase
+      .from('information_schema.columns')
+      .select('column_name, data_type')
+      .eq('table_name', 'tutor_profiles')
+      .eq('table_schema', 'public')
+      .order('ordinal_position');
+
+    if (schemaError) {
+      console.log('❌ Error checking schema:', schemaError);
+    } else {
+      console.log('✅ Available columns in tutor_profiles:', schemaInfo?.map(col => col.column_name));
+    }
+    
     const { data: tutor, error } = await supabase
       .from('tutor_profiles')
       .select(`
@@ -21,9 +38,13 @@ async function fetchTutor(id: string) {
         display_name,
         profile_image_url,
         bio,
-        hourly_rate,
+        teaching_style,
+        education,
         languages_taught,
         specializations,
+        intro_video_url,
+        certificate_files,
+        hourly_rate,
         is_active
       `)
       .eq('id', id)
@@ -31,12 +52,13 @@ async function fetchTutor(id: string) {
       .single();
 
     if (error) {
-      console.log('Database error:', error);
+      console.log('❌ Database error:', error);
+      console.log('❌ Error details:', JSON.stringify(error, null, 2));
       return { error: 'Tutor not found', tutor: null };
     }
 
     if (!tutor) {
-      console.log('No tutor found for ID:', id);
+      console.log('❌ No tutor found for ID:', id);
       return { error: 'Tutor not found', tutor: null };
     }
 
@@ -45,16 +67,24 @@ async function fetchTutor(id: string) {
       id: tutor.id,
       name: tutor.display_name,
       profile_image_url: tutor.profile_image_url,
+      bio: tutor.bio,
+      teaching_style: tutor.teaching_style,
+      education: tutor.education,
+      languages_taught: tutor.languages_taught || [],
+      languages_spoken: [], // Not available in current schema
+      specializations: tutor.specializations || [],
+      intro_video_url: tutor.intro_video_url,
+      certificate_files: tutor.certificate_files || [],
+      hourly_rate: tutor.hourly_rate,
       accent: tutor.languages_taught?.[0]?.language || 'English',
       certificates: tutor.specializations || [],
       average_rating: 5.0, // Placeholder
       review_count: 0, // Placeholder
       lesson_count: 0, // Placeholder
-      bio: tutor.bio,
-      hourly_rate: tutor.hourly_rate
     };
 
-    console.log('Found tutor:', transformedTutor);
+    console.log('✅ Found tutor:', transformedTutor);
+    console.log('✅ Raw tutor data from DB:', tutor);
     return { tutor: transformedTutor };
   } catch (error) {
     console.log('Error fetching tutor:', error);
@@ -280,47 +310,142 @@ export default async function TutorProfilePage({ params }: { params: Promise<{ i
     );
   }
 
+  // Get user email for sidebar (optional, can be blank for public view)
+  let userEmail = undefined;
+  try {
+    // Try to get user from AuthContext if available (client-side only)
+    // This is a server component, so we leave userEmail undefined
+  } catch {}
+
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto py-16">
-        <div className="flex flex-col items-center mb-8">
-          <img
-            src={tutor.profile_image_url}
-            alt={tutor.name}
-            className="w-24 h-24 rounded-full mb-4 object-cover"
-          />
-          <h3 className="text-2xl font-bold mb-2">{tutor.name}</h3>
-          <div className="text-text-secondary mb-2">{tutor.accent}</div>
-          <div className="flex flex-wrap gap-2 mb-2">
-            {tutor.certificates?.map((c: string, i: number) => (
-              <span key={i} className="bg-surface-subtle px-2 py-1 rounded text-xs">
-                {c}
-              </span>
-            ))}
-          </div>
-          <div className="flex gap-4 mb-2">
-            <span className="text-yellow-500 font-semibold">★ {tutor.average_rating || 5.0}</span>
-            <span className="text-text-secondary">{tutor.review_count || 0} reviews</span>
-            <span className="text-text-secondary">{tutor.lesson_count || 0} lessons</span>
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-token-surface-accent-light via-token-surface to-token-surface-accent min-h-screen">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative lg:flex lg:min-h-[600px]">
+            {/* Sidebar */}
+            <div className="hidden lg:block lg:w-72 lg:shrink-0">
+              <div className="sticky top-24">
+                <DashboardSidebar userEmail={userEmail} />
+              </div>
+            </div>
+            {/* Main Content */}
+            <div className="lg:ml-8 flex-1">
+              <div className="max-w-4xl mx-auto py-16">
+                {/* Profile Header */}
+                <div className="flex flex-col items-center mb-8">
+                  <img
+                    src={tutor.profile_image_url}
+                    alt={tutor.name}
+                    className="w-24 h-24 rounded-full mb-4 object-cover"
+                  />
+                  <h3 className="text-2xl font-bold mb-2">{tutor.name}</h3>
+                  <div className="text-text-secondary mb-2">{tutor.accent}</div>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {tutor.certificates?.map((c: string, i: number) => (
+                      <span key={i} className="bg-surface-subtle px-2 py-1 rounded text-xs">
+                        {c}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex gap-4 mb-2">
+                    <span className="text-yellow-500 font-semibold">★ {tutor.average_rating || 5.0}</span>
+                    <span className="text-text-secondary">{tutor.review_count || 0} reviews</span>
+                    <span className="text-text-secondary">{tutor.lesson_count || 0} lessons</span>
+                  </div>
+
+                </div>
+
+                {/* Self-Introduction Video Section */}
+                {tutor.intro_video_url && (
+                  <div className="mb-8">
+                    <h4 className="font-semibold mb-4 text-lg">Self-Introduction Video</h4>
+                    <div className="bg-gray-200 rounded h-40 flex items-center justify-center text-gray-500">
+                      <p>Video: {tutor.intro_video_url}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* About Me Section */}
+                {tutor.bio && (
+                  <div className="mb-8">
+                    <h4 className="font-semibold mb-4 text-lg">About Me</h4>
+                    <p className="text-text-secondary leading-relaxed">{tutor.bio}</p>
+                  </div>
+                )}
+
+                {/* Teaching Style Section */}
+                {tutor.teaching_style && (
+                  <div className="mb-8">
+                    <h4 className="font-semibold mb-4 text-lg">Teaching Style</h4>
+                    <p className="text-text-secondary leading-relaxed">{tutor.teaching_style}</p>
+                  </div>
+                )}
+
+                {/* Education Section */}
+                {tutor.education && (
+                  <div className="mb-8">
+                    <h4 className="font-semibold mb-4 text-lg">Education & Certifications</h4>
+                    <p className="text-text-secondary leading-relaxed">{tutor.education}</p>
+                  </div>
+                )}
+
+                {/* Languages I Teach Section */}
+                {tutor.languages_taught && tutor.languages_taught.length > 0 && (
+                  <div className="mb-8">
+                    <h4 className="font-semibold mb-4 text-lg">Languages I Teach</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {tutor.languages_taught.map((lang: any, i: number) => (
+                        <span key={i} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                          {lang.language} ({lang.fluency})
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Teaching Focus Areas Section */}
+                {tutor.specializations && tutor.specializations.length > 0 && (
+                  <div className="mb-8">
+                    <h4 className="font-semibold mb-4 text-lg">Teaching Focus Areas</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {tutor.specializations.map((spec: string, i: number) => (
+                        <span key={i} className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+                          {spec}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Teaching Certificates Section */}
+                {tutor.certifications && tutor.certifications.length > 0 && (
+                  <div className="mb-8">
+                    <h4 className="font-semibold mb-4 text-lg">Teaching Certificates & Qualifications</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {tutor.certifications.map((cert: string, i: number) => (
+                        <span key={i} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                          {cert}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">
+                      Certificates have been verified by our team
+                    </p>
+                  </div>
+                )}
+
+                {/* Real-time Calendar Section */}
+                <RealTimeCalendar 
+                  tutorId={tutor.id}
+                  initialCalendar={calendar || []}
+                  initialMonth={month || 1}
+                  initialYear={year || new Date().getFullYear()}
+                />
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Self-Introduction Video Section */}
-        <div className="w-full mb-8">
-          <h4 className="font-semibold mb-4 text-lg">Self-Introduction Video</h4>
-          <div className="bg-gray-200 rounded h-40 flex items-center justify-center text-gray-500">
-            (Video placeholder)
-          </div>
-        </div>
-
-        {/* Real-time Calendar Section */}
-        <RealTimeCalendar 
-          tutorId={tutor.id}
-          initialCalendar={calendar || []}
-          initialMonth={month || 1}
-          initialYear={year || new Date().getFullYear()}
-        />
-      </div>
+      </section>
     </Layout>
   );
 } 

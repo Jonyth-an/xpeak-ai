@@ -49,6 +49,12 @@ const navigationItems = [
     description: 'Overview and today\'s schedule'
   },
   {
+    name: 'Profile',
+    href: '/tutor/profile',
+    icon: User,
+    description: 'View and edit your public profile'
+  },
+  {
     name: 'Calendar',
     href: '/tutor/calendar',
     icon: Calendar,

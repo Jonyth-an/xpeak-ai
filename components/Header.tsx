@@ -104,30 +104,7 @@ export default function Header({ heroBackgroundColor }: HeaderProps) {
             </Link>
           </div>
 
-          {/* Navigation Tabs - Hidden on mobile */}
-          <nav className="hidden md:flex gap-x-4">
-            {user ? (
-              // Logged-in navigation
-              <>
-                <Link href="/dashboard" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/dashboard') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Dashboard</Link>
-                {roles.includes('student') && (
-                  <Link href="/tutors" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/tutors') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Book Tutors</Link>
-                )}
-                <Link href="/meet-sagea" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/meet-sagea') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Meet Sagea</Link>
-                <Link href="/topic-spark" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/topic-spark') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Topic Spark</Link>
-                <Link href="/word-maze" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/word-maze') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Word Maze</Link>
-                <Link href="/pricing" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname === '/pricing' ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Pricing</Link>
-              </>
-            ) : (
-              // Logged-out navigation
-              <>
-                <Link href="/meet-sagea" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/meet-sagea') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Meet Sagea</Link>
-                <Link href="/topic-spark" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/topic-spark') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Topic Spark</Link>
-                <Link href="/word-maze" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname.startsWith('/word-maze') ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Word Maze</Link>
-                <Link href="/pricing" className={`text-base font-medium h-10 flex items-center px-4 rounded-full transition-colors ${pathname === '/pricing' ? 'bg-token-primary-light text-token-primary-dark font-bold' : 'text-token-text-secondary hover:text-token-primary'}`}>Pricing</Link>
-              </>
-            )}
-          </nav>
+          {/* Removed navigation tabs for all users */}
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
@@ -207,7 +184,7 @@ export default function Header({ heroBackgroundColor }: HeaderProps) {
                           </>
                         )}
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleSignOut} disabled={signingOut} className="text-token-error">
+                        <DropdownMenuItem onClick={handleSignOut} disabled={signingOut} className="text-red-600">
                           {signingOut ? (
                             <div className="flex items-center">
                               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
@@ -223,23 +200,13 @@ export default function Header({ heroBackgroundColor }: HeaderProps) {
                 </div>
               ) : (
                 // Logged out state
-                <div className="flex items-center gap-x-2">
-                  <Link href="/login">
-                    <Button variant="outline" className="h-10 px-4 text-base font-medium rounded-lg">Log In</Button>
-                  </Link>
-                  <Link href="/signup">
-                    <Button variant="primary" className="h-10 px-4 text-base font-medium rounded-lg">Sign Up</Button>
-                  </Link>
-                </div>
+                <Link href="/login">
+                  <Button variant="outline" size="sm" className="h-10 px-4 text-base font-medium">
+                    Login
+                  </Button>
+                </Link>
               )}
             </div>
-
-            {/* Mobile Menu Button */}
-            <Button variant="tertiary" size="sm" className="md:hidden">
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </Button>
           </div>
         </div>
       </div>

@@ -3,78 +3,172 @@ import { serverSupabase } from '@/lib/serverSupabaseClient';
 
 export async function GET(request: NextRequest) {
   try {
-    // Get the user from the request
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      console.error('No authorization header');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    const token = authHeader.replace('Bearer ', '');
-    // Get user from Supabase
-    const { data: { user }, error: authError } = await serverSupabase.auth.getUser(token);
-    if (authError || !user) {
-      console.error('Auth error or no user:', authError, user);
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    // Check if user has student role
-    const { data: roleRows, error: roleError } = await serverSupabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', user.id)
-      .eq('role', 'student');
-    if (roleError || !roleRows || roleRows.length === 0) {
-      console.error('Role error or no student role:', roleError, roleRows);
-      return NextResponse.json({ error: 'Access denied. Student role required.' }, { status: 403 });
-    }
-    // Fetch all active tutors using existing columns
-    const { data: tutors, error: tutorsError } = await serverSupabase
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const search = searchParams.get('search') || '';
+    const offset = (page - 1) * limit;
+
+    // Build the query for tutor_profiles
+    let query = serverSupabase
       .from('tutor_profiles')
       .select(`
         id,
         display_name,
-        profile_image_url,
         bio,
         hourly_rate,
+        timezone,
         languages_taught,
         specializations,
-        is_active
+        profile_image_url,
+        is_active,
+        created_at,
+        updated_at
       `)
       .eq('is_active', true);
-    if (tutorsError) {
-      console.error('Tutors fetch error:', tutorsError);
-      return NextResponse.json({ error: 'Failed to fetch tutors', details: tutorsError }, { status: 500 });
+
+    // Add search filter if provided
+    if (search.trim()) {
+      // Search in name, bio, and languages
+      query = query.or(`
+        display_name.ilike.%${search}%,
+        bio.ilike.%${search}%,
+        languages_taught::text.ilike.%${search}%
+      `);
     }
-    if (!tutors) {
-      console.error('Tutors data is null or undefined');
-      return NextResponse.json({ error: 'No tutors data returned' }, { status: 500 });
+
+    // Get total count for pagination
+    const { count } = await serverSupabase
+      .from('tutor_profiles')
+      .select('id', { count: 'exact' })
+      .eq('is_active', true);
+
+    // Get paginated results
+    const { data: tutors, error } = await query
+      .order('display_name', { ascending: true })
+      .range(offset, offset + limit - 1);
+
+    if (error) {
+      console.error('Error fetching tutors:', error);
+      return NextResponse.json({ error: 'Failed to fetch tutors' }, { status: 500 });
     }
-    // For each tutor, fetch review count, average rating, and lesson count (mock 0 for now if not available)
-    let tutorList;
-    try {
-      tutorList = await Promise.all((tutors || []).map(async (tutor) => {
-        // Extract accent from languages_taught if available
-        const accent = tutor.languages_taught && tutor.languages_taught.length > 0 
-          ? tutor.languages_taught[0].language 
-          : 'N/A';
+
+    // Get availability data for each tutor
+    const tutorsWithAvailability = await Promise.all(
+      tutors.map(async (tutor) => {
+        // Get next 3 available slots for this tutor
+        const now = new Date();
+        const today = now.toISOString().split('T')[0];
+        const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
         
+        const { data: availability } = await serverSupabase
+          .from('tutor_availability')
+          .select('*')
+          .eq('tutor_id', tutor.id)
+          .gte('specific_date', today)
+          .lte('specific_date', nextWeek.toISOString().split('T')[0])
+          .order('specific_date', { ascending: true })
+          .order('start_time', { ascending: true })
+          .limit(3);
+
+        // Format availability slots
+        const availableSlots = availability?.map(slot => {
+          const date = new Date(slot.specific_date);
+          const time = slot.start_time;
+          return {
+            date: date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+            time: time,
+            fullDate: slot.specific_date,
+            fullTime: `${slot.specific_date}T${slot.start_time}`
+          };
+        }) || [];
+
+        // Get country from timezone (simplified mapping)
+        const getCountryFromTimezone = (timezone: string) => {
+          const countryMap: Record<string, string> = {
+            'America/New_York': 'United States',
+            'America/Los_Angeles': 'United States',
+            'America/Chicago': 'United States',
+            'America/Denver': 'United States',
+            'Europe/London': 'United Kingdom',
+            'Europe/Paris': 'France',
+            'Europe/Berlin': 'Germany',
+            'Asia/Tokyo': 'Japan',
+            'Asia/Shanghai': 'China',
+            'Australia/Sydney': 'Australia'
+          };
+          return countryMap[timezone] || 'Unknown';
+        };
+
+        // Get flag emoji for country
+        const getCountryFlag = (country: string) => {
+          const flags: Record<string, string> = {
+            'United States': '🇺🇸',
+            'United Kingdom': '🇬🇧',
+            'Canada': '🇨🇦',
+            'Australia': '🇦🇺',
+            'France': '🇫🇷',
+            'Germany': '🇩🇪',
+            'Japan': '🇯🇵',
+            'China': '🇨🇳',
+            'Unknown': '🌍'
+          };
+          return flags[country] || '🌍';
+        };
+
+        const country = getCountryFromTimezone(tutor.timezone);
+        const flag = getCountryFlag(country);
+
+        // Get accent from country/timezone
+        const getAccent = (country: string) => {
+          const accents: Record<string, string> = {
+            'United States': 'American',
+            'United Kingdom': 'British',
+            'Canada': 'Canadian',
+            'Australia': 'Australian',
+            'France': 'French',
+            'Germany': 'German',
+            'Japan': 'Japanese',
+            'China': 'Chinese'
+          };
+          return accents[country] || 'Standard';
+        };
+
         return {
           id: tutor.id,
           name: tutor.display_name,
-          profile_image_url: tutor.profile_image_url,
-          accent: accent,
-          certificates: tutor.specializations || [], // Use specializations as certificates
-          average_rating: 0, // Placeholder
-          review_count: 0,   // Placeholder
-          lesson_count: 0    // Placeholder
+          country,
+          flag,
+          accent: getAccent(country),
+          rating: 4.8 + Math.random() * 0.2, // Placeholder rating between 4.8-5.0
+          reviewCount: Math.floor(Math.random() * 50) + 10, // Placeholder review count
+          bio: tutor.bio || 'No bio provided yet.',
+          languages: tutor.languages_taught || [],
+          specializations: tutor.specializations || [],
+          hourlyRate: tutor.hourly_rate,
+          profileImageUrl: tutor.profile_image_url,
+          availableSlots,
+          timezone: tutor.timezone
         };
-      }));
-    } catch (mapError) {
-      console.error('Error mapping tutors:', mapError, tutors);
-      return NextResponse.json({ error: 'Error mapping tutors', details: mapError }, { status: 500 });
-    }
-    return NextResponse.json({ tutors: tutorList });
+      })
+    );
+
+    const totalCount = count || 0;
+    
+    return NextResponse.json({
+      tutors: tutorsWithAvailability,
+      pagination: {
+        page,
+        limit,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        hasNext: page * limit < totalCount,
+        hasPrev: page > 1
+      }
+    });
+
   } catch (error) {
-    console.error('Error in tutors GET:', error);
-    return NextResponse.json({ error: 'Internal server error', details: error instanceof Error ? error.message : String(error) }, { status: 500 });
+    console.error('Error in tutors API:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 } 

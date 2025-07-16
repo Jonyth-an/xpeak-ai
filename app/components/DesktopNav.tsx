@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Home, Users, Sparkles, Puzzle, DollarSign, User } from 'lucide-react';
+import { Home, Globe, Moon, User } from 'lucide-react';
 
 export function DesktopNav() {
   return (
@@ -12,25 +12,27 @@ export function DesktopNav() {
           </span>
         </Link>
       </div>
-      {/* Nav Links */}
-      <div className="flex gap-6 items-center flex-1">
-        <Link href="/meet-sagea" className="flex items-center gap-1 hover:text-blue-600 transition-colors">
-          <Users className="w-5 h-5" /> Meet Sagea
-        </Link>
-        <Link href="/topic-spark" className="flex items-center gap-1 hover:text-blue-600 transition-colors">
-          <Sparkles className="w-5 h-5" /> Topic Spark
-        </Link>
-        <Link href="/word-maze" className="flex items-center gap-1 hover:text-blue-600 transition-colors">
-          <Puzzle className="w-5 h-5" /> Word Maze
-        </Link>
-        <Link href="/pricing" className="flex items-center gap-1 hover:text-blue-600 transition-colors">
-          <DollarSign className="w-5 h-5" /> Pricing
-        </Link>
-      </div>
-      {/* Profile/Login/Signup */}
-      <div className="ml-auto">
-        <Link href="/login" className="flex items-center gap-1 px-4 py-2 rounded-md border border-gray-200 hover:bg-gray-100 transition-colors">
-          <User className="w-5 h-5" /> Login / Signup
+      
+      {/* Spacer to push right elements */}
+      <div className="flex-1" />
+      
+      {/* Global Actions */}
+      <div className="flex items-center gap-4">
+        {/* Language Selector */}
+        <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 transition-colors">
+          <Globe className="w-4 h-4" />
+          <span className="text-sm">Engl...</span>
+        </button>
+        
+        {/* Theme Toggle */}
+        <button className="p-2 rounded-md hover:bg-gray-100 transition-colors">
+          <Moon className="w-4 h-4" />
+        </button>
+        
+        {/* Profile/Login */}
+        <Link href="/login" className="flex items-center gap-2 px-4 py-2 rounded-md border border-gray-200 hover:bg-gray-100 transition-colors">
+          <User className="w-4 h-4" />
+          <span className="text-sm">Login / Signup</span>
         </Link>
       </div>
     </nav>

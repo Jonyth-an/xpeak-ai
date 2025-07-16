@@ -25,9 +25,15 @@ export async function GET(
         display_name,
         profile_image_url,
         bio,
-        hourly_rate,
+        teaching_style,
+        education,
         languages_taught,
+        languages_spoken,
         specializations,
+        certifications,
+        intro_video_url,
+        certificate_files,
+        hourly_rate,
         is_active
       `)
       .eq('id', id)
@@ -51,11 +57,19 @@ export async function GET(
       name: tutor.display_name,
       profile_image_url: tutor.profile_image_url,
       accent: tutor.languages_taught?.[0]?.language || 'English',
-      certificates: tutor.specializations || [],
+      certificates: tutor.certifications || [],
       average_rating: 5.0, // Placeholder
       review_count: 0, // Placeholder
       lesson_count: 0, // Placeholder
       bio: tutor.bio,
+      teaching_style: tutor.teaching_style,
+      education: tutor.education,
+      languages_taught: tutor.languages_taught || [],
+      languages_spoken: tutor.languages_spoken || [],
+      specializations: tutor.specializations || [],
+      certifications: tutor.certifications || [],
+      intro_video_url: tutor.intro_video_url,
+      certificate_files: tutor.certificate_files || [],
       hourly_rate: tutor.hourly_rate
     };
 
