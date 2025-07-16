@@ -33,7 +33,6 @@ export async function GET(
         certifications,
         intro_video_url,
         certificate_files,
-        hourly_rate,
         is_active
       `)
       .eq('id', id)
@@ -69,8 +68,7 @@ export async function GET(
       specializations: tutor.specializations || [],
       certifications: tutor.certifications || [],
       intro_video_url: tutor.intro_video_url,
-      certificate_files: tutor.certificate_files || [],
-      hourly_rate: tutor.hourly_rate
+      certificate_files: tutor.certificate_files || []
     };
 
     console.log('Found tutor:', transformedTutor);

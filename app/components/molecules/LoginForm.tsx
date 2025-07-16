@@ -211,20 +211,51 @@ export default function LoginForm({
     setIsGoogleLoading(true);
     setError(null);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      console.log('🔐 Starting Google OAuth flow...');
+      console.log('📍 Current origin:', window.location.origin);
+      console.log('📍 Redirect URL:', `${window.location.origin}/auth/callback`);
+      console.log('📍 Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       });
+      
+      console.log('🔐 OAuth response:', { data, error });
+      
       if (error) {
+        console.error('❌ OAuth error:', error);
         setError(error.message || "Google sign-in failed");
         setIsGoogleLoading(false);
+      } else {
+        console.log('✅ OAuth initiated successfully');
+        console.log('🔗 OAuth URL:', data?.url);
+        console.log('📋 User should be redirected to Google');
+        
+        // Log the full OAuth URL for debugging
+        if (data?.url) {
+          console.log('🔍 Full OAuth URL:', data.url);
+          const url = new URL(data.url);
+          console.log('🔍 OAuth URL params:', {
+            client_id: url.searchParams.get('client_id'),
+            redirect_uri: url.searchParams.get('redirect_uri'),
+            response_type: url.searchParams.get('response_type'),
+            scope: url.searchParams.get('scope'),
+            state: url.searchParams.get('state'),
+          });
+        }
       }
       // Note: If successful, the user will be redirected to Google
       // and then back to /auth/callback, so we don't need to handle
       // the success case here
     } catch (err: any) {
+      console.error('❌ OAuth exception:', err);
       setError(err.message || "Google sign-in failed");
       setIsGoogleLoading(false);
     }
@@ -233,7 +264,8 @@ export default function LoginForm({
   return (
     <Card className="max-w-md mx-auto rounded-token-lg shadow-token-lg">
       <form onSubmit={handleSubmit} className="space-y-token-lg">
-        {/* Google Login Button */}
+        {/* Google Login Button - Temporarily disabled */}
+        {/*
         <Button
           type="button"
           variant="outline"
@@ -278,12 +310,17 @@ export default function LoginForm({
             </>
           )}
         </Button>
-        {/* Divider */}
+        */}
+        
+        {/* Divider - Also commented out since no Google button */}
+        {/*
         <div className="flex items-center my-token-sm">
           <div className="flex-grow border-t border-token-border"></div>
           <span className="mx-token-sm text-token-text-muted text-token-xs">or</span>
           <div className="flex-grow border-t border-token-border"></div>
         </div>
+        */}
+        
         {error && (
           <div className="bg-token-error-surface border border-token-error text-token-error px-token-md py-token-md rounded-token-lg text-token-sm">
             {error}
@@ -381,6 +418,18 @@ export default function LoginForm({
             className="text-token-sm text-token-text-secondary hover:text-token-primary underline transition-colors"
           >
             Forgot your password?
+          </a>
+        </div>
+        
+        <div className="text-center mt-token-sm">
+          <span className="text-token-sm text-token-text-secondary">
+            Don't have an account?{" "}
+          </span>
+          <a
+            href="/signup"
+            className="text-token-sm text-token-primary hover:underline transition-colors"
+          >
+            Sign up
           </a>
         </div>
       </form>

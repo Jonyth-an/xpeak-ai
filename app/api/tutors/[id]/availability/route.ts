@@ -66,7 +66,7 @@ export async function GET(
       .eq('tutor_id', id)
       .gte('scheduled_start', `${monthStartStr}T00:00:00`)
       .lte('scheduled_start', `${monthEndStr}T23:59:59`)
-      .in('status', ['confirmed', 'completed']);
+      .in('status', ['pending', 'confirmed', 'reschedule_requested']);
 
     if (lessonsError) {
       console.log('Error fetching booked lessons:', lessonsError);

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabaseClient';
 
 interface AvailabilitySlot {
   id: string;
@@ -174,13 +175,19 @@ export default function RealTimeCalendar({
     if (!selectedSlot || !selectedDate) return;
 
     try {
-      // For now, skip authentication check to fix webpack error
-      // TODO: Add proper authentication later
+      // Get the current session to include Authorization header
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
+      if (sessionError || !session) {
+        alert('Please log in to book a lesson.');
+        return;
+      }
+
       const response = await fetch('/api/lessons/book', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
           tutorId,

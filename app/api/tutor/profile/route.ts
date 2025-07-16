@@ -43,7 +43,6 @@ export async function GET(request: NextRequest) {
         bio,
         teaching_style,
         education,
-        hourly_rate,
         timezone,
         ip_timezone,
         timezone_confirmed,

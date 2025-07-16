@@ -45,7 +45,6 @@ async function fetchTutor(id: string) {
         certifications,
         intro_video_url,
         certificate_files,
-        hourly_rate,
         is_active
       `)
       .eq('id', id)
@@ -76,7 +75,6 @@ async function fetchTutor(id: string) {
       specializations: tutor.specializations || [],
       intro_video_url: tutor.intro_video_url,
       certificate_files: tutor.certificate_files || [],
-      hourly_rate: tutor.hourly_rate,
       accent: tutor.languages_taught?.[0]?.language || 'English',
       certificates: tutor.certifications || [],
       average_rating: 5.0, // Placeholder

@@ -20,13 +20,17 @@ export default function LoginPage() {
       setPageError('Authentication failed. Please try again.');
       // Clean up the URL
       window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (error === 'no_auth_code') {
+      setPageError('No authentication code received. Please try logging in again.');
+      // Clean up the URL
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
 
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      router.push('/');
+      router.push('/dashboard');
     }
   }, [user, router]);
 

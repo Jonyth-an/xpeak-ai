@@ -34,8 +34,6 @@ interface Lesson {
   lesson_notes?: string;
   student_goals?: string;
   homework_assigned?: string;
-  price_paid: number;
-  currency: string;
   created_at: string;
   student: {
     id: string;

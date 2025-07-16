@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
       // Get lessons in date range
       serverSupabase
         .from('lessons')
-        .select('id, status, duration_minutes, scheduled_start, actual_start, actual_end, price_paid')
+        .select('id, status, duration_minutes, scheduled_start, actual_start, actual_end')
         .eq('tutor_id', tutorProfile.id)
         .gte('scheduled_start', startDate.toISOString())
         .lte('scheduled_start', endDate.toISOString()),

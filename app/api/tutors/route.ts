@@ -16,7 +16,6 @@ export async function GET(request: NextRequest) {
         id,
         display_name,
         bio,
-        hourly_rate,
         timezone,
         languages_taught,
         specializations,
@@ -145,7 +144,6 @@ export async function GET(request: NextRequest) {
           bio: tutor.bio || 'No bio provided yet.',
           languages: tutor.languages_taught || [],
           specializations: tutor.specializations || [],
-          hourlyRate: tutor.hourly_rate,
           profileImageUrl: tutor.profile_image_url,
           availableSlots,
           timezone: tutor.timezone
