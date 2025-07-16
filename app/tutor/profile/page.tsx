@@ -42,7 +42,6 @@ interface TutorProfileData {
   profile_image_url?: string;
   intro_video_url?: string;
   certificate_files?: string[];
-  hourly_rate: number;
   timezone: string;
   is_active: boolean;
   created_at: string;
@@ -107,12 +106,7 @@ export default function TutorProfilePage() {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
-  };
+
 
   const getCountryFlag = (country: string) => {
     const flags: Record<string, string> = {
@@ -455,12 +449,6 @@ export default function TutorProfilePage() {
                   <Star className="w-5 h-5 text-yellow-500 fill-current" />
                   <Text variant="body" className="font-semibold">4.8</Text>
                   <Text variant="small" className="text-token-text-secondary">(126 reviews)</Text>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Clock className="w-5 h-5 text-token-accent" />
-                  <Text variant="small" className="text-token-text-secondary">
-                    {formatCurrency(profileData.hourly_rate)}/hour
-                  </Text>
                 </div>
               </div>
               <div className="flex items-center gap-1">

@@ -158,11 +158,6 @@ export default function Header({ heroBackgroundColor }: HeaderProps) {
                         <DropdownMenuItem asChild>
                           <Link href="/profile">Profile</Link>
                         </DropdownMenuItem>
-                        {roles.includes('student') && (
-                          <DropdownMenuItem asChild>
-                            <Link href="/tutors">Book Tutors</Link>
-                          </DropdownMenuItem>
-                        )}
                         {roles.includes('tutor') && (
                           <DropdownMenuItem asChild>
                             <Link href="/tutor">Tutor Dashboard</Link>

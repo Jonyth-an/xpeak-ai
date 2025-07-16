@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, BarChart2, Users, HeartPulse, LogOut, Menu, X, Shield } from 'lucide-react';
+import { LayoutDashboard, BarChart2, Users, HeartPulse, LogOut, Menu, X, Shield, FileText } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { Avatar } from '@/app/components/ui';
 
@@ -15,6 +15,7 @@ const adminNav = [
   { label: 'User Management', href: '/admin/users', icon: Users },
   { label: 'System Health', href: '/admin/health', icon: HeartPulse },
   { label: 'Roles & Access', href: '/admin/roles', icon: Shield },
+  { label: 'Tutor Applications', href: '/admin/tutor-applications', icon: FileText },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

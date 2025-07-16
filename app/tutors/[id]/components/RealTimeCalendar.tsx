@@ -51,6 +51,25 @@ export default function RealTimeCalendar({
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [bookingType, setBookingType] = useState<string | null>(null);
+
+  // Check for URL parameters on component mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const type = urlParams.get('booking_type');
+      if (type) {
+        setBookingType(type);
+        // Scroll to calendar section if booking type is specified
+        setTimeout(() => {
+          const calendarElement = document.getElementById('calendar-section');
+          if (calendarElement) {
+            calendarElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 500);
+      }
+    }
+  }, []);
 
   // Get month name
   const monthNames = [
@@ -168,14 +187,15 @@ export default function RealTimeCalendar({
           date: selectedDate,
           startTime: selectedSlot.start_time,
           endTime: selectedSlot.end_time,
-          lessonType: 'Conversation Practice',
-          durationMinutes: 30
+          lessonType: bookingType === 'trial' ? 'Trial Lesson' : 'Conversation Practice',
+          durationMinutes: 30,
+          bookingType: bookingType
         })
       });
 
       if (response.ok) {
         const result = await response.json();
-        alert('Lesson booked successfully!');
+        alert(`${bookingType === 'trial' ? 'Trial lesson' : 'Lesson'} booked successfully!`);
         setShowBookingModal(false);
         setSelectedSlot(null);
         setSelectedDate(null);
@@ -338,7 +358,9 @@ export default function RealTimeCalendar({
       {showBookingModal && selectedSlot && selectedDate && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4">Book a Lesson</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              Book a {bookingType === 'trial' ? 'Trial Lesson' : 'Lesson'}
+            </h3>
             <div className="mb-4">
               <p className="text-sm text-gray-600 mb-2">Date:</p>
               <p className="font-medium">
@@ -360,6 +382,13 @@ export default function RealTimeCalendar({
               <p className="text-sm text-gray-600 mb-2">Duration:</p>
               <p className="font-medium">30 minutes</p>
             </div>
+            {bookingType === 'trial' && (
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  <strong>Trial Lesson:</strong> This is a 30-minute trial session to get to know your tutor and teaching style.
+                </p>
+              </div>
+            )}
             <div className="flex gap-3">
               <button
                 className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50"
@@ -371,7 +400,7 @@ export default function RealTimeCalendar({
                 className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 onClick={handleBooking}
               >
-                Book Lesson
+                Book {bookingType === 'trial' ? 'Trial' : 'Lesson'}
               </button>
             </div>
           </div>

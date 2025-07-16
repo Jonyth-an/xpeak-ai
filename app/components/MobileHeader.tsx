@@ -70,11 +70,6 @@ export default function MobileHeader() {
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard">Dashboard</Link>
                 </DropdownMenuItem>
-                {roles.includes('student') && (
-                  <DropdownMenuItem asChild>
-                    <Link href="/tutors">Book Tutors</Link>
-                  </DropdownMenuItem>
-                )}
                 <DropdownMenuItem asChild>
                   <Link href="/profile">Profile</Link>
                 </DropdownMenuItem>
