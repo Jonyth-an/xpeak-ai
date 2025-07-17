@@ -16,12 +16,39 @@ export default function LoginPage() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get('error');
-    if (error === 'auth_callback_failed') {
-      setPageError('Authentication failed. Please try again.');
-      // Clean up the URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (error === 'no_auth_code') {
-      setPageError('No authentication code received. Please try logging in again.');
+    const description = urlParams.get('description');
+    
+    if (error) {
+      let errorMessage = 'Authentication failed. Please try again.';
+      
+      switch (error) {
+        case 'auth_callback_failed':
+          errorMessage = description || 'Authentication failed. Please try again.';
+          break;
+        case 'no_auth_code':
+          errorMessage = description || 'No authentication code received. Please try logging in again.';
+          break;
+        case 'invalid_code':
+          errorMessage = description || 'The authorization code is invalid or expired. Please try logging in again.';
+          break;
+        case 'pkce_error':
+          errorMessage = description || 'PKCE verification failed. Please try logging in again.';
+          break;
+        case 'no_session':
+          errorMessage = description || 'No session was created. Please try logging in again.';
+          break;
+        case 'wrong_flow':
+          errorMessage = description || 'Please use the login button to start the correct OAuth flow.';
+          break;
+        default:
+          if (error.startsWith('oauth_')) {
+            errorMessage = description || `OAuth error: ${error.replace('oauth_', '')}`;
+          } else {
+            errorMessage = description || 'An unexpected error occurred during authentication.';
+          }
+      }
+      
+      setPageError(errorMessage);
       // Clean up the URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }

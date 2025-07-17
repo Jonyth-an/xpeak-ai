@@ -57,14 +57,14 @@ interface LessonHistoryData {
     total: number;
     totalPages: number;
   };
-  summary: {
+  summary?: {
     total_lessons: number;
     total_students: number;
     total_minutes: number;
     total_hours: number;
     countries_reached: number;
   };
-  tutor_timezone: string;
+  tutor_timezone?: string;
 }
 
 export default function LessonHistory() {
@@ -97,6 +97,7 @@ export default function LessonHistory() {
       const params = new URLSearchParams({
         page: currentPage.toString(),
         limit: '10',
+        include_summary: 'true',
         ...(searchTerm && { search: searchTerm }),
         ...(statusFilter !== 'all' && { status: statusFilter }),
         ...(lessonTypeFilter !== 'all' && { lesson_type: lessonTypeFilter })
@@ -271,7 +272,7 @@ export default function LessonHistory() {
                 </div>
                 <div className="ml-4">
                   <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
-                    {historyData.summary.total_lessons}
+                    {historyData.summary?.total_lessons || 0}
                   </Text>
                   <Text variant="small" className="text-token-text-secondary">
                     Total Lessons
@@ -287,7 +288,7 @@ export default function LessonHistory() {
                 </div>
                 <div className="ml-4">
                   <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
-                    {historyData.summary.total_students}
+                    {historyData.summary?.total_students || 0}
                   </Text>
                   <Text variant="small" className="text-token-text-secondary">
                     Total Students
@@ -303,10 +304,10 @@ export default function LessonHistory() {
                 </div>
                 <div className="ml-4">
                   <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
-                    {historyData.summary.total_hours.toLocaleString()}
+                    {(historyData.summary?.total_hours || 0).toLocaleString()}
                   </Text>
                   <Text variant="small" className="text-token-text-secondary">
-                    {historyData.summary.total_minutes.toLocaleString()} minutes
+                    {(historyData.summary?.total_minutes || 0).toLocaleString()} minutes
                   </Text>
                 </div>
               </div>
@@ -319,7 +320,7 @@ export default function LessonHistory() {
                 </div>
                 <div className="ml-4">
                   <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
-                    {historyData.summary.countries_reached}
+                    {historyData.summary?.countries_reached || 0}
                   </Text>
                   <Text variant="small" className="text-token-text-secondary">
                     Countries Reached

@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20');
     const status = searchParams.get('status');
     const upcoming = searchParams.get('upcoming') === 'true';
+    const includeSummary = searchParams.get('include_summary') === 'true';
     
     console.log('🔍 Fetching lessons for tutor:', user.email);
     console.log('📊 Filters:', { page, limit, status, upcoming });
@@ -73,6 +74,51 @@ export async function GET(request: NextRequest) {
 
     console.log(`📊 Found ${lessons?.length || 0} lessons for tutor`);
 
+    // Calculate summary if requested
+    let summary = null;
+    if (includeSummary) {
+      // Get all lessons for summary calculation (without pagination)
+      const { data: allLessons, error: summaryError } = await serverSupabase
+        .from('lessons')
+        .select('*')
+        .eq('tutor_id', tutorId);
+
+      if (!summaryError && allLessons) {
+        const totalLessons = allLessons.length;
+        const uniqueStudents = new Set(allLessons.map(lesson => lesson.student_id)).size;
+        const totalMinutes = allLessons.reduce((sum, lesson) => sum + (lesson.duration_minutes || 0), 0);
+        const totalHours = Math.floor(totalMinutes / 60);
+        
+        // Get unique countries from students
+        const studentIds = Array.from(new Set(allLessons.map(lesson => lesson.student_id)));
+        let countriesReached = 0;
+        
+        if (studentIds.length > 0) {
+          const { data: studentData } = await serverSupabase
+            .from('users')
+            .select('user_metadata')
+            .in('id', studentIds);
+          
+          if (studentData) {
+            const countries = new Set(
+              studentData
+                .map(student => student.user_metadata?.country || 'Unknown')
+                .filter(country => country !== 'Unknown')
+            );
+            countriesReached = countries.size;
+          }
+        }
+
+        summary = {
+          total_lessons: totalLessons,
+          total_students: uniqueStudents,
+          total_minutes: totalMinutes,
+          total_hours: totalHours,
+          countries_reached: countriesReached
+        };
+      }
+    }
+
     // Get student data for all lessons
     const studentIds = Array.from(new Set((lessons || []).map(lesson => lesson.student_id)));
     let students: Record<string, any> = {};
@@ -121,7 +167,7 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    return NextResponse.json({
+    const response: any = {
       lessons: processedLessons,
       pagination: {
         page,
@@ -129,7 +175,13 @@ export async function GET(request: NextRequest) {
         total: processedLessons.length,
         hasMore: processedLessons.length === limit
       }
-    });
+    };
+
+    if (summary) {
+      response.summary = summary;
+    }
+
+    return NextResponse.json(response);
 
   } catch (error) {
     console.error('❌ Unexpected error in tutor lessons API:', error);

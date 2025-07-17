@@ -56,7 +56,6 @@ async function checkTutorProfilesSchema() {
       'user_id',
       'application_id',
       'bio',
-      'hourly_rate',
       'timezone',
       'languages_taught',
       'specializations',

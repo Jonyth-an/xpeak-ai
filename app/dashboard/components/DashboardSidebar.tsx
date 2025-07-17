@@ -44,6 +44,13 @@ const navigationItems = [
     href: '/dashboard'
   },
   { 
+    id: 'lessons', 
+    label: 'Lessons', 
+    icon: GraduationCap,
+    description: 'View lesson history',
+    href: '/dashboard/lessons'
+  },
+  { 
     id: 'tutors', 
     label: 'Tutors', 
     icon: BookOpen,

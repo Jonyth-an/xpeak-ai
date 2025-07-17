@@ -34,21 +34,27 @@ export async function GET(
       return NextResponse.json({ error: 'Lesson not found' }, { status: 404 });
     }
 
-    // Check if user is authorized to view this lesson
-    if (lesson.student_id !== user.id && lesson.tutor_id !== user.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
-    }
-
-    // Get tutor information
+    // Get tutor information to check authorization
     const { data: tutorData, error: tutorError } = await serverSupabase
       .from('tutor_profiles')
-      .select('id, display_name, profile_image_url, bio, teaching_style')
+      .select('id, user_id, display_name, profile_image_url, bio, teaching_style')
       .eq('id', lesson.tutor_id)
       .single();
 
     if (tutorError) {
       console.error('Error fetching tutor data:', tutorError);
+      return NextResponse.json({ error: 'Failed to fetch tutor information' }, { status: 500 });
     }
+
+    // Check if user is authorized to view this lesson
+    const isStudent = lesson.student_id === user.id;
+    const isTutor = tutorData.user_id === user.id;
+    
+    if (!isStudent && !isTutor) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+
 
     // Get student information from auth.users
     const { data: studentData, error: studentError } = await serverSupabase.auth.admin.getUserById(lesson.student_id);

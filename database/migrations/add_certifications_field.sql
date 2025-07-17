@@ -83,7 +83,6 @@ BEGIN
         profile_image_url,
         intro_video_url,
         certificate_files,
-        hourly_rate,
         timezone,
         is_active
       ) VALUES (
@@ -103,7 +102,6 @@ BEGIN
         END,
         NEW.application_data->>'demoVideo',
         NEW.application_data->'certificates',
-        15.00,
         COALESCE(NEW.application_data->>'timezone', 'UTC'),
         TRUE
       );

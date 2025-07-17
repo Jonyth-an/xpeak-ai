@@ -46,9 +46,21 @@ export async function POST(
       return NextResponse.json({ error: 'Lesson not found' }, { status: 404 });
     }
     
+    // Get tutor information to check authorization
+    const { data: tutorData, error: tutorError } = await serverSupabase
+      .from('tutor_profiles')
+      .select('id, user_id')
+      .eq('id', lesson.tutor_id)
+      .single();
+
+    if (tutorError) {
+      console.error('Error fetching tutor data:', tutorError);
+      return NextResponse.json({ error: 'Failed to fetch tutor information' }, { status: 500 });
+    }
+
     // Check if user is authorized (student or tutor of this lesson)
     const isStudent = lesson.student_id === user.id;
-    const isTutor = lesson.tutor_id === user.id;
+    const isTutor = tutorData.user_id === user.id;
     
     if (!isStudent && !isTutor) {
       return NextResponse.json({ error: 'Not authorized to reschedule this lesson' }, { status: 403 });

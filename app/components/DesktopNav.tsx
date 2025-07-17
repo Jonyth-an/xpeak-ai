@@ -29,10 +29,15 @@ export function DesktopNav() {
           <Moon className="w-4 h-4" />
         </button>
         
-        {/* Profile/Login */}
-        <Link href="/login" className="flex items-center gap-2 px-4 py-2 rounded-md border border-gray-200 hover:bg-gray-100 transition-colors">
+        {/* Login */}
+        <Link href="/login" className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors">
           <User className="w-4 h-4" />
-          <span className="text-sm">Login / Signup</span>
+          <span className="text-sm">Login</span>
+        </Link>
+        
+        {/* Sign Up */}
+        <Link href="/signup" className="flex items-center gap-2 px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition-colors">
+          <span className="text-sm font-medium">Sign Up</span>
         </Link>
       </div>
     </nav>

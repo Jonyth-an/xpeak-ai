@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS public.tutor_profiles (
     application_id UUID NOT NULL REFERENCES public.tutor_applications(id) ON DELETE CASCADE,
     display_name VARCHAR(255) NOT NULL,
     bio TEXT,
-    hourly_rate DECIMAL(10,2) DEFAULT 15.00,
     timezone VARCHAR(100) NOT NULL,
     ip_timezone VARCHAR(100), -- For timezone detection
     timezone_confirmed BOOLEAN DEFAULT FALSE,

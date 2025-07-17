@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from '@/lib/supabaseClient';
 import { rateLimiter, RATE_LIMIT_CONFIGS } from "@/lib/rateLimiter";
 import { Card, Input, Button, Text } from "../ui";
+import { signInWithOAuthWithPKCE } from "@/lib/pkceUtils";
 
 export interface LoginFormProps {
   onSubmit?: (data: { email: string; password: string }) => void;
@@ -28,6 +29,7 @@ export default function LoginForm({
     retryAfter?: number;
   } | null>(null);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isFacebookLoading, setIsFacebookLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -211,21 +213,31 @@ export default function LoginForm({
     setIsGoogleLoading(true);
     setError(null);
     try {
-      console.log('🔐 Starting Google OAuth flow...');
+      console.log('🔐 Starting Google OAuth flow with PKCE...');
       console.log('📍 Current origin:', window.location.origin);
       console.log('📍 Redirect URL:', `${window.location.origin}/auth/callback`);
       console.log('📍 Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
       
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      // Try the built-in PKCE flow first, fallback to custom implementation
+      let { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          },
-        },
+          flow: 'pkce',
+        } as any,
       });
+      
+      // If built-in PKCE fails, try custom implementation
+      if (error || !data?.url) {
+        console.log('🔄 Built-in PKCE failed, trying custom PKCE implementation...');
+        const pkceResult = await signInWithOAuthWithPKCE(
+          supabase,
+          "google",
+          `${window.location.origin}/auth/callback`
+        );
+        data = pkceResult.data;
+        error = pkceResult.error;
+      }
       
       console.log('🔐 OAuth response:', { data, error });
       
@@ -248,6 +260,8 @@ export default function LoginForm({
             response_type: url.searchParams.get('response_type'),
             scope: url.searchParams.get('scope'),
             state: url.searchParams.get('state'),
+            code_challenge: url.searchParams.get('code_challenge') ? 'present' : 'missing',
+            code_challenge_method: url.searchParams.get('code_challenge_method'),
           });
         }
       }
@@ -261,11 +275,60 @@ export default function LoginForm({
     }
   };
 
+  const handleFacebookLogin = async () => {
+    setIsFacebookLoading(true);
+    setError(null);
+    try {
+      console.log('📘 Starting Facebook OAuth flow...');
+      console.log('📍 Current origin:', window.location.origin);
+      console.log('📍 Redirect URL:', `${window.location.origin}/auth/callback`);
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "facebook",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+          },
+        },
+      });
+      
+      console.log('📘 Facebook OAuth response:', { data, error });
+      
+      if (error) {
+        console.error('❌ Facebook OAuth error:', error);
+        setError(error.message || "Facebook sign-in failed");
+        setIsFacebookLoading(false);
+      } else {
+        console.log('✅ Facebook OAuth initiated successfully');
+        console.log('🔗 Facebook OAuth URL:', data?.url);
+        
+        // Log the full OAuth URL for debugging
+        if (data?.url) {
+          console.log('🔍 Full Facebook OAuth URL:', data.url);
+          const url = new URL(data.url);
+          console.log('🔍 Facebook OAuth URL params:', {
+            client_id: url.searchParams.get('client_id'),
+            redirect_uri: url.searchParams.get('redirect_uri'),
+            response_type: url.searchParams.get('response_type'),
+            scope: url.searchParams.get('scope'),
+            state: url.searchParams.get('state'),
+            code_challenge: url.searchParams.get('code_challenge') ? 'present' : 'missing',
+            code_challenge_method: url.searchParams.get('code_challenge_method'),
+          });
+        }
+      }
+    } catch (err: any) {
+      console.error('❌ Facebook OAuth exception:', err);
+      setError(err.message || "Facebook sign-in failed");
+      setIsFacebookLoading(false);
+    }
+  };
+
   return (
     <Card className="max-w-md mx-auto rounded-token-lg shadow-token-lg">
       <form onSubmit={handleSubmit} className="space-y-token-lg">
-        {/* Google Login Button - Temporarily disabled */}
-        {/*
+        {/* Google Login Button */}
         <Button
           type="button"
           variant="outline"
@@ -310,16 +373,45 @@ export default function LoginForm({
             </>
           )}
         </Button>
-        */}
+
+        {/* Facebook Login Button */}
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full flex items-center justify-center gap-token-sm"
+          onClick={handleFacebookLogin}
+          disabled={isFacebookLoading || isLoading}
+        >
+          {isFacebookLoading ? (
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-token-text-muted mr-token-sm"></div>
+              Signing in with Facebook...
+            </div>
+          ) : (
+            <>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                className="mr-token-sm"
+                aria-hidden="true"
+              >
+                <path
+                  fill="#1877F2"
+                  d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                />
+              </svg>
+              Continue with Facebook
+            </>
+          )}
+        </Button>
         
-        {/* Divider - Also commented out since no Google button */}
-        {/*
+        {/* Divider */}
         <div className="flex items-center my-token-sm">
           <div className="flex-grow border-t border-token-border"></div>
           <span className="mx-token-sm text-token-text-muted text-token-xs">or</span>
           <div className="flex-grow border-t border-token-border"></div>
         </div>
-        */}
         
         {error && (
           <div className="bg-token-error-surface border border-token-error text-token-error px-token-md py-token-md rounded-token-lg text-token-sm">

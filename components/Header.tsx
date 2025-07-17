@@ -104,7 +104,43 @@ export default function Header({ heroBackgroundColor }: HeaderProps) {
             </Link>
           </div>
 
-          {/* Removed navigation tabs for all users */}
+          {/* Navigation Tabs - Only show for logged out users */}
+          {!user && (
+            <nav className="hidden md:flex items-center space-x-8">
+              <Link 
+                href="/meet-sagea" 
+                className={`text-sm font-medium transition-colors hover:text-token-primary ${
+                  pathname === '/meet-sagea' ? 'text-token-primary' : 'text-token-text-secondary'
+                }`}
+              >
+                Meet Sagea
+              </Link>
+              <Link 
+                href="/topic-spark" 
+                className={`text-sm font-medium transition-colors hover:text-token-primary ${
+                  pathname === '/topic-spark' ? 'text-token-primary' : 'text-token-text-secondary'
+                }`}
+              >
+                Topic Spark
+              </Link>
+              <Link 
+                href="/word-maze" 
+                className={`text-sm font-medium transition-colors hover:text-token-primary ${
+                  pathname === '/word-maze' ? 'text-token-primary' : 'text-token-text-secondary'
+                }`}
+              >
+                Word Maze
+              </Link>
+              <Link 
+                href="/pricing" 
+                className={`text-sm font-medium transition-colors hover:text-token-primary ${
+                  pathname === '/pricing' ? 'text-token-primary' : 'text-token-text-secondary'
+                }`}
+              >
+                Pricing
+              </Link>
+            </nav>
+          )}
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
@@ -195,11 +231,18 @@ export default function Header({ heroBackgroundColor }: HeaderProps) {
                 </div>
               ) : (
                 // Logged out state
-                <Link href="/login">
-                  <Button variant="outline" size="sm" className="h-10 px-4 text-base font-medium">
-                    Login
-                  </Button>
-                </Link>
+                <div className="flex items-center gap-x-2">
+                  <Link href="/login">
+                    <Button variant="outline" size="sm" className="h-10 px-4 text-base font-medium">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link href="/signup">
+                    <Button variant="primary" size="sm" className="h-10 px-4 text-base font-medium">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </div>
               )}
             </div>
           </div>

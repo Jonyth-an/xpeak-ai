@@ -79,16 +79,19 @@ export async function POST(request: NextRequest) {
     }
     
     // Check for existing bookings that conflict with this time slot
-    const scheduledStart = `${date}T${startTime}:00`;
-    const scheduledEnd = `${date}T${endTime}:00`;
+    const scheduledStart = `${date}T${startTime}`;
+    const scheduledEnd = `${date}T${endTime}`;
     
     console.log('🔍 Checking for time conflicts...');
     console.log('📅 Requested time slot:', { scheduledStart, scheduledEnd });
     
+    // Check for conflicts on the same date only
     const { data: conflictingLessons, error: conflictError } = await serverSupabase
       .from('lessons')
       .select('id, scheduled_start, scheduled_end, status')
       .eq('tutor_id', tutorId)
+      .gte('scheduled_start', `${date}T00:00:00`)
+      .lt('scheduled_start', `${date}T23:59:59`)
       .or(`scheduled_start.lt.${scheduledEnd},scheduled_end.gt.${scheduledStart}`)
       .in('status', ['pending', 'confirmed', 'reschedule_requested']);
     
@@ -107,11 +110,13 @@ export async function POST(request: NextRequest) {
       }, { status: 409 });
     }
     
-    // Check if user already has a booking at this time
+    // Check if user already has a booking at this time (same date only)
     const { data: userConflicts, error: userConflictError } = await serverSupabase
       .from('lessons')
       .select('id, scheduled_start, scheduled_end, status')
       .eq('student_id', user.id)
+      .gte('scheduled_start', `${date}T00:00:00`)
+      .lt('scheduled_start', `${date}T23:59:59`)
       .or(`scheduled_start.lt.${scheduledEnd},scheduled_end.gt.${scheduledStart}`)
       .in('status', ['pending', 'confirmed', 'reschedule_requested']);
     
@@ -154,7 +159,7 @@ export async function POST(request: NextRequest) {
       const { data: tutorProfile } = await serverSupabase
         .from('tutor_profiles')
         .select('timezone')
-        .eq('user_id', tutorId)
+        .eq('id', tutorId)
         .single();
       
       if (tutorProfile?.timezone) {
@@ -163,17 +168,26 @@ export async function POST(request: NextRequest) {
     } catch (error) {
       console.log('Could not fetch tutor timezone, using default UTC');
     }
-    
+
+    // Calculate duration in minutes
+    const startTimeObj = new Date(`2000-01-01T${startTime}:00`);
+    const endTimeObj = new Date(`2000-01-01T${endTime}:00`);
+    const durationMinutes = Math.round((endTimeObj.getTime() - startTimeObj.getTime()) / (1000 * 60));
+
+    // Fixed lesson pricing - tutors are paid per lesson, not by the hour
+    const baseLessonPrice = 15.00; // Fixed base price per lesson
+    const pricePaid = baseLessonPrice;
+
     // Create lesson record - only include fields that exist in the lessons table
     const lessonData = {
       tutor_id: tutorId,
       student_id: user.id,
       lesson_type: bookingType === 'trial' ? 'Trial Lesson' : 'Conversation Practice',
-      duration_minutes: 30,
+      duration_minutes: durationMinutes,
       status: 'pending',
       scheduled_start: scheduledStart,
       scheduled_end: scheduledEnd,
-      price_paid: 15.00,
+      price_paid: pricePaid,
       currency: 'USD',
       student_timezone: studentTimezone,
       tutor_timezone: tutorTimezone

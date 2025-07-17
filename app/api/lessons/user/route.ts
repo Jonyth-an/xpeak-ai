@@ -57,7 +57,13 @@ export async function GET(request: NextRequest) {
 
     // Apply filters
     if (status !== 'all') {
-      query = query.eq('status', status);
+      // Handle comma-separated status values
+      const statusList = status.split(',');
+      if (statusList.length === 1) {
+        query = query.eq('status', status);
+      } else {
+        query = query.in('status', statusList);
+      }
     }
 
     if (upcoming) {
@@ -128,7 +134,13 @@ export async function GET(request: NextRequest) {
       .eq('student_id', user.id);
 
     if (status !== 'all') {
-      countQuery = countQuery.eq('status', status);
+      // Handle comma-separated status values
+      const statusList = status.split(',');
+      if (statusList.length === 1) {
+        countQuery = countQuery.eq('status', status);
+      } else {
+        countQuery = countQuery.in('status', statusList);
+      }
     }
 
     if (upcoming) {

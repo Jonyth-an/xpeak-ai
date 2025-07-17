@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { Card, Input, Button } from '../ui';
+import { signInWithOAuthWithPKCE } from "@/lib/pkceUtils";
 
 export interface SignupFormProps {
   onSubmit?: (data: { name: string; email: string; password: string }) => void;
@@ -72,20 +73,62 @@ export default function SignupForm({ onSubmit, onSuccess, onError }: SignupFormP
     setIsGoogleLoading(true);
     setError(null);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({ 
+      console.log('🔐 Starting Google OAuth flow with PKCE...');
+      console.log('📍 Current origin:', window.location.origin);
+      console.log('📍 Redirect URL:', `${window.location.origin}/auth/callback`);
+      
+      // Try the built-in PKCE flow first, fallback to custom implementation
+      let { data, error } = await supabase.auth.signInWithOAuth({ 
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
-        },
+          flow: 'pkce',
+        } as any,
       });
+      
+      // If built-in PKCE fails, try custom implementation
+      if (error || !data?.url) {
+        console.log('🔄 Built-in PKCE failed, trying custom PKCE implementation...');
+        const pkceResult = await signInWithOAuthWithPKCE(
+          supabase,
+          "google",
+          `${window.location.origin}/auth/callback`
+        );
+        data = pkceResult.data;
+        error = pkceResult.error;
+      }
+      
+      console.log('🔐 OAuth response:', { data, error });
+      
       if (error) {
+        console.error('❌ OAuth error:', error);
         setError(error.message || 'Google sign-up failed');
         setIsGoogleLoading(false);
+      } else {
+        console.log('✅ OAuth initiated successfully');
+        console.log('🔗 OAuth URL:', data?.url);
+        console.log('📋 User should be redirected to Google');
+        
+        // Log the full OAuth URL for debugging
+        if (data?.url) {
+          console.log('🔍 Full OAuth URL:', data.url);
+          const url = new URL(data.url);
+          console.log('🔍 OAuth URL params:', {
+            client_id: url.searchParams.get('client_id'),
+            redirect_uri: url.searchParams.get('redirect_uri'),
+            response_type: url.searchParams.get('response_type'),
+            scope: url.searchParams.get('scope'),
+            state: url.searchParams.get('state'),
+            code_challenge: url.searchParams.get('code_challenge') ? 'present' : 'missing',
+            code_challenge_method: url.searchParams.get('code_challenge_method'),
+          });
+        }
       }
       // Note: If successful, the user will be redirected to Google
       // and then back to /auth/callback, so we don't need to handle
       // the success case here
     } catch (err: any) {
+      console.error('❌ OAuth exception:', err);
       setError(err.message || 'Google sign-up failed');
       setIsGoogleLoading(false);
     }

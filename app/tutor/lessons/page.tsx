@@ -159,6 +159,30 @@ export default function TutorLessonsPage() {
     }
   };
 
+  const handleConfirmLesson = async (lessonId: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const response = await fetch(`/api/lessons/${lessonId}/confirm`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        // Refresh lessons
+        await fetchLessons();
+      } else {
+        console.error('Failed to confirm lesson:', response.status);
+      }
+    } catch (error) {
+      console.error('Error confirming lesson:', error);
+    }
+  };
+
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
     const now = new Date();
@@ -410,6 +434,18 @@ export default function TutorLessonsPage() {
                         <Eye className="w-4 h-4 mr-1" />
                         View Details
                       </Button>
+                      
+                      {/* Show Confirm button for pending lessons */}
+                      {lesson.status === 'pending' && (
+                        <Button
+                          variant="success"
+                          size="sm"
+                          onClick={() => handleConfirmLesson(lesson.id)}
+                        >
+                          <Check className="w-4 h-4 mr-1" />
+                          Confirm
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </Card>
