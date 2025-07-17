@@ -483,7 +483,10 @@ export default function LessonDetailsPage() {
   const canCancel = lesson.status !== 'completed' && lesson.status !== 'cancelled';
   const canEdit = lesson.status !== 'completed' && lesson.status !== 'cancelled';
   const canReschedule = lesson.status !== 'completed' && lesson.status !== 'cancelled' && lesson.status !== 'reschedule_requested';
-  const canJoin = lesson.status === 'confirmed' && new Date(lesson.scheduled_start) > new Date();
+  const now = new Date();
+  const lessonStart = new Date(lesson.scheduled_start);
+  const oneHourBefore = new Date(lessonStart.getTime() - 60 * 60 * 1000); // 1 hour before
+  const canJoin = lesson.status === 'confirmed' && now >= oneHourBefore && now <= lessonStart;
 
   // Debug logging
   console.log('🔍 UI Debug Info:', {
@@ -767,7 +770,10 @@ export default function LessonDetailsPage() {
                   </Button>
                   
                   {canJoin && (
-                    <Button className="w-full">
+                    <Button 
+                      className="w-full"
+                      onClick={() => router.push(`/lessons/${lesson.id}/video`)}
+                    >
                       <Video className="w-4 h-4 mr-2" />
                       Join Lesson
                     </Button>

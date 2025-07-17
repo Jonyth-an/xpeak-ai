@@ -158,7 +158,7 @@ export async function GET(request: NextRequest) {
         homework_assigned: lesson.homework_assigned,
         created_at: lesson.created_at,
         minutes_until: minutesUntil,
-        can_join: lesson.status === 'confirmed' && minutesUntil <= 15 && minutesUntil >= -30,
+        can_join: lesson.status === 'confirmed' && minutesUntil <= 60 && minutesUntil >= -60,
         student: {
           id: student.id,
           email: student.email,

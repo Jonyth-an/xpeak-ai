@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
         currency: lesson.currency,
         created_at: lesson.created_at,
         minutes_until: minutesUntil,
-        can_join: minutesUntil <= 15 && minutesUntil >= 0 && lesson.status === 'confirmed',
+        can_join: minutesUntil <= 60 && minutesUntil >= -60 && lesson.status === 'confirmed',
         tutor: {
           id: tutor.id,
           name: tutor.display_name,

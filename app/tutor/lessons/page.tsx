@@ -183,6 +183,30 @@ export default function TutorLessonsPage() {
     }
   };
 
+  const handleCancelLesson = async (lessonId: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const response = await fetch(`/api/lessons/${lessonId}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        // Refresh lessons
+        await fetchLessons();
+      } else {
+        console.error('Failed to cancel lesson:', response.status);
+      }
+    } catch (error) {
+      console.error('Error cancelling lesson:', error);
+    }
+  };
+
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
     const now = new Date();
@@ -380,6 +404,18 @@ export default function TutorLessonsPage() {
                             </Button>
                           </>
                         )}
+                        
+                        {/* Show Cancel button for lessons that can be cancelled */}
+                        {['pending', 'confirmed', 'reschedule_requested'].includes(lesson.status) && (
+                          <Button
+                            variant="warning"
+                            size="sm"
+                            onClick={() => handleCancelLesson(lesson.id)}
+                          >
+                            <X className="w-4 h-4 mr-1" />
+                            Cancel Lesson
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </Card>
@@ -435,16 +471,26 @@ export default function TutorLessonsPage() {
                         View Details
                       </Button>
                       
-                      {/* Show Confirm button for pending lessons */}
+                      {/* Show Confirm and Cancel buttons for pending lessons */}
                       {lesson.status === 'pending' && (
-                        <Button
-                          variant="success"
-                          size="sm"
-                          onClick={() => handleConfirmLesson(lesson.id)}
-                        >
-                          <Check className="w-4 h-4 mr-1" />
-                          Confirm
-                        </Button>
+                        <>
+                          <Button
+                            variant="success"
+                            size="sm"
+                            onClick={() => handleConfirmLesson(lesson.id)}
+                          >
+                            <Check className="w-4 h-4 mr-1" />
+                            Confirm
+                          </Button>
+                          <Button
+                            variant="warning"
+                            size="sm"
+                            onClick={() => handleCancelLesson(lesson.id)}
+                          >
+                            <X className="w-4 h-4 mr-1" />
+                            Cancel
+                          </Button>
+                        </>
                       )}
                     </div>
                   </div>

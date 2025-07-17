@@ -190,7 +190,7 @@ export async function GET(request: NextRequest) {
         scheduled_start: lesson.scheduled_start,
         scheduled_end: lesson.scheduled_end,
         minutes_until: minutesUntil,
-        can_join: minutesUntil <= 15, // Allow joining 15 minutes before
+        can_join: minutesUntil <= 60, // Allow joining 60 minutes before for testing
         status: lesson.status
       };
     }

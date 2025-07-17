@@ -456,10 +456,12 @@ export default function StudentLessonsPage() {
                                 {/* Action Buttons */}
                                 <div className="flex items-center gap-2 ml-4">
                                   {activeTab === 'upcoming' && lesson.can_join && (
-                                    <Button variant="primary" size="sm">
-                                      <Video className="w-4 h-4 mr-2" />
-                                      Join
-                                    </Button>
+                                    <Link href={`/lessons/${lesson.id}/video`}>
+                                      <Button variant="primary" size="sm">
+                                        <Video className="w-4 h-4 mr-2" />
+                                        Join
+                                      </Button>
+                                    </Link>
                                   )}
                                   {activeTab === 'upcoming' && !lesson.can_join && (
                                     <>

@@ -26,6 +26,7 @@ import {
   AlertCircle,
   Flag
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface DashboardData {
   tutor: {
@@ -77,6 +78,7 @@ export default function TutorDashboard() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     fetchDashboardData();
@@ -289,6 +291,7 @@ export default function TutorDashboard() {
                       variant={dashboardData.next_lesson.can_join ? "primary" : "outline"}
                       size="sm"
                       disabled={!dashboardData.next_lesson.can_join}
+                      onClick={() => dashboardData.next_lesson?.can_join && router.push(`/lessons/${dashboardData.next_lesson.id}/video`)}
                     >
                       <Video className="w-4 h-4 mr-2" />
                       {dashboardData.next_lesson.can_join ? 'Join Lesson' : `Join in ${dashboardData.next_lesson.minutes_until} min`}
@@ -355,7 +358,11 @@ export default function TutorDashboard() {
                            lesson.status === 'completed' ? 'Completed' : 
                            lesson.status}
                         </span>
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => router.push(`/lessons/${lesson.id}`)}
+                        >
                           <Eye className="w-4 h-4 mr-1" />
                           View Details
                         </Button>

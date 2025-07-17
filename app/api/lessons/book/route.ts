@@ -78,65 +78,6 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
     
-    // Check for existing bookings that conflict with this time slot
-    const scheduledStart = `${date}T${startTime}`;
-    const scheduledEnd = `${date}T${endTime}`;
-    
-    console.log('🔍 Checking for time conflicts...');
-    console.log('📅 Requested time slot:', { scheduledStart, scheduledEnd });
-    
-    // Check for conflicts on the same date only
-    const { data: conflictingLessons, error: conflictError } = await serverSupabase
-      .from('lessons')
-      .select('id, scheduled_start, scheduled_end, status')
-      .eq('tutor_id', tutorId)
-      .gte('scheduled_start', `${date}T00:00:00`)
-      .lt('scheduled_start', `${date}T23:59:59`)
-      .or(`scheduled_start.lt.${scheduledEnd},scheduled_end.gt.${scheduledStart}`)
-      .in('status', ['pending', 'confirmed', 'reschedule_requested']);
-    
-    if (conflictError) {
-      console.error('Error checking conflicts:', conflictError);
-      return NextResponse.json({ 
-        error: 'Failed to check availability. Please try again.' 
-      }, { status: 500 });
-    }
-    
-    if (conflictingLessons && conflictingLessons.length > 0) {
-      console.log('❌ Time conflict detected:', conflictingLessons);
-      return NextResponse.json({ 
-        error: 'This time slot is no longer available. Please select a different time.',
-        conflicts: conflictingLessons
-      }, { status: 409 });
-    }
-    
-    // Check if user already has a booking at this time (same date only)
-    const { data: userConflicts, error: userConflictError } = await serverSupabase
-      .from('lessons')
-      .select('id, scheduled_start, scheduled_end, status')
-      .eq('student_id', user.id)
-      .gte('scheduled_start', `${date}T00:00:00`)
-      .lt('scheduled_start', `${date}T23:59:59`)
-      .or(`scheduled_start.lt.${scheduledEnd},scheduled_end.gt.${scheduledStart}`)
-      .in('status', ['pending', 'confirmed', 'reschedule_requested']);
-    
-    if (userConflictError) {
-      console.error('Error checking user conflicts:', userConflictError);
-      return NextResponse.json({ 
-        error: 'Failed to check your schedule. Please try again.' 
-      }, { status: 500 });
-    }
-    
-    if (userConflicts && userConflicts.length > 0) {
-      console.log('❌ User has conflicting lesson:', userConflicts);
-      return NextResponse.json({ 
-        error: 'You already have a lesson scheduled at this time. Please select a different time.',
-        conflicts: userConflicts
-      }, { status: 409 });
-    }
-    
-    console.log('✅ No conflicts detected, proceeding with booking...');
-    
     // Get user's timezone from profile or use default
     let studentTimezone = 'UTC';
     try {
@@ -168,6 +109,98 @@ export async function POST(request: NextRequest) {
     } catch (error) {
       console.log('Could not fetch tutor timezone, using default UTC');
     }
+    
+    // Convert local time to UTC based on user's timezone
+    const userTimezone = studentTimezone || 'UTC';
+    console.log('🌍 Converting time from user timezone:', userTimezone);
+    
+    // Create the local datetime string
+    const localDateTimeStart = `${date}T${startTime}`;
+    const localDateTimeEnd = `${date}T${endTime}`;
+    
+    // Convert to UTC
+    const scheduledStart = new Date(localDateTimeStart + (userTimezone !== 'UTC' ? ` ${userTimezone}` : '')).toISOString();
+    const scheduledEnd = new Date(localDateTimeEnd + (userTimezone !== 'UTC' ? ` ${userTimezone}` : '')).toISOString();
+    
+    console.log('🔍 Checking for time conflicts...');
+    console.log('📅 Requested time slot:', { 
+      localStart: localDateTimeStart, 
+      localEnd: localDateTimeEnd,
+      utcStart: scheduledStart, 
+      utcEnd: scheduledEnd 
+    });
+    
+    // Check for conflicts on the same date only
+    const { data: conflictingLessons, error: conflictError } = await serverSupabase
+      .from('lessons')
+      .select('id, scheduled_start, scheduled_end, status')
+      .eq('tutor_id', tutorId)
+      .gte('scheduled_start', `${date}T00:00:00`)
+      .lt('scheduled_start', `${date}T23:59:59`)
+      .in('status', ['pending', 'confirmed', 'reschedule_requested']);
+    
+    if (conflictError) {
+      console.error('Error checking conflicts:', conflictError);
+      return NextResponse.json({ 
+        error: 'Failed to check availability. Please try again.' 
+      }, { status: 500 });
+    }
+    
+    // Filter conflicts manually to check for actual time overlap
+    const actualConflicts = conflictingLessons?.filter(lesson => {
+      const lessonStart = new Date(lesson.scheduled_start);
+      const lessonEnd = new Date(lesson.scheduled_end);
+      const requestedStart = new Date(scheduledStart);
+      const requestedEnd = new Date(scheduledEnd);
+      
+      // Check for overlap: if one lesson starts before another ends and ends after another starts
+      return (lessonStart < requestedEnd && lessonEnd > requestedStart);
+    }) || [];
+
+    if (actualConflicts.length > 0) {
+      console.log('❌ Time conflict detected:', actualConflicts);
+      return NextResponse.json({ 
+        error: 'This time slot is no longer available. Please select a different time.',
+        conflicts: actualConflicts
+      }, { status: 409 });
+    }
+    
+    // Check if user already has a booking at this time (same date only)
+    const { data: userConflicts, error: userConflictError } = await serverSupabase
+      .from('lessons')
+      .select('id, scheduled_start, scheduled_end, status')
+      .eq('student_id', user.id)
+      .gte('scheduled_start', `${date}T00:00:00`)
+      .lt('scheduled_start', `${date}T23:59:59`)
+      .in('status', ['pending', 'confirmed', 'reschedule_requested']);
+    
+    if (userConflictError) {
+      console.error('Error checking user conflicts:', userConflictError);
+      return NextResponse.json({ 
+        error: 'Failed to check your schedule. Please try again.' 
+      }, { status: 500 });
+    }
+    
+    // Filter user conflicts manually to check for actual time overlap
+    const actualUserConflicts = userConflicts?.filter(lesson => {
+      const lessonStart = new Date(lesson.scheduled_start);
+      const lessonEnd = new Date(lesson.scheduled_end);
+      const requestedStart = new Date(scheduledStart);
+      const requestedEnd = new Date(scheduledEnd);
+      
+      // Check for overlap: if one lesson starts before another ends and ends after another starts
+      return (lessonStart < requestedEnd && lessonEnd > requestedStart);
+    }) || [];
+
+    if (actualUserConflicts.length > 0) {
+      console.log('❌ User has conflicting lesson:', actualUserConflicts);
+      return NextResponse.json({ 
+        error: 'You already have a lesson scheduled at this time. Please select a different time.',
+        conflicts: actualUserConflicts
+      }, { status: 409 });
+    }
+    
+    console.log('✅ No conflicts detected, proceeding with booking...');
 
     // Calculate duration in minutes
     const startTimeObj = new Date(`2000-01-01T${startTime}:00`);
