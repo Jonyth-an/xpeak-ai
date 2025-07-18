@@ -6,7 +6,7 @@ import ProtectedRoute from '../../components/ProtectedRoute';
 import RequireEmailVerification from '../components/RequireEmailVerification';
 import Text from '@/app/components/ui/Text';
 import { Button, Card } from '@/app/components/ui';
-import { Sparkles, BookOpen, Users, Trophy, ArrowRight, Calendar, Clock, User, Video } from 'lucide-react';
+import { Sparkles, BookOpen, Users, Trophy, ArrowRight, Calendar, Clock, User, Video, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/AuthContext';
 import DashboardSidebar from './components/DashboardSidebar';
@@ -74,7 +74,7 @@ export default function DashboardPage() {
       return 'Starting now';
     } else if (minutesUntil < 60) {
       return `in ${minutesUntil} minutes`;
-    } else {
+    } else if (minutesUntil < 1440) { // Less than 24 hours
       const hours = Math.floor(minutesUntil / 60);
       const minutes = minutesUntil % 60;
       if (minutes === 0) {
@@ -82,19 +82,32 @@ export default function DashboardPage() {
       } else {
         return `in ${hours}h ${minutes}m`;
       }
+    } else { // 24 hours or more
+      const days = Math.floor(minutesUntil / 1440);
+      const remainingMinutes = minutesUntil % 1440;
+      const hours = Math.floor(remainingMinutes / 60);
+      const minutes = remainingMinutes % 60;
+      
+      if (hours === 0 && minutes === 0) {
+        return `in ${days} day${days > 1 ? 's' : ''}`;
+      } else if (minutes === 0) {
+        return `in ${days}d ${hours}h`;
+      } else {
+        return `in ${days}d ${hours}h ${minutes}m`;
+      }
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return 'text-token-success';
+        return 'text-token-success bg-token-success-light border-token-success/20';
       case 'pending':
-        return 'text-token-warning';
+        return 'text-token-warning bg-token-warning-light border-token-warning/20';
       case 'completed':
-        return 'text-token-text-secondary';
+        return 'text-token-info bg-token-info-light border-token-info/20';
       default:
-        return 'text-token-text-secondary';
+        return 'text-token-text-secondary bg-token-surface-accent border-token-border';
     }
   };
 
@@ -160,14 +173,14 @@ export default function DashboardPage() {
                       </div>
 
                       {loading ? (
-                        <Card className="p-8 text-center">
+                        <Card className="p-8 text-center border border-gray-200 rounded-xl">
                           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-token-primary mx-auto mb-4"></div>
                           <Text variant="body" className="text-token-text-secondary">
                             Loading your upcoming lessons...
                           </Text>
                         </Card>
                       ) : error ? (
-                        <Card className="p-8 text-center">
+                        <Card className="p-8 text-center border border-gray-200 rounded-xl">
                           <Text variant="body" className="text-token-error mb-4">
                             {error}
                           </Text>
@@ -176,7 +189,7 @@ export default function DashboardPage() {
                           </Button>
                         </Card>
                       ) : upcomingLessons.length === 0 ? (
-                        <Card className="p-12 text-center">
+                        <Card className="p-12 text-center border border-gray-200 rounded-xl">
                           <Calendar className="w-16 h-16 text-token-text-muted mx-auto mb-4" />
                           <Text variant="h3" className="text-token-text-secondary mb-2">
                             No Upcoming Lessons
@@ -194,7 +207,7 @@ export default function DashboardPage() {
                       ) : (
                         <div className="space-y-4">
                           {upcomingLessons.map((lesson) => (
-                            <Card key={lesson.id} className="p-6 hover:shadow-lg transition-shadow">
+                            <Card key={lesson.id} className="p-6 border border-gray-200 rounded-xl" variant="outlined">
                               <div className="flex items-start justify-between">
                                 <div className="flex items-start gap-4 flex-1">
                                   {/* Tutor Avatar */}
@@ -216,22 +229,36 @@ export default function DashboardPage() {
                                       <Text variant="h3" as="h3" className="truncate">
                                         {lesson.tutor.name}
                                       </Text>
-                                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(lesson.status)} bg-token-surface-accent`}>
+                                      <span className={`px-3 py-1.5 rounded-full text-sm font-medium ${getStatusColor(lesson.status)} flex items-center gap-1.5`}>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-current"></div>
                                         {getStatusText(lesson.status)}
                                       </span>
+                                      {lesson.minutes_until >= 0 && (
+                                        <>
+                                          <span className="text-token-text-muted">•</span>
+                                          <div className="flex items-center gap-1.5">
+                                            <div className={`w-1.5 h-1.5 rounded-full ${lesson.minutes_until <= 15 ? 'bg-token-warning animate-pulse' : 'bg-token-success'}`}></div>
+                                            <Text variant="small" className="text-token-text-secondary">
+                                              {formatTimeUntil(lesson.minutes_until)}
+                                            </Text>
+                                          </div>
+                                        </>
+                                      )}
                                     </div>
                                     
-                                    <div className="flex items-center gap-4 text-sm text-token-text-secondary mb-2">
+                                    <div className="flex items-center gap-2 text-sm text-token-text-secondary">
                                       <div className="flex items-center gap-1">
-                                        <BookOpen className="w-4 h-4" />
+                                        <BookOpen className="w-3.5 h-3.5 text-token-text-muted" />
                                         <span>{lesson.lesson_type}</span>
                                       </div>
+                                      <span className="text-token-text-muted">•</span>
                                       <div className="flex items-center gap-1">
-                                        <Clock className="w-4 h-4" />
+                                        <Clock className="w-3.5 h-3.5 text-token-text-muted" />
                                         <span>{lesson.duration_minutes} minutes</span>
                                       </div>
+                                      <span className="text-token-text-muted">•</span>
                                       <div className="flex items-center gap-1">
-                                        <Calendar className="w-4 h-4" />
+                                        <Calendar className="w-3.5 h-3.5 text-token-text-muted" />
                                         <span>
                                           {new Date(lesson.scheduled_start).toLocaleDateString('en-US', {
                                             weekday: 'short',
@@ -244,30 +271,22 @@ export default function DashboardPage() {
                                         </span>
                                       </div>
                                     </div>
-
-                                    {lesson.minutes_until >= 0 && (
-                                      <div className="flex items-center gap-2">
-                                        <div className={`w-2 h-2 rounded-full ${lesson.minutes_until <= 15 ? 'bg-token-warning animate-pulse' : 'bg-token-success'}`}></div>
-                                        <Text variant="small" className="text-token-text-secondary">
-                                          {formatTimeUntil(lesson.minutes_until)}
-                                        </Text>
-                                      </div>
-                                    )}
                                   </div>
                                 </div>
 
                                 {/* Action Buttons */}
-                                <div className="flex items-center gap-2 ml-4">
+                                <div className="flex items-center gap-1.5 ml-4">
                                   {lesson.can_join && (
                                     <Link href={`/lessons/${lesson.id}/video`}>
-                                      <Button variant="primary" size="sm">
-                                        <Video className="w-4 h-4 mr-2" />
+                                      <Button variant="primary" size="sm" className="text-xs px-3 py-1.5 h-8">
+                                        <Video className="w-3.5 h-3.5 mr-1.5" />
                                         Join
                                       </Button>
                                     </Link>
                                   )}
                                   <Link href={`/lessons/${lesson.id}`}>
-                                    <Button variant="outline" size="sm">
+                                    <Button variant="outline" size="sm" className="text-xs px-3 py-1.5 h-8">
+                                      <Eye className="w-3.5 h-3.5 mr-1.5" />
                                       View Details
                                     </Button>
                                   </Link>
@@ -282,7 +301,7 @@ export default function DashboardPage() {
                     {/* Quick Actions */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                       <Link href="/word-maze">
-                        <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer">
+                        <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer border border-gray-200 rounded-xl">
                           <div className="w-12 h-12 bg-gradient-to-br from-token-primary to-token-accent rounded-xl flex items-center justify-center mb-4">
                             <Sparkles className="w-6 h-6 text-white" />
                           </div>
@@ -296,7 +315,7 @@ export default function DashboardPage() {
                       </Link>
 
                       <Link href="/meet-sagea">
-                        <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer">
+                        <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer border border-gray-200 rounded-xl">
                           <div className="w-12 h-12 bg-gradient-to-br from-token-secondary to-token-accent rounded-xl flex items-center justify-center mb-4">
                             <Users className="w-6 h-6 text-white" />
                           </div>
@@ -310,7 +329,7 @@ export default function DashboardPage() {
                       </Link>
 
                       <Link href="/tutors">
-                        <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer">
+                        <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer border border-gray-200 rounded-xl">
                           <div className="w-12 h-12 bg-gradient-to-br from-token-accent to-token-primary rounded-xl flex items-center justify-center mb-4">
                             <BookOpen className="w-6 h-6 text-white" />
                           </div>

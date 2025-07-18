@@ -203,7 +203,7 @@ export default function StudentLessonsPage() {
       return 'Starting now';
     } else if (minutesUntil < 60) {
       return `in ${minutesUntil} minutes`;
-    } else {
+    } else if (minutesUntil < 1440) { // Less than 24 hours
       const hours = Math.floor(minutesUntil / 60);
       const minutes = minutesUntil % 60;
       if (minutes === 0) {
@@ -211,23 +211,36 @@ export default function StudentLessonsPage() {
       } else {
         return `in ${hours}h ${minutes}m`;
       }
+    } else { // 24 hours or more
+      const days = Math.floor(minutesUntil / 1440);
+      const remainingMinutes = minutesUntil % 1440;
+      const hours = Math.floor(remainingMinutes / 60);
+      const minutes = remainingMinutes % 60;
+      
+      if (hours === 0 && minutes === 0) {
+        return `in ${days} day${days > 1 ? 's' : ''}`;
+      } else if (minutes === 0) {
+        return `in ${days}d ${hours}h`;
+      } else {
+        return `in ${days}d ${hours}h ${minutes}m`;
+      }
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return 'text-token-success';
+        return 'text-token-success bg-token-success-light border-token-success/20';
       case 'pending':
-        return 'text-token-warning';
+        return 'text-token-warning bg-token-warning-light border-token-warning/20';
       case 'completed':
-        return 'text-token-text-secondary';
+        return 'text-token-info bg-token-info-light border-token-info/20';
       case 'cancelled':
-        return 'text-token-error';
+        return 'text-token-error bg-token-error-light border-token-error/20';
       case 'no_show':
-        return 'text-token-error';
+        return 'text-token-error bg-token-error-light border-token-error/20';
       default:
-        return 'text-token-text-secondary';
+        return 'text-token-text-secondary bg-token-surface-accent border-token-border';
     }
   };
 
@@ -391,7 +404,7 @@ export default function StudentLessonsPage() {
                       ) : (
                         <div className="space-y-4">
                           {(activeTab === 'upcoming' ? upcomingLessons : pastLessons).map((lesson) => (
-                            <Card key={lesson.id} className="p-6 hover:shadow-lg transition-shadow">
+                            <Card key={lesson.id} className="p-6 border border-gray-200 rounded-xl" variant="outlined">
                               <div className="flex items-start justify-between">
                                 <div className="flex items-start gap-4 flex-1">
                                   {/* Tutor Avatar */}
@@ -413,22 +426,36 @@ export default function StudentLessonsPage() {
                                       <Text variant="h3" as="h3" className="truncate">
                                         {lesson.tutor.name}
                                       </Text>
-                                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(lesson.status)} bg-token-surface-accent`}>
+                                      <span className={`px-3 py-1.5 rounded-full text-sm font-medium border flex items-center gap-1.5 ${getStatusColor(lesson.status)}`}>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-current"></div>
                                         {getStatusText(lesson.status)}
                                       </span>
+                                      {activeTab === 'upcoming' && lesson.minutes_until >= 0 && (
+                                        <>
+                                          <span className="text-token-text-muted">•</span>
+                                          <div className="flex items-center gap-1.5">
+                                            <div className={`w-1.5 h-1.5 rounded-full ${lesson.minutes_until <= 15 ? 'bg-token-warning animate-pulse' : 'bg-token-success'}`}></div>
+                                            <Text variant="small" className="text-token-text-secondary">
+                                              {formatTimeUntil(lesson.minutes_until)}
+                                            </Text>
+                                          </div>
+                                        </>
+                                      )}
                                     </div>
                                     
-                                    <div className="flex items-center gap-4 text-sm text-token-text-secondary mb-2">
+                                    <div className="flex items-center gap-2 text-sm text-token-text-secondary">
                                       <div className="flex items-center gap-1">
-                                        <BookOpen className="w-4 h-4" />
+                                        <BookOpen className="w-3.5 h-3.5 text-token-text-muted" />
                                         <span>{lesson.lesson_type}</span>
                                       </div>
+                                      <span className="text-token-text-muted">•</span>
                                       <div className="flex items-center gap-1">
-                                        <Clock className="w-4 h-4" />
+                                        <Clock className="w-3.5 h-3.5 text-token-text-muted" />
                                         <span>{lesson.duration_minutes} minutes</span>
                                       </div>
+                                      <span className="text-token-text-muted">•</span>
                                       <div className="flex items-center gap-1">
-                                        <Calendar className="w-4 h-4" />
+                                        <Calendar className="w-3.5 h-3.5 text-token-text-muted" />
                                         <span>
                                           {new Date(lesson.scheduled_start).toLocaleDateString('en-US', {
                                             weekday: 'short',
@@ -441,24 +468,15 @@ export default function StudentLessonsPage() {
                                         </span>
                                       </div>
                                     </div>
-
-                                    {activeTab === 'upcoming' && lesson.minutes_until >= 0 && (
-                                      <div className="flex items-center gap-2">
-                                        <div className={`w-2 h-2 rounded-full ${lesson.minutes_until <= 15 ? 'bg-token-warning animate-pulse' : 'bg-token-success'}`}></div>
-                                        <Text variant="small" className="text-token-text-secondary">
-                                          {formatTimeUntil(lesson.minutes_until)}
-                                        </Text>
-                                      </div>
-                                    )}
                                   </div>
                                 </div>
 
                                 {/* Action Buttons */}
-                                <div className="flex items-center gap-2 ml-4">
+                                <div className="flex items-center gap-1.5 ml-4">
                                   {activeTab === 'upcoming' && lesson.can_join && (
                                     <Link href={`/lessons/${lesson.id}/video`}>
-                                      <Button variant="primary" size="sm">
-                                        <Video className="w-4 h-4 mr-2" />
+                                      <Button variant="primary" size="sm" className="text-xs px-3 py-1.5 h-8">
+                                        <Video className="w-3.5 h-3.5 mr-1.5" />
                                         Join
                                       </Button>
                                     </Link>
@@ -468,17 +486,19 @@ export default function StudentLessonsPage() {
                                       <Button 
                                         variant="outline" 
                                         size="sm"
+                                        className="text-xs px-3 py-1.5 h-8"
                                         onClick={() => handleReschedule(lesson)}
                                       >
-                                        <RefreshCw className="w-4 h-4 mr-2" />
+                                        <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
                                         Reschedule
                                       </Button>
                                       <Button 
                                         variant="outline" 
                                         size="sm"
+                                        className="text-xs px-3 py-1.5 h-8"
                                         onClick={() => handleCancel(lesson)}
                                       >
-                                        <X className="w-4 h-4 mr-2" />
+                                        <X className="w-3.5 h-3.5 mr-1.5" />
                                         Cancel
                                       </Button>
                                     </>
@@ -487,15 +507,16 @@ export default function StudentLessonsPage() {
                                     <Button 
                                       variant="outline" 
                                       size="sm"
+                                      className="text-xs px-3 py-1.5 h-8"
                                       onClick={() => handleFeedback(lesson)}
                                     >
-                                      <Star className="w-4 h-4 mr-2" />
+                                      <Star className="w-3.5 h-3.5 mr-1.5" />
                                       Leave Feedback
                                     </Button>
                                   )}
                                   <Link href={`/lessons/${lesson.id}`}>
-                                    <Button variant="outline" size="sm">
-                                      <Eye className="w-4 h-4 mr-2" />
+                                    <Button variant="outline" size="sm" className="text-xs px-3 py-1.5 h-8">
+                                      <Eye className="w-3.5 h-3.5 mr-1.5" />
                                       View Details
                                     </Button>
                                   </Link>

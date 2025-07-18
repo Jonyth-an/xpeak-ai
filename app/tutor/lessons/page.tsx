@@ -25,7 +25,8 @@ import {
   Check,
   X,
   Ban,
-  RefreshCw
+  RefreshCw,
+  BookOpen
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -79,6 +80,11 @@ export default function TutorLessonsPage() {
   useEffect(() => {
     fetchLessons();
     fetchRescheduleRequests();
+    // Refresh every minute to update countdown timers and join availability
+    const interval = setInterval(() => {
+      fetchLessons();
+    }, 60000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchLessons = async () => {
@@ -210,24 +216,34 @@ export default function TutorLessonsPage() {
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
     const now = new Date();
-    const diffInHours = Math.floor((date.getTime() - now.getTime()) / (1000 * 60 * 60));
+    const diffInMinutes = Math.floor((date.getTime() - now.getTime()) / (1000 * 60));
     
-    if (diffInHours < 24) {
-      const diffInMinutes = Math.floor((date.getTime() - now.getTime()) / (1000 * 60));
-      if (diffInMinutes < 60) {
-        return `in ${diffInMinutes} minutes`;
+    if (diffInMinutes <= 0) {
+      return 'Starting now';
+    } else if (diffInMinutes < 60) {
+      return `in ${diffInMinutes} minutes`;
+    } else if (diffInMinutes < 1440) { // Less than 24 hours
+      const hours = Math.floor(diffInMinutes / 60);
+      const minutes = diffInMinutes % 60;
+      if (minutes === 0) {
+        return `in ${hours} hour${hours > 1 ? 's' : ''}`;
+      } else {
+        return `in ${hours}h ${minutes}m`;
       }
-      return `in ${diffInHours} hours`;
+    } else { // 24 hours or more
+      const days = Math.floor(diffInMinutes / 1440);
+      const remainingMinutes = diffInMinutes % 1440;
+      const hours = Math.floor(remainingMinutes / 60);
+      const minutes = remainingMinutes % 60;
+      
+      if (hours === 0 && minutes === 0) {
+        return `in ${days} day${days > 1 ? 's' : ''}`;
+      } else if (minutes === 0) {
+        return `in ${days}d ${hours}h`;
+      } else {
+        return `in ${days}d ${hours}h ${minutes}m`;
+      }
     }
-    
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
   };
 
   const getLessonStatus = (lesson: Lesson) => {
@@ -235,16 +251,24 @@ export default function TutorLessonsPage() {
     if (lesson.status === 'completed') return 'Completed';
     if (lesson.status === 'reschedule_requested') return 'Reschedule Requested';
     if (lesson.status === 'pending') return 'Needs Review';
+    if (lesson.status === 'confirmed') return 'Confirmed';
     return lesson.status;
   };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'cancelled': return 'text-red-600 bg-red-50';
-      case 'completed': return 'text-green-600 bg-green-50';
-      case 'reschedule_requested': return 'text-orange-600 bg-orange-50';
-      case 'pending': return 'text-blue-600 bg-blue-50';
-      default: return 'text-gray-600 bg-gray-50';
+      case 'confirmed':
+        return 'text-token-success bg-token-success-light border-token-success/20';
+      case 'pending':
+        return 'text-token-warning bg-token-warning-light border-token-warning/20';
+      case 'completed':
+        return 'text-token-info bg-token-info-light border-token-info/20';
+      case 'cancelled':
+        return 'text-token-error bg-token-error-light border-token-error/20';
+      case 'reschedule_requested':
+        return 'text-token-warning bg-token-warning-light border-token-warning/20';
+      default:
+        return 'text-token-text-secondary bg-token-surface-accent border-token-border';
     }
   };
 
@@ -269,7 +293,7 @@ export default function TutorLessonsPage() {
         />
 
         {/* Rescheduling Rules */}
-        <Card className="p-6 bg-orange-50 border border-orange-200 mb-6" variant="outlined">
+        <Card className="p-6 bg-orange-50 border border-orange-200 rounded-xl mb-6" variant="outlined">
           <div className="flex items-start">
             <AlertTriangle className="w-5 h-5 text-orange-600 mr-3 mt-0.5 flex-shrink-0" />
             <div>
@@ -295,7 +319,7 @@ export default function TutorLessonsPage() {
               {lessonsWithRescheduleRequests.map((lesson) => {
                 const rescheduleRequest = rescheduleRequests.find(req => req.lesson_id === lesson.id);
                 return (
-                  <Card key={lesson.id} className="p-6 border-2 border-orange-200 bg-orange-50" variant="outlined">
+                  <Card key={lesson.id} className="p-6 border border-gray-200 bg-orange-50 rounded-xl" variant="outlined">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start space-x-4 flex-1">
                         <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -306,23 +330,51 @@ export default function TutorLessonsPage() {
                             <Text variant="subtitle" className="font-semibold text-gray-900">
                               {lesson.student.name}
                             </Text>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(lesson.status)}`}>
+                            <span className={`px-3 py-1.5 rounded-full text-sm font-medium border flex items-center gap-1.5 ${getStatusColor(lesson.status)}`}>
+                              <div className="w-1.5 h-1.5 rounded-full bg-current"></div>
                               {getLessonStatus(lesson)}
                             </span>
+                            {lesson.minutes_until >= 0 && (
+                              <>
+                                <span className="text-gray-400">•</span>
+                                <div className="flex items-center gap-1.5">
+                                  <div className={`w-1.5 h-1.5 rounded-full ${lesson.minutes_until <= 15 ? 'bg-orange-500 animate-pulse' : 'bg-green-500'}`}></div>
+                                  <Text variant="small" className="text-gray-500">
+                                    {formatDateTime(lesson.scheduled_start)}
+                                  </Text>
+                                </div>
+                              </>
+                            )}
                           </div>
-                          <Text variant="body" className="text-gray-600 mb-2">
-                            {lesson.lesson_type} • {lesson.duration_minutes} minutes
-                          </Text>
-                          <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
-                            <div className="flex items-center">
-                              <Calendar className="w-4 h-4 mr-1" />
-                              {formatDateTime(lesson.scheduled_start)}
+                          <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                            <div className="flex items-center gap-1">
+                              <BookOpen className="w-3.5 h-3.5 text-gray-400" />
+                              <span>{lesson.lesson_type}</span>
+                            </div>
+                            <span className="text-gray-400">•</span>
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-3.5 h-3.5 text-gray-400" />
+                              <span>{lesson.duration_minutes} minutes</span>
+                            </div>
+                            <span className="text-gray-400">•</span>
+                            <div className="flex items-center gap-1">
+                              <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                              <span>
+                                {new Date(lesson.scheduled_start).toLocaleDateString('en-US', {
+                                  weekday: 'short',
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: 'numeric',
+                                  minute: '2-digit',
+                                  hour12: true
+                                })}
+                              </span>
                             </div>
                           </div>
 
                           {/* Reschedule Request Details */}
                           {rescheduleRequest && (
-                            <div className="mt-4 p-4 bg-white rounded-lg border border-orange-200">
+                            <div className="mt-4 p-4 bg-white rounded-xl border border-orange-200">
                               <div className="flex items-center mb-3">
                                 <RefreshCw className="w-4 h-4 text-orange-600 mr-2" />
                                 <Text variant="subtitle" className="font-semibold text-orange-800">
@@ -369,16 +421,16 @@ export default function TutorLessonsPage() {
                       </div>
 
                       {/* Action Buttons */}
-                      <div className="flex flex-col space-y-2 ml-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => window.open(`/lessons/${lesson.id}`, '_blank')}
-                          className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                        >
-                          <Eye className="w-4 h-4 mr-1" />
-                          View Details
-                        </Button>
+                      <div className="flex flex-row space-x-2 ml-4">
+                        {/* Join button for lessons within 60 minutes */}
+                        {lesson.can_join && (
+                          <Link href={`/lessons/${lesson.id}/video`}>
+                            <Button variant="primary" size="sm" className="px-3 py-1.5 h-8 text-xs">
+                              <Video className="w-3.5 h-3.5 mr-1" />
+                              Join
+                            </Button>
+                          </Link>
+                        )}
                         
                         {rescheduleRequest && (
                           <>
@@ -387,9 +439,9 @@ export default function TutorLessonsPage() {
                               size="sm"
                               onClick={() => handleRescheduleAction(rescheduleRequest.id, 'approve')}
                               disabled={rescheduleActionLoading === rescheduleRequest.id}
-                              className="text-green-600 border-green-200 hover:bg-green-50"
+                              className="text-green-600 border-green-200 hover:bg-green-50 px-3 py-1.5 h-8 text-xs"
                             >
-                              <Check className="w-4 h-4 mr-1" />
+                              <Check className="w-3.5 h-3.5 mr-1" />
                               {rescheduleActionLoading === rescheduleRequest.id ? 'Approving...' : 'Approve'}
                             </Button>
                             <Button
@@ -397,9 +449,9 @@ export default function TutorLessonsPage() {
                               size="sm"
                               onClick={() => handleRescheduleAction(rescheduleRequest.id, 'reject')}
                               disabled={rescheduleActionLoading === rescheduleRequest.id}
-                              className="text-red-600 border-red-200 hover:bg-red-50"
+                              className="text-red-600 border-red-200 hover:bg-red-50 px-3 py-1.5 h-8 text-xs"
                             >
-                              <X className="w-4 h-4 mr-1" />
+                              <X className="w-3.5 h-3.5 mr-1" />
                               {rescheduleActionLoading === rescheduleRequest.id ? 'Rejecting...' : 'Reject'}
                             </Button>
                           </>
@@ -411,11 +463,22 @@ export default function TutorLessonsPage() {
                             variant="warning"
                             size="sm"
                             onClick={() => handleCancelLesson(lesson.id)}
+                            className="px-3 py-1.5 h-8 text-xs"
                           >
-                            <X className="w-4 h-4 mr-1" />
-                            Cancel Lesson
+                            <X className="w-3.5 h-3.5 mr-1" />
+                            Cancel
                           </Button>
                         )}
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open(`/lessons/${lesson.id}`, '_blank')}
+                          className="text-blue-600 border-blue-200 hover:bg-blue-50 px-3 py-1.5 h-8 text-xs"
+                        >
+                          <Eye className="w-3.5 h-3.5 mr-1" />
+                          View Details
+                        </Button>
                       </div>
                     </div>
                   </Card>
@@ -433,7 +496,7 @@ export default function TutorLessonsPage() {
             </Text>
             <div className="space-y-4">
               {regularLessons.map((lesson) => (
-                <Card key={lesson.id} className="p-6" variant="outlined">
+                <Card key={lesson.id} className="p-6 border border-gray-200 rounded-xl" variant="outlined">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-4 flex-1">
                       <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -444,32 +507,49 @@ export default function TutorLessonsPage() {
                           <Text variant="subtitle" className="font-semibold text-gray-900">
                             {lesson.student.name}
                           </Text>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(lesson.status)}`}>
+                          <span className={`px-3 py-1.5 rounded-full text-sm font-medium border flex items-center gap-1.5 ${getStatusColor(lesson.status)}`}>
+                            <div className="w-1.5 h-1.5 rounded-full bg-current"></div>
                             {getLessonStatus(lesson)}
                           </span>
                         </div>
-                        <Text variant="body" className="text-gray-600 mb-2">
-                          {lesson.lesson_type} • {lesson.duration_minutes} minutes
-                        </Text>
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
-                          <div className="flex items-center">
-                            <Calendar className="w-4 h-4 mr-1" />
-                            {formatDateTime(lesson.scheduled_start)}
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                          <div className="flex items-center gap-1">
+                            <BookOpen className="w-3.5 h-3.5 text-gray-400" />
+                            <span>{lesson.lesson_type}</span>
+                          </div>
+                          <span className="text-gray-400">•</span>
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5 text-gray-400" />
+                            <span>{lesson.duration_minutes} minutes</span>
+                          </div>
+                          <span className="text-gray-400">•</span>
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                            <span>
+                              {new Date(lesson.scheduled_start).toLocaleDateString('en-US', {
+                                weekday: 'short',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: 'numeric',
+                                minute: '2-digit',
+                                hour12: true
+                              })}
+                            </span>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex flex-col space-y-2 ml-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open(`/lessons/${lesson.id}`, '_blank')}
-                        className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                      >
-                        <Eye className="w-4 h-4 mr-1" />
-                        View Details
-                      </Button>
+                    <div className="flex flex-row space-x-2 ml-4">
+                      {/* Join button for lessons within 60 minutes */}
+                      {lesson.can_join && (
+                        <Link href={`/lessons/${lesson.id}/video`}>
+                          <Button variant="primary" size="sm" className="px-3 py-1.5 h-8 text-xs">
+                            <Video className="w-3.5 h-3.5 mr-1" />
+                            Join
+                          </Button>
+                        </Link>
+                      )}
                       
                       {/* Show Confirm and Cancel buttons for pending lessons */}
                       {lesson.status === 'pending' && (
@@ -478,20 +558,32 @@ export default function TutorLessonsPage() {
                             variant="success"
                             size="sm"
                             onClick={() => handleConfirmLesson(lesson.id)}
+                            className="px-3 py-1.5 h-8 text-xs"
                           >
-                            <Check className="w-4 h-4 mr-1" />
+                            <Check className="w-3.5 h-3.5 mr-1" />
                             Confirm
                           </Button>
                           <Button
                             variant="warning"
                             size="sm"
                             onClick={() => handleCancelLesson(lesson.id)}
+                            className="px-3 py-1.5 h-8 text-xs"
                           >
-                            <X className="w-4 h-4 mr-1" />
+                            <X className="w-3.5 h-3.5 mr-1" />
                             Cancel
                           </Button>
                         </>
                       )}
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(`/lessons/${lesson.id}`, '_blank')}
+                        className="text-blue-600 border-blue-200 hover:bg-blue-50 px-3 py-1.5 h-8 text-xs"
+                      >
+                        <Eye className="w-3.5 h-3.5 mr-1" />
+                        View Details
+                      </Button>
                     </div>
                   </div>
                 </Card>
@@ -501,7 +593,7 @@ export default function TutorLessonsPage() {
         )}
 
         {lessons.length === 0 && (
-          <Card className="p-8 text-center" variant="outlined">
+          <Card className="p-8 text-center border border-gray-200 rounded-xl" variant="outlined">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Calendar className="w-8 h-8 text-gray-400" />
             </div>
