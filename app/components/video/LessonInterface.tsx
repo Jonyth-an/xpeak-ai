@@ -48,6 +48,10 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [showFileUpload, setShowFileUpload] = useState(false)
 
+  // Mobile-specific state management
+  const [isMobile, setIsMobile] = useState(false)
+  const [mobileActivePanel, setMobileActivePanel] = useState<'content' | 'chat' | null>(null)
+
   // Determine user type and ID
   const isTutor = lesson?.tutor_id === user?.id
   const userType = isTutor ? 'tutor' : 'student'
@@ -91,6 +95,38 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
   const [lessonTime, setLessonTime] = useState(0)
   const studentVideoRef = useRef<HTMLVideoElement>(null)
   const tutorVideoRef = useRef<HTMLVideoElement>(null)
+
+  // Check for mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768) // md breakpoint
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Mobile panel management
+  useEffect(() => {
+    if (isMobile) {
+      // On mobile, only one panel can be active at a time
+      if (isContentVisible && isChatOpen) {
+        // If both are open, prioritize content (lesson materials)
+        setIsChatOpen(false)
+        setMobileActivePanel('content')
+      } else if (isContentVisible) {
+        setMobileActivePanel('content')
+      } else if (isChatOpen) {
+        setMobileActivePanel('chat')
+      } else {
+        setMobileActivePanel(null)
+      }
+    } else {
+      // On desktop, both panels can be open
+      setMobileActivePanel(null)
+    }
+  }, [isMobile, isContentVisible, isChatOpen])
 
   // Timer for lesson duration
   useEffect(() => {
@@ -155,6 +191,37 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
     setIsScreenSharing(!isScreenSharing)
   }
 
+  // Mobile panel handlers
+  const handleMobileContentToggle = () => {
+    if (isMobile) {
+      if (mobileActivePanel === 'content') {
+        setIsContentVisible(false)
+        setMobileActivePanel(null)
+      } else {
+        setIsContentVisible(true)
+        setIsChatOpen(false)
+        setMobileActivePanel('content')
+      }
+    } else {
+      setIsContentVisible(!isContentVisible)
+    }
+  }
+
+  const handleMobileChatToggle = () => {
+    if (isMobile) {
+      if (mobileActivePanel === 'chat') {
+        setIsChatOpen(false)
+        setMobileActivePanel(null)
+      } else {
+        setIsChatOpen(true)
+        setIsContentVisible(false)
+        setMobileActivePanel('chat')
+      }
+    } else {
+      setIsChatOpen(!isChatOpen)
+    }
+  }
+
   // Get tutor and student information
   const tutorName = lesson?.tutor?.name || "Tutor"
   const tutorInitials = tutorName.split(" ").map((n: string) => n[0]).join("").toUpperCase()
@@ -198,7 +265,7 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                 variant="ghost"
                 size="sm"
                 className="text-white hover:bg-white/20"
-                onClick={() => setIsContentVisible(true)}
+                onClick={handleMobileContentToggle}
               >
                 <FileText className="w-4 h-4" />
               </Button>
@@ -207,7 +274,7 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
               variant="ghost"
               size="sm"
               className="text-white hover:bg-white/20"
-              onClick={() => setIsChatOpen(!isChatOpen)}
+              onClick={handleMobileChatToggle}
             >
               <MessageSquare className="w-4 h-4" />
             </Button>
@@ -224,31 +291,43 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
 
       <div className="flex-1 flex">
         {/* Main Content Area */}
-        <div className={`flex-1 flex ${isChatOpen ? "mr-80" : ""} transition-all duration-300`}>
+        <div className={`flex-1 flex ${isChatOpen && !isMobile ? "mr-50" : ""} transition-all duration-300`}>
           {isContentVisible ? (
             <>
               {/* Video Streams - With Content */}
               <div
-                className={`${isContentMaximized ? "w-1/4" : "w-1/3"} flex flex-col gap-4 p-4 transition-all duration-300`}
+                className={`${
+                  isMobile 
+                    ? "w-full h-1/2 flex flex-row gap-2 p-2" 
+                    : `${isContentMaximized ? "w-1/4" : "w-1/3"} flex flex-col gap-3 p-3`
+                } transition-all duration-300 flex-shrink-0`}
               >
                 {/* Tutor Video */}
-                <Card className="bg-gray-800 border-gray-700 flex-1">
+                <Card className={`bg-gray-800 border-gray-700 ${isMobile ? "flex-1" : "flex-1"}`}>
                   <CardContent className="p-0 h-full">
                     <div className="relative h-full bg-gray-900 rounded-lg overflow-hidden">
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl">
+                        <div className={`${
+                          isMobile ? "w-12 h-12 text-lg" : "w-20 h-20 text-2xl"
+                        } bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold`}>
                           {tutorInitials}
                         </div>
                       </div>
-                      <div className="absolute bottom-4 left-4">
-                        <Badge className="bg-blue-600 text-white border-blue-500">{tutorName} (Tutor)</Badge>
+                      <div className="absolute bottom-2 left-2">
+                        <Badge className={`bg-blue-600 text-white border-blue-500 ${
+                          isMobile ? "text-xs px-2 py-1" : ""
+                        }`}>{tutorName} (Tutor)</Badge>
                       </div>
-                      <div className="absolute bottom-4 right-4 flex gap-2">
-                        <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                          <Mic className="w-4 h-4 text-white" />
+                      <div className={`absolute bottom-2 right-2 flex gap-1 ${isMobile ? "gap-1" : "gap-2"}`}>
+                        <div className={`${
+                          isMobile ? "w-6 h-6" : "w-8 h-8"
+                        } bg-green-600 rounded-full flex items-center justify-center`}>
+                          <Mic className={`text-white ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
                         </div>
-                        <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                          <Video className="w-4 h-4 text-white" />
+                        <div className={`${
+                          isMobile ? "w-6 h-6" : "w-8 h-8"
+                        } bg-green-600 rounded-full flex items-center justify-center`}>
+                          <Video className={`text-white ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
                         </div>
                       </div>
                     </div>
@@ -256,30 +335,42 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                 </Card>
 
                 {/* Student Video */}
-                <Card className="bg-gray-800 border-gray-700 flex-1">
+                <Card className={`bg-gray-800 border-gray-700 ${isMobile ? "flex-1" : "flex-1"}`}>
                   <CardContent className="p-0 h-full">
                     <div className="relative h-full bg-gray-900 rounded-lg overflow-hidden">
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-2xl">
+                        <div className={`${
+                          isMobile ? "w-12 h-12 text-lg" : "w-20 h-20 text-2xl"
+                        } bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold`}>
                           {studentInitials}
                         </div>
                       </div>
-                      <div className="absolute bottom-4 left-4">
-                        <Badge className="bg-green-600 text-white border-green-500">You (Student)</Badge>
+                      <div className="absolute bottom-2 left-2">
+                        <Badge className={`bg-green-600 text-white border-green-500 ${
+                          isMobile ? "text-xs px-2 py-1" : ""
+                        }`}>You (Student)</Badge>
                       </div>
-                      <div className="absolute bottom-4 right-4 flex gap-2">
+                      <div className={`absolute bottom-2 right-2 flex gap-1 ${isMobile ? "gap-1" : "gap-2"}`}>
                         <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center ${isMicOn ? "bg-green-600" : "bg-red-600"}`}
+                          className={`${
+                            isMobile ? "w-6 h-6" : "w-8 h-8"
+                          } rounded-full flex items-center justify-center ${isMicOn ? "bg-green-600" : "bg-red-600"}`}
                         >
-                          {isMicOn ? <Mic className="w-4 h-4 text-white" /> : <MicOff className="w-4 h-4 text-white" />}
+                          {isMicOn ? (
+                            <Mic className={`text-white ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
+                          ) : (
+                            <MicOff className={`text-white ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
+                          )}
                         </div>
                         <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center ${isCameraOn ? "bg-green-600" : "bg-red-600"}`}
+                          className={`${
+                            isMobile ? "w-6 h-6" : "w-8 h-8"
+                          } rounded-full flex items-center justify-center ${isCameraOn ? "bg-green-600" : "bg-red-600"}`}
                         >
                           {isCameraOn ? (
-                            <Video className="w-4 h-4 text-white" />
+                            <Video className={`text-white ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
                           ) : (
-                            <VideoOff className="w-4 h-4 text-white" />
+                            <VideoOff className={`text-white ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
                           )}
                         </div>
                       </div>
@@ -289,8 +380,12 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
               </div>
 
               {/* Lesson Content Area */}
-              <div className={`${isContentMaximized ? "flex-1" : "flex-1"} flex flex-col p-4`}>
-                <Card className="flex-1 bg-white border-gray-200">
+              <div className={`${
+                isMobile 
+                  ? "w-full h-1/2" 
+                  : "flex-1"
+              } flex flex-col ${isMobile ? "p-2" : "p-2 min-w-0 h-full"}`}>
+                <Card className="flex-1 bg-white border-gray-200 rounded-lg h-full">
                   <CardContent className="p-0 h-full">
                     <div className="h-full flex flex-col">
                       {/* Content Header */}
@@ -300,37 +395,39 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                           <h3 className="font-semibold text-gray-900">Lesson Materials</h3>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => setIsContentMaximized(!isContentMaximized)}>
-                            {isContentMaximized ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => setIsContentVisible(false)}>
+                          {!isMobile && (
+                            <Button variant="ghost" size="sm" onClick={() => setIsContentMaximized(!isContentMaximized)}>
+                              {isContentMaximized ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                            </Button>
+                          )}
+                          <Button variant="ghost" size="sm" onClick={handleMobileContentToggle}>
                             <X className="w-4 h-4" />
                           </Button>
                         </div>
                       </div>
 
                       {/* Content Display */}
-                      <div className="flex-1 p-8 bg-gradient-to-br from-blue-50 to-purple-50">
+                      <div className="flex-1 p-3 lg:p-6 bg-gradient-to-br from-blue-50 to-purple-50 rounded-b-lg">
                         <div className="h-full flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="w-32 h-32 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                              <FileText className="w-16 h-16 text-blue-600" />
+                          <div className="text-center w-full max-w-5xl">
+                            <div className="w-24 h-24 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4 lg:mb-6">
+                              <FileText className="w-12 h-12 lg:w-16 lg:h-16 text-blue-600" />
                             </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-4">Conversation Practice</h3>
-                            <p className="text-gray-600 mb-6 max-w-md">
+                            <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-3 lg:mb-4">Conversation Practice</h3>
+                            <p className="text-gray-600 mb-4 lg:mb-6 max-w-3xl mx-auto text-sm lg:text-base">
                               Today we'll practice everyday conversations. Let's start with introductions and move on to
                               talking about hobbies and interests.
                             </p>
-                            <div className="space-y-4">
-                              <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
-                                <h4 className="font-semibold text-gray-900 mb-2">Topic 1: Introductions</h4>
-                                <p className="text-gray-600 text-sm">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 max-w-4xl mx-auto">
+                              <div className="p-3 lg:p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+                                <h4 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">Topic 1: Introductions</h4>
+                                <p className="text-gray-600 text-xs lg:text-sm">
                                   Practice introducing yourself and asking about others
                                 </p>
                               </div>
-                              <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
-                                <h4 className="font-semibold text-gray-900 mb-2">Topic 2: Hobbies & Interests</h4>
-                                <p className="text-gray-600 text-sm">Discuss what you like to do in your free time</p>
+                              <div className="p-3 lg:p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+                                <h4 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">Topic 2: Hobbies & Interests</h4>
+                                <p className="text-gray-600 text-xs lg:text-sm">Discuss what you like to do in your free time</p>
                               </div>
                             </div>
                           </div>
@@ -438,11 +535,11 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
           )}
         </div>
 
-        {/* Chat Sidebar */}
-        {isChatOpen && (
-          <div className="w-80 bg-white border-l border-gray-200 flex flex-col">
+        {/* Chat Sidebar - Desktop Only */}
+        {isChatOpen && !isMobile && (
+          <div className="w-80 bg-white border-l border-gray-200 flex flex-col rounded-l-lg">
             {/* Chat Header */}
-            <div className="p-4 border-b border-gray-200">
+            <div className="p-3 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold text-gray-900">Chat</h3>
@@ -469,7 +566,7 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
             </div>
 
             {/* Chat Messages */}
-            <ScrollArea className="flex-1 p-4">
+            <ScrollArea className="flex-1 p-3">
               {chatLoading ? (
                 <div className="flex items-center justify-center h-32">
                   <div className="text-gray-500 text-sm">Loading messages...</div>
@@ -531,7 +628,171 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
             </ScrollArea>
 
             {/* Chat Input */}
-            <div className="p-4 border-t border-gray-200">
+            <div className="p-3 border-t border-gray-200">
+              {/* File Upload Area */}
+              {showFileUpload && (
+                <div className="mb-3">
+                  <FileUpload
+                    onFileSelect={handleFileSelect}
+                    onFileRemove={handleFileRemove}
+                    selectedFile={selectedFile}
+                    isUploading={isUploading}
+                    uploadProgress={uploadProgress}
+                    error={chatError || undefined}
+                  />
+                </div>
+              )}
+
+              {/* Selected File Display */}
+              {selectedFile && !showFileUpload && (
+                <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-blue-600" />
+                      <span className="text-sm font-medium">{selectedFile.name}</span>
+                      <Badge variant="secondary" className="text-xs">
+                        {formatFileSize(selectedFile.size)}
+                      </Badge>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleFileRemove}
+                      className="h-6 w-6 p-0"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowFileUpload(!showFileUpload)}
+                  className="flex-shrink-0"
+                  disabled={!chatConnected}
+                >
+                  <Paperclip className="w-4 h-4" />
+                </Button>
+                
+                <Input
+                  value={chatMessage}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setChatMessage(e.target.value)}
+                  placeholder={chatConnected ? "Type a message..." : "Connecting to chat..."}
+                  onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Enter" && handleSendMessage()}
+                  className="flex-1"
+                  disabled={!chatConnected}
+                />
+                
+                <Button 
+                  onClick={selectedFile ? handleSendFile : handleSendMessage} 
+                  size="sm" 
+                  className="bg-blue-600 hover:bg-blue-700"
+                  disabled={!chatConnected || (!chatMessage.trim() && !selectedFile)}
+                >
+                  <Send className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Mobile Chat Panel */}
+        {isMobile && mobileActivePanel === 'chat' && (
+          <div className="absolute inset-0 top-1/2 bg-white border-t border-gray-200 flex flex-col rounded-t-lg z-10 transition-all duration-300 ease-in-out">
+            {/* Chat Header */}
+            <div className="p-3 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-gray-900">Chat</h3>
+                  {chatConnected ? (
+                    <div className="flex items-center gap-1 text-green-600">
+                      <Wifi className="w-3 h-3" />
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1 text-red-600">
+                      <WifiOff className="w-3 h-3" />
+                    </div>
+                  )}
+                </div>
+                <Button variant="ghost" size="sm" onClick={handleMobileChatToggle}>
+                  <Minimize2 className="w-4 h-4" />
+                </Button>
+              </div>
+              {chatError && (
+                <div className="flex items-center gap-2 mt-2 p-2 bg-red-50 border border-red-200 rounded-md">
+                  <AlertCircle className="w-4 h-4 text-red-600" />
+                  <span className="text-xs text-red-600">{chatError}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Chat Messages */}
+            <ScrollArea className="flex-1 p-3">
+              {chatLoading ? (
+                <div className="flex items-center justify-center h-32">
+                  <div className="text-gray-500 text-sm">Loading messages...</div>
+                </div>
+              ) : chatMessages.length === 0 ? (
+                <div className="flex items-center justify-center h-32">
+                  <div className="text-gray-500 text-sm text-center">
+                    No messages yet.<br />
+                    Start the conversation!
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {chatMessages.map((msg) => {
+                    const isOwnMessage = msg.sender_id === userId
+                    const timestamp = new Date(msg.created_at).toLocaleTimeString([], { 
+                      hour: '2-digit', 
+                      minute: '2-digit' 
+                    })
+                    
+                    return (
+                      <div key={msg.id} className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}>
+                        <div
+                          className={`max-w-[80%] p-3 rounded-lg ${
+                            isOwnMessage 
+                              ? "bg-blue-600 text-white" 
+                              : "bg-gray-100 text-gray-900"
+                          }`}
+                        >
+                          {!isOwnMessage && msg.sender_name && (
+                            <p className="text-xs mb-1 font-medium text-gray-600">
+                              {msg.sender_name}
+                            </p>
+                          )}
+                          {msg.message_type === 'file' && msg.file_url && msg.file_name ? (
+                            <FileMessage
+                              fileName={msg.file_name}
+                              fileUrl={msg.file_url}
+                              fileSize={msg.file_size || 0}
+                              fileType={msg.message}
+                              senderName={msg.sender_name || 'Unknown'}
+                              timestamp={timestamp}
+                              isOwnMessage={isOwnMessage}
+                            />
+                          ) : (
+                            <p className="text-sm">{msg.message}</p>
+                          )}
+                          <p className={`text-xs mt-1 ${
+                            isOwnMessage ? "text-blue-100" : "text-gray-500"
+                          }`}>
+                            {timestamp}
+                          </p>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </ScrollArea>
+
+            {/* Chat Input */}
+            <div className="p-3 border-t border-gray-200">
               {/* File Upload Area */}
               {showFileUpload && (
                 <div className="mb-3">
@@ -642,13 +903,27 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
           <Button
             variant="ghost"
             size="lg"
-            onClick={() => setIsChatOpen(!isChatOpen)}
+            onClick={handleMobileChatToggle}
             className={`w-12 h-12 rounded-full ${
-              isChatOpen ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-gray-700 hover:bg-gray-600 text-white"
+              (isChatOpen || mobileActivePanel === 'chat') ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-gray-700 hover:bg-gray-600 text-white"
             }`}
           >
             <MessageSquare className="w-5 h-5" />
           </Button>
+
+          {/* Mobile Content Toggle Button */}
+          {isMobile && (
+            <Button
+              variant="ghost"
+              size="lg"
+              onClick={handleMobileContentToggle}
+              className={`w-12 h-12 rounded-full ${
+                mobileActivePanel === 'content' ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-gray-700 hover:bg-gray-600 text-white"
+              }`}
+            >
+              <FileText className="w-5 h-5" />
+            </Button>
+          )}
         </div>
       </div>
     </div>
