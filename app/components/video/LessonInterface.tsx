@@ -22,19 +22,19 @@ import {
   Users,
   FileText,
   X,
+  Wifi,
+  WifiOff,
+  AlertCircle,
+  Paperclip,
 } from "lucide-react"
+import { useLessonChat } from "@/lib/hooks/useLessonChat"
+import FileUpload from "./FileUpload"
+import FileMessage from "./FileMessage"
 
 interface LessonInterfaceProps {
   onEndLesson: () => void
   lesson?: any
   user?: any
-}
-
-interface ChatMessage {
-  id: number
-  sender: "student" | "tutor"
-  message: string
-  timestamp: string
 }
 
 export default function LessonInterface({ onEndLesson, lesson, user }: LessonInterfaceProps) {
@@ -44,30 +44,53 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [isContentMaximized, setIsContentMaximized] = useState(false)
   const [chatMessage, setChatMessage] = useState("")
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    {
-      id: 1,
-      sender: "tutor",
-      message: "Hello! Welcome to our lesson. How are you today?",
-      timestamp: "2:30 PM",
-    },
-    {
-      id: 2,
-      sender: "student",
-      message: "Hi! I'm doing well, thank you. Ready to learn!",
-      timestamp: "2:31 PM",
-    },
-    {
-      id: 3,
-      sender: "tutor",
-      message: "Great! Let's start with some conversation practice.",
-      timestamp: "2:31 PM",
-    },
-  ])
+  const [isContentVisible, setIsContentVisible] = useState(true)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [showFileUpload, setShowFileUpload] = useState(false)
+
+  // Determine user type and ID
+  const isTutor = lesson?.tutor_id === user?.id
+  const userType = isTutor ? 'tutor' : 'student'
+  const userId = user?.id
+  const userName = user?.full_name || user?.email?.split('@')[0] || 'User'
+
+  console.log('LessonInterface - User data:', {
+    user,
+    lesson,
+    isTutor,
+    userType,
+    userId,
+    userName
+  })
+
+  // Use real-time chat hook
+  const {
+    messages: chatMessages,
+    sendMessage,
+    sendFileMessage,
+    isLoading: chatLoading,
+    error: chatError,
+    isConnected: chatConnected,
+    isUploading,
+    uploadProgress
+  } = useLessonChat({
+    lessonId: lesson?.id || '',
+    userId: userId || '',
+    userType,
+    userName
+  })
+
+  console.log('LessonInterface - Chat hook state:', {
+    chatLoading,
+    chatError,
+    chatConnected,
+    isUploading,
+    uploadProgress
+  })
+
   const [lessonTime, setLessonTime] = useState(0)
   const studentVideoRef = useRef<HTMLVideoElement>(null)
   const tutorVideoRef = useRef<HTMLVideoElement>(null)
-  const [isContentVisible, setIsContentVisible] = useState(true)
 
   // Timer for lesson duration
   useEffect(() => {
@@ -83,41 +106,60 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`
   }
 
-  const handleSendMessage = () => {
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
+  const handleSendMessage = async () => {
     if (chatMessage.trim()) {
-      const newMessage: ChatMessage = {
-        id: chatMessages.length + 1,
-        sender: "student",
-        message: chatMessage,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      }
-      setChatMessages([...chatMessages, newMessage])
+      await sendMessage(chatMessage)
       setChatMessage("")
     }
   }
 
-  const toggleScreenShare = async () => {
-    if (!isScreenSharing) {
+  const handleFileSelect = (file: File) => {
+    setSelectedFile(file)
+    setShowFileUpload(false)
+  }
+
+  const handleFileRemove = () => {
+    setSelectedFile(null)
+  }
+
+  const handleSendFile = async () => {
+    if (selectedFile) {
+      console.log('LessonInterface - Sending file:', {
+        fileName: selectedFile.name,
+        fileSize: selectedFile.size,
+        fileType: selectedFile.type,
+        lessonId: lesson?.id,
+        userId,
+        userName
+      })
+      
       try {
-        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true })
-        setIsScreenSharing(true)
-        // In a real implementation, you would handle the screen share stream
-        stream.getVideoTracks()[0].onended = () => {
-          setIsScreenSharing(false)
-        }
+        await sendFileMessage(selectedFile)
+        console.log('LessonInterface - File sent successfully')
+        setSelectedFile(null)
       } catch (error) {
-        console.error("Error starting screen share:", error)
+        console.error('LessonInterface - Error sending file:', error)
       }
-    } else {
-      setIsScreenSharing(false)
     }
   }
 
-  // Get participant names
-  const tutorName = lesson?.tutor?.display_name || "Tutor"
-  const studentName = user?.email?.split('@')[0] || "Student"
-  const tutorInitials = tutorName.split(' ').map((n: string) => n[0]).join('').toUpperCase()
-  const studentInitials = studentName.split(' ').map((n: string) => n[0]).join('').toUpperCase()
+  const toggleScreenShare = () => {
+    setIsScreenSharing(!isScreenSharing)
+  }
+
+  // Get tutor and student information
+  const tutorName = lesson?.tutor?.name || "Tutor"
+  const tutorInitials = tutorName.split(" ").map((n: string) => n[0]).join("").toUpperCase()
+  const studentName = user?.full_name || "Student"
+  const studentInitials = studentName.split(" ").map((n: string) => n[0]).join("").toUpperCase()
 
   return (
     <div className="h-screen bg-gray-900 flex flex-col">
@@ -134,34 +176,48 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
               <Users className="w-4 h-4" />
               <span className="text-sm">{tutorName}</span>
             </div>
+            {/* Chat Connection Status */}
+            <div className="flex items-center gap-2">
+              {chatConnected ? (
+                <div className="flex items-center gap-1 text-green-400">
+                  <Wifi className="w-4 h-4" />
+                  <span className="text-xs">Chat Connected</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1 text-red-400">
+                  <WifiOff className="w-4 h-4" />
+                  <span className="text-xs">Chat Disconnected</span>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
             {!isContentVisible && (
-                          <Button
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20"
+                onClick={() => setIsContentVisible(true)}
+              >
+                <FileText className="w-4 h-4" />
+              </Button>
+            )}
+            <Button
               variant="ghost"
               size="sm"
               className="text-white hover:bg-white/20"
-              onClick={() => setIsContentVisible(true)}
+              onClick={() => setIsChatOpen(!isChatOpen)}
             >
-              <FileText className="w-4 h-4" />
+              <MessageSquare className="w-4 h-4" />
             </Button>
-          )}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-white hover:bg-white/20"
-            onClick={() => setIsChatOpen(!isChatOpen)}
-          >
-            <MessageSquare className="w-4 h-4" />
-          </Button>
-          <Button variant="ghost" size="sm" className="text-white hover:bg-white/20">
-            <Settings className="w-4 h-4" />
-          </Button>
-          <Button variant="destructive" size="sm" onClick={onEndLesson} className="bg-red-600 hover:bg-red-700">
-            <Phone className="w-4 h-4 mr-2" />
-            End Lesson
-          </Button>
+            <Button variant="ghost" size="sm" className="text-white hover:bg-white/20">
+              <Settings className="w-4 h-4" />
+            </Button>
+            <Button variant="destructive" size="sm" onClick={onEndLesson} className="bg-red-600 hover:bg-red-700">
+              <Phone className="w-4 h-4 mr-2" />
+              End Lesson
+            </Button>
           </div>
         </div>
       </div>
@@ -388,44 +444,157 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
             {/* Chat Header */}
             <div className="p-4 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900">Chat</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-gray-900">Chat</h3>
+                  {chatConnected ? (
+                    <div className="flex items-center gap-1 text-green-600">
+                      <Wifi className="w-3 h-3" />
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1 text-red-600">
+                      <WifiOff className="w-3 h-3" />
+                    </div>
+                  )}
+                </div>
                 <Button variant="ghost" size="sm" onClick={() => setIsChatOpen(false)}>
                   <Minimize2 className="w-4 h-4" />
                 </Button>
               </div>
+              {chatError && (
+                <div className="flex items-center gap-2 mt-2 p-2 bg-red-50 border border-red-200 rounded-md">
+                  <AlertCircle className="w-4 h-4 text-red-600" />
+                  <span className="text-xs text-red-600">{chatError}</span>
+                </div>
+              )}
             </div>
 
             {/* Chat Messages */}
             <ScrollArea className="flex-1 p-4">
-              <div className="space-y-4">
-                {chatMessages.map((msg) => (
-                  <div key={msg.id} className={`flex ${msg.sender === "student" ? "justify-end" : "justify-start"}`}>
-                    <div
-                      className={`max-w-[80%] p-3 rounded-lg ${
-                        msg.sender === "student" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-900"
-                      }`}
-                    >
-                      <p className="text-sm">{msg.message}</p>
-                      <p className={`text-xs mt-1 ${msg.sender === "student" ? "text-blue-100" : "text-gray-500"}`}>
-                        {msg.timestamp}
-                      </p>
-                    </div>
+              {chatLoading ? (
+                <div className="flex items-center justify-center h-32">
+                  <div className="text-gray-500 text-sm">Loading messages...</div>
+                </div>
+              ) : chatMessages.length === 0 ? (
+                <div className="flex items-center justify-center h-32">
+                  <div className="text-gray-500 text-sm text-center">
+                    No messages yet.<br />
+                    Start the conversation!
                   </div>
-                ))}
-              </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {chatMessages.map((msg) => {
+                    const isOwnMessage = msg.sender_id === userId
+                    const timestamp = new Date(msg.created_at).toLocaleTimeString([], { 
+                      hour: '2-digit', 
+                      minute: '2-digit' 
+                    })
+                    
+                    return (
+                      <div key={msg.id} className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}>
+                        <div
+                          className={`max-w-[80%] p-3 rounded-lg ${
+                            isOwnMessage 
+                              ? "bg-blue-600 text-white" 
+                              : "bg-gray-100 text-gray-900"
+                          }`}
+                        >
+                          {!isOwnMessage && msg.sender_name && (
+                            <p className="text-xs mb-1 font-medium text-gray-600">
+                              {msg.sender_name}
+                            </p>
+                          )}
+                          {msg.message_type === 'file' && msg.file_url && msg.file_name ? (
+                            <FileMessage
+                              fileName={msg.file_name}
+                              fileUrl={msg.file_url}
+                              fileSize={msg.file_size || 0}
+                              fileType={msg.message}
+                              senderName={msg.sender_name || 'Unknown'}
+                              timestamp={timestamp}
+                              isOwnMessage={isOwnMessage}
+                            />
+                          ) : (
+                            <p className="text-sm">{msg.message}</p>
+                          )}
+                          <p className={`text-xs mt-1 ${
+                            isOwnMessage ? "text-blue-100" : "text-gray-500"
+                          }`}>
+                            {timestamp}
+                          </p>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
             </ScrollArea>
 
             {/* Chat Input */}
             <div className="p-4 border-t border-gray-200">
+              {/* File Upload Area */}
+              {showFileUpload && (
+                <div className="mb-3">
+                  <FileUpload
+                    onFileSelect={handleFileSelect}
+                    onFileRemove={handleFileRemove}
+                    selectedFile={selectedFile}
+                    isUploading={isUploading}
+                    uploadProgress={uploadProgress}
+                    error={chatError || undefined}
+                  />
+                </div>
+              )}
+
+              {/* Selected File Display */}
+              {selectedFile && !showFileUpload && (
+                <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-blue-600" />
+                      <span className="text-sm font-medium">{selectedFile.name}</span>
+                      <Badge variant="secondary" className="text-xs">
+                        {formatFileSize(selectedFile.size)}
+                      </Badge>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleFileRemove}
+                      className="h-6 w-6 p-0"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+
               <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowFileUpload(!showFileUpload)}
+                  className="flex-shrink-0"
+                  disabled={!chatConnected}
+                >
+                  <Paperclip className="w-4 h-4" />
+                </Button>
+                
                 <Input
                   value={chatMessage}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setChatMessage(e.target.value)}
-                  placeholder="Type a message..."
+                  placeholder={chatConnected ? "Type a message..." : "Connecting to chat..."}
                   onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Enter" && handleSendMessage()}
                   className="flex-1"
+                  disabled={!chatConnected}
                 />
-                <Button onClick={handleSendMessage} size="sm" className="bg-blue-600 hover:bg-blue-700">
+                
+                <Button 
+                  onClick={selectedFile ? handleSendFile : handleSendMessage} 
+                  size="sm" 
+                  className="bg-blue-600 hover:bg-blue-700"
+                  disabled={!chatConnected || (!chatMessage.trim() && !selectedFile)}
+                >
                   <Send className="w-4 h-4" />
                 </Button>
               </div>
