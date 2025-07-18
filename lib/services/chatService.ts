@@ -148,6 +148,12 @@ class ChatService {
 
       if (error) {
         console.error('Error sending message:', error)
+        console.error('Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        })
         throw error
       }
 
@@ -155,6 +161,8 @@ class ChatService {
       return data
     } catch (error) {
       console.error('Failed to send message:', error)
+      console.error('Error type:', typeof error)
+      console.error('Error stringified:', JSON.stringify(error, null, 2))
       return null
     }
   }
