@@ -42,7 +42,7 @@ export default function ProfilePage() {
                 <div className="lg:ml-40 flex-1">
                   <div className="space-y-8">
                     {/* Avatar Section */}
-                    <Card className="p-6">
+                    <Card className="p-6 rounded-xl">
                       {!hasProfilePhoto && (
                         <div className="text-center mb-6">
                           <Text variant="h3" as="h3" className="mb-2">
@@ -68,7 +68,7 @@ export default function ProfilePage() {
                     </Card>
 
                     {/* Profile Form */}
-                    <Card className="p-6">
+                    <Card className="p-6 rounded-xl">
                       <div className="mb-6">
                         <Text variant="h3" as="h3" className="mb-2">
                           Personal Information

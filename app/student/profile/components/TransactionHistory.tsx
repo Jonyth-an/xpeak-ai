@@ -376,7 +376,7 @@ export default function TransactionHistory() {
 
       {/* Filters */}
       {showFilters && (
-        <Card className="p-6">
+        <Card className="p-6 rounded-xl">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Text variant="h6">Filters</Text>
@@ -457,7 +457,7 @@ export default function TransactionHistory() {
 
       {/* Transaction Table */}
       {transactions.length > 0 ? (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden rounded-xl">
           {/* Table Header */}
           <div className="bg-token-surface-subtle px-6 py-3 border-b token-border-primary">
             <div className="grid grid-cols-6 gap-4 text-sm font-medium token-text-secondary">

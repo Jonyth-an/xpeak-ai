@@ -27,7 +27,10 @@ import {
   AlertTriangle,
   RefreshCw,
   Play,
-  Eye
+  Eye,
+  Activity,
+  Zap,
+  Settings
 } from 'lucide-react';
 
 interface DashboardData {
@@ -299,7 +302,7 @@ export default function TutorDashboard() {
 
           {/* Next Lesson Section */}
           {data.next_lesson && (
-            <Card className="p-6 mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200" variant="default">
+            <Card className="p-6 mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl" variant="default">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center">
                   <Clock className="w-6 h-6 text-blue-600 mr-3" />
@@ -357,7 +360,7 @@ export default function TutorDashboard() {
           {/* Performance Overview */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             {/* Performance Metrics */}
-            <Card className="p-6" variant="default">
+            <Card className="p-6 rounded-xl" variant="default">
               <div className="flex items-center mb-4">
                 <Target className="w-5 h-5 text-token-primary mr-2" />
                 <Text variant="h3" className="text-token-primary">Performance Metrics</Text>
@@ -419,7 +422,7 @@ export default function TutorDashboard() {
             </Card>
 
             {/* Recent Activity */}
-            <Card className="p-6" variant="default">
+            <Card className="p-6 rounded-xl" variant="default">
               <div className="flex items-center mb-4">
                 <Clock className="w-5 h-5 text-token-primary mr-2" />
                 <Text variant="h3" className="text-token-primary">Recent Activity</Text>
@@ -458,7 +461,7 @@ export default function TutorDashboard() {
           </div>
 
           {/* Today's Schedule */}
-          <Card className="p-6" variant="default">
+          <Card className="p-6 rounded-xl" variant="default">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
                 <Calendar className="w-5 h-5 text-token-primary mr-2" />

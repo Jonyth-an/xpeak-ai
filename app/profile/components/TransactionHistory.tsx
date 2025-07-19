@@ -376,7 +376,7 @@ export default function TransactionHistory() {
 
       {/* Filters */}
       {showFilters && (
-        <Card className="p-6">
+        <Card className="p-6 rounded-xl">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Text variant="h6">Filters</Text>

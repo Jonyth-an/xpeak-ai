@@ -61,7 +61,7 @@ export default function OptimisticWordDemo() {
       </div>
 
       {/* Add Word Form */}
-      <Card className="p-6">
+      <Card className="p-6 rounded-xl">
         <h2 className="text-xl font-semibold mb-4">Add New Word</h2>
         <form onSubmit={handleAddWord} className="flex gap-4 mb-4">
           <Input
@@ -154,7 +154,7 @@ export default function OptimisticWordDemo() {
       </div>
 
       {/* Status Legend */}
-      <Card className="p-6">
+      <Card className="p-6 rounded-xl">
         <h3 className="text-lg font-semibold mb-4">Status Legend</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="flex items-center gap-2">

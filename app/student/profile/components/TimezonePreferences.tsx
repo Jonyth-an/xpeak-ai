@@ -116,7 +116,7 @@ export default function TimezonePreferences() {
   const currentTzObj = timezones.find(tz => tz.value === currentTimezone) || null;
 
   return (
-    <Card className="mb-6">
+    <Card className="mb-6 rounded-xl">
       <Text as="h3" className="font-semibold mb-2">Current Region & Time</Text>
       {!editMode ? (
         <div className="flex items-center justify-between">

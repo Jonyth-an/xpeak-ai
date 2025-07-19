@@ -28,7 +28,7 @@ export default function SecurityPage() {
                 </div>
                 {/* Main Content */}
                 <div className="lg:ml-40 flex-1">
-                  <Card className="p-6">
+                  <Card className="p-6 rounded-xl">
                     <div className="mb-6">
                       <Text variant="h3" as="h3" className="mb-2">
                         Security Settings

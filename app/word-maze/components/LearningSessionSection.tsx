@@ -152,7 +152,7 @@ const LearningSessionSection = () => {
     if (!gamificationData) return null;
 
     return (
-      <Card className="p-6 mb-6">
+      <Card className="p-6 rounded-xl">
         <Text variant="h3" className="mb-4">Your Progress</Text>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center">
@@ -239,7 +239,7 @@ const LearningSessionSection = () => {
     if (currentSession) return null;
 
     return (
-      <Card className="p-6">
+      <Card className="p-6 rounded-xl">
         <Text variant="h3" className="mb-4">Start Learning</Text>
         <Text variant="body" className="text-gray-600 mb-6">
           Begin a personalized learning session tailored to your current level and progress.

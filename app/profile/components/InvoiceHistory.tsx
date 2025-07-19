@@ -348,7 +348,7 @@ export default function InvoiceHistory() {
       {/* Stats Cards */}
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="p-4">
+          <Card className="p-4 rounded-xl">
             <div className="flex items-center justify-between">
               <div>
                 <Text className="text-sm text-gray-600">Total Invoices</Text>
@@ -357,7 +357,7 @@ export default function InvoiceHistory() {
               <FileText className="text-blue-500" size={24} />
             </div>
           </Card>
-          <Card className="p-4">
+          <Card className="p-4 rounded-xl">
             <div className="flex items-center justify-between">
               <div>
                 <Text className="text-sm text-gray-600">Total Paid</Text>
@@ -368,7 +368,7 @@ export default function InvoiceHistory() {
               <TrendingUp className="text-green-500" size={24} />
             </div>
           </Card>
-          <Card className="p-4">
+          <Card className="p-4 rounded-xl">
             <div className="flex items-center justify-between">
               <div>
                 <Text className="text-sm text-gray-600">Outstanding</Text>
@@ -379,7 +379,7 @@ export default function InvoiceHistory() {
               <TrendingDown className="text-yellow-500" size={24} />
             </div>
           </Card>
-          <Card className="p-4">
+          <Card className="p-4 rounded-xl">
             <div className="flex items-center justify-between">
               <div>
                 <Text className="text-sm text-gray-600">Average Amount</Text>
@@ -395,7 +395,7 @@ export default function InvoiceHistory() {
 
       {/* Filters */}
       {showFilters && (
-        <Card className="p-6">
+        <Card className="p-6 rounded-xl">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Text variant="h6">Filters</Text>
@@ -475,7 +475,7 @@ export default function InvoiceHistory() {
 
       {/* Invoice Table */}
       {invoices.length > 0 ? (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden rounded-xl">
           {/* Table Header */}
           <div className="bg-gray-50 px-6 py-3 border-b border-gray-200">
             <div className="grid grid-cols-5 gap-4 text-sm font-medium text-gray-700">
@@ -576,7 +576,7 @@ export default function InvoiceHistory() {
           </div>
         </Card>
       ) : (
-        <Card className="text-center py-12">
+        <Card className="text-center py-12 rounded-xl">
           <div className="text-gray-400 text-6xl mb-4">📄</div>
           <Text className="text-gray-500 mb-2">No invoices found</Text>
           <Text className="text-gray-400 text-sm">

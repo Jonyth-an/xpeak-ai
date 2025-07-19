@@ -192,7 +192,7 @@ export default function DashboardSidebar({ userEmail }: DashboardSidebarProps) {
   };
 
   const sidebarContent = (
-    <Card className="p-6 h-fit">
+    <Card className="p-6 h-fit rounded-xl">
       {/* User Info */}
       <div className="mb-8 pb-6 border-b border-token-border">
         <div className="flex items-center space-x-3 mb-2">

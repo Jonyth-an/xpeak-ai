@@ -577,14 +577,14 @@ export default function StudentLessonsPage() {
                     {/* Lessons Section */}
                     <div>
                       {loading ? (
-                        <Card className="p-8 text-center">
+                        <Card className="p-8 text-center rounded-xl">
                           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-token-primary mx-auto mb-4"></div>
                           <Text variant="body" className="text-token-text-secondary">
                             Loading your lessons...
                           </Text>
                         </Card>
                       ) : error ? (
-                        <Card className="p-8 text-center">
+                        <Card className="p-8 text-center rounded-xl">
                           <Text variant="body" className="text-token-error mb-4">
                             {error}
                           </Text>
@@ -593,7 +593,7 @@ export default function StudentLessonsPage() {
                           </Button>
                         </Card>
                       ) : (activeTab === 'upcoming' ? upcomingLessons : pastLessons).length === 0 ? (
-                        <Card className="p-12 text-center">
+                        <Card className="p-12 text-center rounded-xl">
                           <Calendar className="w-16 h-16 text-token-text-muted mx-auto mb-4" />
                           <Text variant="h3" className="text-token-text-secondary mb-2">
                             {activeTab === 'upcoming' ? 'No Upcoming Lessons' : 'No Past Lessons'}

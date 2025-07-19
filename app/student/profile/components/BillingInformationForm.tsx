@@ -316,7 +316,7 @@ export default function BillingInformationForm({
           )}
 
           {/* Contact Information */}
-          <Card className="p-6 bg-token-elevated token-border-primary border">
+          <Card className="p-6 bg-token-elevated token-border-primary border rounded-xl">
             <h3 className="text-lg font-medium token-text-primary mb-4">
               Contact Information
             </h3>
@@ -360,7 +360,7 @@ export default function BillingInformationForm({
           </Card>
 
           {/* Billing Address */}
-          <Card className="p-6 bg-token-elevated token-border-primary border">
+          <Card className="p-6 bg-token-elevated token-border-primary border rounded-xl">
             <h3 className="text-lg font-medium token-text-primary mb-4">
               Billing Address
             </h3>
@@ -463,7 +463,7 @@ export default function BillingInformationForm({
           </Card>
 
           {/* Tax Information */}
-          <Card className="p-6 bg-token-elevated token-border-primary border">
+          <Card className="p-6 bg-token-elevated token-border-primary border rounded-xl">
             <h3 className="text-lg font-medium token-text-primary mb-4">
               Tax Information
             </h3>
@@ -528,7 +528,7 @@ export default function BillingInformationForm({
           </Card>
 
           {/* Receipt Preferences */}
-          <Card className="p-6 bg-token-elevated token-border-primary border">
+          <Card className="p-6 bg-token-elevated token-border-primary border rounded-xl">
             <h3 className="text-lg font-medium token-text-primary mb-4">
               Receipt Preferences
             </h3>

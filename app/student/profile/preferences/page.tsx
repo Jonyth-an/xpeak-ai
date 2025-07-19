@@ -31,7 +31,7 @@ export default function PreferencesPage() {
                 <div className="lg:ml-40 flex-1">
                   <div className="space-y-8">
                     {/* Language Preferences */}
-                    <Card className="p-6">
+                    <Card className="p-6 rounded-xl">
                       <div className="mb-6">
                         <Text variant="h3" as="h3" className="mb-2">
                           Language Preferences
@@ -44,7 +44,7 @@ export default function PreferencesPage() {
                     </Card>
 
                     {/* Timezone Preferences */}
-                    <Card className="p-6">
+                    <Card className="p-6 rounded-xl">
                       <div className="mb-6">
                         <Text variant="h3" as="h3" className="mb-2">
                           Current Region & Time
