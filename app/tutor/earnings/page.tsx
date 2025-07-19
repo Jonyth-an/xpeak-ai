@@ -356,7 +356,7 @@ export default function EarningsDashboard() {
         {/* Earnings Breakdown */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Earnings by Type */}
-          <Card className="p-6" variant="default">
+          <Card className="p-6 rounded-xl" variant="default">
             <div className="flex items-center mb-4">
               <Banknote className="w-5 h-5 text-token-primary mr-2" />
               <Text variant="h3" className="text-token-primary">Earnings Breakdown</Text>
@@ -396,7 +396,7 @@ export default function EarningsDashboard() {
           </Card>
 
           {/* Payout Status */}
-          <Card className="p-6" variant="default">
+          <Card className="p-6 rounded-xl" variant="default">
             <div className="flex items-center mb-4">
               <CreditCard className="w-5 h-5 text-token-primary mr-2" />
               <Text variant="h3" className="text-token-primary">Payout Status</Text>
@@ -437,7 +437,7 @@ export default function EarningsDashboard() {
         {/* Earnings History & Recent Payouts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Recent Earnings */}
-          <Card className="p-6" variant="default">
+          <Card className="p-6 rounded-xl" variant="default">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
                 <DollarSign className="w-5 h-5 text-token-primary mr-2" />
@@ -496,7 +496,7 @@ export default function EarningsDashboard() {
           </Card>
 
           {/* Recent Payouts */}
-          <Card className="p-6" variant="default">
+          <Card className="p-6 rounded-xl" variant="default">
             <div className="flex items-center mb-4">
               <CreditCard className="w-5 h-5 text-token-primary mr-2" />
               <Text variant="h3" className="text-token-primary">Recent Payouts</Text>
@@ -544,7 +544,7 @@ export default function EarningsDashboard() {
         </div>
 
         {/* Monthly Trends */}
-        <Card className="p-6" variant="default">
+        <Card className="p-6 rounded-xl" variant="default">
           <div className="flex items-center mb-4">
             <TrendingUp className="w-5 h-5 text-token-primary mr-2" />
             <Text variant="h3" className="text-token-primary">Monthly Earnings Trends</Text>
@@ -599,7 +599,7 @@ export default function EarningsDashboard() {
         {/* Payout Request Modal */}
         {showPayoutModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-token-surface rounded-lg p-6 w-full max-w-md">
+            <div className="bg-token-surface rounded-xl p-6 w-full max-w-md">
               <div className="flex items-center justify-between mb-4">
                 <Text variant="h3" className="text-token-primary">
                   Request Payout

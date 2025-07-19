@@ -83,16 +83,17 @@ export default function RealTimeCalendar({
   const fetchAvailability = async () => {
     try {
       setLoading(true);
-      const currentDate = new Date();
-      const currentMonth = currentDate.getMonth() + 1;
-      const currentYear = currentDate.getFullYear();
-
-      const response = await fetch(`/api/tutors/${tutorId}/availability?month=${currentMonth}&year=${currentYear}`);
+      console.log('🔍 fetchAvailability called with month:', month, 'year:', year);
+      // Use current month and year state instead of current date
+      const timestamp = Date.now(); // Cache buster
+      const response = await fetch(`/api/tutors/${tutorId}/availability?month=${month}&year=${year}&t=${timestamp}`);
       
       if (response.ok) {
         const data = await response.json();
+        console.log('🔍 fetchAvailability response data:', data);
         
         if (data.calendar) {
+          console.log('🔍 Setting calendar data:', data.calendar.map(d => ({ day: d.day, date: d.date, isToday: d.isToday })));
           setCalendar(data.calendar);
           setMonth(data.month);
           setYear(data.year);
@@ -105,9 +106,9 @@ export default function RealTimeCalendar({
     }
   };
 
-  // Poll for updates every 30 seconds
+  // Poll for updates every 10 seconds
   useEffect(() => {
-    const interval = setInterval(fetchAvailability, 30000); // 30 seconds
+    const interval = setInterval(fetchAvailability, 10000); // 10 seconds
     
     return () => clearInterval(interval);
   }, [tutorId]);
@@ -159,7 +160,10 @@ export default function RealTimeCalendar({
 
   // Handle day click to show time slots
   const handleDayClick = (dayData: CalendarData) => {
+    console.log('🔍 handleDayClick called with dayData:', dayData);
+    console.log('🔍 Day clicked - day:', dayData.day, 'date:', dayData.date, 'available:', dayData.available);
     if (dayData.available && (dayData.availableSlots?.length || 0) > 0) {
+      console.log('🔍 Setting selectedDate to:', dayData.date);
       setSelectedDate(dayData.date || '');
     }
   };
@@ -195,29 +199,43 @@ export default function RealTimeCalendar({
           startTime: selectedSlot.start_time,
           endTime: selectedSlot.end_time,
           lessonType: bookingType === 'trial' ? 'Trial Lesson' : 'Conversation Practice',
-          durationMinutes: 30,
-          bookingType: bookingType
-        })
+        }),
       });
 
       if (response.ok) {
         const result = await response.json();
-        alert(`${bookingType === 'trial' ? 'Trial lesson' : 'Lesson'} booked successfully!`);
+        alert(result.message || 'Lesson booked successfully!');
+        
+        // Immediately refresh availability to remove the booked slot
+        console.log('🔄 Immediately refreshing availability after booking...');
+        await fetchAvailability();
+        
         setShowBookingModal(false);
         setSelectedSlot(null);
-        setSelectedDate(null);
-        
-        // Refresh availability
-        await fetchAvailability();
       } else {
         const errorData = await response.json();
-        alert(`Booking failed: ${errorData.error || 'Unknown error'}`);
+        alert(errorData.error || 'Failed to book lesson. Please try again.');
       }
     } catch (error) {
-      console.error('Error booking slot:', error);
+      console.error('Booking error:', error);
       alert('An error occurred while booking. Please try again.');
     }
   };
+
+  // Debug selected date changes
+  useEffect(() => {
+    if (selectedDate) {
+      console.log('🔍 selectedDate changed to:', selectedDate);
+      const matchingDay = calendar.find(day => day.date === selectedDate);
+      console.log('🔍 Matching day data:', matchingDay);
+      console.log('🔍 All calendar dates:', calendar.map(d => ({ day: d.day, date: d.date, isToday: d.isToday })));
+    }
+  }, [selectedDate, calendar]);
+
+  // Debug calendar data changes
+  useEffect(() => {
+    console.log('🔍 Calendar data updated:', calendar?.map(d => ({ day: d.day, date: d.date, isToday: d.isToday, available: d.available })));
+  }, [calendar]);
 
   // Format time for display
   const formatTime = (time: string) => {
@@ -283,12 +301,14 @@ export default function RealTimeCalendar({
                       ${dayData.isPast ? 'text-gray-400 bg-gray-50' : 'hover:bg-gray-50'}
                       ${selectedDate === dayData.date ? 'ring-2 ring-blue-500' : ''}
                     `}
-                    onClick={() => handleDayClick(dayData)}
+                    onClick={() => {
+                      handleDayClick(dayData);
+                    }}
                   >
                     {dayData.day}
-                    {dayData.available && !dayData.isPast && (
+                    {dayData.available && !dayData.isPast && dayData.availableSlots && dayData.availableSlots.length > 0 && (
                       <div className="text-xs text-green-600 mt-1">
-                        {(dayData.availableSlots?.length || 0)} slots
+                        {dayData.availableSlots.length} slots
                       </div>
                     )}
                   </div>
@@ -318,31 +338,55 @@ export default function RealTimeCalendar({
             {selectedDate ? (
               <div>
                 <h6 className="font-medium mb-3">
-                  Available Times for {new Date(selectedDate).toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}
+                  Available Times for {(() => {
+                    // Parse the date as local time to avoid timezone issues
+                    const [year, month, day] = selectedDate.split('-').map(Number);
+                    const localDate = new Date(year, month - 1, day);
+                    console.log('🔍 Date formatting - selectedDate:', selectedDate, 'localDate:', localDate);
+                    return localDate.toLocaleDateString('en-US', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    });
+                  })()}
                 </h6>
                 <div className="text-sm text-gray-600 mb-3">
                   All lessons are 30 minutes. Click any slot to book.
                 </div>
+                {(() => {
+                  console.log('🔍 Rendering time slots panel');
+                  console.log('🔍 selectedDate:', selectedDate);
+                  const matchingDay = calendar.find(day => day.date === selectedDate);
+                  console.log('🔍 Matching day for selectedDate:', matchingDay);
+                  console.log('🔍 Available slots count:', matchingDay?.availableSlots?.length || 0);
+                  console.log('🔍 Available slots:', matchingDay?.availableSlots);
+                  return null;
+                })()}
                 <div className="space-y-2">
-                  {(calendar.find(day => day.date === selectedDate)?.availableSlots || []).map((slot, index) => (
-                    <button
-                      key={slot.id}
-                      className="w-full p-3 text-left border rounded-lg hover:bg-green-50 hover:border-green-300 transition-colors"
-                      onClick={() => handleSlotClick(slot)}
-                    >
-                      <div className="font-medium">
-                        {formatTime(slot.start_time)} - {formatTime(slot.end_time)}
+                  {(calendar.find(day => day.date === selectedDate)?.availableSlots || []).length > 0 ? (
+                    (calendar.find(day => day.date === selectedDate)?.availableSlots || []).map((slot, index) => (
+                      <button
+                        key={slot.id}
+                        className="w-full p-3 text-left border rounded-lg hover:bg-green-50 hover:border-green-300 transition-colors"
+                        onClick={() => handleSlotClick(slot)}
+                      >
+                        <div className="font-medium">
+                          {formatTime(slot.start_time)} - {formatTime(slot.end_time)}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          30-minute lesson • Click to book
+                        </div>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <div className="text-lg mb-2">No available slots</div>
+                      <div className="text-sm">
+                        All time slots for this date have either been booked or are in the past.
                       </div>
-                      <div className="text-sm text-gray-600">
-                        30-minute lesson • Click to book
-                      </div>
-                    </button>
-                  ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ) : (
@@ -357,7 +401,14 @@ export default function RealTimeCalendar({
         {/* Real-time indicator */}
         <div className="mt-4 text-xs text-gray-500 flex items-center gap-2">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <span>Live updates every 30 seconds</span>
+          <span>Live updates every 10 seconds</span>
+          <button 
+            onClick={fetchAvailability}
+            disabled={loading}
+            className="ml-4 px-2 py-1 text-xs border rounded hover:bg-gray-50 disabled:opacity-50"
+          >
+            {loading ? 'Refreshing...' : 'Refresh Now'}
+          </button>
         </div>
       </div>
 
@@ -371,12 +422,17 @@ export default function RealTimeCalendar({
             <div className="mb-4">
               <p className="text-sm text-gray-600 mb-2">Date:</p>
               <p className="font-medium">
-                {new Date(selectedDate).toLocaleDateString('en-US', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
+                {(() => {
+                  // Parse the date as local time to avoid timezone issues
+                  const [year, month, day] = selectedDate.split('-').map(Number);
+                  const localDate = new Date(year, month - 1, day);
+                  return localDate.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  });
+                })()}
               </p>
             </div>
             <div className="mb-4">

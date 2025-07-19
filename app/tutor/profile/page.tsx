@@ -361,7 +361,7 @@ export default function TutorProfilePage() {
         </div>
 
         {/* Profile Card */}
-        <Card className="p-8 mb-8">
+        <Card className="p-8 mb-8 rounded-xl">
           <div className="flex items-start gap-8 mb-8">
             {/* Profile Image */}
             <div className="relative w-32 h-32 bg-token-gray-200 rounded-full overflow-hidden flex-shrink-0">
@@ -807,7 +807,7 @@ export default function TutorProfilePage() {
 
         {/* Quick Actions */}
         <div className="grid md:grid-cols-2 gap-6">
-          <Card className="p-6">
+          <Card className="p-6 rounded-xl">
             <div className="flex items-center gap-3 mb-4">
               <Calendar className="w-6 h-6 text-token-accent" />
               <Text variant="h4" as="h4">Manage Availability</Text>
@@ -820,7 +820,7 @@ export default function TutorProfilePage() {
             </Button>
           </Card>
 
-          <Card className="p-6">
+          <Card className="p-6 rounded-xl">
             <div className="flex items-center gap-3 mb-4">
               <Settings className="w-6 h-6 text-token-accent" />
               <Text variant="h4" as="h4">Profile Settings</Text>

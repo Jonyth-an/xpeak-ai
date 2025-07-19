@@ -41,21 +41,21 @@ const navigationItems = [
     label: 'Dashboard', 
     icon: LayoutDashboard,
     description: 'Your learning overview',
-    href: '/dashboard'
+    href: '/student/dashboard'
   },
   { 
     id: 'lessons', 
     label: 'Lessons', 
     icon: GraduationCap,
     description: 'View lesson history',
-    href: '/dashboard/lessons'
+    href: '/student/lessons'
   },
   { 
     id: 'tutors', 
     label: 'Tutors', 
     icon: BookOpen,
     description: 'Find and book tutors',
-    href: '/tutors'
+    href: '/student/tutors'
   },
   { 
     id: 'meet-sagea', 
@@ -188,7 +188,7 @@ export default function DashboardSidebar({ userEmail }: DashboardSidebarProps) {
 
   const handleTutorApplicationClick = () => {
     // Navigate to tutor application page
-    window.location.href = '/tutor-application';
+    window.location.href = '/become-a-tutor';
   };
 
   const sidebarContent = (

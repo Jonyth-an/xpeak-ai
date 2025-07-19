@@ -230,7 +230,7 @@ export default function TutorDashboard() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Next Lesson Card */}
-            <Card className="p-6 bg-token-surface border border-token">
+            <Card className="p-6 bg-token-surface border border-token rounded-xl">
               <div className="flex items-center mb-4">
                 <Clock className="w-5 h-5 text-token-primary mr-2" />
                 <Text variant="h3" as="h3" className="text-token-primary">
@@ -312,7 +312,7 @@ export default function TutorDashboard() {
             </Card>
 
             {/* Today's Schedule */}
-            <Card className="p-6 bg-token-surface border border-token">
+            <Card className="p-6 bg-token-surface border border-token rounded-xl">
               <Text variant="h3" as="h3" className="text-token-primary mb-4">
                 Today's Schedule
               </Text>
@@ -387,7 +387,7 @@ export default function TutorDashboard() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Performance Card */}
-            <Card className="p-6 bg-token-surface border border-token">
+            <Card className="p-6 bg-token-surface border border-token rounded-xl">
               <div className="flex items-center mb-4">
                 <TrendingUp className="w-5 h-5 text-token-success mr-2" />
                 <Text variant="h3" as="h3" className="text-token-primary">
@@ -445,7 +445,7 @@ export default function TutorDashboard() {
             </Card>
 
             {/* Quick Actions */}
-            <Card className="p-6 bg-token-surface border border-token">
+            <Card className="p-6 bg-token-surface border border-token rounded-xl">
               <Text variant="h3" as="h3" className="text-token-primary mb-4">
                 Quick Actions
               </Text>

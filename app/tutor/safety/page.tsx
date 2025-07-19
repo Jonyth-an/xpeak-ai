@@ -244,7 +244,7 @@ export default function TutorSafety() {
           </div>
 
           {/* Emergency Contact */}
-          <Card className="p-6 mb-8 border-l-4 border-token-error">
+          <Card className="p-6 mb-8 border-l-4 border-token-error rounded-xl">
             <div className="flex items-center mb-4">
               <Phone className="w-6 h-6 text-token-error mr-3" />
               <Text variant="h3" className="text-token-text-primary">
@@ -275,7 +275,7 @@ export default function TutorSafety() {
               {safetyGuidelines.map((guideline, index) => {
                 const Icon = guideline.icon;
                 return (
-                  <Card key={index} className="p-6 text-center">
+                  <Card key={index} className="p-6 text-center rounded-xl">
                     <div className={`w-12 h-12 ${guideline.color} rounded-lg flex items-center justify-center mx-auto mb-4`}>
                       <Icon className="w-6 h-6 text-white" />
                     </div>
@@ -300,7 +300,7 @@ export default function TutorSafety() {
               {trustFeatures.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
-                  <Card key={index} className="p-6">
+                  <Card key={index} className="p-6 rounded-xl">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-token-surface-subtle rounded-lg flex items-center justify-center mr-3">
@@ -333,7 +333,7 @@ export default function TutorSafety() {
             <Text variant="h2" className="text-token-text-primary mb-6">
               Report an Issue
             </Text>
-            <Card className="p-6">
+            <Card className="p-6 rounded-xl">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 {reportingCategories.map((category, index) => {
                   const Icon = category.icon;
@@ -399,7 +399,7 @@ export default function TutorSafety() {
               {supportResources.map((resource, index) => {
                 const Icon = resource.icon;
                 return (
-                  <Card key={index} className="p-6">
+                  <Card key={index} className="p-6 rounded-xl">
                     <div className="flex items-start mb-4">
                       <div className={`w-12 h-12 ${resource.color} rounded-lg flex items-center justify-center mr-4`}>
                         <Icon className="w-6 h-6 text-white" />
@@ -434,7 +434,7 @@ export default function TutorSafety() {
             </Text>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {bestPractices.map((section, index) => (
-                <Card key={index} className="p-6">
+                <Card key={index} className="p-6 rounded-xl">
                   <Text variant="h3" className="text-token-text-primary mb-4">
                     {section.category}
                   </Text>
@@ -454,7 +454,7 @@ export default function TutorSafety() {
           </div>
 
           {/* Additional Resources */}
-          <Card className="p-6">
+          <Card className="p-6 rounded-xl">
             <Text variant="h3" className="text-token-text-primary mb-4">
               Additional Resources
             </Text>

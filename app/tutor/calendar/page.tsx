@@ -167,7 +167,7 @@ function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTim
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-token-surface rounded-lg p-6 w-full max-w-md">
+      <div className="bg-token-surface rounded-xl p-6 w-full max-w-md">
         <div className="flex items-center justify-between mb-4">
           <Text variant="h3" className="text-token-primary">Add Availability</Text>
           <Button variant="outline" size="sm" onClick={onClose}>
@@ -314,7 +314,7 @@ function DeleteSlotModal({ open, slot, onClose, onDelete }: { open: boolean, slo
   const dateStr = slot.specific_date || '';
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-token-surface rounded-lg p-6 w-full max-w-md">
+      <div className="bg-token-surface rounded-xl p-6 w-full max-w-md">
         <div className="flex items-center justify-between mb-4">
           <Text variant="h3" className="text-token-primary">Delete Availability</Text>
           <Button variant="outline" size="sm" onClick={onClose}>×</Button>
@@ -853,7 +853,7 @@ export default function TutorCalendar() {
         )}
 
         {/* Timezone Notice */}
-        <Card className="p-4 mb-6 bg-blue-50 border border-blue-200" variant="outlined">
+        <Card className="p-4 mb-6 bg-blue-50 border border-blue-200 rounded-xl" variant="outlined">
           <div className="flex items-center">
             <Info className="w-5 h-5 text-blue-600 mr-2 flex-shrink-0" />
             <Text variant="small" className="text-blue-800">
@@ -863,7 +863,7 @@ export default function TutorCalendar() {
         </Card>
 
         {/* Calendar Header */}
-        <Card className="p-6 mb-6" variant="default">
+        <Card className="p-6 mb-6 rounded-xl" variant="default">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
             <div className="flex items-center space-x-4">
               <Calendar className="w-6 h-6 text-token-primary" />
@@ -899,7 +899,7 @@ export default function TutorCalendar() {
         </Card>
 
         {/* Calendar Grid */}
-        <Card className="p-6 mb-6" variant="default">
+        <Card className="p-6 mb-6 rounded-xl" variant="default">
           <div className="overflow-x-auto">
             <div className="min-w-full">
               {/* Header Row */}

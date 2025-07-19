@@ -252,7 +252,7 @@ export default function PerformanceDashboard() {
         />
 
         {/* Bonus Tier Banner */}
-        <Card className="p-6 mb-8 bg-gradient-to-r from-blue-50 to-purple-50 border border-token" variant="outlined">
+        <Card className="p-6 mb-8 bg-gradient-to-r from-blue-50 to-purple-50 border border-token rounded-xl" variant="outlined">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex items-center">
               <div className="text-4xl mr-4">{bonusTierInfo.icon}</div>
@@ -285,7 +285,7 @@ export default function PerformanceDashboard() {
         {/* Performance Metrics */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Performance Overview */}
-          <Card className="p-6" variant="default">
+          <Card className="p-6 rounded-xl" variant="default">
             <div className="flex items-center mb-4">
               <BarChart3 className="w-5 h-5 text-token-primary mr-2" />
               <Text variant="h3" className="text-token-primary">Performance Metrics</Text>
@@ -335,7 +335,7 @@ export default function PerformanceDashboard() {
           </Card>
 
           {/* Rating Distribution */}
-          <Card className="p-6" variant="default">
+          <Card className="p-6 rounded-xl" variant="default">
             <div className="flex items-center mb-4">
               <Star className="w-5 h-5 text-token-primary mr-2" />
               <Text variant="h3" className="text-token-primary">Rating Distribution</Text>
@@ -406,7 +406,7 @@ export default function PerformanceDashboard() {
         {/* Recent Feedback & Top Tags */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Recent Feedback */}
-          <Card className="p-6" variant="default">
+          <Card className="p-6 rounded-xl" variant="default">
             <div className="flex items-center mb-4">
               <MessageSquare className="w-5 h-5 text-token-primary mr-2" />
               <Text variant="h3" className="text-token-primary">Recent Feedback</Text>
@@ -454,7 +454,7 @@ export default function PerformanceDashboard() {
           </Card>
 
           {/* Top Feedback Tags */}
-          <Card className="p-6" variant="default">
+          <Card className="p-6 rounded-xl" variant="default">
             <div className="flex items-center mb-4">
               <Award className="w-5 h-5 text-token-primary mr-2" />
               <Text variant="h3" className="text-token-primary">Top Strengths</Text>
@@ -492,7 +492,7 @@ export default function PerformanceDashboard() {
         </div>
 
         {/* Monthly Trends */}
-        <Card className="p-6" variant="default">
+        <Card className="p-6 rounded-xl" variant="default">
           <div className="flex items-center mb-4">
             <TrendingUp className="w-5 h-5 text-token-primary mr-2" />
             <Text variant="h3" className="text-token-primary">Monthly Trends</Text>

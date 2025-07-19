@@ -25,10 +25,17 @@ import {
   BookOpen,
   Target,
   AlertTriangle,
-  RefreshCw
+  RefreshCw,
+  Play,
+  Eye
 } from 'lucide-react';
 
 interface DashboardData {
+  tutor: {
+    id: string;
+    name: string;
+    timezone: string;
+  };
   summary: {
     total_lessons: number;
     completed_lessons: number;
@@ -59,6 +66,32 @@ interface DashboardData {
     start_time: string;
     duration: number;
     status: string;
+  }>;
+  next_lesson?: {
+    id: string;
+    student_name: string;
+    student_country: string;
+    student_avatar?: string;
+    lesson_type: string;
+    duration: number;
+    scheduled_start: string;
+    scheduled_end: string;
+    minutes_until: number;
+    can_join: boolean;
+    status: string;
+  };
+  today_schedule: Array<{
+    id: string;
+    time: string;
+    student_name: string;
+    student_country: string;
+    student_avatar?: string;
+    lesson_type: string;
+    duration: number;
+    status: string;
+    has_reschedule_request: boolean;
+    reschedule_requested_at?: string;
+    scheduled_start: string;
   }>;
 }
 
@@ -134,6 +167,30 @@ export default function TutorDashboard() {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }, []);
+
+  const formatTime = useCallback((dateString: string) => {
+    return new Date(dateString).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }, []);
+
+  const getCountryFlag = useCallback((country: string) => {
+    const flags: Record<string, string> = {
+      'South Korea': '🇰🇷',
+      'United States': '🇺🇸',
+      'Canada': '🇨🇦',
+      'United Kingdom': '🇬🇧',
+      'Australia': '🇦🇺',
+      'Japan': '🇯🇵',
+      'China': '🇨🇳',
+      'Taiwan': '🇹🇼',
+      'Egypt': '🇪🇬',
+      'Mexico': '🇲🇽',
+      'Unknown': '🌍'
+    };
+    return flags[country] || '🌍';
   }, []);
 
   // Enhanced error state with better user feedback
@@ -240,6 +297,63 @@ export default function TutorDashboard() {
             cardPadding="lg"
           />
 
+          {/* Next Lesson Section */}
+          {data.next_lesson && (
+            <Card className="p-6 mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200" variant="default">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <Clock className="w-6 h-6 text-blue-600 mr-3" />
+                  <div>
+                    <Text variant="h3" className="text-blue-900 font-bold">Next Lesson</Text>
+                    <Text variant="small" className="text-blue-700">
+                      {data.next_lesson.minutes_until > 0 
+                        ? `Starting in ${Math.floor(data.next_lesson.minutes_until / 60)}h ${data.next_lesson.minutes_until % 60}m`
+                        : 'Starting now!'
+                      }
+                    </Text>
+                  </div>
+                </div>
+                {data.next_lesson.can_join && (
+                  <Button variant="primary" className="bg-blue-600 hover:bg-blue-700">
+                    <Play className="w-4 h-4 mr-2" />
+                    Join Lesson
+                  </Button>
+                )}
+              </div>
+              
+              <div className="flex items-center p-4 bg-white rounded-lg border border-blue-100">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 mr-4">
+                  {data.next_lesson.student_avatar ? (
+                    <img 
+                      src={data.next_lesson.student_avatar} 
+                      alt={data.next_lesson.student_name}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                  ) : (
+                    <Users className="w-6 h-6 text-white" />
+                  )}
+                </div>
+                
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <Text variant="h4" className="font-bold text-gray-900">
+                      {data.next_lesson.student_name}
+                    </Text>
+                    <span className="text-lg">{getCountryFlag(data.next_lesson.student_country)}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                      {data.next_lesson.lesson_type}
+                    </span>
+                    <span>{data.next_lesson.duration} minutes</span>
+                    <span>{formatTime(data.next_lesson.scheduled_start)}</span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )}
+
           {/* Performance Overview */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             {/* Performance Metrics */}
@@ -343,71 +457,107 @@ export default function TutorDashboard() {
             </Card>
           </div>
 
-          {/* Upcoming Schedule */}
+          {/* Today's Schedule */}
           <Card className="p-6" variant="default">
-            <div className="flex items-center mb-4">
-              <Calendar className="w-5 h-5 text-token-primary mr-2" />
-              <Text variant="h3" className="text-token-primary">Upcoming Schedule</Text>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <Calendar className="w-5 h-5 text-token-primary mr-2" />
+                <Text variant="h3" className="text-token-primary">Today's Schedule</Text>
+              </div>
+              <Button variant="outline" size="sm">
+                <Eye className="w-4 h-4 mr-2" />
+                View All
+              </Button>
             </div>
             
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-token">
-                    <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Student</th>
-                    <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Lesson Type</th>
-                    <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Start Time</th>
-                    <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Duration</th>
-                    <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.upcoming_schedule.length === 0 ? (
-                    <tr>
-                      <td colSpan={5} className="py-8 text-center">
-                        <Text variant="body" className="text-token-text-secondary">
-                          No upcoming lessons scheduled
-                        </Text>
-                      </td>
-                    </tr>
-                  ) : (
-                    data.upcoming_schedule.slice(0, 10).map((lesson: any) => (
-                      <tr key={lesson.id} className="border-b border-token hover:bg-token-surface-subtle">
-                        <td className="py-3 px-4">
-                          <Text variant="body" className="font-medium text-token-text-primary">
-                            {lesson.student_name}
-                          </Text>
-                        </td>
-                        <td className="py-3 px-4">
-                          <Text variant="body" className="text-token-text-primary">
-                            {lesson.lesson_type}
-                          </Text>
-                        </td>
-                        <td className="py-3 px-4">
-                          <Text variant="body" className="text-token-text-primary">
-                            {formatDate(lesson.start_time)}
-                          </Text>
-                        </td>
-                        <td className="py-3 px-4">
-                          <Text variant="body" className="text-token-text-primary">
-                            {lesson.duration} min
-                          </Text>
-                        </td>
-                        <td className="py-3 px-4">
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                            lesson.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                            lesson.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {lesson.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+            {/* Filter to only show upcoming lessons */}
+            {(() => {
+              const now = new Date();
+              const upcomingLessons = data.today_schedule?.filter(lesson => {
+                const lessonTime = new Date(lesson.scheduled_start);
+                return lessonTime > now && lesson.status === 'confirmed';
+              }).sort((a, b) => new Date(a.scheduled_start).getTime() - new Date(b.scheduled_start).getTime()) || [];
+
+              if (upcomingLessons.length === 0) {
+                return (
+                  <div className="text-center py-8">
+                    <Calendar className="w-12 h-12 text-token-text-muted mx-auto mb-3" />
+                    <Text variant="body" className="text-token-text-secondary mb-2">
+                      No upcoming lessons today
+                    </Text>
+                    <Text variant="small" className="text-token-text-muted">
+                      Set your availability to start receiving bookings
+                    </Text>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="space-y-3">
+                  {upcomingLessons.map((lesson) => {
+                    const lessonTime = new Date(lesson.scheduled_start);
+                    const minutesUntil = Math.max(0, Math.floor((lessonTime.getTime() - now.getTime()) / (1000 * 60)));
+                    const canJoin = minutesUntil <= 60 && minutesUntil >= -60;
+
+                    return (
+                      <div key={lesson.id} className="flex items-center p-4 border border-token rounded-lg hover:bg-token-surface-subtle transition-colors">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 mr-4">
+                          {lesson.student_avatar ? (
+                            <img 
+                              src={lesson.student_avatar} 
+                              alt={lesson.student_name}
+                              className="w-10 h-10 rounded-full object-cover"
+                            />
+                          ) : (
+                            <Users className="w-5 h-5 text-white" />
+                          )}
+                        </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <Text variant="body" className="font-medium text-token-text-primary truncate">
+                              {lesson.student_name}
+                            </Text>
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg">{getCountryFlag(lesson.student_country)}</span>
+                              <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">
+                                Confirmed
+                              </span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-4 text-sm text-token-text-secondary">
+                            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                              {lesson.lesson_type}
+                            </span>
+                            <span>{lesson.duration} min</span>
+                            <span>{lesson.time}</span>
+                            {canJoin && (
+                              <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs font-medium">
+                                Can Join
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 ml-4">
+                          {canJoin && (
+                            <Button variant="primary" size="sm">
+                              <Play className="w-4 h-4 mr-1" />
+                              Join
+                            </Button>
+                          )}
+                          <Button variant="outline" size="sm">
+                            <Eye className="w-4 h-4 mr-1" />
+                            Details
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </Card>
         </TutorPageLayout>
       </TutorLayout>

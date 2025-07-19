@@ -264,6 +264,8 @@ async function fetchTutorAvailability(id: string) {
         
         // Check each 30-minute interval for conflicts
         intervals.forEach((interval, index) => {
+          const now = new Date();
+          const isPast = interval.start < now;
           const isBooked = dayBookedLessons.some(lesson => {
             const lessonStart = new Date(lesson.scheduled_start);
             const lessonEnd = new Date(lesson.scheduled_end);
@@ -272,6 +274,7 @@ async function fetchTutorAvailability(id: string) {
             return (interval.start < lessonEnd && interval.end > lessonStart);
           });
 
+          // Only add slots that are in the future and not booked
           if (!isBooked && !isPast) {
             availableSlots.push({
               id: `${slot.id}-${index}`, // Unique ID for each 30-min interval
@@ -286,7 +289,8 @@ async function fetchTutorAvailability(id: string) {
         });
       });
 
-      const isAvailable = availableSlots.length > 0 && !isPast;
+      // A day is available if it has future, non-booked slots
+      const isAvailable = availableSlots.length > 0;
       
       calendarData.push({
         day,

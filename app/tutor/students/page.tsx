@@ -276,7 +276,7 @@ export default function MyStudents() {
           </div>
 
           {/* Search */}
-          <Card className="p-6 bg-token-surface border border-token mb-6">
+          <Card className="p-6 bg-token-surface border border-token mb-6 rounded-xl">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-token-text-muted w-4 h-4" />
               <input
@@ -292,7 +292,7 @@ export default function MyStudents() {
 
           {/* Students Grid */}
           {studentsData.students.length === 0 ? (
-            <Card className="p-8 bg-token-surface border border-token text-center">
+            <Card className="p-8 bg-token-surface border border-token text-center rounded-xl">
               <Users className="w-12 h-12 text-token-text-muted mx-auto mb-4" />
               <Text variant="h3" className="text-token-text-secondary mb-2">No Students Yet</Text>
               <Text variant="body" className="text-token-text-muted">
@@ -302,7 +302,7 @@ export default function MyStudents() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {studentsData.students.map((student) => (
-                <Card key={student.id} className="p-6 bg-token-surface border border-token">
+                <Card key={student.id} className="p-6 bg-token-surface border border-token rounded-xl">
                   <div className="flex items-center mb-4">
                     <div className="w-12 h-12 bg-token-primary rounded-full flex items-center justify-center text-white font-medium mr-3">
                       {student.avatar_url ? (
@@ -392,7 +392,7 @@ export default function MyStudents() {
           )}
 
           {/* Student Overview */}
-          <Card className="p-6 bg-token-surface border border-token">
+          <Card className="p-6 bg-token-surface border border-token rounded-xl">
             <div className="flex items-center mb-4">
               <Calendar className="w-5 h-5 text-token-primary mr-2" />
               <Text variant="h3" className="text-token-primary">Student Overview</Text>
@@ -437,7 +437,7 @@ export default function MyStudents() {
           {/* Notes Modal */}
           {showNotesModal && selectedStudent && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-token-surface rounded-lg p-6 w-full max-w-lg">
+              <div className="bg-token-surface rounded-xl p-6 w-full max-w-lg">
                 <div className="flex items-center justify-between mb-4">
                   <Text variant="h3" className="text-token-primary">
                     Student Notes (Private)

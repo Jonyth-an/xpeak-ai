@@ -303,7 +303,9 @@ export async function GET(request: NextRequest) {
         start_time: l.scheduled_start,
         duration: l.duration,
         status: l.status
-      }))
+      })),
+      next_lesson: nextLesson,
+      today_schedule: todaySchedule
     });
 
   } catch (error) {

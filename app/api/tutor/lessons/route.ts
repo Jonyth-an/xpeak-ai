@@ -163,7 +163,8 @@ export async function GET(request: NextRequest) {
           id: student.id,
           email: student.email,
           name: student.user_metadata?.full_name || student.email?.split('@')[0] || 'Unknown',
-          profile_image_url: student.user_metadata?.avatar_url || student.user_metadata?.picture
+          profile_image_url: student.user_metadata?.avatar_url || student.user_metadata?.picture,
+          country: student.user_metadata?.country || 'Unknown'
         }
       };
     });

@@ -53,7 +53,7 @@ export default function MetricsGrid({
           variant={cardVariant}
           padding={cardPadding}
           className={cn(
-            'transition-all duration-200 hover:shadow-md',
+            'transition-all duration-200 hover:shadow-md rounded-xl',
             metric.className
           )}
         >

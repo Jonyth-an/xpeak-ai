@@ -222,7 +222,7 @@ export default function TutorTools() {
             {quickTools.map((tool, index) => {
               const Icon = tool.icon;
               return (
-                <Card key={index} className="p-6 hover:shadow-lg transition-shadow cursor-pointer">
+                <Card key={index} className="p-6 hover:shadow-lg transition-shadow cursor-pointer rounded-xl">
                   <div className={`w-12 h-12 ${tool.color} rounded-lg flex items-center justify-center mb-4`}>
                     <Icon className="w-6 h-6 text-white" />
                   </div>
@@ -241,7 +241,7 @@ export default function TutorTools() {
           </div>
 
           {/* Filters */}
-          <Card className="p-6 mb-8">
+          <Card className="p-6 mb-8 rounded-xl">
             <div className="flex flex-col lg:flex-row gap-4">
               {/* Search */}
               <div className="flex-1">
@@ -321,7 +321,7 @@ export default function TutorTools() {
             {filteredResources.map((resource) => {
               const TypeIcon = getTypeIcon(resource.type);
               return (
-                <Card key={resource.id} className="p-6 hover:shadow-lg transition-shadow">
+                <Card key={resource.id} className="p-6 hover:shadow-lg transition-shadow rounded-xl">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center">
                       <div className="w-10 h-10 bg-token-surface-subtle rounded-lg flex items-center justify-center mr-3">

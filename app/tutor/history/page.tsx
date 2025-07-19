@@ -39,7 +39,7 @@ interface Lesson {
     id: string;
     name: string;
     email?: string;
-    avatar_url?: string;
+    profile_image_url?: string;
     country: string;
   };
   feedback?: {
@@ -47,6 +47,8 @@ interface Lesson {
     comment: string;
     tags: string[];
   };
+  // Enhanced status for better tracking
+  cancellation_reason?: 'student_cancelled' | 'tutor_cancelled' | 'miss_student' | 'miss_tutor' | 'miss_both';
 }
 
 interface LessonHistoryData {
@@ -83,6 +85,12 @@ export default function LessonHistory() {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [editingNotes, setEditingNotes] = useState('');
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [selectedRating, setSelectedRating] = useState<{ rating: number; comment: string } | null>(null);
+
+  // Enhanced filters
+  const [ratingFilter, setRatingFilter] = useState('all');
+  const [dateRangeFilter, setDateRangeFilter] = useState('all');
 
   useEffect(() => {
     fetchLessonHistory();
@@ -111,6 +119,8 @@ export default function LessonHistory() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log('🔍 Lesson history data:', data);
+        console.log('🔍 First lesson student data:', data.lessons?.[0]?.student);
         setHistoryData(data);
       } else {
         setError('Failed to load lesson history');
@@ -165,25 +175,81 @@ export default function LessonHistory() {
     return flags[country] || '🌍';
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string, cancellationReason?: string) => {
     const statusColors = {
-      completed: 'bg-token-success-light text-token-success',
-      confirmed: 'bg-token-info-light text-token-info',
-      cancelled: 'bg-token-error-light text-token-error',
-      no_show: 'bg-token-warning-light text-token-warning'
+      completed: 'bg-green-100 text-green-700 border-green-200',
+      confirmed: 'bg-blue-100 text-blue-700 border-blue-200',
+      cancelled: 'bg-red-100 text-red-700 border-red-200',
+      no_show: 'bg-orange-100 text-orange-700 border-orange-200',
+      pending: 'bg-yellow-100 text-yellow-700 border-yellow-200'
     };
     
     const statusLabels = {
       completed: 'Completed',
       confirmed: 'Confirmed',
-      cancelled: 'Cancelled',
-      no_show: 'No Show'
+      cancelled: cancellationReason === 'student_cancelled' ? 'Student Cancelled' : 
+                 cancellationReason === 'tutor_cancelled' ? 'Tutor Cancelled' : 'Cancelled',
+      no_show: cancellationReason === 'miss_student' ? 'Miss-Student' :
+               cancellationReason === 'miss_tutor' ? 'Miss-Tutor' :
+               cancellationReason === 'miss_both' ? 'Miss-Both' : 'No Show',
+      pending: 'Pending'
     };
 
     return (
-      <span className={`px-2 py-1 rounded text-xs font-medium ${statusColors[status as keyof typeof statusColors] || 'bg-token-surface-subtle text-token-text-secondary'}`}>
+      <span className={`px-2 py-1 rounded text-xs font-medium border ${statusColors[status as keyof typeof statusColors] || 'bg-gray-100 text-gray-700 border-gray-200'}`}>
         {statusLabels[status as keyof typeof statusLabels] || status}
       </span>
+    );
+  };
+
+  const renderRatingStars = (rating: number) => {
+    return (
+      <div className="flex items-center">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            className={`w-4 h-4 ${star <= rating ? 'text-yellow-500 fill-current' : 'text-gray-300'}`}
+          />
+        ))}
+      </div>
+    );
+  };
+
+  const renderRatingPreview = (lesson: Lesson) => {
+    if (!lesson.feedback) {
+      return (
+        <Text variant="small" className="text-gray-500">
+          No rating yet
+        </Text>
+      );
+    }
+
+    const { rating, comment } = lesson.feedback;
+    const preview = comment.length > 50 ? `${comment.substring(0, 50)}...` : comment;
+
+    return (
+      <div className="space-y-1">
+        <div className="flex items-center gap-2">
+          {renderRatingStars(rating)}
+          <Text variant="small" className="font-medium text-gray-900">
+            {rating}/5
+          </Text>
+        </div>
+        <Text variant="small" className="text-gray-600">
+          {preview}
+        </Text>
+        {comment.length > 50 && (
+          <button
+            onClick={() => {
+              setSelectedRating({ rating, comment });
+              setShowRatingModal(true);
+            }}
+            className="text-xs text-blue-600 hover:text-blue-800 underline"
+          >
+            View full review
+          </button>
+        )}
+      </div>
     );
   };
 
@@ -265,7 +331,7 @@ export default function LessonHistory() {
 
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="p-6 bg-token-surface border border-token">
+            <Card className="p-6 bg-token-surface border border-token rounded-xl">
               <div className="flex items-center">
                 <div className="p-3 bg-blue-100 rounded-lg">
                   <BookOpen className="w-6 h-6 text-blue-600" />
@@ -281,7 +347,7 @@ export default function LessonHistory() {
               </div>
             </Card>
 
-            <Card className="p-6 bg-token-surface border border-token">
+            <Card className="p-6 bg-token-surface border border-token rounded-xl">
               <div className="flex items-center">
                 <div className="p-3 bg-green-100 rounded-lg">
                   <Users className="w-6 h-6 text-green-600" />
@@ -297,41 +363,137 @@ export default function LessonHistory() {
               </div>
             </Card>
 
-            <Card className="p-6 bg-token-surface border border-token">
+            <Card className="p-6 bg-token-surface border border-token rounded-xl">
               <div className="flex items-center">
                 <div className="p-3 bg-purple-100 rounded-lg">
                   <Clock className="w-6 h-6 text-purple-600" />
                 </div>
                 <div className="ml-4">
                   <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
-                    {(historyData.summary?.total_hours || 0).toLocaleString()}
+                    {(historyData.summary?.total_minutes || 0).toLocaleString()}
                   </Text>
                   <Text variant="small" className="text-token-text-secondary">
-                    {(historyData.summary?.total_minutes || 0).toLocaleString()} minutes
+                    Total Minutes
                   </Text>
                 </div>
               </div>
             </Card>
 
-            <Card className="p-6 bg-token-surface border border-token">
+            <Card className="p-6 bg-token-surface border border-token rounded-xl">
               <div className="flex items-center">
                 <div className="p-3 bg-orange-100 rounded-lg">
-                  <Globe className="w-6 h-6 text-orange-600" />
+                  <Calendar className="w-6 h-6 text-orange-600" />
                 </div>
                 <div className="ml-4">
                   <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
-                    {historyData.summary?.countries_reached || 0}
+                    {Math.ceil((historyData.summary?.total_minutes || 0) / 1440)}
                   </Text>
                   <Text variant="small" className="text-token-text-secondary">
-                    Countries Reached
+                    Total Days
                   </Text>
                 </div>
               </div>
             </Card>
           </div>
 
+          {/* Recent Lessons Cards */}
+          {historyData.lessons.length > 0 && (
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <Calendar className="w-4 h-4 text-blue-600" />
+                </div>
+                <Text variant="h3" className="font-bold text-gray-900">
+                  Recent Lessons (8)
+                </Text>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {historyData.lessons.slice(0, 8).map((lesson) => (
+                  <Card key={lesson.id} className="p-4 border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow" variant="outlined">
+                    <div className="flex items-start gap-3">
+                      {/* Student Avatar */}
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        {lesson.student.profile_image_url ? (
+                          <img 
+                            src={lesson.student.profile_image_url} 
+                            alt={lesson.student.name}
+                            className="w-10 h-10 rounded-full object-cover"
+                            onError={(e) => {
+                              // Hide the image if it fails to load
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <Users className="w-5 h-5 text-white" />
+                        )}
+                      </div>
+
+                      {/* Lesson Info */}
+                      <div className="flex-1 min-w-0">
+                        {/* Student Name and Rating */}
+                        <div className="flex items-start justify-between mb-2">
+                          <Text variant="body" className="font-medium text-gray-900 truncate">
+                            {lesson.student.name}
+                          </Text>
+                          {lesson.feedback && (
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                              {renderRatingStars(lesson.feedback.rating)}
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Lesson Time */}
+                        <Text variant="small" className="text-gray-600 mb-2">
+                          {formatDate(lesson.scheduled_start)} at {formatTime(lesson.scheduled_start)}
+                        </Text>
+                        
+                        {/* Lesson Type */}
+                        <div className="mb-2">
+                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                            {lesson.lesson_type}
+                          </span>
+                        </div>
+                        
+                        {/* Status */}
+                        <div className="mb-2">
+                          {getStatusBadge(lesson.status, lesson.cancellation_reason)}
+                        </div>
+                        
+                        {/* Review Preview */}
+                        {lesson.feedback && lesson.feedback.comment && (
+                          <div className="mt-2">
+                            <Text variant="small" className="text-gray-600 line-clamp-2">
+                              "{lesson.feedback.comment.length > 60 
+                                ? `${lesson.feedback.comment.substring(0, 60)}...` 
+                                : lesson.feedback.comment}"
+                            </Text>
+                            {lesson.feedback.comment.length > 60 && (
+                              <button
+                                onClick={() => {
+                                  setSelectedRating({ 
+                                    rating: lesson.feedback!.rating, 
+                                    comment: lesson.feedback!.comment 
+                                  });
+                                  setShowRatingModal(true);
+                                }}
+                                className="text-xs text-blue-600 hover:text-blue-800 underline mt-1"
+                              >
+                                Read more
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Search and Filters */}
-          <Card className="p-6 bg-token-surface border border-token mb-6">
+          <Card className="p-6 bg-token-surface border border-token mb-6 rounded-xl">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
@@ -373,7 +535,7 @@ export default function LessonHistory() {
 
             {showFilters && (
               <div className="mt-4 pt-4 border-t border-token">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-token-text-secondary mb-1">
                       Lesson Type
@@ -390,15 +552,68 @@ export default function LessonHistory() {
                       <option value="IELTS Preparation">IELTS Preparation</option>
                     </select>
                   </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-token-text-secondary mb-1">
+                      Rating
+                    </label>
+                    <select
+                      value={ratingFilter}
+                      onChange={(e) => setRatingFilter(e.target.value)}
+                      className="w-full px-3 py-2 border border-token rounded-md bg-token-surface"
+                    >
+                      <option value="all">All Ratings</option>
+                      <option value="rated">Rated Only</option>
+                      <option value="unrated">Unrated Only</option>
+                      <option value="5">5 Stars</option>
+                      <option value="4">4+ Stars</option>
+                      <option value="3">3+ Stars</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-token-text-secondary mb-1">
+                      Date Range
+                    </label>
+                    <select
+                      value={dateRangeFilter}
+                      onChange={(e) => setDateRangeFilter(e.target.value)}
+                      className="w-full px-3 py-2 border border-token rounded-md bg-token-surface"
+                    >
+                      <option value="all">All Time</option>
+                      <option value="7">Last 7 Days</option>
+                      <option value="30">Last 30 Days</option>
+                      <option value="90">Last 3 Months</option>
+                      <option value="365">Last Year</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-token-text-secondary mb-1">
+                      Status
+                    </label>
+                    <select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      className="w-full px-3 py-2 border border-token rounded-md bg-token-surface"
+                    >
+                      <option value="all">All Status</option>
+                      <option value="completed">Completed</option>
+                      <option value="cancelled">Cancelled</option>
+                      <option value="no_show">No Show</option>
+                      <option value="student_cancelled">Student Cancelled</option>
+                      <option value="tutor_cancelled">Tutor Cancelled</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             )}
           </Card>
 
           {/* Lessons Table */}
-          <Card className="bg-token-surface border border-token">
+          <Card className="bg-token-surface border border-token rounded-xl">
             <div className="p-6">
-              <Text variant="h3" className="text-token-primary mb-4">Recent Lessons</Text>
+              <Text variant="h3" className="text-token-primary mb-4">All Lessons</Text>
               
               {historyData.lessons.length === 0 ? (
                 <div className="text-center py-8">
@@ -417,8 +632,9 @@ export default function LessonHistory() {
                         <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Student</th>
                         <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Type</th>
                         <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Duration</th>
+                        <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Status</th>
+                        <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Rating</th>
                         <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Notes</th>
-                        <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Feedback</th>
                         <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Actions</th>
                       </tr>
                     </thead>
@@ -461,6 +677,12 @@ export default function LessonHistory() {
                             </Text>
                           </td>
                           <td className="py-3 px-4">
+                            {getStatusBadge(lesson.status, lesson.cancellation_reason)}
+                          </td>
+                          <td className="py-3 px-4">
+                            {renderRatingPreview(lesson)}
+                          </td>
+                          <td className="py-3 px-4">
                             {lesson.lesson_notes ? (
                               <Button variant="outline" size="sm" onClick={() => handleNotesEdit(lesson)}>
                                 <MessageSquare className="w-4 h-4 mr-1" />
@@ -471,20 +693,6 @@ export default function LessonHistory() {
                                 <Edit className="w-4 h-4 mr-1" />
                                 Add
                               </Button>
-                            )}
-                          </td>
-                          <td className="py-3 px-4">
-                            {lesson.feedback ? (
-                              <div className="flex items-center">
-                                <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                                <Text variant="body" className="font-medium text-token-text-primary">
-                                  {lesson.feedback.rating}
-                                </Text>
-                              </div>
-                            ) : (
-                              <Text variant="small" className="text-token-text-secondary">
-                                No feedback
-                              </Text>
                             )}
                           </td>
                           <td className="py-3 px-4">
@@ -542,7 +750,7 @@ export default function LessonHistory() {
           {/* Notes Modal */}
           {showNotesModal && selectedLesson && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-token-surface rounded-lg p-6 w-full max-w-lg">
+              <div className="bg-token-surface rounded-xl p-6 w-full max-w-lg">
                 <div className="flex items-center justify-between mb-4">
                   <Text variant="h3" className="text-token-primary">
                     Lesson Notes
@@ -580,6 +788,43 @@ export default function LessonHistory() {
                   </Button>
                   <Button variant="primary" onClick={saveNotes} className="flex-1">
                     Save Notes
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Rating Modal */}
+          {showRatingModal && selectedRating && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-token-surface rounded-xl p-6 w-full max-w-lg">
+                <div className="flex items-center justify-between mb-4">
+                  <Text variant="h3" className="text-token-primary">
+                    Student Review
+                  </Text>
+                  <Button variant="outline" size="sm" onClick={() => setShowRatingModal(false)}>
+                    ×
+                  </Button>
+                </div>
+                
+                <div className="mb-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    {renderRatingStars(selectedRating.rating)}
+                    <Text variant="body" className="font-medium text-gray-900">
+                      {selectedRating.rating}/5
+                    </Text>
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <Text variant="body" className="text-gray-900 leading-relaxed">
+                      {selectedRating.comment}
+                    </Text>
+                  </div>
+                </div>
+                
+                <div className="flex justify-end">
+                  <Button variant="outline" onClick={() => setShowRatingModal(false)}>
+                    Close
                   </Button>
                 </div>
               </div>

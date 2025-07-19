@@ -215,6 +215,18 @@ export default function TutorLessonsPage() {
     }
   };
 
+  const handleRescheduleLesson = async (lessonId: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      // Navigate to reschedule page or open reschedule modal
+      window.location.href = `/lessons/${lessonId}/reschedule`;
+    } catch (error) {
+      console.error('Error initiating reschedule:', error);
+    }
+  };
+
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
     const now = new Date();
@@ -729,6 +741,43 @@ export default function TutorLessonsPage() {
                           Cancel
                         </Button>
                       </>
+                    )}
+                    
+                    {/* Show Reschedule and Cancel buttons for confirmed lessons */}
+                    {lesson.status === 'confirmed' && !lesson.can_join && (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleRescheduleLesson(lesson.id)}
+                          className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-blue-50 hover:border-blue-300 text-blue-600 border-blue-200"
+                        >
+                          <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
+                          Reschedule
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleCancelLesson(lesson.id)}
+                          className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-red-50 hover:border-red-300 hover:text-red-700"
+                        >
+                          <X className="w-3.5 h-3.5 mr-1.5" />
+                          Cancel
+                        </Button>
+                      </>
+                    )}
+                    
+                    {/* Show Cancel button for other lesson statuses that can be cancelled */}
+                    {['confirmed', 'reschedule_requested'].includes(lesson.status) && lesson.can_join && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleCancelLesson(lesson.id)}
+                        className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-red-50 hover:border-red-300 hover:text-red-700"
+                      >
+                        <X className="w-3.5 h-3.5 mr-1.5" />
+                        Cancel
+                      </Button>
                     )}
                     
                     <Link href={`/lessons/${lesson.id}`}>
