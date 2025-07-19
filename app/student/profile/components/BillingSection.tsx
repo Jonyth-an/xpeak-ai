@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, Text, Button } from '@/app/components/ui';
 import { useAuth } from '@/lib/AuthContext';
-import { supabase } from '../../../lib/supabaseClient';
+import { supabase } from '../../../../lib/supabaseClient';
 import { useSearchParams } from 'next/navigation';
 import BillingInformationForm from './BillingInformationForm';
 import TransactionHistory from './TransactionHistory';

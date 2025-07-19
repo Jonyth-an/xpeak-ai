@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../../lib/AuthContext';
-import { supabase } from '../../../lib/supabaseClient';
 import { Button } from '@/app/components/ui';
+import { Text } from '@/app/components/ui';
+import { supabase } from '../../../lib/supabaseClient';
 import AvatarUpload from './AvatarUpload';
 
 interface ProfileData {

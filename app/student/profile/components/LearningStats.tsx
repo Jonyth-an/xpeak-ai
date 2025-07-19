@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useAuth } from '../../../lib/AuthContext';
+import { useAuth } from '../../../../lib/AuthContext';
 import { Button } from '@/app/components/ui';
 
 interface StatCardProps {

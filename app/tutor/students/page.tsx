@@ -58,94 +58,41 @@ export default function MyStudents() {
   const fetchStudentsData = async () => {
     try {
       setLoading(true);
+      
+      // Get the current session
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
-      // Get tutor profile first
-      const { data: tutorProfile } = await supabase
-        .from('tutor_profiles')
-        .select('id')
-        .eq('user_id', session.user.id)
-        .single();
-
-      if (!tutorProfile) {
-        setError('Tutor profile not found');
+      if (!session) {
+        setError('Not authenticated');
         return;
       }
-
-      // Get tutor-student relationships
-      const { data: relationships, error: relationshipsError } = await supabase
-        .from('tutor_students')
-        .select(`
-          student_id,
-          total_lessons,
-          total_minutes,
-          first_lesson_at,
-          last_lesson_at,
-          student_goals,
-          tutor_notes,
-          student_level
-        `)
-        .eq('tutor_id', tutorProfile.id);
-
-      if (relationshipsError) {
-        console.error('Error fetching relationships:', relationshipsError);
-        setError('Failed to load student data');
-        return;
-      }
-
-      if (!relationships || relationships.length === 0) {
-        setStudentsData({
-          students: [],
-          overview: {
-            active_students: 0,
-            total_lessons: 0,
-            total_hours: 0,
-            countries: 0
-          }
-        });
-        return;
-      }
-
-      // Get student profile details from auth.users via API
-      const studentIds = relationships.map(r => r.student_id);
-      let studentProfiles: any[] = [];
-
-      // For now, create placeholder data since we can't easily access auth.users from client
-      // In production, you'd want to create an API endpoint to fetch user details
-      const students = relationships.map(rel => {
-        return {
-          id: rel.student_id,
-          name: `Student ${rel.student_id.slice(0, 8)}`,
-          email: `student${rel.student_id.slice(0, 4)}@example.com`,
-          avatar_url: null,
-          country: 'Unknown',
-          level: rel.student_level || 'intermediate',
-          total_lessons: rel.total_lessons || 0,
-          total_hours: Math.round((rel.total_minutes || 0) / 60 * 10) / 10,
-          last_lesson_date: rel.last_lesson_at || rel.first_lesson_at,
-          goals: rel.student_goals || '',
-          tutor_notes: rel.tutor_notes || '',
-          first_lesson_at: rel.first_lesson_at
-        };
+      
+      // Fetch data from the new API endpoint
+      const response = await fetch('/api/tutor/students', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.error) {
+        setError(data.error);
+        return;
+      }
 
-      // Calculate overview stats
-      const totalLessons = students.reduce((sum, s) => sum + s.total_lessons, 0);
-      const totalHours = students.reduce((sum, s) => sum + s.total_hours, 0);
-      const countries = new Set(students.map(s => s.country).filter(Boolean)).size;
+      // Apply search filter if there's a search term
+      const filteredStudents = data.students.filter((s: Student) => 
+        !searchTerm || s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.country.toLowerCase().includes(searchTerm.toLowerCase())
+      );
 
       setStudentsData({
-        students: students.filter(s => 
-          !searchTerm || s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          s.country.toLowerCase().includes(searchTerm.toLowerCase())
-        ),
-        overview: {
-          active_students: students.length,
-          total_lessons: totalLessons,
-          total_hours: Math.round(totalHours * 10) / 10,
-          countries
-        }
+        students: filteredStudents,
+        overview: data.overview
       });
 
     } catch (error) {
@@ -157,6 +104,8 @@ export default function MyStudents() {
   };
 
   const handleSearch = () => {
+    // The search is now handled client-side in fetchStudentsData
+    // Just refetch the data to apply the current search term
     fetchStudentsData();
   };
 
@@ -275,6 +224,49 @@ export default function MyStudents() {
             </Text>
           </div>
 
+          {/* Student Overview */}
+          <Card className="p-6 bg-token-surface border border-token mb-6 rounded-xl">
+            <div className="flex items-center mb-4">
+              <Calendar className="w-5 h-5 text-token-primary mr-2" />
+              <Text variant="h3" className="text-token-primary">Student Overview</Text>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="text-center">
+                <Text variant="h2" className="text-3xl font-bold text-blue-600">
+                  {studentsData.overview.active_students}
+                </Text>
+                <Text variant="body" className="text-token-text-secondary">
+                  Active Students
+                </Text>
+              </div>
+              <div className="text-center">
+                <Text variant="h2" className="text-3xl font-bold text-green-600">
+                  {studentsData.overview.total_lessons}
+                </Text>
+                <Text variant="body" className="text-token-text-secondary">
+                  Total Lessons
+                </Text>
+              </div>
+              <div className="text-center">
+                <Text variant="h2" className="text-3xl font-bold text-purple-600">
+                  {studentsData.overview.total_hours}
+                </Text>
+                <Text variant="body" className="text-token-text-secondary">
+                  Total Hours
+                </Text>
+              </div>
+              <div className="text-center">
+                <Text variant="h2" className="text-3xl font-bold text-orange-600">
+                  {studentsData.overview.countries}
+                </Text>
+                <Text variant="body" className="text-token-text-secondary">
+                  Countries
+                </Text>
+              </div>
+            </div>
+          </Card>
+
           {/* Search */}
           <Card className="p-6 bg-token-surface border border-token mb-6 rounded-xl">
             <div className="relative">
@@ -390,49 +382,6 @@ export default function MyStudents() {
               ))}
             </div>
           )}
-
-          {/* Student Overview */}
-          <Card className="p-6 bg-token-surface border border-token rounded-xl">
-            <div className="flex items-center mb-4">
-              <Calendar className="w-5 h-5 text-token-primary mr-2" />
-              <Text variant="h3" className="text-token-primary">Student Overview</Text>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="text-center">
-                <Text variant="h2" className="text-3xl font-bold text-blue-600">
-                  {studentsData.overview.active_students}
-                </Text>
-                <Text variant="body" className="text-token-text-secondary">
-                  Active Students
-                </Text>
-              </div>
-              <div className="text-center">
-                <Text variant="h2" className="text-3xl font-bold text-green-600">
-                  {studentsData.overview.total_lessons}
-                </Text>
-                <Text variant="body" className="text-token-text-secondary">
-                  Total Lessons
-                </Text>
-              </div>
-              <div className="text-center">
-                <Text variant="h2" className="text-3xl font-bold text-purple-600">
-                  {studentsData.overview.total_hours}
-                </Text>
-                <Text variant="body" className="text-token-text-secondary">
-                  Total Hours
-                </Text>
-              </div>
-              <div className="text-center">
-                <Text variant="h2" className="text-3xl font-bold text-orange-600">
-                  {studentsData.overview.countries}
-                </Text>
-                <Text variant="body" className="text-token-text-secondary">
-                  Countries
-                </Text>
-              </div>
-            </div>
-          </Card>
 
           {/* Notes Modal */}
           {showNotesModal && selectedStudent && (

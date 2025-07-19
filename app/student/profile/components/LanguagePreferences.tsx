@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../../lib/AuthContext';
-import { supabase } from '../../../lib/supabaseClient';
+import { useAuth } from '../../../../lib/AuthContext';
+import { supabase } from '../../../../lib/supabaseClient';
 import { Card, Text, Button } from '@/app/components/ui';
 
 // Simple pencil SVG icon
