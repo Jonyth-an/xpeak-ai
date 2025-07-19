@@ -94,14 +94,12 @@ export async function GET(request: NextRequest) {
         let countriesReached = 0;
         
         if (studentIds.length > 0) {
-          const { data: studentData } = await serverSupabase
-            .from('users')
-            .select('user_metadata')
-            .in('id', studentIds);
+          const { data: studentData } = await serverSupabase.auth.admin.listUsers();
           
-          if (studentData) {
+          if (studentData?.users) {
+            const lessonStudents = studentData.users.filter(user => studentIds.includes(user.id));
             const countries = new Set(
-              studentData
+              lessonStudents
                 .map(student => student.user_metadata?.country || 'Unknown')
                 .filter(country => country !== 'Unknown')
             );
@@ -124,13 +122,13 @@ export async function GET(request: NextRequest) {
     let students: Record<string, any> = {};
     
     if (studentIds.length > 0) {
-      const { data: studentData, error: studentError } = await serverSupabase
-        .from('users')
-        .select('id, email, user_metadata')
-        .in('id', studentIds);
+      // Use auth.admin.listUsers() to get student information
+      const { data: studentData, error: studentError } = await serverSupabase.auth.admin.listUsers();
       
-      if (!studentError && studentData) {
-        students = studentData.reduce((acc: Record<string, any>, student: any) => {
+      if (!studentError && studentData?.users) {
+        // Filter to only include students from our lessons
+        const lessonStudents = studentData.users.filter(user => studentIds.includes(user.id));
+        students = lessonStudents.reduce((acc: Record<string, any>, student: any) => {
           acc[student.id] = student;
           return acc;
         }, {});
@@ -143,6 +141,8 @@ export async function GET(request: NextRequest) {
       const now = new Date();
       const scheduledStart = new Date(lesson.scheduled_start);
       const minutesUntil = Math.max(0, Math.floor((scheduledStart.getTime() - now.getTime()) / (1000 * 60)));
+      
+
       
       return {
         id: lesson.id,
@@ -162,7 +162,8 @@ export async function GET(request: NextRequest) {
         student: {
           id: student.id,
           email: student.email,
-          name: student.user_metadata?.full_name || student.email?.split('@')[0] || 'Unknown'
+          name: student.user_metadata?.full_name || student.email?.split('@')[0] || 'Unknown',
+          profile_image_url: student.user_metadata?.avatar_url || student.user_metadata?.picture
         }
       };
     });

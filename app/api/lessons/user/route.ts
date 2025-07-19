@@ -51,6 +51,12 @@ export async function GET(request: NextRequest) {
           profile_image_url,
           bio,
           timezone
+        ),
+        lesson_feedback(
+          id,
+          rating,
+          comment,
+          created_at
         )
       `)
       .eq('student_id', user.id);
@@ -69,6 +75,13 @@ export async function GET(request: NextRequest) {
     if (upcoming) {
       const now = new Date();
       query = query.gte('scheduled_start', now.toISOString());
+    } else {
+      // For past lessons, show lessons that are in the past AND not pending/cancelled
+      const now = new Date();
+      query = query
+        .lt('scheduled_start', now.toISOString())
+        .neq('status', 'pending')
+        .neq('status', 'cancelled');
     }
 
     // Apply sorting and pagination
@@ -90,6 +103,11 @@ export async function GET(request: NextRequest) {
       const scheduledStart = new Date(lesson.scheduled_start);
       const minutesUntil = Math.max(0, Math.floor((scheduledStart.getTime() - now.getTime()) / (1000 * 60)));
       
+      // Extract feedback data (take the first feedback if multiple exist)
+      const feedback = lesson.lesson_feedback && lesson.lesson_feedback.length > 0 
+        ? lesson.lesson_feedback[0] 
+        : null;
+      
       return {
         id: lesson.id,
         lesson_type: lesson.lesson_type,
@@ -107,6 +125,12 @@ export async function GET(request: NextRequest) {
         created_at: lesson.created_at,
         minutes_until: minutesUntil,
         can_join: minutesUntil <= 60 && minutesUntil >= -60 && lesson.status === 'confirmed',
+        feedback: feedback ? {
+          id: feedback.id,
+          rating: feedback.rating,
+          comment: feedback.comment,
+          created_at: feedback.created_at
+        } : null,
         tutor: {
           id: tutor.id,
           name: tutor.display_name,
@@ -146,6 +170,13 @@ export async function GET(request: NextRequest) {
     if (upcoming) {
       const now = new Date();
       countQuery = countQuery.gte('scheduled_start', now.toISOString());
+    } else {
+      // For past lessons, show lessons that are in the past AND not pending/cancelled
+      const now = new Date();
+      countQuery = countQuery
+        .lt('scheduled_start', now.toISOString())
+        .neq('status', 'pending')
+        .neq('status', 'cancelled');
     }
 
     const { count: totalCount } = await countQuery;

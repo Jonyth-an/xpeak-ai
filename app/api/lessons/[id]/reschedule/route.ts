@@ -114,25 +114,38 @@ export async function POST(
     const requestedStart = `${requestedDate}T${requestedStartTime}:00`;
     const requestedEnd = `${requestedDate}T${requestedEndTime}:00`;
     
-    // Check tutor conflicts
+    console.log('🔍 Checking conflicts for reschedule request:');
+    console.log('📅 Requested time slot:', { requestedStart, requestedEnd });
+    console.log('👨‍🏫 Tutor ID:', lesson.tutor_id);
+    console.log('👤 User ID:', user.id);
+    console.log('📚 Lesson ID being rescheduled:', lessonId);
+    
+    // Check tutor conflicts using proper overlap detection
     const { data: tutorConflicts, error: tutorConflictError } = await serverSupabase
       .from('lessons')
       .select('id, scheduled_start, scheduled_end, status')
       .eq('tutor_id', lesson.tutor_id)
-      .or(`scheduled_start.lt.${requestedEnd},scheduled_end.gt.${requestedStart}`)
+      .lt('scheduled_start', requestedEnd)  // lesson starts before requested end
+      .gt('scheduled_end', requestedStart)  // lesson ends after requested start
       .in('status', ['pending', 'confirmed', 'reschedule_requested'])
       .neq('id', lessonId);
     
     if (tutorConflictError) {
-      console.error('Error checking tutor conflicts:', tutorConflictError);
+      console.error('❌ Error checking tutor conflicts:', tutorConflictError);
       return NextResponse.json({ 
         error: 'Failed to check tutor availability' 
       }, { status: 500 });
     }
     
+    console.log(`📊 Found ${tutorConflicts?.length || 0} tutor conflicts`);
     if (tutorConflicts && tutorConflicts.length > 0) {
+      console.log('❌ Tutor conflicts detected:');
+      tutorConflicts.forEach(conflict => {
+        console.log(`  - Lesson ${conflict.id}: ${conflict.scheduled_start} to ${conflict.scheduled_end} (${conflict.status})`);
+      });
       return NextResponse.json({ 
-        error: 'Tutor has a conflicting lesson at the requested time' 
+        error: 'Tutor has a conflicting lesson at the requested time',
+        conflicts: tutorConflicts
       }, { status: 409 });
     }
     
@@ -142,23 +155,32 @@ export async function POST(
         .from('lessons')
         .select('id, scheduled_start, scheduled_end, status')
         .eq('student_id', user.id)
-        .or(`scheduled_start.lt.${requestedEnd},scheduled_end.gt.${requestedStart}`)
+        .lt('scheduled_start', requestedEnd)  // lesson starts before requested end
+        .gt('scheduled_end', requestedStart)  // lesson ends after requested start
         .in('status', ['pending', 'confirmed', 'reschedule_requested'])
         .neq('id', lessonId);
       
       if (studentConflictError) {
-        console.error('Error checking student conflicts:', studentConflictError);
+        console.error('❌ Error checking student conflicts:', studentConflictError);
         return NextResponse.json({ 
           error: 'Failed to check your schedule' 
         }, { status: 500 });
       }
       
+      console.log(`📊 Found ${studentConflicts?.length || 0} student conflicts`);
       if (studentConflicts && studentConflicts.length > 0) {
+        console.log('❌ Student conflicts detected:');
+        studentConflicts.forEach(conflict => {
+          console.log(`  - Lesson ${conflict.id}: ${conflict.scheduled_start} to ${conflict.scheduled_end} (${conflict.status})`);
+        });
         return NextResponse.json({ 
-          error: 'You have a conflicting lesson at the requested time' 
+          error: 'You have a conflicting lesson at the requested time',
+          conflicts: studentConflicts
         }, { status: 409 });
       }
     }
+    
+    console.log('✅ No conflicts detected, proceeding with reschedule request creation...');
     
     // Create reschedule request
     const rescheduleRequestData = {

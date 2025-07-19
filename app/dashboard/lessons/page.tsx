@@ -9,6 +9,7 @@ import {
   Calendar, 
   Clock, 
   User, 
+  Users,
   Video, 
   RefreshCw, 
   X, 
@@ -21,7 +22,10 @@ import {
   ChevronRight,
   Search,
   Filter,
-  ArrowRight
+  ArrowRight,
+  CheckCircle,
+  UserPlus,
+  FileText
 } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import DashboardSidebar from '../components/DashboardSidebar';
@@ -73,6 +77,8 @@ export default function StudentLessonsPage() {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [feedbackRating, setFeedbackRating] = useState(0);
   const [feedbackComment, setFeedbackComment] = useState('');
+  const [isTutor, setIsTutor] = useState(false);
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
 
   // Reschedule modal states (matching Lesson Details page)
   const [rescheduleForm, setRescheduleForm] = useState({
@@ -107,8 +113,21 @@ export default function StudentLessonsPage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      // Use the same API call as Dashboard for upcoming lessons
-      const response = await fetch(`/api/lessons/user?upcoming=${activeTab === 'upcoming' ? 'true' : 'false'}&limit=20`, {
+      // First, check if the user is a tutor
+      const { data: tutorProfile } = await supabase
+        .from('tutor_profiles')
+        .select('id')
+        .eq('user_id', session.user.id)
+        .single();
+
+      // Determine which API to call based on user role
+      const userIsTutor = !!tutorProfile;
+      setIsTutor(userIsTutor);
+      const apiEndpoint = userIsTutor ? '/api/tutor/lessons' : '/api/lessons/user';
+      
+      console.log(`🔍 User role: ${userIsTutor ? 'Tutor' : 'Student'}, calling API: ${apiEndpoint}`);
+
+      const response = await fetch(`${apiEndpoint}?upcoming=${activeTab === 'upcoming' ? 'true' : 'false'}&limit=20`, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`
         }
@@ -239,6 +258,8 @@ export default function StudentLessonsPage() {
         return 'text-token-error bg-token-error-light border-token-error/20';
       case 'no_show':
         return 'text-token-error bg-token-error-light border-token-error/20';
+      case 'reschedule_requested':
+        return 'text-token-warning bg-token-warning-light border-token-warning/20';
       default:
         return 'text-token-text-secondary bg-token-surface-accent border-token-border';
     }
@@ -256,8 +277,86 @@ export default function StudentLessonsPage() {
         return 'Cancelled';
       case 'no_show':
         return 'Missed';
+      case 'reschedule_requested':
+        return 'Reschedule Requested';
       default:
         return status;
+    }
+  };
+
+  // Add status icons
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+        return <CheckCircle className="w-3.5 h-3.5" />;
+      case 'pending':
+        return <Clock className="w-3.5 h-3.5" />;
+      case 'completed':
+        return <CheckCircle className="w-3.5 h-3.5" />;
+      case 'cancelled':
+        return <X className="w-3.5 h-3.5" />;
+      case 'no_show':
+        return <X className="w-3.5 h-3.5" />;
+      case 'reschedule_requested':
+        return <RefreshCw className="w-3.5 h-3.5" />;
+      default:
+        return <Clock className="w-3.5 h-3.5" />;
+    }
+  };
+
+  // Enhanced time formatting with timezone
+  const formatLessonTime = (scheduledStart: string) => {
+    const lessonDate = new Date(scheduledStart);
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const lessonDay = new Date(lessonDate.getFullYear(), lessonDate.getMonth(), lessonDate.getDate());
+    
+    let dayLabel = '';
+    if (lessonDay.getTime() === today.getTime()) {
+      dayLabel = 'Today';
+    } else if (lessonDay.getTime() === tomorrow.getTime()) {
+      dayLabel = 'Tomorrow';
+    } else {
+      dayLabel = lessonDate.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+    
+    const timeString = lessonDate.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+    
+    // Get timezone abbreviation (simplified)
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const timezoneAbbr = timezone.includes('America/New_York') ? 'EST' :
+                        timezone.includes('America/Chicago') ? 'CST' :
+                        timezone.includes('America/Denver') ? 'MST' :
+                        timezone.includes('America/Los_Angeles') ? 'PST' :
+                        timezone.includes('Europe/London') ? 'GMT' :
+                        timezone.includes('Asia/Shanghai') ? 'CST' :
+                        timezone.includes('Asia/Tokyo') ? 'JST' :
+                        'GMT';
+    
+    return `${dayLabel} at ${timeString} (${timezoneAbbr})`;
+  };
+
+  // Enhanced time until formatting with highlighting
+  const formatTimeUntilHighlighted = (minutesUntil: number) => {
+    const timeString = formatTimeUntil(minutesUntil);
+    
+    if (minutesUntil <= 15) {
+      return <span className="text-orange-600 font-medium">{timeString}</span>;
+    } else if (minutesUntil <= 60) {
+      return <span className="text-orange-500">{timeString}</span>;
+    } else {
+      return <span className="text-token-text-secondary">{timeString}</span>;
     }
   };
 
@@ -285,9 +384,10 @@ export default function StudentLessonsPage() {
   };
 
   const submitFeedback = async () => {
-    if (!selectedLesson || feedbackRating === 0) return;
+    if (!selectedLesson || feedbackRating === 0 || submittingFeedback) return;
     
     try {
+      setSubmittingFeedback(true);
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
@@ -306,9 +406,117 @@ export default function StudentLessonsPage() {
       if (response.ok) {
         setShowFeedbackModal(false);
         fetchLessons(); // Refresh to show feedback was submitted
+      } else {
+        // Handle different error statuses
+        const errorData = await response.json().catch(() => ({}));
+        
+        if (response.status === 409) {
+          // Feedback already submitted
+          setShowFeedbackModal(false);
+          fetchLessons(); // Refresh to show existing feedback
+          // You could show a toast notification here if you have one
+          console.log('Feedback already submitted for this lesson');
+        } else if (response.status === 403) {
+          console.error('Unauthorized: You cannot submit feedback for this lesson');
+        } else if (response.status === 400) {
+          console.error('Invalid request:', errorData.error);
+        } else {
+          console.error('Failed to submit feedback:', errorData.error || 'Unknown error');
+        }
       }
     } catch (error) {
       console.error('Error submitting feedback:', error);
+    } finally {
+      setSubmittingFeedback(false);
+    }
+  };
+
+  const isLessonInPast = (lesson: Lesson) => {
+    const lessonDate = new Date(lesson.scheduled_start);
+    const now = new Date();
+    return lessonDate < now;
+  };
+
+  const getEffectiveStatus = (lesson: Lesson, isPastTab: boolean) => {
+    if (isPastTab && isLessonInPast(lesson)) {
+      // For past lessons, treat confirmed lessons as completed
+      if (lesson.status === 'confirmed') {
+        return 'completed';
+      }
+      return lesson.status;
+    }
+    return lesson.status;
+  };
+
+  const getRatingText = (feedback?: { rating: number; comment: string }) => {
+    if (!feedback) return 'Not Rated';
+    return 'Submitted';
+  };
+
+  const getRatingIcon = (feedback?: { rating: number; comment: string }) => {
+    if (!feedback) return <Star className="w-4 h-4 text-token-text-muted" />;
+    return <CheckCircle className="w-4 h-4 text-token-text-muted" />;
+  };
+
+  const handleRebookTutor = (lesson: Lesson) => {
+    // Navigate to tutor profile page
+    window.open(`/tutors/${lesson.tutor.id}`, '_blank');
+  };
+
+  const handleViewSummary = (lesson: Lesson) => {
+    // Placeholder for summary functionality
+    console.log('View summary for lesson:', lesson.id);
+    // TODO: Implement summary modal or page
+  };
+
+  const getPastLessonStatusText = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return 'Completed';
+      case 'no_show_student':
+        return 'Missed - Student';
+      case 'no_show_tutor':
+        return 'Missed - Tutor';
+      case 'no_show_both':
+        return 'Missed - Both';
+      case 'missed':
+        return 'Missed';
+      default:
+        return getStatusText(status);
+    }
+  };
+
+  const getPastLessonStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return 'bg-green-50 text-green-700 border-green-200';
+      case 'no_show_student':
+        return 'bg-red-50 text-red-700 border-red-200';
+      case 'no_show_tutor':
+        return 'bg-orange-50 text-orange-700 border-orange-200';
+      case 'no_show_both':
+        return 'bg-gray-50 text-gray-700 border-gray-200';
+      case 'missed':
+        return 'bg-red-50 text-red-700 border-red-200';
+      default:
+        return getStatusColor(status);
+    }
+  };
+
+  const getPastLessonStatusIcon = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return <CheckCircle className="w-3.5 h-3.5" />;
+      case 'no_show_student':
+        return <User className="w-3.5 h-3.5" />;
+      case 'no_show_tutor':
+        return <User className="w-3.5 h-3.5" />;
+      case 'no_show_both':
+        return <Users className="w-3.5 h-3.5" />;
+      case 'missed':
+        return <Clock className="w-3.5 h-3.5" />;
+      default:
+        return getStatusIcon(status);
     }
   };
 
@@ -403,9 +611,12 @@ export default function StudentLessonsPage() {
                         </Card>
                       ) : (
                         <div className="space-y-4">
-                          {(activeTab === 'upcoming' ? upcomingLessons : pastLessons).map((lesson) => (
+                          {(activeTab === 'upcoming' ? upcomingLessons : pastLessons).map((lesson) => {
+                            const effectiveStatus = getEffectiveStatus(lesson, activeTab === 'past');
+                            return (
                             <Card key={lesson.id} className="p-6 border border-gray-200 rounded-xl" variant="outlined">
                               <div className="flex items-start justify-between">
+                                {/* Left Section: Avatar, Name, Time, Details */}
                                 <div className="flex items-start gap-4 flex-1">
                                   {/* Tutor Avatar */}
                                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-token-primary to-token-accent flex items-center justify-center flex-shrink-0">
@@ -420,110 +631,184 @@ export default function StudentLessonsPage() {
                                     )}
                                   </div>
 
-                                  {/* Lesson Details */}
+                                  {/* Lesson Info */}
                                   <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-2">
+                                    {/* Name and Time Until */}
+                                    <div className="flex items-center gap-2 mb-1">
                                       <Text variant="h3" as="h3" className="truncate">
                                         {lesson.tutor.name}
                                       </Text>
-                                      <span className={`px-3 py-1.5 rounded-full text-sm font-medium border flex items-center gap-1.5 ${getStatusColor(lesson.status)}`}>
-                                        <div className="w-1.5 h-1.5 rounded-full bg-current"></div>
-                                        {getStatusText(lesson.status)}
-                                      </span>
                                       {activeTab === 'upcoming' && lesson.minutes_until >= 0 && (
-                                        <>
-                                          <span className="text-token-text-muted">•</span>
-                                          <div className="flex items-center gap-1.5">
-                                            <div className={`w-1.5 h-1.5 rounded-full ${lesson.minutes_until <= 15 ? 'bg-token-warning animate-pulse' : 'bg-token-success'}`}></div>
-                                            <Text variant="small" className="text-token-text-secondary">
-                                              {formatTimeUntil(lesson.minutes_until)}
-                                            </Text>
-                                          </div>
-                                        </>
+                                        <div className="flex items-center gap-1.5">
+                                          <div className={`w-1.5 h-1.5 rounded-full ${lesson.minutes_until <= 15 ? 'bg-token-warning animate-pulse' : 'bg-token-success'}`}></div>
+                                          <Text variant="small" className="text-token-text-secondary">
+                                            {formatTimeUntilHighlighted(lesson.minutes_until)}
+                                          </Text>
+                                        </div>
                                       )}
                                     </div>
                                     
-                                    <div className="flex items-center gap-2 text-sm text-token-text-secondary">
-                                      <div className="flex items-center gap-1">
-                                        <BookOpen className="w-3.5 h-3.5 text-token-text-muted" />
-                                        <span>{lesson.lesson_type}</span>
+                                    {/* Lesson Time */}
+                                    <Text variant="body" className="text-token-text-secondary mb-3">
+                                      {formatLessonTime(lesson.scheduled_start)}
+                                    </Text>
+                                    
+                                    {/* Labeled Details */}
+                                    <div className="grid grid-cols-3 gap-4 text-sm">
+                                      <div className="flex items-center gap-2">
+                                        <BookOpen className="w-4 h-4 text-token-text-muted" />
+                                        <div>
+                                          <div className="text-xs text-token-text-muted uppercase tracking-wide">Lesson Type</div>
+                                          <div className="font-medium text-token-text">{lesson.lesson_type}</div>
+                                        </div>
                                       </div>
-                                      <span className="text-token-text-muted">•</span>
-                                      <div className="flex items-center gap-1">
-                                        <Clock className="w-3.5 h-3.5 text-token-text-muted" />
-                                        <span>{lesson.duration_minutes} minutes</span>
+                                      <div className="flex items-center gap-2">
+                                        <Clock className="w-4 h-4 text-token-text-muted" />
+                                        <div>
+                                          <div className="text-xs text-token-text-muted uppercase tracking-wide">Duration</div>
+                                          <div className="font-medium text-token-text">{lesson.duration_minutes} Minutes</div>
+                                        </div>
                                       </div>
-                                      <span className="text-token-text-muted">•</span>
-                                      <div className="flex items-center gap-1">
-                                        <Calendar className="w-3.5 h-3.5 text-token-text-muted" />
-                                        <span>
-                                          {new Date(lesson.scheduled_start).toLocaleDateString('en-US', {
-                                            weekday: 'short',
-                                            month: 'short',
-                                            day: 'numeric',
-                                            hour: 'numeric',
-                                            minute: '2-digit',
-                                            hour12: true
-                                          })}
-                                        </span>
+                                      <div className="flex items-center gap-2">
+                                        {activeTab === 'past' ? (
+                                          <>
+                                            {getRatingIcon(lesson.feedback)}
+                                            <div>
+                                              <div className="text-xs text-token-text-muted uppercase tracking-wide">Rating</div>
+                                              <div className="font-medium text-token-text">{getRatingText(lesson.feedback)}</div>
+                                            </div>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Calendar className="w-4 h-4 text-token-text-muted" />
+                                            <div>
+                                              <div className="text-xs text-token-text-muted uppercase tracking-wide">Status</div>
+                                              <div className="font-medium text-token-text">
+                                                {lesson.status === 'confirmed' && lesson.can_join ? 'Ready to Join' :
+                                                 lesson.status === 'confirmed' ? 'Confirmed' :
+                                                 lesson.status === 'pending' ? 'Pending Confirmation' :
+                                                 getStatusText(lesson.status)}
+                                              </div>
+                                            </div>
+                                          </>
+                                        )}
                                       </div>
                                     </div>
                                   </div>
                                 </div>
 
-                                {/* Action Buttons */}
-                                <div className="flex items-center gap-1.5 ml-4">
-                                  {activeTab === 'upcoming' && lesson.can_join && (
-                                    <Link href={`/lessons/${lesson.id}/video`}>
-                                      <Button variant="primary" size="sm" className="text-xs px-3 py-1.5 h-8">
-                                        <Video className="w-3.5 h-3.5 mr-1.5" />
-                                        Join
-                                      </Button>
-                                    </Link>
+                                {/* Right Section: Status Badge */}
+                                <div className="flex-shrink-0 ml-4">
+                                  {activeTab === 'past' && lesson.feedback ? (
+                                    <div className="flex items-center gap-2">
+                                      <span className={`px-3 py-1.5 rounded-full text-sm font-medium border flex items-center gap-1.5 ${getPastLessonStatusColor(effectiveStatus)}`}>
+                                        {getPastLessonStatusIcon(effectiveStatus)}
+                                        {getPastLessonStatusText(effectiveStatus)}
+                                      </span>
+                                      <div className="flex items-center gap-1">
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                          <span
+                                            key={star}
+                                            className={`text-sm ${lesson.feedback!.rating >= star ? 'text-yellow-400' : 'text-gray-300'}`}
+                                          >
+                                            ★
+                                          </span>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <span className={`px-3 py-1.5 rounded-full text-sm font-medium border flex items-center gap-1.5 ${
+                                      activeTab === 'past' ? getPastLessonStatusColor(effectiveStatus) : getStatusColor(lesson.status)
+                                    }`}>
+                                      {activeTab === 'past' ? getPastLessonStatusIcon(effectiveStatus) : getStatusIcon(lesson.status)}
+                                      {activeTab === 'past' ? getPastLessonStatusText(effectiveStatus) : getStatusText(lesson.status)}
+                                    </span>
                                   )}
-                                  {activeTab === 'upcoming' && !lesson.can_join && (
-                                    <>
-                                      <Button 
-                                        variant="outline" 
-                                        size="sm"
-                                        className="text-xs px-3 py-1.5 h-8"
-                                        onClick={() => handleReschedule(lesson)}
-                                      >
-                                        <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
-                                        Reschedule
-                                      </Button>
-                                      <Button 
-                                        variant="outline" 
-                                        size="sm"
-                                        className="text-xs px-3 py-1.5 h-8"
-                                        onClick={() => handleCancel(lesson)}
-                                      >
-                                        <X className="w-3.5 h-3.5 mr-1.5" />
-                                        Cancel
-                                      </Button>
-                                    </>
-                                  )}
-                                  {activeTab === 'past' && lesson.status === 'completed' && !lesson.feedback && (
+                                </div>
+                              </div>
+
+                              {/* Bottom Section: Action Buttons */}
+                              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+                                {activeTab === 'upcoming' && lesson.can_join && (
+                                  <Link href={`/lessons/${lesson.id}/video`}>
+                                    <Button variant="primary" size="sm" className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:shadow-md">
+                                      <Video className="w-3.5 h-3.5 mr-1.5" />
+                                      Join Lesson
+                                    </Button>
+                                  </Link>
+                                )}
+                                {activeTab === 'upcoming' && !lesson.can_join && (
+                                  <>
                                     <Button 
                                       variant="outline" 
                                       size="sm"
-                                      className="text-xs px-3 py-1.5 h-8"
-                                      onClick={() => handleFeedback(lesson)}
+                                      className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-gray-50 hover:border-gray-300"
+                                      onClick={() => handleReschedule(lesson)}
                                     >
-                                      <Star className="w-3.5 h-3.5 mr-1.5" />
-                                      Leave Feedback
+                                      <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
+                                      Reschedule
                                     </Button>
-                                  )}
-                                  <Link href={`/lessons/${lesson.id}`}>
-                                    <Button variant="outline" size="sm" className="text-xs px-3 py-1.5 h-8">
-                                      <Eye className="w-3.5 h-3.5 mr-1.5" />
-                                      View Details
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm"
+                                      className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-red-50 hover:border-red-300 hover:text-red-700"
+                                      onClick={() => handleCancel(lesson)}
+                                    >
+                                      <X className="w-3.5 h-3.5 mr-1.5" />
+                                      Cancel
                                     </Button>
-                                  </Link>
-                                </div>
+                                  </>
+                                )}
+                                {activeTab === 'past' && (
+                                  <>
+                                    {effectiveStatus === 'completed' && !lesson.feedback && !isTutor && (
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm"
+                                        className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-yellow-50 hover:border-yellow-300 hover:text-yellow-700"
+                                        onClick={() => handleFeedback(lesson)}
+                                      >
+                                        <Star className="w-3.5 h-3.5 mr-1.5" />
+                                        Leave Feedback
+                                      </Button>
+                                    )}
+                                    {effectiveStatus === 'completed' && isTutor && (
+                                      <div className="text-xs text-gray-500 px-3 py-1.5">
+                                        <Star className="w-3.5 h-3.5 mr-1.5 inline" />
+                                        Feedback from student
+                                      </div>
+                                    )}
+                                    {!['no_show_student', 'no_show_tutor', 'no_show_both', 'missed'].includes(effectiveStatus) && (
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm"
+                                        className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700"
+                                        onClick={() => handleRebookTutor(lesson)}
+                                      >
+                                        <UserPlus className="w-3.5 h-3.5 mr-1.5" />
+                                        Rebook Tutor
+                                      </Button>
+                                    )}
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm"
+                                      className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-green-50 hover:border-green-300 hover:text-green-700"
+                                      onClick={() => handleViewSummary(lesson)}
+                                    >
+                                      <FileText className="w-3.5 h-3.5 mr-1.5" />
+                                      View Summary
+                                    </Button>
+                                  </>
+                                )}
+                                <Link href={`/lessons/${lesson.id}`}>
+                                  <Button variant="outline" size="sm" className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-gray-50 hover:border-gray-300">
+                                    <Eye className="w-3.5 h-3.5 mr-1.5" />
+                                    View Details
+                                  </Button>
+                                </Link>
                               </div>
                             </Card>
-                          ))}
+                          )})}
                         </div>
                       )}
                     </div>
@@ -770,10 +1055,10 @@ export default function StudentLessonsPage() {
                 <Button 
                   variant="primary" 
                   onClick={submitFeedback}
-                  disabled={feedbackRating === 0}
+                  disabled={feedbackRating === 0 || isTutor || submittingFeedback}
                   className="flex-1"
                 >
-                  Submit Feedback
+                  {submittingFeedback ? 'Submitting...' : 'Submit Feedback'}
                 </Button>
               </div>
             </div>

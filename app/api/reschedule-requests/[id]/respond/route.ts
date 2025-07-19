@@ -160,27 +160,41 @@ export async function POST(
       const proposedStart = `${proposedDate}T${proposedStartTime}:00`;
       const proposedEnd = `${proposedDate}T${proposedEndTime}:00`;
       
-      // Check tutor conflicts
+      console.log('🔍 Checking conflicts for tutor proposal:');
+      console.log('📅 Proposed time slot:', { proposedStart, proposedEnd });
+      console.log('👨‍🏫 Tutor ID:', lesson.tutor_id);
+      console.log('📚 Lesson ID being rescheduled:', lesson.id);
+      
+      // Check tutor conflicts using proper overlap detection
       const { data: tutorConflicts, error: tutorConflictError } = await serverSupabase
         .from('lessons')
         .select('id, scheduled_start, scheduled_end, status')
         .eq('tutor_id', lesson.tutor_id)
-        .or(`scheduled_start.lt.${proposedEnd},scheduled_end.gt.${proposedStart}`)
+        .lt('scheduled_start', proposedEnd)  // lesson starts before proposed end
+        .gt('scheduled_end', proposedStart)  // lesson ends after proposed start
         .in('status', ['pending', 'confirmed', 'reschedule_requested'])
         .neq('id', lesson.id);
       
       if (tutorConflictError) {
-        console.error('Error checking tutor conflicts:', tutorConflictError);
+        console.error('❌ Error checking tutor conflicts:', tutorConflictError);
         return NextResponse.json({ 
           error: 'Failed to check tutor availability' 
         }, { status: 500 });
       }
       
+      console.log(`📊 Found ${tutorConflicts?.length || 0} tutor conflicts for proposal`);
       if (tutorConflicts && tutorConflicts.length > 0) {
+        console.log('❌ Tutor conflicts detected for proposal:');
+        tutorConflicts.forEach(conflict => {
+          console.log(`  - Lesson ${conflict.id}: ${conflict.scheduled_start} to ${conflict.scheduled_end} (${conflict.status})`);
+        });
         return NextResponse.json({ 
-          error: 'You have a conflicting lesson at the proposed time' 
+          error: 'You have a conflicting lesson at the proposed time',
+          conflicts: tutorConflicts
         }, { status: 409 });
       }
+      
+      console.log('✅ No conflicts detected for tutor proposal, proceeding...');
       
       // Update reschedule request with proposal
       const { error: requestUpdateError } = await serverSupabase
