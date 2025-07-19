@@ -6,10 +6,12 @@ import Layout from '../../components/Layout';
 import LoginForm from '@/app/components/molecules/LoginForm';
 import Text from '@/app/components/ui/Text';
 import { useAuth } from '@/lib/AuthContext';
+import { useRoles } from '@/lib/RolesContext';
 
 export default function LoginPage() {
   const router = useRouter();
   const { user } = useAuth();
+  const { roles } = useRoles();
   const [pageError, setPageError] = useState<string | null>(null);
 
   // Check for error parameters from OAuth callback
@@ -57,9 +59,16 @@ export default function LoginPage() {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      router.push('/dashboard');
+      // Route based on user role
+      if (roles.includes('admin')) {
+        router.push('/admin/dashboard');
+      } else if (roles.includes('tutor')) {
+        router.push('/tutor');
+      } else {
+        router.push('/student/dashboard');
+      }
     }
-  }, [user, router]);
+  }, [user, router, roles]);
 
   const handleLogin = (data: { email: string; password: string }) => {
     console.log('login attempt:', data);

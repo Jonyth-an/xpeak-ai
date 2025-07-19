@@ -97,7 +97,7 @@ export default function Header({ heroBackgroundColor }: HeaderProps) {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href={user ? "/dashboard" : "/"} className="flex items-center">
+            <Link href={user ? (roles.includes('admin') ? '/admin/dashboard' : roles.includes('tutor') ? '/tutor' : '/student/dashboard') : "/"} className="flex items-center">
               <Text variant="h2" as="span" className="text-token-primary">
                 Xpeak AI
               </Text>
@@ -192,7 +192,7 @@ export default function Header({ heroBackgroundColor }: HeaderProps) {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
-                          <Link href="/profile">Profile</Link>
+                          <Link href={roles.includes('tutor') ? '/tutor/profile' : '/student/profile'}>Profile</Link>
                         </DropdownMenuItem>
                         {roles.includes('tutor') && (
                           <DropdownMenuItem asChild>

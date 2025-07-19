@@ -2,18 +2,27 @@
 
 import React, { useEffect } from 'react';
 import { useAuth } from '@/lib/AuthContext';
+import { useRoles } from '@/lib/RolesContext';
 import { useRouter } from 'next/navigation';
 import HomePage from './home/page';
 
 export default function MainPage() {
   const { user, loading } = useAuth();
+  const { roles } = useRoles();
   const router = useRouter();
 
   useEffect(() => {
     if (!loading && user) {
-      router.push('/dashboard');
+      // Route based on user role
+      if (roles.includes('admin')) {
+        router.push('/admin/dashboard');
+      } else if (roles.includes('tutor')) {
+        router.push('/tutor');
+      } else {
+        router.push('/student/dashboard');
+      }
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, roles]);
 
   // Show loading while checking auth status
   if (loading) {

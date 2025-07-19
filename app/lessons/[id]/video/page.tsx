@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/AuthContext"
+import { useRoles } from "@/lib/RolesContext"
 import SystemCheck from "@/app/components/video/SystemCheck"
 import VideoRoom from "@/app/components/video/VideoRoom"
 import LessonInterface from "@/app/components/video/LessonInterface"
@@ -38,7 +39,17 @@ export default function VideoPage({ params }: { params: Promise<{ id: string }> 
   const [showVideoRoom, setShowVideoRoom] = useState(false)
   const [showLessonInterface, setShowLessonInterface] = useState(false)
   const { user } = useAuth()
+  const { roles } = useRoles()
   const router = useRouter()
+
+  // Helper function to get the appropriate lessons route based on user role
+  const getLessonsRoute = () => {
+    if (roles.includes('tutor')) {
+      return '/tutor/lessons'
+    } else {
+      return '/student/lessons'
+    }
+  }
 
   useEffect(() => {
     const initPage = async () => {
@@ -90,7 +101,7 @@ export default function VideoPage({ params }: { params: Promise<{ id: string }> 
 
   const handleEndLesson = () => {
     // Navigate back to dashboard or lesson details
-    router.push('/dashboard/lessons')
+    router.push(getLessonsRoute())
   }
 
   if (loading) {
@@ -116,7 +127,7 @@ export default function VideoPage({ params }: { params: Promise<{ id: string }> 
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Lesson</h2>
           <p className="text-gray-600 mb-4">{error || 'Lesson not found'}</p>
           <button
-            onClick={() => router.push('/dashboard/lessons')}
+            onClick={() => router.push(getLessonsRoute())}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
             Back to Lessons
@@ -142,7 +153,7 @@ export default function VideoPage({ params }: { params: Promise<{ id: string }> 
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Access Denied</h2>
           <p className="text-gray-600 mb-4">You are not authorized to join this lesson.</p>
           <button
-            onClick={() => router.push('/dashboard/lessons')}
+            onClick={() => router.push(getLessonsRoute())}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
             Back to Lessons
