@@ -217,13 +217,13 @@ export default function SystemCheck({ onComplete, onBack }: SystemTestProps) {
   const getStatusIcon = (status: TestResult["status"]) => {
     switch (status) {
       case "passed":
-        return <CheckCircle className="w-5 h-5 text-green-600" />
+        return <CheckCircle className="w-5 h-5 text-success" />
       case "failed":
-        return <XCircle className="w-5 h-5 text-red-600" />
+        return <XCircle className="w-5 h-5 text-error" />
       case "testing":
-        return <RefreshCw className="w-5 h-5 text-blue-600 animate-spin" />
+        return <RefreshCw className="w-5 h-5 text-accent animate-spin" />
       default:
-        return <AlertCircle className="w-5 h-5 text-gray-400" />
+        return <AlertCircle className="w-5 h-5 text-muted" />
     }
   }
 
@@ -243,7 +243,7 @@ export default function SystemCheck({ onComplete, onBack }: SystemTestProps) {
   const getStatusBadge = (status: TestResult["status"]) => {
     switch (status) {
       case "passed":
-        return <Badge className="bg-green-100 text-green-800">Camera working perfectly!</Badge>
+        return <Badge className="bg-success text-success-foreground">Camera working perfectly!</Badge>
       case "failed":
         return <Badge variant="destructive">Camera not working</Badge>
       case "testing":
@@ -256,7 +256,7 @@ export default function SystemCheck({ onComplete, onBack }: SystemTestProps) {
   const getMicrophoneStatusBadge = (status: TestResult["status"]) => {
     switch (status) {
       case "passed":
-        return <Badge className="bg-green-100 text-green-800">Microphone working perfectly!</Badge>
+        return <Badge className="bg-success text-success-foreground">Microphone working perfectly!</Badge>
       case "failed":
         return <Badge variant="destructive">Microphone not working</Badge>
       case "testing":
@@ -269,7 +269,7 @@ export default function SystemCheck({ onComplete, onBack }: SystemTestProps) {
   const getInternetStatusBadge = (status: TestResult["status"]) => {
     switch (status) {
       case "passed":
-        return <Badge className="bg-green-100 text-green-800">Internet connection is excellent!</Badge>
+        return <Badge className="bg-success text-success-foreground">Internet connection is excellent!</Badge>
       case "failed":
         return <Badge variant="destructive">Connection issues</Badge>
       case "testing":
@@ -280,97 +280,98 @@ export default function SystemCheck({ onComplete, onBack }: SystemTestProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">System Check</h1>
-          <p className="text-gray-600">
+    <div className="min-h-screen bg-surface flex items-center justify-center p-4">
+      <div className="w-full max-w-6xl">
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold text-text mb-2">System Check</h1>
+          <p className="text-text-secondary">
             Let's make sure your camera, microphone, and internet are ready for your lesson.
           </p>
         </div>
 
         {/* Test Progress */}
-        <div className="mb-8">
+        <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">Test Progress</span>
-            <span className="text-sm text-gray-500">{Math.round(testProgress)}%</span>
+            <span className="text-sm font-medium text-text">Test Progress</span>
+            <span className="text-sm text-text-muted">{Math.round(testProgress)}%</span>
           </div>
           <Progress value={testProgress} className="h-2" />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Test Results */}
-          <div className="space-y-4">
-            {testResults.map((result, index) => (
-              <Card key={index} className="border-2">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      {getTestIcon(index)}
-                      <h3 className="font-semibold text-gray-900">{testNames[index]}</h3>
-                      {getStatusIcon(result.status)}
-                    </div>
-                    {result.status === "failed" && isTestingComplete && (
-                      <Button variant="outline" size="sm" onClick={() => retryTest(index)}>
-                        <RefreshCw className="w-4 h-4 mr-1" />
-                        Retry
-                      </Button>
-                    )}
+        {/* Test Results - 3 cards in a row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {testResults.map((result, index) => (
+            <Card key={index} className="border-2">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    {getTestIcon(index)}
+                    <h3 className="font-semibold text-text text-sm">{testNames[index]}</h3>
+                    {getStatusIcon(result.status)}
                   </div>
+                  {result.status === "failed" && isTestingComplete && (
+                    <Button variant="outline" size="sm" onClick={() => retryTest(index)} className="h-6 px-2">
+                      <RefreshCw className="w-3 h-3 mr-1" />
+                      Retry
+                    </Button>
+                  )}
+                </div>
 
-                  <p className="text-sm text-gray-600 mb-3">{result.message}</p>
+                <p className="text-xs text-text-secondary mb-2">{result.message}</p>
 
-                  {/* Status Badge */}
-                  <div className="mb-3">
-                    {index === 0 && getStatusBadge(result.status)}
-                    {index === 1 && getMicrophoneStatusBadge(result.status)}
-                    {index === 2 && getInternetStatusBadge(result.status)}
+                {/* Status Badge */}
+                <div className="mb-2">
+                  {index === 0 && getStatusBadge(result.status)}
+                  {index === 1 && getMicrophoneStatusBadge(result.status)}
+                  {index === 2 && getInternetStatusBadge(result.status)}
+                </div>
+
+                {result.status === "testing" && (
+                  <div className="space-y-1">
+                    <Progress value={((currentTest + 1) / testResults.length) * 100} className="h-1" />
+                    <p className="text-xs text-text-muted">Testing in progress...</p>
                   </div>
+                )}
 
-                  {result.status === "testing" && (
-                    <div className="space-y-2">
-                      <Progress value={((currentTest + 1) / testResults.length) * 100} className="h-2" />
-                      <p className="text-xs text-gray-500">Testing in progress...</p>
+                {/* Special UI for each test */}
+                {index === 1 && result.status === "testing" && (
+                  <div className="mt-2">
+                    <div className="flex items-center gap-1 mb-1">
+                      <Volume2 className="w-3 h-3 text-accent" />
+                      <span className="text-xs text-text-secondary">Audio Level</span>
                     </div>
-                  )}
+                    <Progress value={audioLevel} className="h-2" />
+                  </div>
+                )}
 
-                  {/* Special UI for each test */}
-                  {index === 1 && result.status === "testing" && (
-                    <div className="mt-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Volume2 className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm text-gray-600">Audio Level</span>
-                      </div>
-                      <Progress value={audioLevel} className="h-3" />
+                {index === 2 && result.status === "testing" && (
+                  <div className="mt-2">
+                    <div className="flex items-center gap-1 mb-1">
+                      <Wifi className="w-3 h-3 text-accent" />
+                      <span className="text-xs text-text-secondary">Connection Speed</span>
                     </div>
-                  )}
+                    <Progress value={internetSpeed} className="h-2" />
+                    <p className="text-xs text-text-muted">{Math.round(internetSpeed)} Mbps</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-                  {index === 2 && result.status === "testing" && (
-                    <div className="mt-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Wifi className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm text-gray-600">Connection Speed</span>
-                      </div>
-                      <Progress value={internetSpeed} className="h-3" />
-                      <p className="text-xs text-gray-500 mt-1">{Math.round(internetSpeed)} Mbps</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Video Preview and Audio Level */}
-          <div className="space-y-4">
+        {/* Preview & Controls - Side by side */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Camera Preview */}
+          <div className="lg:col-span-1">
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Camera className="w-5 h-5" />
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Camera className="w-4 h-4" />
                   Camera Preview
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden relative">
+              <CardContent className="pt-0">
+                <div className="aspect-[4/3] bg-surface-muted rounded-lg overflow-hidden relative">
                   <video 
                     ref={videoRef} 
                     autoPlay 
@@ -379,93 +380,98 @@ export default function SystemCheck({ onComplete, onBack }: SystemTestProps) {
                     className="w-full h-full object-cover" 
                   />
                   {testResults[0].status === "failed" && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
-                      <div className="text-center text-white">
-                        <XCircle className="w-12 h-12 mx-auto mb-2 text-red-500" />
-                        <p className="text-sm">Camera not available</p>
+                    <div className="absolute inset-0 flex items-center justify-center bg-surface-muted">
+                      <div className="text-center text-text">
+                        <XCircle className="w-8 h-8 mx-auto mb-1 text-error" />
+                        <p className="text-xs">Camera not available</p>
                       </div>
                     </div>
                   )}
                   {testResults[0].status === "pending" && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
-                      <div className="text-center text-white">
-                        <Camera className="w-12 h-12 mx-auto mb-2 text-gray-400" />
-                        <p className="text-sm">Camera preview will appear here</p>
+                    <div className="absolute inset-0 flex items-center justify-center bg-surface-muted">
+                      <div className="text-center text-text">
+                        <Camera className="w-8 h-8 mx-auto mb-1 text-muted" />
+                        <p className="text-xs">Camera preview will appear here</p>
                       </div>
                     </div>
                   )}
                 </div>
               </CardContent>
             </Card>
+          </div>
 
+          {/* Audio Level & Action Buttons */}
+          <div className="lg:col-span-2 space-y-4">
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Volume2 className="w-5 h-5" />
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Volume2 className="w-4 h-4" />
                   Audio Level
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-0">
                 <div className="space-y-2">
                   <Progress value={audioLevel} className="h-3" />
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Silent</span>
-                    <span className="text-gray-600">Good</span>
+                    <span className="text-text-secondary">Silent</span>
+                    <span className="text-text-secondary">Good</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
 
-        {/* Action Buttons */}
-        <div className="flex justify-center gap-4 mt-8">
-          {!isTestingComplete ? (
-            <Button disabled className="px-8">
-              <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-              Testing System...
-            </Button>
-          ) : (
-            <>
-              <Button variant="outline" onClick={retryAllTests}>
-                Run Tests Again
+            {/* Action Buttons */}
+            <div className="flex flex-wrap gap-3">
+              {!isTestingComplete ? (
+                <Button disabled className="px-6">
+                  <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                  Testing System...
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline" onClick={retryAllTests} size="sm">
+                    Run Tests Again
+                  </Button>
+                  <Button 
+                    onClick={() => onComplete(canProceed)} 
+                    disabled={!canProceed} 
+                    className="px-6"
+                    size="sm"
+                  >
+                    <Play className="w-4 h-4 mr-2" />
+                    {canProceed ? "Join Lesson Now" : "Fix Issues to Continue"}
+                  </Button>
+                </>
+              )}
+              <Button variant="outline" onClick={onBack} size="sm">
+                Back
               </Button>
-              <Button 
-                onClick={() => onComplete(canProceed)} 
-                disabled={!canProceed} 
-                className="px-8"
-              >
-                <Play className="w-4 h-4 mr-2" />
-                {canProceed ? "Join Lesson Now" : "Fix Issues to Continue"}
-              </Button>
-            </>
-          )}
-          <Button variant="outline" onClick={onBack}>
-            Back
-          </Button>
-        </div>
+            </div>
 
-        {isTestingComplete && (
-          <div className="text-center mt-8">
-            {canProceed ? (
-              <Card className="max-w-md mx-auto">
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle className="w-8 h-8 text-green-600" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">All Systems Ready!</h3>
-                  <p className="text-sm text-gray-600">
-                    Your camera, microphone, and internet connection are all working perfectly. You're ready to join your lesson!
+            {/* Success/Failure Message - Inline */}
+            {isTestingComplete && (
+              <div>
+                {canProceed ? (
+                  <Card className="bg-success/10 border-success/20">
+                    <CardContent className="p-4 text-center">
+                      <div className="flex items-center justify-center gap-2 mb-2">
+                        <CheckCircle className="w-5 h-5 text-success" />
+                        <h3 className="text-sm font-semibold text-text">All Systems Ready!</h3>
+                      </div>
+                      <p className="text-xs text-text-secondary">
+                        Your camera, microphone, and internet connection are all working perfectly. You're ready to join your lesson!
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <p className="text-sm text-text-secondary text-center">
+                    Some tests failed, but you can still continue. Your experience may be affected.
                   </p>
-                </CardContent>
-              </Card>
-            ) : (
-              <p className="text-sm text-gray-600">
-                Some tests failed, but you can still continue. Your experience may be affected.
-              </p>
+                )}
+              </div>
             )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   )

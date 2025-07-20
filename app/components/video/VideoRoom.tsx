@@ -75,8 +75,8 @@ export default function VideoRoom({ lessonId, onJoinLesson, onBack }: VideoRoomP
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-gray-800 border-gray-700">
+    <div className="min-h-screen bg-surface flex items-center justify-center p-4">
+      <Card className="w-full max-w-md bg-surface-subtle border-border">
         <div className="p-6">
           {/* Header */}
           <div className="flex items-center gap-3 mb-6">
@@ -84,14 +84,14 @@ export default function VideoRoom({ lessonId, onJoinLesson, onBack }: VideoRoomP
               variant="tertiary"
               size="sm"
               onClick={onBack}
-              className="text-gray-300 hover:text-white"
+              className="text-text-secondary hover:text-text"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Button>
             <div className="flex-1">
-              <h2 className="text-xl font-semibold text-white">Join Video Call</h2>
-              <p className="text-gray-400 text-sm">Connect to your lesson</p>
+              <h2 className="text-xl font-semibold text-text">Join Video Call</h2>
+              <p className="text-text-secondary text-sm">Connect to your lesson</p>
             </div>
           </div>
 
@@ -99,10 +99,10 @@ export default function VideoRoom({ lessonId, onJoinLesson, onBack }: VideoRoomP
           <div className="text-center">
             {error ? (
               <div className="mb-6">
-                <div className="text-red-400 mb-4">
+                <div className="text-error mb-4">
                   <AlertCircle className="w-12 h-12 mx-auto" />
                 </div>
-                <Text className="text-red-400 mb-4">{error}</Text>
+                <Text className="text-error mb-4">{error}</Text>
                 {joinAttempts < maxJoinAttempts && (
                   <Button onClick={retryJoin} className="w-full mb-3">
                     Try Again
@@ -114,13 +114,13 @@ export default function VideoRoom({ lessonId, onJoinLesson, onBack }: VideoRoomP
               </div>
             ) : (
               <div className="mb-6">
-                <div className="text-blue-400 mb-4">
+                <div className="text-accent mb-4">
                   <Video className="w-12 h-12 mx-auto" />
                 </div>
-                <Text className="text-white mb-4">
+                <Text className="text-text mb-4">
                   Ready to join your video lesson?
                 </Text>
-                <Text className="text-gray-400 text-sm mb-6">
+                <Text className="text-text-secondary text-sm mb-6">
                   Make sure your camera and microphone are working properly.
                 </Text>
                 <Button 

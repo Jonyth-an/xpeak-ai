@@ -103,14 +103,14 @@ export default function FileMessage({
   return (
     <Card 
       className={`max-w-sm transition-all duration-200 ${
-        isOwnMessage ? 'ml-auto bg-primary/10' : 'mr-auto bg-muted/50'
+        isOwnMessage ? 'ml-auto bg-primary/10' : 'mr-auto bg-surface-muted/50'
       } ${isHovered ? 'shadow-md' : 'shadow-sm'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <CardContent className="p-3">
         <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 p-2 bg-muted rounded-lg">
+          <div className="flex-shrink-0 p-2 bg-surface-muted rounded-lg">
             {getFileIcon(fileType)}
           </div>
           
@@ -122,7 +122,7 @@ export default function FileMessage({
               </Badge>
             </div>
             
-            <div className="text-xs text-muted-foreground mb-2">
+            <div className="text-xs text-text-secondary mb-2">
               {formatFileSize(fileSize)} • {senderName} • {timestamp}
             </div>
             

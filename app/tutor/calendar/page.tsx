@@ -412,7 +412,13 @@ export default function TutorCalendar() {
     const d = new Date(date);
     const day = d.getDay();
     const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
-    return new Date(d.setDate(diff));
+    const weekStart = new Date(d.setDate(diff));
+    
+    // Ensure we're working with local date to avoid timezone issues
+    const year = weekStart.getFullYear();
+    const month = weekStart.getMonth();
+    const dayOfMonth = weekStart.getDate();
+    return new Date(year, month, dayOfMonth);
   };
 
   const formatWeekRange = (weekStart: Date) => {
@@ -429,7 +435,12 @@ export default function TutorCalendar() {
       if (!session) return;
 
       const weekStart = getWeekStart(currentWeek);
-      const weekStartStr = weekStart.toISOString().split('T')[0];
+      
+      // Use local date string instead of UTC to match the calendar display
+      const year = weekStart.getFullYear();
+      const month = String(weekStart.getMonth() + 1).padStart(2, '0');
+      const day = String(weekStart.getDate()).padStart(2, '0');
+      const weekStartStr = `${year}-${month}-${day}`;
       
       console.log('Fetching calendar data for week:', weekStartStr);
 
@@ -607,7 +618,13 @@ export default function TutorCalendar() {
     const weekStart = getWeekStart(currentWeek);
     const targetDate = new Date(weekStart);
     targetDate.setDate(weekStart.getDate() + dayIndex);
-    const targetDateStr = targetDate.toISOString().split('T')[0];
+    
+    // Use local date string instead of UTC to match the calendar display
+    const year = targetDate.getFullYear();
+    const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+    const day = String(targetDate.getDate()).padStart(2, '0');
+    const targetDateStr = `${year}-${month}-${day}`;
+    
     return calendarData.availability.find(slot => {
       return (
         slot.specific_date === targetDateStr &&
@@ -624,7 +641,12 @@ export default function TutorCalendar() {
     const weekStart = getWeekStart(currentWeek);
     const targetDate = new Date(weekStart);
     targetDate.setDate(weekStart.getDate() + dayIndex);
-    const targetDateStr = targetDate.toISOString().split('T')[0];
+    
+    // Use local date string instead of UTC to match the calendar display
+    const year = targetDate.getFullYear();
+    const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+    const day = String(targetDate.getDate()).padStart(2, '0');
+    const targetDateStr = `${year}-${month}-${day}`;
     
     // Check if there's a booked lesson at this time
     const hasBookedLesson = calendarData.booked_lessons.some(lesson => {
@@ -683,17 +705,23 @@ export default function TutorCalendar() {
     const status = getSlotStatus(dayIndex, timeSlot);
     console.log('🔍 Slot status:', status);
     
-    // Get the target date for this slot
+    // Get the target date for this slot - use local date calculation to match display
     const weekStart = getWeekStart(currentWeek);
     const targetDate = new Date(weekStart);
     targetDate.setDate(weekStart.getDate() + dayIndex);
-    const targetDateStr = targetDate.toISOString().split('T')[0];
+    
+    // Use local date string instead of UTC to match the calendar display
+    const year = targetDate.getFullYear();
+    const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+    const day = String(targetDate.getDate()).padStart(2, '0');
+    const targetDateStr = `${year}-${month}-${day}`;
     
     console.log('🔍 Date calculations:', {
       weekStart: weekStart.toISOString(),
       dayIndex,
       targetDate: targetDate.toISOString(),
-      targetDateStr
+      targetDateStr,
+      localDate: targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     });
     
     // Convert dayIndex (Mon=0, Sun=6) to day_of_week (Sun=0, Sat=6)

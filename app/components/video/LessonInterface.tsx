@@ -26,6 +26,7 @@ import {
   WifiOff,
   AlertCircle,
   Paperclip,
+  Upload,
 } from "lucide-react"
 import { useLessonChat } from "@/lib/hooks/useLessonChat"
 import FileUpload from "./FileUpload"
@@ -229,31 +230,31 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
   const studentInitials = studentName.split(" ").map((n: string) => n[0]).join("").toUpperCase()
 
   return (
-    <div className="h-screen bg-gray-900 flex flex-col">
+    <div className="h-screen bg-surface flex flex-col">
       {/* Top Bar */}
-      <div className="bg-white/10 backdrop-blur-sm border-b border-white/20 p-4">
+      <div className="bg-surface-subtle backdrop-blur-sm border-b border-border p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-              <span className="text-white font-medium">Live Lesson</span>
+              <div className="w-3 h-3 bg-error rounded-full animate-pulse"></div>
+              <span className="text-text font-medium">Live Lesson</span>
             </div>
-            <Badge className="bg-blue-600 text-white border-blue-500">{formatTime(lessonTime)}</Badge>
-            <div className="flex items-center gap-2 text-white">
+            <Badge className="bg-primary text-text-inverse border-primary">{formatTime(lessonTime)}</Badge>
+            <div className="flex items-center gap-2 text-text">
               <Users className="w-4 h-4" />
               <span className="text-sm">{tutorName}</span>
             </div>
             {/* Chat Connection Status */}
             <div className="flex items-center gap-2">
               {chatConnected ? (
-                <div className="flex items-center gap-1 text-green-400">
+                <div className="flex items-center gap-1 text-success">
                   <Wifi className="w-4 h-4" />
-                  <span className="text-xs">Chat Connected</span>
+                  <span className="text-xs text-text">Chat Connected</span>
                 </div>
               ) : (
-                <div className="flex items-center gap-1 text-red-400">
+                <div className="flex items-center gap-1 text-error">
                   <WifiOff className="w-4 h-4" />
-                  <span className="text-xs">Chat Disconnected</span>
+                  <span className="text-xs text-text">Chat Disconnected</span>
                 </div>
               )}
             </div>
@@ -264,7 +265,7 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-white/20"
+                className="text-text hover:bg-accent hover:text-accent-foreground transition-colors"
                 onClick={handleMobileContentToggle}
               >
                 <FileText className="w-4 h-4" />
@@ -273,15 +274,15 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
             <Button
               variant="ghost"
               size="sm"
-              className="text-white hover:bg-white/20"
+              className="text-text hover:bg-accent hover:text-accent-foreground transition-colors"
               onClick={handleMobileChatToggle}
             >
               <MessageSquare className="w-4 h-4" />
             </Button>
-            <Button variant="ghost" size="sm" className="text-white hover:bg-white/20">
+            <Button variant="ghost" size="sm" className="text-text hover:bg-accent hover:text-accent-foreground transition-colors">
               <Settings className="w-4 h-4" />
             </Button>
-            <Button variant="destructive" size="sm" onClick={onEndLesson} className="bg-red-600 hover:bg-red-700">
+            <Button variant="destructive" size="sm" onClick={onEndLesson} className="bg-error hover:bg-error/90 transition-colors">
               <Phone className="w-4 h-4 mr-2" />
               End Lesson
             </Button>
@@ -303,31 +304,31 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                 } transition-all duration-300 flex-shrink-0`}
               >
                 {/* Tutor Video */}
-                <Card className={`bg-gray-800 border-gray-700 ${isMobile ? "flex-1" : "flex-1"}`}>
+                <Card className={`bg-surface-subtle border-border ${isMobile ? "flex-1" : "flex-1"}`}>
                   <CardContent className="p-0 h-full">
-                    <div className="relative h-full bg-gray-900 rounded-lg overflow-hidden">
+                    <div className="relative h-full bg-surface-muted rounded-lg overflow-hidden">
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className={`${
                           isMobile ? "w-12 h-12 text-lg" : "w-20 h-20 text-2xl"
-                        } bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold`}>
+                                                 } bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-text-inverse font-bold`}>
                           {tutorInitials}
                         </div>
                       </div>
                       <div className="absolute bottom-2 left-2">
-                        <Badge className={`bg-blue-600 text-white border-blue-500 ${
+                        <Badge className={`bg-primary text-text-inverse border-primary ${
                           isMobile ? "text-xs px-2 py-1" : ""
                         }`}>{tutorName} (Tutor)</Badge>
                       </div>
                       <div className={`absolute bottom-2 right-2 flex gap-1 ${isMobile ? "gap-1" : "gap-2"}`}>
                         <div className={`${
                           isMobile ? "w-6 h-6" : "w-8 h-8"
-                        } bg-green-600 rounded-full flex items-center justify-center`}>
-                          <Mic className={`text-white ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
+                        } bg-success rounded-full flex items-center justify-center`}>
+                          <Mic className={`text-text-inverse ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
                         </div>
                         <div className={`${
                           isMobile ? "w-6 h-6" : "w-8 h-8"
-                        } bg-green-600 rounded-full flex items-center justify-center`}>
-                          <Video className={`text-white ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
+                        } bg-success rounded-full flex items-center justify-center`}>
+                          <Video className={`text-text-inverse ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
                         </div>
                       </div>
                     </div>
@@ -335,18 +336,18 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                 </Card>
 
                 {/* Student Video */}
-                <Card className={`bg-gray-800 border-gray-700 ${isMobile ? "flex-1" : "flex-1"}`}>
+                <Card className={`bg-surface-subtle border-border ${isMobile ? "flex-1" : "flex-1"}`}>
                   <CardContent className="p-0 h-full">
-                    <div className="relative h-full bg-gray-900 rounded-lg overflow-hidden">
+                    <div className="relative h-full bg-surface-muted rounded-lg overflow-hidden">
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className={`${
                           isMobile ? "w-12 h-12 text-lg" : "w-20 h-20 text-2xl"
-                        } bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold`}>
+                                                 } bg-gradient-to-br from-secondary to-primary rounded-full flex items-center justify-center text-text-inverse font-bold`}>
                           {studentInitials}
                         </div>
                       </div>
                       <div className="absolute bottom-2 left-2">
-                        <Badge className={`bg-green-600 text-white border-green-500 ${
+                        <Badge className={`bg-secondary text-text-inverse border-secondary ${
                           isMobile ? "text-xs px-2 py-1" : ""
                         }`}>You (Student)</Badge>
                       </div>
@@ -354,23 +355,23 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                         <div
                           className={`${
                             isMobile ? "w-6 h-6" : "w-8 h-8"
-                          } rounded-full flex items-center justify-center ${isMicOn ? "bg-green-600" : "bg-red-600"}`}
+                          } rounded-full flex items-center justify-center ${isMicOn ? "bg-success" : "bg-error"}`}
                         >
                           {isMicOn ? (
-                            <Mic className={`text-white ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
+                            <Mic className={`text-text ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
                           ) : (
-                            <MicOff className={`text-white ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
+                            <MicOff className={`text-text ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
                           )}
                         </div>
                         <div
                           className={`${
                             isMobile ? "w-6 h-6" : "w-8 h-8"
-                          } rounded-full flex items-center justify-center ${isCameraOn ? "bg-green-600" : "bg-red-600"}`}
+                          } rounded-full flex items-center justify-center ${isCameraOn ? "bg-success" : "bg-error"}`}
                         >
                           {isCameraOn ? (
-                            <Video className={`text-white ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
+                            <Video className={`text-text-inverse ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
                           ) : (
-                            <VideoOff className={`text-white ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
+                            <VideoOff className={`text-text-inverse ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
                           )}
                         </div>
                       </div>
@@ -385,14 +386,14 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                   ? "w-full h-1/2" 
                   : "flex-1"
               } flex flex-col ${isMobile ? "p-2" : "p-2 min-w-0 h-full"}`}>
-                <Card className="flex-1 bg-white border-gray-200 rounded-lg h-full">
+                <Card className="flex-1 bg-surface-subtle border-border rounded-lg h-full">
                   <CardContent className="p-0 h-full">
                     <div className="h-full flex flex-col">
                       {/* Content Header */}
-                      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+                      <div className="p-4 border-b border-border flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <FileText className="w-5 h-5 text-blue-600" />
-                          <h3 className="font-semibold text-gray-900">Lesson Materials</h3>
+                          <FileText className="w-5 h-5 text-primary" />
+                          <h3 className="font-semibold text-text">Lesson Materials</h3>
                         </div>
                         <div className="flex items-center gap-2">
                           {!isMobile && (
@@ -407,27 +408,27 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                       </div>
 
                       {/* Content Display */}
-                      <div className="flex-1 p-3 lg:p-6 bg-gradient-to-br from-blue-50 to-purple-50 rounded-b-lg">
+                      <div className="flex-1 p-3 lg:p-6 bg-gradient-to-br from-surface-accent-light to-surface-accent rounded-b-lg">
                         <div className="h-full flex items-center justify-center">
                           <div className="text-center w-full max-w-5xl">
-                            <div className="w-24 h-24 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4 lg:mb-6">
-                              <FileText className="w-12 h-12 lg:w-16 lg:h-16 text-blue-600" />
+                            <div className="w-24 h-24 lg:w-32 lg:h-32 bg-gradient-to-br from-surface-accent to-surface-accent-light rounded-2xl flex items-center justify-center mx-auto mb-4 lg:mb-6">
+                              <FileText className="w-12 h-12 lg:w-16 lg:h-16 text-primary" />
                             </div>
-                            <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-3 lg:mb-4">Conversation Practice</h3>
-                            <p className="text-gray-600 mb-4 lg:mb-6 max-w-3xl mx-auto text-sm lg:text-base">
+                            <h3 className="text-xl lg:text-2xl font-bold text-text mb-3 lg:mb-4">Conversation Practice</h3>
+                            <p className="text-text-secondary mb-4 lg:mb-6 max-w-3xl mx-auto text-sm lg:text-base">
                               Today we'll practice everyday conversations. Let's start with introductions and move on to
                               talking about hobbies and interests.
                             </p>
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 max-w-4xl mx-auto">
-                              <div className="p-3 lg:p-4 bg-white rounded-lg shadow-sm border border-gray-200">
-                                <h4 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">Topic 1: Introductions</h4>
-                                <p className="text-gray-600 text-xs lg:text-sm">
+                              <div className="p-3 lg:p-4 bg-surface-muted rounded-lg shadow-sm border border-border">
+                                <h4 className="font-semibold text-text mb-2 text-sm lg:text-base">Topic 1: Introductions</h4>
+                                <p className="text-text-secondary text-xs lg:text-sm">
                                   Practice introducing yourself and asking about others
                                 </p>
                               </div>
-                              <div className="p-3 lg:p-4 bg-white rounded-lg shadow-sm border border-gray-200">
-                                <h4 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">Topic 2: Hobbies & Interests</h4>
-                                <p className="text-gray-600 text-xs lg:text-sm">Discuss what you like to do in your free time</p>
+                              <div className="p-3 lg:p-4 bg-surface-muted rounded-lg shadow-sm border border-border">
+                                <h4 className="font-semibold text-text mb-2 text-sm lg:text-base">Topic 2: Hobbies & Interests</h4>
+                                <p className="text-text-secondary text-xs lg:text-sm">Discuss what you like to do in your free time</p>
                               </div>
                             </div>
                           </div>
@@ -436,7 +437,7 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
 
                       {/* Screen Share Indicator */}
                       {isScreenSharing && (
-                        <div className="p-3 bg-blue-600 text-white text-center">
+                        <div className="p-3 bg-primary text-text-inverse text-center">
                           <div className="flex items-center justify-center gap-2">
                             <Monitor className="w-4 h-4" />
                             <span className="text-sm font-medium">You are sharing your screen</span>
@@ -452,35 +453,35 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
             /* Full Video Chat Mode - No Content */
             <div className="flex-1 relative p-4">
               {/* Main Tutor Video - Full Screen */}
-              <Card className="h-full bg-gray-800 border-gray-700">
+              <Card className="h-full bg-surface-subtle border-border">
                 <CardContent className="p-0 h-full">
-                  <div className="relative h-full bg-gray-900 rounded-lg overflow-hidden">
+                  <div className="relative h-full bg-surface-muted rounded-lg overflow-hidden">
                     {/* Video Content Area - Leave space at bottom for transcript */}
                     <div className="h-[calc(100%-80px)] flex items-center justify-center">
-                      <div className="w-32 h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-4xl">
+                      <div className="w-32 h-32 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-text-inverse font-bold text-4xl">
                         {tutorInitials}
                       </div>
                     </div>
 
                     {/* Tutor Info */}
                     <div className="absolute top-6 left-6">
-                      <Badge className="bg-blue-600 text-white border-blue-500 text-lg px-4 py-2">{tutorName} (Tutor)</Badge>
+                      <Badge className="bg-primary text-text-inverse border-primary text-lg px-4 py-2">{tutorName} (Tutor)</Badge>
                     </div>
 
                     {/* Tutor Status Icons */}
                     <div className="absolute top-6 right-6 flex gap-3">
-                      <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
-                        <Mic className="w-5 h-5 text-white" />
+                      <div className="w-10 h-10 bg-success rounded-full flex items-center justify-center">
+                        <Mic className="w-5 h-5 text-text-inverse" />
                       </div>
-                      <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
-                        <Video className="w-5 h-5 text-white" />
+                      <div className="w-10 h-10 bg-success rounded-full flex items-center justify-center">
+                        <Video className="w-5 h-5 text-text-inverse" />
                       </div>
                     </div>
 
                     {/* Screen Share Indicator */}
                     {isScreenSharing && (
                       <div className="absolute top-20 left-1/2 transform -translate-x-1/2">
-                        <div className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                        <div className="bg-primary text-text-inverse px-4 py-2 rounded-lg flex items-center gap-2">
                           <Monitor className="w-4 h-4" />
                           <span className="text-sm font-medium">Screen sharing active</span>
                         </div>
@@ -488,8 +489,8 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                     )}
 
                     {/* Reserved Space for Future Transcript */}
-                    <div className="absolute bottom-0 left-0 right-0 h-20 bg-black/20 backdrop-blur-sm border-t border-white/10">
-                      <div className="h-full flex items-center justify-center text-white/60 text-sm">
+                    <div className="absolute bottom-0 left-0 right-0 h-20 bg-bg-overlay backdrop-blur-sm border-t border-border">
+                      <div className="h-full flex items-center justify-center text-text-muted text-sm">
                         {/* This space is reserved for real-time audio transcript */}
                         <span className="italic">Transcript will appear here...</span>
                       </div>
@@ -500,30 +501,30 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
 
               {/* Student Video - Picture in Picture Style */}
               <div className="absolute bottom-8 right-8 w-64 h-48">
-                <Card className="h-full bg-gray-800 border-gray-700 shadow-2xl">
+                <Card className="h-full bg-surface-subtle border-border shadow-2xl">
                   <CardContent className="p-0 h-full">
-                    <div className="relative h-full bg-gray-900 rounded-lg overflow-hidden">
+                    <div className="relative h-full bg-surface-muted rounded-lg overflow-hidden">
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                        <div className="w-16 h-16 bg-gradient-to-br from-secondary to-primary rounded-full flex items-center justify-center text-text-inverse font-bold text-xl">
                           {studentInitials}
                         </div>
                       </div>
                       <div className="absolute bottom-3 left-3">
-                        <Badge className="bg-green-600 text-white border-green-500 text-xs">You</Badge>
+                        <Badge className="bg-secondary text-text-inverse border-secondary text-xs">You</Badge>
                       </div>
                       <div className="absolute bottom-3 right-3 flex gap-1">
                         <div
-                          className={`w-6 h-6 rounded-full flex items-center justify-center ${isMicOn ? "bg-green-600" : "bg-red-600"}`}
+                          className={`w-6 h-6 rounded-full flex items-center justify-center ${isMicOn ? "bg-success" : "bg-error"}`}
                         >
-                          {isMicOn ? <Mic className="w-3 h-3 text-white" /> : <MicOff className="w-3 h-3 text-white" />}
+                          {isMicOn ? <Mic className="w-3 h-3 text-text-inverse" /> : <MicOff className="w-3 h-3 text-text-inverse" />}
                         </div>
                         <div
-                          className={`w-6 h-6 rounded-full flex items-center justify-center ${isCameraOn ? "bg-green-600" : "bg-red-600"}`}
+                          className={`w-6 h-6 rounded-full flex items-center justify-center ${isCameraOn ? "bg-success" : "bg-error"}`}
                         >
                           {isCameraOn ? (
-                            <Video className="w-3 h-3 text-white" />
+                            <Video className="w-3 h-3 text-text-inverse" />
                           ) : (
-                            <VideoOff className="w-3 h-3 text-white" />
+                            <VideoOff className="w-3 h-3 text-text-inverse" />
                           )}
                         </div>
                       </div>
@@ -537,18 +538,18 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
 
         {/* Chat Sidebar - Desktop Only */}
         {isChatOpen && !isMobile && (
-          <div className="w-80 bg-white border-l border-gray-200 flex flex-col rounded-l-lg">
+          <div className="w-80 bg-surface-subtle border-l border-border flex flex-col rounded-l-lg">
             {/* Chat Header */}
-            <div className="p-3 border-b border-gray-200">
+            <div className="p-3 border-b border-border">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-gray-900">Chat</h3>
+                  <h3 className="font-semibold text-text">Chat</h3>
                   {chatConnected ? (
-                    <div className="flex items-center gap-1 text-green-600">
+                    <div className="flex items-center gap-1 text-success">
                       <Wifi className="w-3 h-3" />
                     </div>
                   ) : (
-                    <div className="flex items-center gap-1 text-red-600">
+                    <div className="flex items-center gap-1 text-error">
                       <WifiOff className="w-3 h-3" />
                     </div>
                   )}
@@ -558,9 +559,9 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                 </Button>
               </div>
               {chatError && (
-                <div className="flex items-center gap-2 mt-2 p-2 bg-red-50 border border-red-200 rounded-md">
-                  <AlertCircle className="w-4 h-4 text-red-600" />
-                  <span className="text-xs text-red-600">{chatError}</span>
+                <div className="flex items-center gap-2 mt-2 p-2 bg-error/50 border border-error/200 rounded-md">
+                  <AlertCircle className="w-4 h-4 text-error" />
+                  <span className="text-xs text-error">{chatError}</span>
                 </div>
               )}
             </div>
@@ -569,11 +570,11 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
             <ScrollArea className="flex-1 p-3">
               {chatLoading ? (
                 <div className="flex items-center justify-center h-32">
-                  <div className="text-gray-500 text-sm">Loading messages...</div>
+                  <div className="text-text-secondary text-sm">Loading messages...</div>
                 </div>
               ) : chatMessages.length === 0 ? (
                 <div className="flex items-center justify-center h-32">
-                  <div className="text-gray-500 text-sm text-center">
+                  <div className="text-text-secondary text-sm text-center">
                     No messages yet.<br />
                     Start the conversation!
                   </div>
@@ -592,12 +593,12 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                         <div
                           className={`max-w-[80%] p-3 rounded-lg ${
                             isOwnMessage 
-                              ? "bg-blue-600 text-white" 
-                              : "bg-gray-100 text-gray-900"
+                              ? "bg-primary text-text-inverse" 
+                              : "bg-surface-muted text-text"
                           }`}
                         >
                           {!isOwnMessage && msg.sender_name && (
-                            <p className="text-xs mb-1 font-medium text-gray-600">
+                            <p className="text-xs mb-1 font-medium text-text-secondary">
                               {msg.sender_name}
                             </p>
                           )}
@@ -615,7 +616,7 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                             <p className="text-sm">{msg.message}</p>
                           )}
                           <p className={`text-xs mt-1 ${
-                            isOwnMessage ? "text-blue-100" : "text-gray-500"
+                            isOwnMessage ? "text-text-inverse/60" : "text-text-secondary"
                           }`}>
                             {timestamp}
                           </p>
@@ -628,7 +629,7 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
             </ScrollArea>
 
             {/* Chat Input */}
-            <div className="p-3 border-t border-gray-200">
+            <div className="p-3 border-t border-border">
               {/* File Upload Area */}
               {showFileUpload && (
                 <div className="mb-3">
@@ -645,12 +646,12 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
 
               {/* Selected File Display */}
               {selectedFile && !showFileUpload && (
-                <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="mb-3 p-3 bg-primary/50 border border-primary/200 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-blue-600" />
-                      <span className="text-sm font-medium">{selectedFile.name}</span>
-                      <Badge variant="secondary" className="text-xs">
+                      <FileText className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium text-text">{selectedFile.name}</span>
+                      <Badge variant="secondary" className="text-xs text-text">
                         {formatFileSize(selectedFile.size)}
                       </Badge>
                     </div>
@@ -689,7 +690,7 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                 <Button 
                   onClick={selectedFile ? handleSendFile : handleSendMessage} 
                   size="sm" 
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-primary hover:bg-primary/90"
                   disabled={!chatConnected || (!chatMessage.trim() && !selectedFile)}
                 >
                   <Send className="w-4 h-4" />
@@ -701,18 +702,18 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
 
         {/* Mobile Chat Panel */}
         {isMobile && mobileActivePanel === 'chat' && (
-          <div className="absolute inset-0 top-1/2 bg-white border-t border-gray-200 flex flex-col rounded-t-lg z-10 transition-all duration-300 ease-in-out">
+          <div className="absolute inset-0 top-1/2 bg-surface-subtle border-t border-border flex flex-col rounded-t-lg z-10 transition-all duration-300 ease-in-out">
             {/* Chat Header */}
-            <div className="p-3 border-b border-gray-200">
+            <div className="p-3 border-b border-border">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-gray-900">Chat</h3>
+                  <h3 className="font-semibold text-text">Chat</h3>
                   {chatConnected ? (
-                    <div className="flex items-center gap-1 text-green-600">
+                    <div className="flex items-center gap-1 text-success">
                       <Wifi className="w-3 h-3" />
                     </div>
                   ) : (
-                    <div className="flex items-center gap-1 text-red-600">
+                    <div className="flex items-center gap-1 text-error">
                       <WifiOff className="w-3 h-3" />
                     </div>
                   )}
@@ -722,9 +723,9 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                 </Button>
               </div>
               {chatError && (
-                <div className="flex items-center gap-2 mt-2 p-2 bg-red-50 border border-red-200 rounded-md">
-                  <AlertCircle className="w-4 h-4 text-red-600" />
-                  <span className="text-xs text-red-600">{chatError}</span>
+                <div className="flex items-center gap-2 mt-2 p-2 bg-error/50 border border-error/200 rounded-md">
+                  <AlertCircle className="w-4 h-4 text-error" />
+                  <span className="text-xs text-error">{chatError}</span>
                 </div>
               )}
             </div>
@@ -733,11 +734,11 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
             <ScrollArea className="flex-1 p-3">
               {chatLoading ? (
                 <div className="flex items-center justify-center h-32">
-                  <div className="text-gray-500 text-sm">Loading messages...</div>
+                  <div className="text-text-secondary text-sm">Loading messages...</div>
                 </div>
               ) : chatMessages.length === 0 ? (
                 <div className="flex items-center justify-center h-32">
-                  <div className="text-gray-500 text-sm text-center">
+                  <div className="text-text-secondary text-sm text-center">
                     No messages yet.<br />
                     Start the conversation!
                   </div>
@@ -756,12 +757,12 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                         <div
                           className={`max-w-[80%] p-3 rounded-lg ${
                             isOwnMessage 
-                              ? "bg-blue-600 text-white" 
-                              : "bg-gray-100 text-gray-900"
+                              ? "bg-primary text-text-inverse" 
+                              : "bg-surface-muted text-text"
                           }`}
                         >
                           {!isOwnMessage && msg.sender_name && (
-                            <p className="text-xs mb-1 font-medium text-gray-600">
+                            <p className="text-xs mb-1 font-medium text-text-secondary">
                               {msg.sender_name}
                             </p>
                           )}
@@ -779,7 +780,7 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                             <p className="text-sm">{msg.message}</p>
                           )}
                           <p className={`text-xs mt-1 ${
-                            isOwnMessage ? "text-blue-100" : "text-gray-500"
+                            isOwnMessage ? "text-text-inverse/60" : "text-text-secondary"
                           }`}>
                             {timestamp}
                           </p>
@@ -792,7 +793,7 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
             </ScrollArea>
 
             {/* Chat Input */}
-            <div className="p-3 border-t border-gray-200">
+            <div className="p-3 border-t border-border">
               {/* File Upload Area */}
               {showFileUpload && (
                 <div className="mb-3">
@@ -809,12 +810,12 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
 
               {/* Selected File Display */}
               {selectedFile && !showFileUpload && (
-                <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="mb-3 p-3 bg-primary/50 border border-primary/200 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-blue-600" />
-                      <span className="text-sm font-medium">{selectedFile.name}</span>
-                      <Badge variant="secondary" className="text-xs">
+                      <FileText className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium text-text">{selectedFile.name}</span>
+                      <Badge variant="secondary" className="text-xs text-text">
                         {formatFileSize(selectedFile.size)}
                       </Badge>
                     </div>
@@ -853,7 +854,7 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
                 <Button 
                   onClick={selectedFile ? handleSendFile : handleSendMessage} 
                   size="sm" 
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-primary hover:bg-primary/90"
                   disabled={!chatConnected || (!chatMessage.trim() && !selectedFile)}
                 >
                   <Send className="w-4 h-4" />
@@ -865,47 +866,47 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
       </div>
 
       {/* Bottom Controls */}
-      <div className="bg-white/10 backdrop-blur-sm border-t border-white/20 p-4">
+      <div className="bg-surface-subtle backdrop-blur-sm border-t border-border p-4">
         <div className="flex items-center justify-center gap-4">
           <Button
-            variant="ghost"
-            size="lg"
             onClick={() => setIsCameraOn(!isCameraOn)}
-            className={`w-12 h-12 rounded-full ${
-              isCameraOn ? "bg-gray-700 hover:bg-gray-600 text-white" : "bg-red-600 hover:bg-red-700 text-white"
+            className={`w-12 h-12 rounded-full transition-all duration-200 ${
+              isCameraOn 
+                ? "bg-surface-muted hover:bg-surface-subtle text-text shadow-md hover:shadow-lg" 
+                : "bg-error hover:bg-error/90 text-text-inverse shadow-md hover:shadow-lg"
             }`}
           >
             {isCameraOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
           </Button>
 
           <Button
-            variant="ghost"
-            size="lg"
             onClick={() => setIsMicOn(!isMicOn)}
-            className={`w-12 h-12 rounded-full ${
-              isMicOn ? "bg-gray-700 hover:bg-gray-600 text-white" : "bg-red-600 hover:bg-red-700 text-white"
+            className={`w-12 h-12 rounded-full transition-all duration-200 ${
+              isMicOn 
+                ? "bg-surface-muted hover:bg-surface-subtle text-text shadow-md hover:shadow-lg" 
+                : "bg-error hover:bg-error/90 text-text-inverse shadow-md hover:shadow-lg"
             }`}
           >
             {isMicOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
           </Button>
 
           <Button
-            variant="ghost"
-            size="lg"
             onClick={toggleScreenShare}
-            className={`w-12 h-12 rounded-full ${
-              isScreenSharing ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-gray-700 hover:bg-gray-600 text-white"
+            className={`w-12 h-12 rounded-full transition-all duration-200 ${
+              isScreenSharing 
+                ? "bg-primary hover:bg-primary/90 text-text-inverse shadow-md hover:shadow-lg" 
+                : "bg-surface-muted hover:bg-surface-subtle text-text shadow-md hover:shadow-lg"
             }`}
           >
-            {isScreenSharing ? <MonitorOff className="w-5 h-5" /> : <Monitor className="w-5 h-5" />}
+            <Monitor className="w-5 h-5" />
           </Button>
 
           <Button
-            variant="ghost"
-            size="lg"
             onClick={handleMobileChatToggle}
-            className={`w-12 h-12 rounded-full ${
-              (isChatOpen || mobileActivePanel === 'chat') ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-gray-700 hover:bg-gray-600 text-white"
+            className={`w-12 h-12 rounded-full transition-all duration-200 ${
+              (isChatOpen || mobileActivePanel === 'chat') 
+                ? "bg-primary hover:bg-primary/90 text-text-inverse shadow-md hover:shadow-lg" 
+                : "bg-surface-muted hover:bg-surface-subtle text-text shadow-md hover:shadow-lg"
             }`}
           >
             <MessageSquare className="w-5 h-5" />
@@ -914,11 +915,11 @@ export default function LessonInterface({ onEndLesson, lesson, user }: LessonInt
           {/* Mobile Content Toggle Button */}
           {isMobile && (
             <Button
-              variant="ghost"
-              size="lg"
               onClick={handleMobileContentToggle}
-              className={`w-12 h-12 rounded-full ${
-                mobileActivePanel === 'content' ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-gray-700 hover:bg-gray-600 text-white"
+              className={`w-12 h-12 rounded-full transition-all duration-200 ${
+                mobileActivePanel === 'content' 
+                  ? "bg-primary hover:bg-primary/90 text-text-inverse shadow-md hover:shadow-lg" 
+                  : "bg-surface-muted hover:bg-surface-subtle text-text shadow-md hover:shadow-lg"
               }`}
             >
               <FileText className="w-5 h-5" />

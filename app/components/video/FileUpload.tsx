@@ -121,9 +121,9 @@ export default function FileUpload({
 
   if (selectedFile) {
     return (
-      <div className="p-3 border rounded-lg bg-muted/50">
+      <div className="p-3 border border-border rounded-lg bg-surface-muted/50">
         <div className="flex items-center gap-3">
-          <div className="flex-shrink-0 p-2 bg-background rounded-lg">
+          <div className="flex-shrink-0 p-2 bg-surface rounded-lg">
             <File className="h-4 w-4" />
           </div>
           
@@ -135,17 +135,17 @@ export default function FileUpload({
               </Badge>
             </div>
             
-            <div className="text-xs text-muted-foreground">
+            <div className="text-xs text-text-secondary">
               {formatFileSize(selectedFile.size)}
             </div>
             
             {isUploading && (
               <div className="mt-2">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2 text-xs text-text-secondary">
                   <Loader2 className="h-3 w-3 animate-spin" />
                   Uploading... {uploadProgress}%
                 </div>
-                <div className="w-full bg-muted rounded-full h-1 mt-1">
+                <div className="w-full bg-surface-muted rounded-full h-1 mt-1">
                   <div 
                     className="bg-primary h-1 rounded-full transition-all duration-300"
                     style={{ width: `${uploadProgress}%` }}
@@ -155,7 +155,7 @@ export default function FileUpload({
             )}
             
             {error && (
-              <div className="flex items-center gap-1 mt-2 text-xs text-destructive">
+              <div className="flex items-center gap-1 mt-2 text-xs text-error">
                 <AlertCircle className="h-3 w-3" />
                 {error}
               </div>
@@ -181,7 +181,7 @@ export default function FileUpload({
       className={`p-4 border-2 border-dashed rounded-lg text-center transition-colors ${
         isDragOver 
           ? 'border-primary bg-primary/5' 
-          : 'border-muted-foreground/25 hover:border-muted-foreground/50'
+          : 'border-border/25 hover:border-border/50'
       }`}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
@@ -196,7 +196,7 @@ export default function FileUpload({
       />
       
       <div className="flex flex-col items-center gap-2">
-        <Upload className="h-8 w-8 text-muted-foreground" />
+        <Upload className="h-8 w-8 text-text-secondary" />
         
         <div>
           <p className="text-sm font-medium">
@@ -210,7 +210,7 @@ export default function FileUpload({
             </button>
           </p>
           
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-text-secondary mt-1">
             Max size: 10MB • Images, PDFs, Documents
           </p>
         </div>
