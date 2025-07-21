@@ -19,7 +19,8 @@ import {
   ChevronRight,
   Eye,
   Edit,
-  FileText
+  FileText,
+  User
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -415,25 +416,25 @@ export default function LessonHistory() {
                     <div className="flex items-start gap-3">
                       {/* Student Avatar */}
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-sm">
-                        {lesson.student.profile_image_url ? (
+                        {lesson.student && lesson.student.profile_image_url ? (
                           <Image 
                             src={lesson.student.profile_image_url} 
-                            alt={lesson.student.name}
+                            alt={lesson.student?.name || 'Student'}
                             width={40}
                             height={40}
                             className="w-10 h-10 rounded-full object-cover"
                           />
                         ) : (
-                          <Users className="w-5 h-5 text-white" />
+                          <User className="w-5 h-5 text-white" />
                         )}
                       </div>
 
                       {/* Lesson Info */}
                       <div className="flex-1 min-w-0">
-                        {/* Student Name and Rating */}
-                        <div className="flex items-start justify-between mb-2">
-                          <Text variant="body" className="font-medium text-token-text-primary">
-                            {lesson.student.name}
+                        {/* Name and Time */}
+                        <div className="flex items-center gap-2 mb-1">
+                          <Text variant="h4" as="h4" className="truncate">
+                            {lesson.student ? lesson.student.name : 'Unknown Student'}
                           </Text>
                           {lesson.feedback && (
                             <div className="flex items-center gap-1 flex-shrink-0">
@@ -657,13 +658,13 @@ export default function LessonHistory() {
                           </td>
                           <td className="py-3 px-4">
                             <div className="flex items-center">
-                              <span className="text-lg mr-2">{getCountryFlag(lesson.student.country)}</span>
+                              <span className="text-lg mr-2">{lesson.student ? getCountryFlag(lesson.student.country) : ''}</span>
                               <div>
                                 <Text variant="body" className="font-medium text-token-text-primary">
-                                  {lesson.student.name}
+                                  {lesson.student ? lesson.student.name : 'Unknown Student'}
                                 </Text>
                                 <Text variant="small" className="text-token-text-secondary">
-                                  {getCountryFlag(lesson.student.country)} {lesson.student.country}
+                                  {lesson.student ? getCountryFlag(lesson.student.country) : ''} {lesson.student?.country || ''}
                                 </Text>
                               </div>
                             </div>
@@ -712,7 +713,7 @@ export default function LessonHistory() {
             </div>
 
             {/* Pagination */}
-            {historyData.pagination.totalPages > 1 && (
+            {historyData.pagination && historyData.pagination.totalPages > 1 && (
               <div className="px-6 py-4 border-t border-token">
                 <div className="flex items-center justify-between">
                   <Text variant="small" className="text-token-text-secondary">

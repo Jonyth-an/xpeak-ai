@@ -1,34 +1,53 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import TutorLayout from '../TutorLayout';
 import { Card, Button } from '@/app/components/ui';
 import Text from '@/app/components/ui/Text';
-import { 
-  BookOpen,
-  Video,
-  FileText,
-  Download,
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import Textarea from '@/app/components/ui/Textarea';
+import CustomSelect from '@/app/components/ui/CustomSelect';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useAuth } from '@/lib/AuthContext';
+import {
+  Plus,
+  Search as SearchIcon,
+  Filter as FilterIcon,
+  SortAsc,
+  Calendar,
   ExternalLink,
-  Search,
-  Filter,
-  Star,
-  Clock,
-  Users,
-  Globe,
-  Headphones,
-  Mic,
+  Edit,
+  Trash2,
+  FileText,
+  Upload,
+  Link,
+  X,
+  CheckCircle,
+  AlertCircle,
+  Loader2
+} from 'lucide-react';
+import {
   Settings,
   Lightbulb,
-  Target,
-  MessageSquare,
-  Presentation,
-  CheckCircle,
-  PlayCircle,
-  FileImage,
-  Bookmark,
-  Share2
+  BookOpen,
+  Video,
+  FileText as FileTextIcon,
+  Download,
+  ExternalLink as ExternalLinkIcon,
 } from 'lucide-react';
+
+interface Material {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  tags: string[];
+  uploadedAt: Date;
+  fileType?: string;
+  fileSize?: number;
+}
 
 interface Resource {
   id: string;
@@ -45,168 +64,430 @@ interface Resource {
   isBookmarked?: boolean;
 }
 
-const resources: Resource[] = [
-  {
-    id: '1',
-    title: 'Conversation Starter Templates',
-    description: 'Ready-to-use conversation prompts for different proficiency levels',
-    type: 'template',
-    category: 'conversation',
-    level: 'all',
-    rating: 4.8,
-    downloads: 1245,
-    isBookmarked: true
-  },
-  {
-    id: '2',
-    title: 'Grammar Explanation Framework',
-    description: 'Step-by-step guide to explaining complex grammar concepts',
-    type: 'guide',
-    category: 'grammar',
-    level: 'intermediate',
-    rating: 4.7,
-    downloads: 892
-  },
-  {
-    id: '3',
-    title: 'Pronunciation Practice Exercises',
-    description: 'Interactive exercises for common pronunciation challenges',
-    type: 'interactive',
-    category: 'pronunciation',
-    level: 'all',
-    duration: '15 min',
-    rating: 4.9,
-    downloads: 1567
-  },
-  {
-    id: '4',
-    title: 'Business English Scenarios',
-    description: 'Role-play scenarios for professional communication',
-    type: 'worksheet',
-    category: 'business',
-    level: 'intermediate',
-    rating: 4.6,
-    downloads: 743
-  },
-  {
-    id: '5',
-    title: 'Cultural Context Videos',
-    description: 'Short videos explaining cultural nuances in language',
-    type: 'video',
-    category: 'culture',
-    level: 'all',
-    duration: '5-10 min',
-    rating: 4.8,
-    downloads: 2134,
-    isBookmarked: true
-  },
-  {
-    id: '6',
-    title: 'IELTS Speaking Preparation',
-    description: 'Comprehensive guide for IELTS speaking test preparation',
-    type: 'guide',
-    category: 'exam-prep',
-    level: 'advanced',
-    rating: 4.9,
-    downloads: 1876
-  }
-];
-
-const categories = [
-  { id: 'all', label: 'All Categories', icon: Globe },
-  { id: 'conversation', label: 'Conversation', icon: MessageSquare },
-  { id: 'grammar', label: 'Grammar', icon: BookOpen },
-  { id: 'vocabulary', label: 'Vocabulary', icon: Target },
-  { id: 'pronunciation', label: 'Pronunciation', icon: Mic },
-  { id: 'business', label: 'Business English', icon: Users },
-  { id: 'exam-prep', label: 'Exam Prep', icon: CheckCircle },
-  { id: 'culture', label: 'Culture', icon: Globe }
-];
-
-const resourceTypes = [
-  { id: 'all', label: 'All Types', icon: FileText },
-  { id: 'template', label: 'Templates', icon: FileText },
-  { id: 'guide', label: 'Guides', icon: BookOpen },
-  { id: 'video', label: 'Videos', icon: Video },
-  { id: 'audio', label: 'Audio', icon: Headphones },
-  { id: 'interactive', label: 'Interactive', icon: PlayCircle },
-  { id: 'worksheet', label: 'Worksheets', icon: FileImage }
-];
-
 const quickTools = [
   {
-    title: 'Lesson Plan Generator',
-    description: 'Create structured lesson plans in minutes',
-    icon: Presentation,
-    color: 'bg-token-primary',
-    action: 'Generate Plan'
-  },
-  {
-    title: 'Progress Tracker',
-    description: 'Track student progress and set goals',
-    icon: Target,
-    color: 'bg-token-accent',
-    action: 'Track Progress'
-  },
-  {
-    title: 'Feedback Templates',
-    description: 'Pre-written feedback for common scenarios',
-    icon: MessageSquare,
-    color: 'bg-token-secondary',
-    action: 'View Templates'
-  },
-  {
     title: 'Technical Setup Guide',
-    description: 'Ensure your tech setup is perfect',
+    description: 'Ensure your equipment is ready for smooth online lessons',
     icon: Settings,
-    color: 'bg-token-warning',
+    color: 'bg-blue-500',
     action: 'Check Setup'
+  },
+  {
+    title: 'Lesson Planning Templates',
+    description: 'Structured templates for different lesson types and levels',
+    icon: BookOpen,
+    color: 'bg-green-500',
+    action: 'Coming Soon'
+  },
+  {
+    title: 'Interactive Activities',
+    description: 'Engaging exercises and games for student participation',
+    icon: Lightbulb,
+    color: 'bg-purple-500',
+    action: 'Coming Soon'
+  },
+  {
+    title: 'Assessment Tools',
+    description: 'Track progress and evaluate student performance',
+    icon: FileTextIcon,
+    color: 'bg-orange-500',
+    action: 'Coming Soon'
   }
 ];
 
 export default function TutorTools() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedType, setSelectedType] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [bookmarkedOnly, setBookmarkedOnly] = useState(false);
+  const { session } = useAuth();
+  const [materials, setMaterials] = useState<Material[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [materialsSearchQuery, setMaterialsSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const [sortBy, setSortBy] = useState('recent');
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [linkPreview, setLinkPreview] = useState<{ title: string; domain: string; url: string } | null>(null);
+  const [isLinkLoading, setIsLinkLoading] = useState(false);
+  const [editingMaterial, setEditingMaterial] = useState<Material | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const filteredResources = resources.filter(resource => {
-    const matchesCategory = selectedCategory === 'all' || resource.category === selectedCategory;
-    const matchesType = selectedType === 'all' || resource.type === selectedType;
-    const matchesSearch = searchQuery === '' || 
-      resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      resource.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesBookmark = !bookmarkedOnly || resource.isBookmarked;
-    
-    return matchesCategory && matchesType && matchesSearch && matchesBookmark;
+  const [newMaterial, setNewMaterial] = useState({
+    title: '',
+    description: '',
+    url: '',
+    tags: ''
   });
 
+  // File type validation
+  const supportedFormats = ['PDF', 'DOC', 'DOCX', 'PPT', 'PPTX', 'JPEG', 'PNG', 'GIF', 'MP4', 'MP3', 'TXT'];
+  const maxFileSize = 10 * 1024 * 1024; // 10MB
+
+  // Auto-populate title from filename or URL
+  const autoPopulateTitle = useCallback((input: string) => {
+    if (!input) return;
+    
+    // Check if it's a URL
+    if (input.startsWith('http://') || input.startsWith('https://')) {
+      try {
+        const url = new URL(input);
+        const domain = url.hostname.replace('www.', '');
+        setNewMaterial(prev => ({ ...prev, title: domain }));
+      } catch (e) {
+        // Invalid URL, keep current title
+      }
+    } else {
+      // Check if it's a file path
+      const fileName = input.split('/').pop() || input.split('\\').pop() || input;
+      if (fileName && fileName.includes('.')) {
+        const nameWithoutExt = fileName.split('.')[0];
+        setNewMaterial(prev => ({ ...prev, title: nameWithoutExt }));
+      }
+    }
+  }, []);
+
+  // Smart tag suggestions
+  const getSmartTags = useCallback((input: string) => {
+    const tags = [];
+    
+    if (!input) return tags;
+    
+    // File type tags
+    const fileExtension = input.split('.').pop()?.toLowerCase();
+    if (fileExtension) {
+      switch (fileExtension) {
+        case 'pdf':
+          tags.push('document');
+          break;
+        case 'doc':
+        case 'docx':
+          tags.push('document', 'word');
+          break;
+        case 'ppt':
+        case 'pptx':
+          tags.push('presentation', 'powerpoint');
+          break;
+        case 'mp4':
+        case 'avi':
+          tags.push('video');
+          break;
+        case 'mp3':
+        case 'wav':
+          tags.push('audio');
+          break;
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+          tags.push('image');
+          break;
+      }
+    }
+    
+    // Content-based tags from filename
+    const fileName = input.toLowerCase();
+    if (fileName.includes('grammar')) tags.push('grammar');
+    if (fileName.includes('vocabulary') || fileName.includes('vocab')) tags.push('vocabulary');
+    if (fileName.includes('pronunciation')) tags.push('pronunciation');
+    if (fileName.includes('listening')) tags.push('listening');
+    if (fileName.includes('speaking')) tags.push('speaking');
+    if (fileName.includes('reading')) tags.push('reading');
+    if (fileName.includes('writing')) tags.push('writing');
+    if (fileName.includes('ielts')) tags.push('ielts');
+    if (fileName.includes('toefl')) tags.push('toefl');
+    if (fileName.includes('business')) tags.push('business');
+    if (fileName.includes('conversation')) tags.push('conversation');
+    
+    return [...new Set(tags)]; // Remove duplicates
+  }, []);
+
+  // Handle file upload
+  const handleFileUpload = async (file: File) => {
+    if (file.size > maxFileSize) {
+      alert(`File size exceeds ${maxFileSize / (1024 * 1024)}MB limit`);
+      return;
+    }
+
+    const fileExtension = file.name.split('.').pop()?.toUpperCase();
+    if (!supportedFormats.includes(fileExtension || '')) {
+      alert(`File type not supported. Supported formats: ${supportedFormats.join(', ')}`);
+      return;
+    }
+
+    if (!session?.access_token) {
+      alert('No active session found. Please log in again.');
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    // Simulate upload progress
+    const progressInterval = setInterval(() => {
+      setUploadProgress(prev => {
+        if (prev >= 90) return prev;
+        return prev + Math.random() * 10;
+      });
+    }, 200);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('materialId', 'new-material'); // We'll generate a proper ID later
+
+      const uploadResponse = await fetch('/api/chat/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: formData
+      });
+
+      if (!uploadResponse.ok) {
+        const errorData = await uploadResponse.json();
+        throw new Error(errorData.error || `Upload failed with status ${uploadResponse.status}`);
+      }
+
+      const result = await uploadResponse.json();
+      
+      // Complete the progress
+      setUploadProgress(100);
+      
+      // Auto-populate fields
+      autoPopulateTitle(file.name);
+      const suggestedTags = getSmartTags(file.name);
+      setNewMaterial(prev => ({
+        ...prev,
+        url: result.file.url,
+        tags: suggestedTags.join(', ')
+      }));
+
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert(`Upload failed: ${error instanceof Error ? error.message : 'Please try again.'}`);
+    } finally {
+      clearInterval(progressInterval);
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  // Handle URL input and preview
+  const handleUrlInput = useCallback(async (url: string) => {
+    setNewMaterial(prev => ({ ...prev, url }));
+    
+    if (!url || !url.startsWith('http')) {
+      setLinkPreview(null);
+      return;
+    }
+
+    setIsLinkLoading(true);
+    try {
+      // Simple preview - extract domain
+      const urlObj = new URL(url);
+      const domain = urlObj.hostname.replace('www.', '');
+      
+      setLinkPreview({
+        title: domain,
+        domain: domain,
+        url: url
+      });
+      
+      // Auto-populate title and tags
+      autoPopulateTitle(url);
+      const suggestedTags = getSmartTags(url);
+      setNewMaterial(prev => ({ ...prev, tags: suggestedTags.join(', ') }));
+    } catch (error) {
+      setLinkPreview(null);
+    } finally {
+      setIsLinkLoading(false);
+    }
+  }, [autoPopulateTitle, getSmartTags]);
+
+  // Handle edit button click
+  const handleEdit = (material: Material) => {
+    setEditingMaterial(material);
+    setNewMaterial({
+      title: material.title,
+      description: material.description,
+      url: material.url,
+      tags: material.tags.join(', ')
+    });
+    setIsEditMode(true);
+    setIsModalOpen(true);
+  };
+
+  // Handle open button click
+  const handleOpen = (material: Material) => {
+    if (!material.url) {
+      alert('No URL available for this material');
+      return;
+    }
+    
+    // Open in new tab
+    window.open(material.url, '_blank');
+  };
+
+  // Reset modal state
+  const handleModalClose = () => {
+    setIsEditMode(false);
+    setEditingMaterial(null);
+    setNewMaterial({ title: '', description: '', url: '', tags: '' });
+    setLinkPreview(null);
+    setIsModalOpen(false);
+  };
+
+  // Handle form submission (create or update)
+  const handleSubmit = async () => {
+    if (!newMaterial.title.trim()) {
+      alert('Please enter a title for the material');
+      return;
+    }
+
+    if (!newMaterial.url.trim()) {
+      alert('Please provide a file or link URL');
+      return;
+    }
+
+    try {
+      if (isEditMode && editingMaterial) {
+        // Update existing material
+        const updatedMaterial = {
+          ...editingMaterial,
+          title: newMaterial.title,
+          description: newMaterial.description,
+          url: newMaterial.url,
+          tags: newMaterial.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
+        };
+        
+        setMaterials(prev => 
+          prev.map(m => m.id === editingMaterial.id ? updatedMaterial : m)
+        );
+      } else {
+        // Create new material
+        const newMaterialObj: Material = {
+          id: Date.now().toString(), // Simple ID generation
+          title: newMaterial.title,
+          description: newMaterial.description,
+          url: newMaterial.url,
+          tags: newMaterial.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+          uploadedAt: new Date(),
+          fileType: newMaterial.url.split('.').pop()?.toUpperCase(),
+          fileSize: 0 // We don't have file size for links
+        };
+        
+        setMaterials(prev => [newMaterialObj, ...prev]);
+      }
+      
+      handleModalClose();
+    } catch (error) {
+      console.error('Error saving material:', error);
+      alert('Failed to save material. Please try again.');
+    }
+  };
+
+  // Handle drag and drop
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      handleFileUpload(files[0]);
+    }
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+  }, []);
+
+  // Handle file input change
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileUpload(file);
+    }
+  };
+
+  // Handle opening the modal for new material
+  const handleAddNewMaterial = () => {
+    setIsEditMode(false);
+    setEditingMaterial(null);
+    setNewMaterial({ title: '', description: '', url: '', tags: '' });
+    setLinkPreview(null);
+    setIsModalOpen(true);
+  };
+
   const getTypeIcon = (type: string) => {
-    const typeMap = {
-      template: FileText,
-      guide: BookOpen,
-      video: Video,
-      audio: Headphones,
-      interactive: PlayCircle,
-      worksheet: FileImage
-    };
-    return typeMap[type as keyof typeof typeMap] || FileText;
+    switch(type) {
+      case 'PDF':
+        return FileTextIcon;
+      case 'Word Doc':
+        return FileTextIcon;
+      case 'PowerPoint':
+        return FileTextIcon;
+      case 'Website Link':
+        return ExternalLinkIcon;
+      case 'YouTube Video':
+        return Video;
+      default:
+        return FileTextIcon;
+    }
   };
 
   const getLevelColor = (level: string) => {
-    const levelMap = {
-      beginner: 'bg-token-success text-token-success',
-      intermediate: 'bg-token-warning text-token-warning',
-      advanced: 'bg-token-error text-token-error',
-      all: 'bg-token-info text-token-info'
+    const levelMap: { [key: string]: string } = {
+      'beginner': 'bg-token-success text-token-success',
+      'intermediate': 'bg-token-warning text-token-warning',
+      'advanced': 'bg-token-error text-token-error',
+      'all': 'bg-token-info text-token-info'
     };
-    return levelMap[level as keyof typeof levelMap] || 'bg-token-info text-token-info';
+    return levelMap[level] || 'bg-token-info text-token-info';
   };
+
+  const getMaterialTypeIcon = (type: string) => {
+    switch(type) {
+      case 'PDF':
+        return FileTextIcon;
+      case 'Word Doc':
+        return FileTextIcon;
+      case 'PowerPoint':
+        return FileTextIcon;
+      case 'Website Link':
+        return ExternalLinkIcon;
+      case 'YouTube Video':
+        return Video;
+      default:
+        return FileTextIcon;
+    }
+  };
+
+  const handleDeleteMaterial = (id: string) => {
+    setMaterials(prev => prev.filter(material => material.id !== id));
+  };
+
+  const filteredMaterials = materials.filter(material => {
+    const matchesSearch = material.title.toLowerCase().includes(materialsSearchQuery.toLowerCase()) ||
+                         material.description.toLowerCase().includes(materialsSearchQuery.toLowerCase()) ||
+                         material.tags.some(tag => tag.toLowerCase().includes(materialsSearchQuery.toLowerCase()));
+    
+    const matchesFilter = filterType === 'all' || material.fileType === filterType;
+    
+    return matchesSearch && matchesFilter;
+  });
+
+  const sortedMaterials = [...filteredMaterials].sort((a, b) => {
+    switch(sortBy) {
+      case 'recent':
+        return b.uploadedAt.getTime() - a.uploadedAt.getTime();
+      case 'az':
+        return a.title.localeCompare(b.title);
+      case 'type':
+        return (a.fileType || '').localeCompare(b.fileType || '');
+      default:
+        return 0;
+    }
+  });
 
   return (
     <TutorLayout>
-      <div className="min-h-screen bg-token-surface-subtle">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="min-h-screen bg-token-surface-alt">
+        <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-4">
@@ -230,12 +511,12 @@ export default function TutorTools() {
               </div>
               <Text variant="h3" className="text-token-text font-semibold">Quick Tools</Text>
             </div>
-            
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {quickTools.map((tool, index) => {
                 const Icon = tool.icon;
+                const isSystemCheck = tool.title === 'Technical Setup Guide';
                 return (
-                  <Card key={index} className="p-6 bg-surface border border-border hover:shadow-lg transition-all duration-200 hover:scale-105 cursor-pointer rounded-xl">
+                  <Card key={index} className="p-6 bg-surface border border-border hover:shadow-lg transition-all duration-200 hover:scale-105 cursor-pointer rounded-xl relative">
                     <div className={`w-12 h-12 ${tool.color} rounded-lg flex items-center justify-center mb-4 shadow-sm`}>
                       <Icon className="w-6 h-6 text-white" />
                     </div>
@@ -245,197 +526,290 @@ export default function TutorTools() {
                     <Text variant="small" className="text-token-text-secondary mb-4 leading-relaxed">
                       {tool.description}
                     </Text>
-                    <Button variant="outline" size="sm" className="w-full">
-                      {tool.action}
-                    </Button>
+                    {/* Coming Soon badge for all except System Check */}
+                    {!isSystemCheck && (
+                      <span className="absolute top-4 right-4 bg-token-warning text-white text-xs font-semibold px-2 py-1 rounded">Coming Soon</span>
+                    )}
+                    {/* Button: link for System Check, outline for others */}
+                    {isSystemCheck ? (
+                      <a href="/tutor/tools/system-check" target="_blank" rel="noopener noreferrer">
+                        <Button variant="outline" size="sm" className="w-full">
+                          {tool.action}
+                        </Button>
+                      </a>
+                    ) : (
+                      <Button variant="outline" size="sm" className="w-full" disabled>
+                        {tool.action}
+                      </Button>
+                    )}
                   </Card>
                 );
               })}
             </div>
           </div>
 
-          {/* Filters */}
-          <Card className="p-6 mb-8 bg-surface border border-border rounded-xl shadow-sm">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-6 h-6 bg-token-info/20 rounded-full flex items-center justify-center">
-                <Filter className="w-4 h-4 text-token-info" />
-              </div>
-              <Text variant="h3" className="text-token-text font-semibold">Find Resources</Text>
-            </div>
-            
-            <div className="flex flex-col lg:flex-row gap-4">
-              {/* Search */}
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-token-text-muted w-5 h-5" />
-                  <input
-                    type="text"
-                    placeholder="Search resources..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-border rounded-lg bg-surface text-token-text placeholder:text-token-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-                  />
-                </div>
-              </div>
-
-              {/* Category Filter */}
-              <div className="flex-1">
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full px-4 py-3 border border-border rounded-lg bg-surface text-token-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-                >
-                  {categories.map(category => (
-                    <option key={category.id} value={category.id}>
-                      {category.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Type Filter */}
-              <div className="flex-1">
-                <select
-                  value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-full px-4 py-3 border border-border rounded-lg bg-surface text-token-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-                >
-                  {resourceTypes.map(type => (
-                    <option key={type.id} value={type.id}>
-                      {type.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Bookmarked Toggle */}
-              <div className="flex items-center">
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={bookmarkedOnly}
-                    onChange={(e) => setBookmarkedOnly(e.target.checked)}
-                    className="sr-only"
-                  />
-                  <div className={`w-5 h-5 border-2 rounded mr-2 flex items-center justify-center transition-colors ${
-                    bookmarkedOnly ? 'bg-primary border-primary' : 'border-border'
-                  }`}>
-                    {bookmarkedOnly && <CheckCircle className="w-3 h-3 text-text-inverse" />}
-                  </div>
-                  <Text variant="small" className="text-token-text-secondary font-medium">
-                    Bookmarked only
-                  </Text>
-                </label>
-              </div>
-            </div>
-          </Card>
-
-          {/* Results */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 bg-token-success/20 rounded-full flex items-center justify-center">
-                  <BookOpen className="w-4 h-4 text-token-success" />
-                </div>
-                <Text variant="h3" className="text-token-text font-semibold">
-                  Resources ({filteredResources.length})
-                </Text>
-              </div>
-              <Text variant="body" className="text-token-text-secondary">
-                {filteredResources.length} resources found
-              </Text>
-            </div>
-          </div>
-
-          {/* Resource Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredResources.map((resource) => {
-              const TypeIcon = getTypeIcon(resource.type);
-              return (
-                <Card key={resource.id} className="p-6 bg-surface border border-border hover:shadow-lg hover:scale-105 transition-all duration-200 rounded-xl">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 bg-token-surface-accent rounded-lg flex items-center justify-center mr-3 shadow-sm">
-                        <TypeIcon className="w-5 h-5 text-token-text" />
+          {/* Teaching Materials Section */}
+          <div className="mt-16">
+            <h2 className="text-2xl font-bold mb-2 text-token-text">Teaching Materials</h2>
+            <p className="text-base mb-6 text-token-text-secondary">
+              Organize the content you like to use when teaching. Add links, documents, or videos — and access them anytime.
+            </p>
+            <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
+              <Button 
+                onClick={handleAddNewMaterial}
+                className="rounded-full px-6 py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-200 bg-primary text-text-inverse"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Material
+              </Button>
+              <DialogContent className="sm:max-w-[600px]">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-semibold text-token-text">
+                    {isEditMode ? 'Edit Teaching Material' : 'Add New Teaching Material'}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  {/* Upload or Link Field */}
+                  <div>
+                    <Label htmlFor="upload" className="text-sm font-medium text-token-text">
+                      Upload or Link
+                    </Label>
+                    <div 
+                      className="mt-1 border-2 border-dashed border-token-border rounded-lg p-4 hover:border-token-primary transition-colors"
+                      onDrop={handleDrop}
+                      onDragOver={handleDragOver}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Input
+                          id="upload"
+                          placeholder="Paste a link or drag & drop a file here"
+                          value={newMaterial.url}
+                          onChange={(e) => handleUrlInput(e.target.value)}
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={isUploading}
+                        >
+                          {isUploading ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Upload className="h-4 w-4" />
+                          )}
+                        </Button>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          className="hidden"
+                          onChange={handleFileInputChange}
+                          accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.mp3,.txt"
+                        />
                       </div>
-                      <div>
-                        <Text variant="h4" className="text-token-text font-semibold">
-                          {resource.title}
-                        </Text>
-                        <div className="flex items-center mt-1">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getLevelColor(resource.level)}`}>
-                            {resource.level}
-                          </span>
+                      
+                      {/* Upload Progress */}
+                      {isUploading && (
+                        <div className="mt-3">
+                          <div className="flex items-center gap-2 text-sm text-token-text-secondary">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Uploading... {uploadProgress}%
+                          </div>
+                          <div className="mt-1 w-full bg-token-surface rounded-full h-2">
+                            <div 
+                              className="bg-token-primary h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${uploadProgress}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Link Preview */}
+                      {linkPreview && (
+                        <div className="mt-3 p-3 bg-token-surface rounded-lg border border-token-border">
+                          <div className="flex items-center gap-2">
+                            <Link className="h-4 w-4 text-token-primary" />
+                            <span className="text-sm font-medium text-token-text">{linkPreview.title}</span>
+                            <span className="text-xs text-token-text-secondary">({linkPreview.domain})</span>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Helper Text */}
+                      <p className="mt-2 text-xs text-token-text-secondary">
+                        Supports: {supportedFormats.join(', ')} • Max size: 10MB
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Title Field */}
+                  <div>
+                    <Label htmlFor="title" className="text-sm font-medium text-token-text">
+                      Material Title
+                    </Label>
+                    <Input
+                      id="title"
+                      placeholder="e.g., IELTS Speaking Framework"
+                      value={newMaterial.title}
+                      onChange={(e) => setNewMaterial({ ...newMaterial, title: e.target.value })}
+                      className="mt-1"
+                    />
+                  </div>
+
+                  {/* Description Field */}
+                  <div>
+                    <Label htmlFor="description" className="text-sm font-medium text-token-text">
+                      Description (optional)
+                    </Label>
+                    <Textarea
+                      id="description"
+                      placeholder="Personal notes or when to use this"
+                      value={newMaterial.description}
+                      onChange={(e) => setNewMaterial({ ...newMaterial, description: e.target.value })}
+                      className="mt-1"
+                      rows={3}
+                    />
+                  </div>
+
+                  {/* Tags Field */}
+                  <div>
+                    <Label htmlFor="tags" className="text-sm font-medium text-token-text">
+                      Tags (optional)
+                    </Label>
+                    <Input
+                      id="tags"
+                      placeholder="e.g., grammar, advanced, ielts (comma separated)"
+                      value={newMaterial.tags}
+                      onChange={(e) => setNewMaterial({ ...newMaterial, tags: e.target.value })}
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-3 pt-4">
+                  <Button onClick={handleSubmit} className="flex-1 rounded-full font-medium bg-primary text-text-inverse">
+                    {isEditMode ? 'Update Material' : 'Save Material'}
+                  </Button>
+                  <Button variant="outline" onClick={handleModalClose} className="flex-1 rounded-full font-medium border-token-border text-token-text-secondary">
+                    Cancel
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            {/* Search & Filter */}
+            {materials.length > 0 && (
+              <Card className="mb-6 border-0 shadow-sm bg-surface">
+                <div className="p-4">
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex-1 relative">
+                      <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-token-text-muted" />
+                      <Input
+                        placeholder="Search my materials..."
+                        value={materialsSearchQuery}
+                        onChange={(e) => setMaterialsSearchQuery(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <CustomSelect 
+                        value={filterType} 
+                        onValueChange={setFilterType}
+                        options={[
+                          { value: 'all', label: 'All Types' },
+                          { value: 'PDF', label: 'PDF' },
+                          { value: 'Word Doc', label: 'Word Doc' },
+                          { value: 'PowerPoint', label: 'PowerPoint' },
+                          { value: 'Website Link', label: 'Website Link' },
+                          { value: 'YouTube Video', label: 'YouTube Video' },
+                          { value: 'Other File', label: 'Other File' }
+                        ]}
+                        placeholder="Filter by type"
+                        triggerClassName="w-[140px]"
+                      />
+                      <CustomSelect 
+                        value={sortBy} 
+                        onValueChange={setSortBy}
+                        options={[
+                          { value: 'recent', label: 'Recent' },
+                          { value: 'az', label: 'A-Z' },
+                          { value: 'type', label: 'File Type' }
+                        ]}
+                        placeholder="Sort by"
+                        triggerClassName="w-[120px]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {/* Materials Grid */}
+            {sortedMaterials.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {sortedMaterials.map((material) => {
+                  const IconComponent = getMaterialTypeIcon(material.fileType || 'Other File');
+                  return (
+                    <Card key={material.id} className="border-0 shadow-sm hover:shadow-md transition-shadow bg-surface">
+                      <div className="p-4">
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-surface-accent">
+                            <IconComponent className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold mb-1 truncate text-token-text">{material.title}</h4>
+                            {material.description && (
+                              <p className="text-sm mb-2 line-clamp-2 text-token-text-secondary">{material.description}</p>
+                            )}
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {material.tags.map((tag, index) => (
+                                <Badge key={index} variant="secondary" className="text-xs px-2 py-1">#{tag}</Badge>
+                              ))}
+                            </div>
+                            <div className="flex items-center gap-1 text-xs text-token-text-muted">
+                              <Calendar className="h-3 w-3" />
+                              Uploaded: {material.uploadedAt.toLocaleDateString()}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline" className="flex-1 text-xs bg-transparent" onClick={() => handleOpen(material)}>
+                            <ExternalLink className="h-3 w-3 mr-1" />
+                            Open
+                          </Button>
+                          <Button size="sm" variant="outline" className="px-2 bg-transparent" onClick={() => handleEdit(material)}>
+                            <Edit className="h-3 w-3" />
+                          </Button>
+                          <Button size="sm" variant="outline" className="px-2 hover:bg-red-50 hover:border-red-200 bg-transparent" onClick={() => handleDeleteMaterial(material.id)}>
+                            <Trash2 className="h-3 w-3 text-red-500" />
+                          </Button>
                         </div>
                       </div>
-                    </div>
-                    <button className="text-token-text-muted hover:text-primary transition-colors">
-                      <Bookmark className={`w-5 h-5 ${resource.isBookmarked ? 'fill-current text-primary' : ''}`} />
-                    </button>
-                  </div>
-
-                  <Text variant="small" className="text-token-text-secondary mb-4 leading-relaxed">
-                    {resource.description}
-                  </Text>
-
-                  <div className="flex items-center justify-between mb-4 p-3 bg-token-surface-accent rounded-lg">
-                    <div className="flex items-center">
-                      <Star className="w-4 h-4 text-token-warning mr-1" />
-                      <Text variant="small" className="text-token-text-secondary font-medium">
-                        {resource.rating} ({resource.downloads} downloads)
-                      </Text>
-                    </div>
-                    {resource.duration && (
-                      <div className="flex items-center">
-                        <Clock className="w-4 h-4 text-token-text-muted mr-1" />
-                        <Text variant="small" className="text-token-text-secondary font-medium">
-                          {resource.duration}
-                        </Text>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button variant="primary" size="sm" className="flex-1">
-                      <Download className="w-4 h-4 mr-2" />
-                      Download
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <ExternalLink className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Share2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-
-          {/* Empty State */}
-          {filteredResources.length === 0 && (
-            <Card className="p-12 text-center bg-surface border border-border rounded-xl shadow-sm">
-              <div className="flex flex-col items-center">
-                <div className="w-16 h-16 bg-token-text-muted/10 rounded-full flex items-center justify-center mb-4">
-                  <Lightbulb className="w-8 h-8 text-token-text-muted" />
-                </div>
-                <Text variant="h3" className="text-token-text font-semibold mb-2">
-                  No resources found
-                </Text>
-                <Text variant="body" className="text-token-text-secondary mb-6 max-w-md">
-                  Try adjusting your filters or search terms to find the perfect teaching materials.
-                </Text>
-                <Button variant="outline" onClick={() => {
-                  setSearchQuery('');
-                  setSelectedCategory('all');
-                  setSelectedType('all');
-                  setBookmarkedOnly(false);
-                }}>
-                  Clear Filters
-                </Button>
+                    </Card>
+                  );
+                })}
               </div>
-            </Card>
-          )}
+            ) : (
+              <Card className="border-0 shadow-sm bg-surface">
+                <div className="p-12 text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-surface-accent">
+                    <FileText className="h-8 w-8 text-token-text-muted" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2 text-token-text">You haven't added any materials yet.</h3>
+                  <p className="mb-6 text-token-text-secondary">Start building your teaching resource library by adding your first material.</p>
+                  <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
+                    <Button 
+                      onClick={handleAddNewMaterial}
+                      className="rounded-full px-6 py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-200 bg-primary text-text-inverse"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Your First Material
+                    </Button>
+                  </Dialog>
+                </div>
+              </Card>
+            )}
+          </div>
         </div>
       </div>
     </TutorLayout>

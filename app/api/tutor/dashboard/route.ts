@@ -139,23 +139,24 @@ export async function GET(request: NextRequest) {
 
     let studentDetails: Record<string, any> = {};
     if (studentIds.size > 0) {
-      const { data: students } = await serverSupabase.auth.admin.listUsers();
-      
-      if (students?.users) {
-        const studentIdsArray = Array.from(studentIds);
-        studentDetails = students.users
-          .filter(user => studentIdsArray.includes(user.id))
-          .reduce((acc: Record<string, any>, user: any) => {
-            acc[user.id] = {
-              id: user.id,
-              email: user.email,
-              full_name: user.user_metadata?.full_name || user.user_metadata?.name || 'Unknown Student',
-              avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture,
-              country: user.user_metadata?.country || 'Unknown'
+      const studentIdsArray = Array.from(studentIds);
+      // Fetch each student by ID using getUserById
+      await Promise.all(studentIdsArray.map(async (id) => {
+        try {
+          const { data: student, error } = await serverSupabase.auth.admin.getUserById(id);
+          if (!error && student && student.user) {
+            studentDetails[id] = {
+              id: student.user.id,
+              email: student.user.email,
+              full_name: student.user.user_metadata?.full_name || student.user.user_metadata?.name || 'Unknown Student',
+              avatar_url: student.user.user_metadata?.avatar_url || student.user.user_metadata?.picture,
+              country: student.user.user_metadata?.country || 'Unknown'
             };
-            return acc;
-          }, {});
-      }
+          }
+        } catch (err) {
+          // If error, skip this student
+        }
+      }));
     }
 
     // Calculate metrics

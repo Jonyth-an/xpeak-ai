@@ -17,6 +17,15 @@ const ALLOWED_FILE_TYPES = [
   'application/vnd.openxmlformats-officedocument.presentationml.presentation'
 ]
 
+// Function to sanitize filename for storage
+function sanitizeFilename(filename: string): string {
+  return filename
+    .replace(/[^a-zA-Z0-9.-]/g, '_') // Replace special characters with underscore
+    .replace(/_+/g, '_') // Replace multiple underscores with single
+    .replace(/^_|_$/g, '') // Remove leading/trailing underscores
+    .substring(0, 200) // Limit length
+}
+
 export async function POST(request: NextRequest) {
   try {
     console.log('File upload request received')
@@ -46,16 +55,20 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData()
     const file = formData.get('file') as File
     const lessonId = formData.get('lessonId') as string
+    const materialId = formData.get('materialId') as string
 
     console.log('File received:', file?.name, 'size:', file?.size)
     console.log('Lesson ID:', lessonId)
+    console.log('Material ID:', materialId)
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    if (!lessonId) {
-      return NextResponse.json({ error: 'Lesson ID is required' }, { status: 400 })
+    // Use materialId if provided, otherwise require lessonId
+    const folderId = materialId || lessonId
+    if (!folderId) {
+      return NextResponse.json({ error: 'Lesson ID or Material ID is required' }, { status: 400 })
     }
 
     // Validate file size
@@ -72,17 +85,18 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Generate unique filename
+    // Generate unique filename with sanitization
     const timestamp = Date.now()
     const fileExtension = file.name.split('.').pop()
-    const fileName = `${user.id}/${lessonId}/${timestamp}-${file.name}`
+    const sanitizedOriginalName = sanitizeFilename(file.name.replace(`.${fileExtension}`, ''))
+    const sanitizedFileName = `${user.id}/${folderId}/${timestamp}-${sanitizedOriginalName}.${fileExtension}`
 
-    console.log('Uploading to storage with filename:', fileName)
+    console.log('Uploading to storage with filename:', sanitizedFileName)
 
     // Upload to Supabase Storage
     const { data: uploadData, error: uploadError } = await serverSupabase.storage
       .from('lesson-files')
-      .upload(fileName, file, {
+      .upload(sanitizedFileName, file, {
         cacheControl: '3600',
         upsert: false
       })
@@ -97,7 +111,7 @@ export async function POST(request: NextRequest) {
     // Get public URL
     const { data: { publicUrl } } = serverSupabase.storage
       .from('lesson-files')
-      .getPublicUrl(fileName)
+      .getPublicUrl(sanitizedFileName)
 
     console.log('Public URL generated:', publicUrl)
 

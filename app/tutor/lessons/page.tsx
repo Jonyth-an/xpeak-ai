@@ -424,10 +424,10 @@ export default function TutorLessonsPage() {
                       <div className="flex items-start gap-4 flex-1">
                         {/* Student Avatar */}
                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0 shadow-sm">
-                          {lesson.student.profile_image_url ? (
+                          {lesson.student && lesson.student.profile_image_url ? (
                             <Image 
                               src={lesson.student.profile_image_url} 
-                              alt={lesson.student.name}
+                              alt={lesson.student?.name || 'Student'}
                               width={48}
                               height={48}
                               className="w-12 h-12 rounded-full object-cover"
@@ -442,7 +442,7 @@ export default function TutorLessonsPage() {
                           {/* Name and Time Until */}
                           <div className="flex items-center gap-2 mb-1">
                             <Text variant="h3" as="h3" className="truncate">
-                              {lesson.student.name}
+                              {lesson.student ? lesson.student.name : 'Unknown Student'}
                             </Text>
                             <span className="px-2 py-0.5 bg-accent/20 text-accent text-xs font-medium rounded-full whitespace-nowrap">
                               Student
@@ -634,10 +634,10 @@ export default function TutorLessonsPage() {
                     <div className="flex items-start gap-4 flex-1">
                       {/* Student Avatar */}
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0 shadow-sm">
-                        {lesson.student.profile_image_url ? (
+                        {lesson.student && lesson.student.profile_image_url ? (
                           <Image 
                             src={lesson.student.profile_image_url} 
-                            alt={lesson.student.name}
+                            alt={lesson.student?.name || 'Student'}
                             width={48}
                             height={48}
                             className="w-12 h-12 rounded-full object-cover"
@@ -652,7 +652,7 @@ export default function TutorLessonsPage() {
                         {/* Name and Time Until */}
                         <div className="flex items-center gap-2 mb-1">
                           <Text variant="h3" as="h3" className="truncate">
-                            {lesson.student.name}
+                            {lesson.student ? lesson.student.name : 'Unknown Student'}
                           </Text>
                           <span className="px-2 py-0.5 bg-primary/20 text-primary text-xs font-medium rounded-full whitespace-nowrap">
                             Student
@@ -756,26 +756,26 @@ export default function TutorLessonsPage() {
                     <div className="flex items-start gap-4 flex-1">
                       {/* Student Avatar */}
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0 shadow-sm">
-                        {lesson.student.profile_image_url ? (
-                          <Image 
-                            src={lesson.student.profile_image_url} 
-                            alt={lesson.student.name}
-                            width={48}
-                            height={48}
-                            className="w-12 h-12 rounded-full object-cover"
-                          />
-                        ) : (
+                        {lesson.student && lesson.student.profile_image_url ? (
+                           <Image 
+                              src={lesson.student.profile_image_url} 
+                              alt={lesson.student?.name || 'Student'}
+                              width={48}
+                              height={48}
+                              className="w-12 h-12 rounded-full object-cover"
+                            />
+                          ) : (
                           <User className="w-6 h-6 text-text-inverse" />
-                        )}
-                      </div>
+                       )}
+                    </div>
 
                       {/* Lesson Info */}
                       <div className="flex-1 min-w-0">
                         {/* Name and Time Until */}
                         <div className="flex items-center gap-2 mb-1">
                           <Text variant="h3" as="h3" className="truncate">
-                            {lesson.student.name}
-                          </Text>
+                            {lesson.student ? lesson.student.name : 'Unknown Student'}
+                         </Text>
                           <span className="px-2 py-0.5 bg-primary/20 text-primary text-xs font-medium rounded-full whitespace-nowrap">
                             Student
                           </span>

@@ -217,15 +217,15 @@ export default function SystemCheck({ onComplete, onBack }: SystemTestProps) {
   const getStatusIcon = (status: TestResult["status"]) => {
     switch (status) {
       case "passed":
-        return <CheckCircle className="w-5 h-5 text-success" />
+        return <CheckCircle className="w-5 h-5 text-success" />;
       case "failed":
-        return <XCircle className="w-5 h-5 text-error" />
+        return <XCircle className="w-5 h-5 text-error" />;
       case "testing":
-        return <RefreshCw className="w-5 h-5 text-accent animate-spin" />
+        return <RefreshCw className="w-5 h-5 animate-spin text-muted" />;
       default:
-        return <AlertCircle className="w-5 h-5 text-muted" />
+        return <AlertCircle className="w-5 h-5 text-muted" />;
     }
-  }
+  };
 
   const getTestIcon = (testIndex: number) => {
     switch (testIndex) {
@@ -298,63 +298,17 @@ export default function SystemCheck({ onComplete, onBack }: SystemTestProps) {
           <Progress value={testProgress} className="h-2" />
         </div>
 
-        {/* Test Results - 3 cards in a row */}
+        {/* Test Result Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {testResults.map((result, index) => (
-            <Card key={index} className="border-2">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    {getTestIcon(index)}
-                    <h3 className="font-semibold text-text text-sm">{testNames[index]}</h3>
-                    {getStatusIcon(result.status)}
-                  </div>
-                  {result.status === "failed" && isTestingComplete && (
-                    <Button variant="outline" size="sm" onClick={() => retryTest(index)} className="h-6 px-2">
-                      <RefreshCw className="w-3 h-3 mr-1" />
-                      Retry
-                    </Button>
-                  )}
-                </div>
-
-                <p className="text-xs text-text-secondary mb-2">{result.message}</p>
-
-                {/* Status Badge */}
-                <div className="mb-2">
-                  {index === 0 && getStatusBadge(result.status)}
-                  {index === 1 && getMicrophoneStatusBadge(result.status)}
-                  {index === 2 && getInternetStatusBadge(result.status)}
-                </div>
-
-                {result.status === "testing" && (
-                  <div className="space-y-1">
-                    <Progress value={((currentTest + 1) / testResults.length) * 100} className="h-1" />
-                    <p className="text-xs text-text-muted">Testing in progress...</p>
-                  </div>
-                )}
-
-                {/* Special UI for each test */}
-                {index === 1 && result.status === "testing" && (
-                  <div className="mt-2">
-                    <div className="flex items-center gap-1 mb-1">
-                      <Volume2 className="w-3 h-3 text-accent" />
-                      <span className="text-xs text-text-secondary">Audio Level</span>
-                    </div>
-                    <Progress value={audioLevel} className="h-2" />
-                  </div>
-                )}
-
-                {index === 2 && result.status === "testing" && (
-                  <div className="mt-2">
-                    <div className="flex items-center gap-1 mb-1">
-                      <Wifi className="w-3 h-3 text-accent" />
-                      <span className="text-xs text-text-secondary">Connection Speed</span>
-                    </div>
-                    <Progress value={internetSpeed} className="h-2" />
-                    <p className="text-xs text-text-muted">{Math.round(internetSpeed)} Mbps</p>
-                  </div>
-                )}
-              </CardContent>
+          {testNames.map((name, idx) => (
+            <Card key={name} className="p-4 flex flex-col items-center border border-border bg-surface rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                {getStatusIcon(testResults[idx].status)}
+                <span className="font-semibold text-base">{name}</span>
+              </div>
+              <span className={`text-sm font-medium ${testResults[idx].status === 'passed' ? 'text-success' : testResults[idx].status === 'failed' ? 'text-error' : 'text-muted'}`}>
+                {testResults[idx].status === 'passed' ? 'Passed' : testResults[idx].status === 'failed' ? 'Failed' : testResults[idx].status === 'testing' ? 'Testing...' : 'Pending'}
+              </span>
             </Card>
           ))}
         </div>

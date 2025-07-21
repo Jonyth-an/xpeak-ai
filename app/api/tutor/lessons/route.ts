@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { serverSupabase } from '@/lib/serverSupabaseClient';
 
+// In-memory cache for tutor lessons (tutor + params)
+const tutorLessonsCache = new Map();
+const CACHE_TTL_MS = 60 * 1000; // 60 seconds
+
+function getTutorLessonsCacheKey(tutorId, page, limit, status, upcoming, includeSummary) {
+  return `${tutorId}|${page}|${limit}|${status}|${upcoming}|${includeSummary}`;
+}
+
 export async function GET(request: NextRequest) {
   try {
     // Get the user from the request
@@ -41,6 +49,13 @@ export async function GET(request: NextRequest) {
     }
 
     const tutorId = tutorProfile.id;
+    const cacheKey = getTutorLessonsCacheKey(tutorId, page, limit, status, upcoming, includeSummary);
+    const now = Date.now();
+    const cached = tutorLessonsCache.get(cacheKey);
+    if (cached && now - cached.timestamp < CACHE_TTL_MS) {
+      return NextResponse.json(cached.data);
+    }
+
     console.log('✅ Found tutor ID:', tutorId);
 
     // Build the query
@@ -117,33 +132,26 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Get student data for all lessons
+    // Manual join: fetch all matching profiles
     const studentIds = Array.from(new Set((lessons || []).map(lesson => lesson.student_id)));
-    let students: Record<string, any> = {};
-    
+    let profiles: Record<string, any> = {};
     if (studentIds.length > 0) {
-      // Use auth.admin.listUsers() to get student information
-      const { data: studentData, error: studentError } = await serverSupabase.auth.admin.listUsers();
-      
-      if (!studentError && studentData?.users) {
-        // Filter to only include students from our lessons
-        const lessonStudents = studentData.users.filter(user => studentIds.includes(user.id));
-        students = lessonStudents.reduce((acc: Record<string, any>, student: any) => {
-          acc[student.id] = student;
+      const { data: profileData } = await serverSupabase
+        .from('profiles')
+        .select('id, full_name, avatar_url, country')
+        .in('id', studentIds);
+      if (profileData) {
+        profiles = profileData.reduce((acc: Record<string, any>, profile: any) => {
+          acc[profile.id] = profile;
           return acc;
         }, {});
       }
     }
-
-    // Process lessons data
     const processedLessons = (lessons || []).map(lesson => {
-      const student = students[lesson.student_id] || {};
+      const profile = profiles[lesson.student_id] || {};
       const now = new Date();
       const scheduledStart = new Date(lesson.scheduled_start);
       const minutesUntil = Math.max(0, Math.floor((scheduledStart.getTime() - now.getTime()) / (1000 * 60)));
-      
-
-      
       return {
         id: lesson.id,
         lesson_type: lesson.lesson_type,
@@ -160,11 +168,10 @@ export async function GET(request: NextRequest) {
         minutes_until: minutesUntil,
         can_join: lesson.status === 'confirmed' && minutesUntil <= 60 && minutesUntil >= -60,
         student: {
-          id: student.id,
-          email: student.email,
-          name: student.user_metadata?.full_name || student.email?.split('@')[0] || 'Unknown',
-          profile_image_url: student.user_metadata?.avatar_url || student.user_metadata?.picture,
-          country: student.user_metadata?.country || 'Unknown'
+          id: profile.id,
+          name: profile.full_name || 'Unknown',
+          profile_image_url: profile.avatar_url,
+          country: profile.country || 'Unknown'
         }
       };
     });
@@ -183,7 +190,9 @@ export async function GET(request: NextRequest) {
       response.summary = summary;
     }
 
-    return NextResponse.json(response);
+    const responseData = includeSummary ? { lessons, summary } : { lessons };
+    tutorLessonsCache.set(cacheKey, { data: responseData, timestamp: now });
+    return NextResponse.json(responseData);
 
   } catch (error) {
     console.error('❌ Unexpected error in tutor lessons API:', error);
