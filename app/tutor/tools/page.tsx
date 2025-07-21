@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import TutorLayout from '../TutorLayout';
 import { Card, Button } from '@/app/components/ui';
 import Text from '@/app/components/ui/Text';
@@ -11,6 +11,7 @@ import Textarea from '@/app/components/ui/Textarea';
 import CustomSelect from '@/app/components/ui/CustomSelect';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useAuth } from '@/lib/AuthContext';
+import { materialsService, Material as MaterialType } from '@/lib/services/materialsService';
 import {
   Plus,
   Search as SearchIcon,
@@ -97,7 +98,8 @@ const quickTools = [
 
 export default function TutorTools() {
   const { session } = useAuth();
-  const [materials, setMaterials] = useState<Material[]>([]);
+  const [materials, setMaterials] = useState<MaterialType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [materialsSearchQuery, setMaterialsSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
@@ -106,7 +108,7 @@ export default function TutorTools() {
   const [isUploading, setIsUploading] = useState(false);
   const [linkPreview, setLinkPreview] = useState<{ title: string; domain: string; url: string } | null>(null);
   const [isLinkLoading, setIsLinkLoading] = useState(false);
-  const [editingMaterial, setEditingMaterial] = useState<Material | null>(null);
+  const [editingMaterial, setEditingMaterial] = useState<MaterialType | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -120,6 +122,26 @@ export default function TutorTools() {
   // File type validation
   const supportedFormats = ['PDF', 'DOC', 'DOCX', 'PPT', 'PPTX', 'JPEG', 'PNG', 'GIF', 'MP4', 'MP3', 'TXT'];
   const maxFileSize = 10 * 1024 * 1024; // 10MB
+
+  // Fetch materials on component mount
+  useEffect(() => {
+    const fetchMaterials = async () => {
+      try {
+        setIsLoading(true);
+        const fetchedMaterials = await materialsService.getMaterials();
+        setMaterials(fetchedMaterials);
+      } catch (error) {
+        console.error('Error fetching materials:', error);
+        // You might want to show a toast notification here
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (session) {
+      fetchMaterials();
+    }
+  }, [session]);
 
   // Auto-populate title from filename or URL
   const autoPopulateTitle = useCallback((input: string) => {
@@ -259,6 +281,27 @@ export default function TutorTools() {
         tags: suggestedTags.join(', ')
       }));
 
+      // Automatically save the material to database
+      try {
+        const materialData = {
+          title: file.name.replace(`.${fileExtension}`, ''),
+          description: '',
+          url: result.file.url,
+          tags: suggestedTags,
+          fileType: fileExtension,
+          fileSize: file.size
+        };
+
+        const newMaterialObj = await materialsService.createMaterial(materialData);
+        setMaterials(prev => [newMaterialObj, ...prev]);
+        
+        // Show success message
+        alert('Material uploaded and saved successfully!');
+      } catch (error) {
+        console.error('Error saving uploaded material:', error);
+        alert('File uploaded but failed to save material. You can manually save it from the form.');
+      }
+
     } catch (error) {
       console.error('Upload error:', error);
       alert(`Upload failed: ${error instanceof Error ? error.message : 'Please try again.'}`);
@@ -302,7 +345,7 @@ export default function TutorTools() {
   }, [autoPopulateTitle, getSmartTags]);
 
   // Handle edit button click
-  const handleEdit = (material: Material) => {
+  const handleEdit = (material: MaterialType) => {
     setEditingMaterial(material);
     setNewMaterial({
       title: material.title,
@@ -315,7 +358,7 @@ export default function TutorTools() {
   };
 
   // Handle open button click
-  const handleOpen = (material: Material) => {
+  const handleOpen = (material: MaterialType) => {
     if (!material.url) {
       alert('No URL available for this material');
       return;
@@ -347,39 +390,35 @@ export default function TutorTools() {
     }
 
     try {
+      const materialData = {
+        title: newMaterial.title,
+        description: newMaterial.description,
+        url: newMaterial.url,
+        tags: newMaterial.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+        fileType: newMaterial.url.split('.').pop()?.toUpperCase(),
+        fileSize: 0 // We don't have file size for links
+      };
+
       if (isEditMode && editingMaterial) {
         // Update existing material
-        const updatedMaterial = {
-          ...editingMaterial,
-          title: newMaterial.title,
-          description: newMaterial.description,
-          url: newMaterial.url,
-          tags: newMaterial.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
-        };
+        const updatedMaterial = await materialsService.updateMaterial({
+          ...materialData,
+          id: editingMaterial.id
+        });
         
         setMaterials(prev => 
           prev.map(m => m.id === editingMaterial.id ? updatedMaterial : m)
         );
       } else {
         // Create new material
-        const newMaterialObj: Material = {
-          id: Date.now().toString(), // Simple ID generation
-          title: newMaterial.title,
-          description: newMaterial.description,
-          url: newMaterial.url,
-          tags: newMaterial.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-          uploadedAt: new Date(),
-          fileType: newMaterial.url.split('.').pop()?.toUpperCase(),
-          fileSize: 0 // We don't have file size for links
-        };
-        
+        const newMaterialObj = await materialsService.createMaterial(materialData);
         setMaterials(prev => [newMaterialObj, ...prev]);
       }
       
       handleModalClose();
     } catch (error) {
       console.error('Error saving material:', error);
-      alert('Failed to save material. Please try again.');
+      alert(`Failed to save material: ${error instanceof Error ? error.message : 'Please try again.'}`);
     }
   };
 
@@ -457,28 +496,39 @@ export default function TutorTools() {
     }
   };
 
-  const handleDeleteMaterial = (id: string) => {
-    setMaterials(prev => prev.filter(material => material.id !== id));
+  const handleDeleteMaterial = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this material?')) {
+      return;
+    }
+
+    try {
+      await materialsService.deleteMaterial(id);
+      setMaterials(prev => prev.filter(m => m.id !== id));
+    } catch (error) {
+      console.error('Error deleting material:', error);
+      alert(`Failed to delete material: ${error instanceof Error ? error.message : 'Please try again.'}`);
+    }
   };
 
+  // Filter and sort materials
   const filteredMaterials = materials.filter(material => {
     const matchesSearch = material.title.toLowerCase().includes(materialsSearchQuery.toLowerCase()) ||
-                         material.description.toLowerCase().includes(materialsSearchQuery.toLowerCase()) ||
+                         material.description?.toLowerCase().includes(materialsSearchQuery.toLowerCase()) ||
                          material.tags.some(tag => tag.toLowerCase().includes(materialsSearchQuery.toLowerCase()));
     
-    const matchesFilter = filterType === 'all' || material.fileType === filterType;
+    const matchesFilter = filterType === 'all' || material.file_type === filterType;
     
     return matchesSearch && matchesFilter;
   });
 
   const sortedMaterials = [...filteredMaterials].sort((a, b) => {
-    switch(sortBy) {
+    switch (sortBy) {
       case 'recent':
-        return b.uploadedAt.getTime() - a.uploadedAt.getTime();
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
       case 'az':
         return a.title.localeCompare(b.title);
       case 'type':
-        return (a.fileType || '').localeCompare(b.fileType || '');
+        return (a.file_type || '').localeCompare(b.file_type || '');
       default:
         return 0;
     }
@@ -745,10 +795,15 @@ export default function TutorTools() {
             )}
 
             {/* Materials Grid */}
-            {sortedMaterials.length > 0 ? (
+            {isLoading ? (
+              <div className="p-12 text-center">
+                <Loader2 className="h-16 w-16 mx-auto mb-4 text-primary animate-spin" />
+                <p className="text-lg text-token-text-secondary">Loading materials...</p>
+              </div>
+            ) : sortedMaterials.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {sortedMaterials.map((material) => {
-                  const IconComponent = getMaterialTypeIcon(material.fileType || 'Other File');
+                  const IconComponent = getMaterialTypeIcon(material.file_type || 'Other File');
                   return (
                     <Card key={material.id} className="border-0 shadow-sm hover:shadow-md transition-shadow bg-surface">
                       <div className="p-4">
@@ -768,7 +823,7 @@ export default function TutorTools() {
                             </div>
                             <div className="flex items-center gap-1 text-xs text-token-text-muted">
                               <Calendar className="h-3 w-3" />
-                              Uploaded: {material.uploadedAt.toLocaleDateString()}
+                              Uploaded: {new Date(material.created_at).toLocaleDateString()}
                             </div>
                           </div>
                         </div>
