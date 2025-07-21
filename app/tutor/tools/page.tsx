@@ -209,39 +209,60 @@ export default function TutorTools() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
-            <Text variant="h1" className="text-token-text-primary mb-2">
-              Teaching Tools & Materials
-            </Text>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                <Settings className="w-4 h-4 text-primary" />
+              </div>
+              <Text variant="h1" className="text-token-text font-bold">
+                Teaching Tools & Materials
+              </Text>
+            </div>
             <Text variant="body" className="text-token-text-secondary">
               Everything you need to deliver engaging and effective lessons
             </Text>
           </div>
 
           {/* Quick Tools */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {quickTools.map((tool, index) => {
-              const Icon = tool.icon;
-              return (
-                <Card key={index} className="p-6 hover:shadow-lg transition-shadow cursor-pointer rounded-xl">
-                  <div className={`w-12 h-12 ${tool.color} rounded-lg flex items-center justify-center mb-4`}>
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                  <Text variant="h3" className="text-token-text-primary mb-2">
-                    {tool.title}
-                  </Text>
-                  <Text variant="small" className="text-token-text-secondary mb-4">
-                    {tool.description}
-                  </Text>
-                  <Button variant="outline" size="sm" className="w-full">
-                    {tool.action}
-                  </Button>
-                </Card>
-              );
-            })}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-6 h-6 bg-accent/20 rounded-full flex items-center justify-center">
+                <Lightbulb className="w-4 h-4 text-accent" />
+              </div>
+              <Text variant="h3" className="text-token-text font-semibold">Quick Tools</Text>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {quickTools.map((tool, index) => {
+                const Icon = tool.icon;
+                return (
+                  <Card key={index} className="p-6 bg-surface border border-border hover:shadow-lg transition-all duration-200 hover:scale-105 cursor-pointer rounded-xl">
+                    <div className={`w-12 h-12 ${tool.color} rounded-lg flex items-center justify-center mb-4 shadow-sm`}>
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <Text variant="h3" className="text-token-text font-semibold mb-2">
+                      {tool.title}
+                    </Text>
+                    <Text variant="small" className="text-token-text-secondary mb-4 leading-relaxed">
+                      {tool.description}
+                    </Text>
+                    <Button variant="outline" size="sm" className="w-full">
+                      {tool.action}
+                    </Button>
+                  </Card>
+                );
+              })}
+            </div>
           </div>
 
           {/* Filters */}
-          <Card className="p-6 mb-8 rounded-xl">
+          <Card className="p-6 mb-8 bg-surface border border-border rounded-xl shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-6 h-6 bg-token-info/20 rounded-full flex items-center justify-center">
+                <Filter className="w-4 h-4 text-token-info" />
+              </div>
+              <Text variant="h3" className="text-token-text font-semibold">Find Resources</Text>
+            </div>
+            
             <div className="flex flex-col lg:flex-row gap-4">
               {/* Search */}
               <div className="flex-1">
@@ -252,7 +273,7 @@ export default function TutorTools() {
                     placeholder="Search resources..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-token rounded-lg focus:outline-none focus:ring-2 focus:ring-token-primary"
+                    className="w-full pl-10 pr-4 py-3 border border-border rounded-lg bg-surface text-token-text placeholder:text-token-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                   />
                 </div>
               </div>
@@ -262,7 +283,7 @@ export default function TutorTools() {
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full px-4 py-2 border border-token rounded-lg focus:outline-none focus:ring-2 focus:ring-token-primary"
+                  className="w-full px-4 py-3 border border-border rounded-lg bg-surface text-token-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                 >
                   {categories.map(category => (
                     <option key={category.id} value={category.id}>
@@ -277,7 +298,7 @@ export default function TutorTools() {
                 <select
                   value={selectedType}
                   onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-full px-4 py-2 border border-token rounded-lg focus:outline-none focus:ring-2 focus:ring-token-primary"
+                  className="w-full px-4 py-3 border border-border rounded-lg bg-surface text-token-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                 >
                   {resourceTypes.map(type => (
                     <option key={type.id} value={type.id}>
@@ -296,12 +317,12 @@ export default function TutorTools() {
                     onChange={(e) => setBookmarkedOnly(e.target.checked)}
                     className="sr-only"
                   />
-                  <div className={`w-5 h-5 border-2 rounded mr-2 flex items-center justify-center ${
-                    bookmarkedOnly ? 'bg-token-primary border-token-primary' : 'border-token'
+                  <div className={`w-5 h-5 border-2 rounded mr-2 flex items-center justify-center transition-colors ${
+                    bookmarkedOnly ? 'bg-primary border-primary' : 'border-border'
                   }`}>
-                    {bookmarkedOnly && <CheckCircle className="w-3 h-3 text-white" />}
+                    {bookmarkedOnly && <CheckCircle className="w-3 h-3 text-text-inverse" />}
                   </div>
-                  <Text variant="small" className="text-token-text-secondary">
+                  <Text variant="small" className="text-token-text-secondary font-medium">
                     Bookmarked only
                   </Text>
                 </label>
@@ -310,10 +331,20 @@ export default function TutorTools() {
           </Card>
 
           {/* Results */}
-          <div className="mb-4">
-            <Text variant="body" className="text-token-text-secondary">
-              {filteredResources.length} resources found
-            </Text>
+          <div className="mb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 bg-token-success/20 rounded-full flex items-center justify-center">
+                  <BookOpen className="w-4 h-4 text-token-success" />
+                </div>
+                <Text variant="h3" className="text-token-text font-semibold">
+                  Resources ({filteredResources.length})
+                </Text>
+              </div>
+              <Text variant="body" className="text-token-text-secondary">
+                {filteredResources.length} resources found
+              </Text>
+            </div>
           </div>
 
           {/* Resource Grid */}
@@ -321,14 +352,14 @@ export default function TutorTools() {
             {filteredResources.map((resource) => {
               const TypeIcon = getTypeIcon(resource.type);
               return (
-                <Card key={resource.id} className="p-6 hover:shadow-lg transition-shadow rounded-xl">
+                <Card key={resource.id} className="p-6 bg-surface border border-border hover:shadow-lg hover:scale-105 transition-all duration-200 rounded-xl">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 bg-token-surface-subtle rounded-lg flex items-center justify-center mr-3">
-                        <TypeIcon className="w-5 h-5 text-token-text-muted" />
+                      <div className="w-10 h-10 bg-token-surface-accent rounded-lg flex items-center justify-center mr-3 shadow-sm">
+                        <TypeIcon className="w-5 h-5 text-token-text" />
                       </div>
                       <div>
-                        <Text variant="h4" className="text-token-text-primary">
+                        <Text variant="h4" className="text-token-text font-semibold">
                           {resource.title}
                         </Text>
                         <div className="flex items-center mt-1">
@@ -338,26 +369,26 @@ export default function TutorTools() {
                         </div>
                       </div>
                     </div>
-                    <button className="text-token-text-muted hover:text-token-primary">
-                      <Bookmark className={`w-5 h-5 ${resource.isBookmarked ? 'fill-current text-token-primary' : ''}`} />
+                    <button className="text-token-text-muted hover:text-primary transition-colors">
+                      <Bookmark className={`w-5 h-5 ${resource.isBookmarked ? 'fill-current text-primary' : ''}`} />
                     </button>
                   </div>
 
-                  <Text variant="small" className="text-token-text-secondary mb-4">
+                  <Text variant="small" className="text-token-text-secondary mb-4 leading-relaxed">
                     {resource.description}
                   </Text>
 
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-4 p-3 bg-token-surface-accent rounded-lg">
                     <div className="flex items-center">
                       <Star className="w-4 h-4 text-token-warning mr-1" />
-                      <Text variant="small" className="text-token-text-secondary">
+                      <Text variant="small" className="text-token-text-secondary font-medium">
                         {resource.rating} ({resource.downloads} downloads)
                       </Text>
                     </div>
                     {resource.duration && (
                       <div className="flex items-center">
                         <Clock className="w-4 h-4 text-token-text-muted mr-1" />
-                        <Text variant="small" className="text-token-text-secondary">
+                        <Text variant="small" className="text-token-text-secondary font-medium">
                           {resource.duration}
                         </Text>
                       </div>
@@ -383,23 +414,27 @@ export default function TutorTools() {
 
           {/* Empty State */}
           {filteredResources.length === 0 && (
-            <div className="text-center py-12">
-              <Lightbulb className="w-16 h-16 text-token-text-muted mx-auto mb-4" />
-              <Text variant="h3" className="text-token-text-primary mb-2">
-                No resources found
-              </Text>
-              <Text variant="body" className="text-token-text-secondary mb-4">
-                Try adjusting your filters or search terms
-              </Text>
-              <Button variant="outline" onClick={() => {
-                setSearchQuery('');
-                setSelectedCategory('all');
-                setSelectedType('all');
-                setBookmarkedOnly(false);
-              }}>
-                Clear Filters
-              </Button>
-            </div>
+            <Card className="p-12 text-center bg-surface border border-border rounded-xl shadow-sm">
+              <div className="flex flex-col items-center">
+                <div className="w-16 h-16 bg-token-text-muted/10 rounded-full flex items-center justify-center mb-4">
+                  <Lightbulb className="w-8 h-8 text-token-text-muted" />
+                </div>
+                <Text variant="h3" className="text-token-text font-semibold mb-2">
+                  No resources found
+                </Text>
+                <Text variant="body" className="text-token-text-secondary mb-6 max-w-md">
+                  Try adjusting your filters or search terms to find the perfect teaching materials.
+                </Text>
+                <Button variant="outline" onClick={() => {
+                  setSearchQuery('');
+                  setSelectedCategory('all');
+                  setSelectedType('all');
+                  setBookmarkedOnly(false);
+                }}>
+                  Clear Filters
+                </Button>
+              </div>
+            </Card>
           )}
         </div>
       </div>

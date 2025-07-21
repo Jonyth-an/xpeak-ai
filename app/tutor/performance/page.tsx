@@ -135,24 +135,24 @@ export default function PerformanceDashboard() {
 
   const getBonusTierInfo = (tier: string) => {
     const tiers = {
-      base: { name: 'Base', color: 'bg-gray-100 text-gray-800', icon: '🌟', bonus: '0%' },
-      bronze: { name: 'Bronze', color: 'bg-orange-100 text-orange-800', icon: '🥉', bonus: '5%' },
-      silver: { name: 'Silver', color: 'bg-gray-100 text-gray-800', icon: '🥈', bonus: '10%' },
-      gold: { name: 'Gold', color: 'bg-yellow-100 text-yellow-800', icon: '🥇', bonus: '15%' },
-      platinum: { name: 'Platinum', color: 'bg-purple-100 text-purple-800', icon: '💎', bonus: '20%' }
+      base: { name: 'Base', color: 'bg-surface-muted text-text-secondary', icon: '🌟', bonus: '0%' },
+      bronze: { name: 'Bronze', color: 'bg-warning/20 text-warning', icon: '🥉', bonus: '5%' },
+      silver: { name: 'Silver', color: 'bg-surface-subtle text-text-secondary', icon: '🥈', bonus: '10%' },
+      gold: { name: 'Gold', color: 'bg-warning/20 text-warning', icon: '🥇', bonus: '15%' },
+      platinum: { name: 'Platinum', color: 'bg-primary/20 text-primary', icon: '💎', bonus: '20%' }
     };
     return tiers[tier as keyof typeof tiers] || tiers.base;
   };
 
   const getPerformanceColor = (rate: number, isHigherBetter: boolean = true) => {
     if (isHigherBetter) {
-      if (rate >= 90) return 'text-green-600';
-      if (rate >= 80) return 'text-yellow-600';
-      return 'text-red-600';
+      if (rate >= 90) return 'text-success';
+      if (rate >= 80) return 'text-warning';
+      return 'text-error';
     } else {
-      if (rate <= 5) return 'text-green-600';
-      if (rate <= 10) return 'text-yellow-600';
-      return 'text-red-600';
+      if (rate <= 5) return 'text-success';
+      if (rate <= 10) return 'text-warning';
+      return 'text-error';
     }
   };
 
@@ -200,30 +200,30 @@ export default function PerformanceDashboard() {
       title: 'Total Lessons',
       value: performanceData.overview.total_lessons,
       icon: <Calendar className="w-6 h-6" />,
-      iconBgColor: 'bg-blue-100',
-      iconColor: 'text-blue-600'
+      iconBgColor: 'bg-accent/20',
+      iconColor: 'text-accent'
     },
     {
       title: 'Average Rating',
       value: performanceData.ratings.average_rating,
       subtitle: `${performanceData.ratings.total_ratings} reviews`,
       icon: <Star className="w-6 h-6" />,
-      iconBgColor: 'bg-yellow-100',
-      iconColor: 'text-yellow-600'
+      iconBgColor: 'bg-warning/20',
+      iconColor: 'text-warning'
     },
     {
       title: 'Completion Rate',
       value: `${performanceData.performance.completion_rate}%`,
       icon: <CheckCircle className="w-6 h-6" />,
-      iconBgColor: 'bg-green-100',
-      iconColor: 'text-green-600'
+      iconBgColor: 'bg-success/20',
+      iconColor: 'text-success'
     },
     {
       title: 'Total Students',
       value: performanceData.overview.total_students,
       icon: <Users className="w-6 h-6" />,
-      iconBgColor: 'bg-purple-100',
-      iconColor: 'text-purple-600'
+      iconBgColor: 'bg-primary/20',
+      iconColor: 'text-primary'
     }
   ];
 
@@ -252,7 +252,7 @@ export default function PerformanceDashboard() {
         />
 
         {/* Bonus Tier Banner */}
-        <Card className="p-6 mb-8 bg-gradient-to-r from-blue-50 to-purple-50 border border-token rounded-xl" variant="outlined">
+        <Card className="p-6 mb-8 bg-gradient-to-r from-accent/10 to-primary/10 border border-border rounded-xl" variant="outlined">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex items-center">
               <div className="text-4xl mr-4">{bonusTierInfo.icon}</div>
@@ -285,57 +285,97 @@ export default function PerformanceDashboard() {
         {/* Performance Metrics */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Performance Overview */}
-          <Card className="p-6 rounded-xl" variant="default">
-            <div className="flex items-center mb-4">
-              <BarChart3 className="w-5 h-5 text-token-primary mr-2" />
-              <Text variant="h3" className="text-token-primary">Performance Metrics</Text>
+          <Card className="p-6 rounded-xl shadow-sm" variant="default">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                <BarChart3 className="w-4 h-4 text-primary" />
+              </div>
+              <Text variant="h3" className="text-token-text font-semibold">Performance Metrics</Text>
             </div>
             
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between p-3 bg-token-success/5 rounded-lg border border-token-success/20">
                 <div className="flex items-center">
-                  <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
+                  <CheckCircle className="w-4 h-4 text-token-success mr-3" />
                   <Text variant="body" className="text-token-text-secondary">Completion Rate</Text>
                 </div>
-                <Text variant="body" className={`font-medium ${getPerformanceColor(performanceData.performance.completion_rate)}`}>
+                <Text variant="body" className={`font-semibold ${getPerformanceColor(performanceData.performance.completion_rate)}`}>
                   {performanceData.performance.completion_rate}%
                 </Text>
               </div>
               
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between p-3 bg-token-info/5 rounded-lg border border-token-info/20">
                 <div className="flex items-center">
-                  <Users className="w-4 h-4 text-blue-600 mr-2" />
+                  <Clock className="w-4 h-4 text-token-info mr-3" />
                   <Text variant="body" className="text-token-text-secondary">Attendance Rate</Text>
                 </div>
-                <Text variant="body" className={`font-medium ${getPerformanceColor(performanceData.performance.attendance_rate)}`}>
+                <Text variant="body" className={`font-semibold ${getPerformanceColor(performanceData.performance.attendance_rate)}`}>
                   {performanceData.performance.attendance_rate}%
                 </Text>
               </div>
               
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between p-3 bg-token-warning/5 rounded-lg border border-token-warning/20">
                 <div className="flex items-center">
-                  <XCircle className="w-4 h-4 text-red-600 mr-2" />
+                  <XCircle className="w-4 h-4 text-token-warning mr-3" />
                   <Text variant="body" className="text-token-text-secondary">Cancellation Rate</Text>
                 </div>
-                <Text variant="body" className={`font-medium ${getPerformanceColor(performanceData.performance.cancellation_rate, false)}`}>
+                <Text variant="body" className={`font-semibold ${getPerformanceColor(100 - performanceData.performance.cancellation_rate)}`}>
                   {performanceData.performance.cancellation_rate}%
-                </Text>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Target className="w-4 h-4 text-purple-600 mr-2" />
-                  <Text variant="body" className="text-token-text-secondary">Avg Lessons/Student</Text>
-                </div>
-                <Text variant="body" className="font-medium text-token-text-primary">
-                  {performanceData.performance.avg_lessons_per_student}
                 </Text>
               </div>
             </div>
           </Card>
 
-          {/* Rating Distribution */}
-          <Card className="p-6 rounded-xl" variant="default">
+          {/* Student Engagement */}
+          <Card className="p-6 rounded-xl shadow-sm" variant="default">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 bg-token-success/20 rounded-full flex items-center justify-center">
+                <Users className="w-4 h-4 text-token-success" />
+              </div>
+              <Text variant="h3" className="text-token-text font-semibold">Student Engagement</Text>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-primary/5 rounded-lg border border-primary/20">
+                <div className="flex items-center">
+                  <Users className="w-4 h-4 text-primary mr-3" />
+                  <Text variant="body" className="text-token-text-secondary">Active Students</Text>
+                </div>
+                <Text variant="body" className="font-semibold text-primary">
+                  {performanceData.overview.active_students}
+                </Text>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-accent/5 rounded-lg border border-accent/20">
+                <div className="flex items-center">
+                  <Target className="w-4 h-4 text-accent mr-3" />
+                  <Text variant="body" className="text-token-text-secondary">Repeat Students</Text>
+                </div>
+                <Text variant="body" className="font-semibold text-accent">
+                  {Math.round((performanceData.overview.active_students / performanceData.overview.total_students) * 100)}%
+                </Text>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-token-warning/5 rounded-lg border border-token-warning/20">
+                <div className="flex items-center">
+                  <Star className="w-4 h-4 text-token-warning mr-3" />
+                  <Text variant="body" className="text-token-text-secondary">Average Rating</Text>
+                </div>
+                <div className="flex items-center">
+                  <Text variant="body" className="font-semibold text-token-warning mr-1">
+                    {performanceData.ratings.average_rating}
+                  </Text>
+                  <Text variant="small" className="text-token-text-muted">
+                    ({performanceData.ratings.total_ratings})
+                  </Text>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Rating Distribution */}
+        <Card className="p-6 rounded-xl" variant="default">
             <div className="flex items-center mb-4">
               <Star className="w-5 h-5 text-token-primary mr-2" />
               <Text variant="h3" className="text-token-primary">Rating Distribution</Text>
@@ -346,15 +386,15 @@ export default function PerformanceDashboard() {
                 <div className="flex items-center">
                   <div className="flex">
                     {[1,2,3,4,5].map(i => (
-                      <Star key={i} className="w-4 h-4 text-yellow-500 fill-current" />
+                      <Star key={i} className="w-4 h-4 text-warning fill-current" />
                     ))}
                   </div>
                   <Text variant="body" className="text-token-text-secondary ml-2">5 Stars</Text>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                  <div className="w-24 bg-surface-muted rounded-full h-2 mr-2">
                     <div 
-                      className="bg-yellow-500 h-2 rounded-full" 
+                      className="bg-warning h-2 rounded-full" 
                       style={{ 
                         width: `${performanceData.ratings.total_ratings > 0 ? (performanceData.ratings.distribution[5] / performanceData.ratings.total_ratings) * 100 : 0}%` 
                       }}
@@ -370,16 +410,16 @@ export default function PerformanceDashboard() {
                 <div className="flex items-center">
                   <div className="flex">
                     {[1,2,3,4].map(i => (
-                      <Star key={i} className="w-4 h-4 text-yellow-500 fill-current" />
+                      <Star key={i} className="w-4 h-4 text-warning fill-current" />
                     ))}
-                    <Star className="w-4 h-4 text-gray-300" />
+                    <Star className="w-4 h-4 text-text-muted" />
                   </div>
                   <Text variant="body" className="text-token-text-secondary ml-2">4 Stars</Text>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                  <div className="w-24 bg-surface-muted rounded-full h-2 mr-2">
                     <div 
-                      className="bg-blue-500 h-2 rounded-full" 
+                      className="bg-accent h-2 rounded-full" 
                       style={{ 
                         width: `${performanceData.ratings.total_ratings > 0 ? (performanceData.ratings.distribution[4] / performanceData.ratings.total_ratings) * 100 : 0}%` 
                       }}
@@ -401,31 +441,37 @@ export default function PerformanceDashboard() {
               </div>
             </div>
           </Card>
-        </div>
 
         {/* Recent Feedback & Top Tags */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Recent Feedback */}
-          <Card className="p-6 rounded-xl" variant="default">
-            <div className="flex items-center mb-4">
-              <MessageSquare className="w-5 h-5 text-token-primary mr-2" />
-              <Text variant="h3" className="text-token-primary">Recent Feedback</Text>
+          <Card className="p-6 rounded-xl shadow-sm" variant="default">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 bg-accent/20 rounded-full flex items-center justify-center">
+                <MessageSquare className="w-4 h-4 text-accent" />
+              </div>
+              <Text variant="h3" className="text-token-text font-semibold">Recent Feedback</Text>
             </div>
             
             <div className="space-y-4">
               {performanceData.ratings.recent_feedback.length === 0 ? (
-                <Text variant="body" className="text-token-text-secondary text-center py-4">
-                  No feedback yet
-                </Text>
+                <div className="text-center py-8">
+                  <div className="w-12 h-12 bg-token-text-muted/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <MessageSquare className="w-6 h-6 text-token-text-muted" />
+                  </div>
+                  <Text variant="body" className="text-token-text-secondary">
+                    No feedback yet
+                  </Text>
+                </div>
               ) : (
                 performanceData.ratings.recent_feedback.slice(0, 3).map((feedback, index) => (
-                  <div key={index} className="border-b border-token pb-3 last:border-b-0">
-                    <div className="flex items-center justify-between mb-2">
+                  <div key={index} className="p-4 bg-token-surface-accent rounded-lg border-l-4 border-accent/30">
+                    <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center">
                         {[1,2,3,4,5].map(i => (
                           <Star 
                             key={i} 
-                            className={`w-4 h-4 ${i <= feedback.rating ? 'text-yellow-500 fill-current' : 'text-gray-300'}`} 
+                            className={`w-4 h-4 ${i <= feedback.rating ? 'text-token-warning fill-current' : 'text-token-text-muted'}`} 
                           />
                         ))}
                       </div>
@@ -434,14 +480,14 @@ export default function PerformanceDashboard() {
                       </Text>
                     </div>
                     {feedback.comment && (
-                      <Text variant="body" className="text-token-text-secondary mb-2">
+                      <Text variant="body" className="text-token-text-secondary mb-3 leading-relaxed">
                         "{feedback.comment}"
                       </Text>
                     )}
                     {feedback.tags && feedback.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex flex-wrap gap-2">
                         {feedback.tags.slice(0, 3).map((tag, tagIndex) => (
-                          <span key={tagIndex} className="px-2 py-1 bg-token-info-light text-token-info rounded text-xs">
+                          <span key={tagIndex} className="px-3 py-1 bg-token-success/20 text-token-success rounded-full text-xs font-medium">
                             {tag}
                           </span>
                         ))}
@@ -454,33 +500,40 @@ export default function PerformanceDashboard() {
           </Card>
 
           {/* Top Feedback Tags */}
-          <Card className="p-6 rounded-xl" variant="default">
-            <div className="flex items-center mb-4">
-              <Award className="w-5 h-5 text-token-primary mr-2" />
-              <Text variant="h3" className="text-token-primary">Top Strengths</Text>
+          <Card className="p-6 rounded-xl shadow-sm" variant="default">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 bg-token-success/20 rounded-full flex items-center justify-center">
+                <Award className="w-4 h-4 text-token-success" />
+              </div>
+              <Text variant="h3" className="text-token-text font-semibold">Top Strengths</Text>
             </div>
             
             <div className="space-y-3">
               {performanceData.performance.top_feedback_tags.length === 0 ? (
-                <Text variant="body" className="text-token-text-secondary text-center py-4">
-                  No feedback tags yet
-                </Text>
+                <div className="text-center py-8">
+                  <div className="w-12 h-12 bg-token-text-muted/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Award className="w-6 h-6 text-token-text-muted" />
+                  </div>
+                  <Text variant="body" className="text-token-text-secondary">
+                    No feedback tags yet
+                  </Text>
+                </div>
               ) : (
                 performanceData.performance.top_feedback_tags.slice(0, 8).map((tag, index) => (
-                  <div key={index} className="flex items-center justify-between">
-                    <Text variant="body" className="text-token-text-secondary capitalize">
+                  <div key={index} className="flex items-center justify-between p-3 bg-token-surface-accent rounded-lg">
+                    <Text variant="body" className="text-token-text font-medium capitalize">
                       {tag.tag.replace(/_/g, ' ')}
                     </Text>
                     <div className="flex items-center">
-                      <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                      <div className="w-20 bg-token-surface-muted rounded-full h-2 mr-3">
                         <div 
-                          className="bg-green-500 h-2 rounded-full" 
+                          className="bg-token-success h-2 rounded-full transition-all duration-500" 
                           style={{ 
                             width: `${(tag.count / Math.max(...performanceData.performance.top_feedback_tags.map(t => t.count))) * 100}%` 
                           }}
                         ></div>
                       </div>
-                      <Text variant="small" className="text-token-text-primary font-medium">
+                      <Text variant="small" className="text-token-success font-semibold">
                         {tag.count}
                       </Text>
                     </div>
@@ -492,51 +545,59 @@ export default function PerformanceDashboard() {
         </div>
 
         {/* Monthly Trends */}
-        <Card className="p-6 rounded-xl" variant="default">
-          <div className="flex items-center mb-4">
-            <TrendingUp className="w-5 h-5 text-token-primary mr-2" />
-            <Text variant="h3" className="text-token-primary">Monthly Trends</Text>
+        <Card className="p-6 rounded-xl shadow-sm" variant="default">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+              <TrendingUp className="w-4 h-4 text-primary" />
+            </div>
+            <Text variant="h3" className="text-token-text font-semibold">Monthly Trends</Text>
           </div>
           
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-token">
-                  <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Month</th>
-                  <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Lessons</th>
-                  <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Rating</th>
-                  <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Completion</th>
-                  <th className="text-left py-3 px-4 text-token-text-secondary font-medium">Feedback</th>
+                <tr className="border-b border-border">
+                  <th className="text-left py-4 px-4 text-token-text-secondary font-semibold">Month</th>
+                  <th className="text-left py-4 px-4 text-token-text-secondary font-semibold">Lessons</th>
+                  <th className="text-left py-4 px-4 text-token-text-secondary font-semibold">Rating</th>
+                  <th className="text-left py-4 px-4 text-token-text-secondary font-semibold">Completion</th>
+                  <th className="text-left py-4 px-4 text-token-text-secondary font-semibold">Feedback</th>
                 </tr>
               </thead>
               <tbody>
                 {performanceData.trends.monthly_data.map((month, index) => (
-                  <tr key={index} className="border-b border-token hover:bg-token-surface-subtle">
-                    <td className="py-3 px-4">
-                      <Text variant="body" className="font-medium text-token-text-primary">
+                  <tr key={index} className="border-b border-border hover:bg-token-surface-accent transition-colors">
+                    <td className="py-4 px-4">
+                      <Text variant="body" className="font-semibold text-token-text">
                         {month.month_name}
                       </Text>
                     </td>
-                    <td className="py-3 px-4">
-                      <Text variant="body" className="text-token-text-primary">
-                        {month.lessons_taught}
-                      </Text>
-                    </td>
-                    <td className="py-3 px-4">
+                    <td className="py-4 px-4">
                       <div className="flex items-center">
-                        <Star className="w-4 h-4 text-yellow-500 fill-current mr-1" />
-                        <Text variant="body" className="text-token-text-primary">
+                        <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                        <Text variant="body" className="text-token-text font-medium">
+                          {month.lessons_taught}
+                        </Text>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="flex items-center">
+                        <Star className="w-4 h-4 text-token-warning fill-current mr-2" />
+                        <Text variant="body" className="text-token-text font-medium">
                           {month.average_rating || 'N/A'}
                         </Text>
                       </div>
                     </td>
-                    <td className="py-3 px-4">
-                      <Text variant="body" className={`font-medium ${getPerformanceColor(month.completion_rate)}`}>
-                        {Math.round(month.completion_rate)}%
-                      </Text>
+                    <td className="py-4 px-4">
+                      <div className="flex items-center">
+                        <div className={`w-2 h-2 rounded-full mr-3 ${month.completion_rate >= 90 ? 'bg-token-success' : month.completion_rate >= 70 ? 'bg-token-warning' : 'bg-token-error'}`}></div>
+                        <Text variant="body" className={`font-semibold ${getPerformanceColor(month.completion_rate)}`}>
+                          {Math.round(month.completion_rate)}%
+                        </Text>
+                      </div>
                     </td>
-                    <td className="py-3 px-4">
-                      <Text variant="body" className="text-token-text-primary">
+                    <td className="py-4 px-4">
+                      <Text variant="body" className="text-token-text font-medium">
                         {month.total_feedback}
                       </Text>
                     </td>

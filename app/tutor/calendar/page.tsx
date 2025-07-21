@@ -197,7 +197,7 @@ function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTim
                   type="date"
                   value={recurringStartDate}
                   onChange={(e) => setRecurringStartDate(e.target.value)}
-                  className="w-full p-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
+                  className="w-full p-2 border border-border rounded-md bg-surface focus:outline-none focus:ring-2 focus:ring-primary"
                   aria-label="Select start date"
                   required
                 />
@@ -210,7 +210,7 @@ function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTim
                   type="number"
                   value={recurringWeeks}
                   onChange={(e) => setRecurringWeeks(Number(e.target.value))}
-                  className="w-full p-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
+                  className="w-full p-2 border border-border rounded-md bg-surface focus:outline-none focus:ring-2 focus:ring-primary"
                   aria-label="Number of weeks"
                   min="1"
                   max="52"
@@ -227,7 +227,7 @@ function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTim
                 type="date"
                 value={specificDate}
                 onChange={(e) => setSpecificDate(e.target.value)}
-                className="w-full p-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
+                className="w-full p-2 border border-border rounded-md bg-surface focus:outline-none focus:ring-2 focus:ring-primary"
                 aria-label="Select date"
                 required
               />
@@ -241,7 +241,7 @@ function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTim
               <select
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className="w-full p-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
+                className="w-full p-2 border border-border rounded-md bg-surface focus:outline-none focus:ring-2 focus:ring-primary"
                 required
                 aria-label="Start time"
               >
@@ -257,7 +257,7 @@ function AddAvailabilityModal({ isOpen, onClose, onAdd, selectedDay, selectedTim
               <select
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
-                className="w-full p-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
+                className="w-full p-2 border border-border rounded-md bg-surface focus:outline-none focus:ring-2 focus:ring-primary"
                 required
                 aria-label="End time"
               >
@@ -346,10 +346,11 @@ export default function TutorCalendar() {
   const [selectedDay, setSelectedDay] = useState<number>();
   const [selectedTime, setSelectedTime] = useState<string>();
 
-  // Generate time slots (00:00 to 23:00 in 1-hour increments)
+  // Generate time slots (00:00 to 23:30 in 30-minute increments)
   const timeSlots: string[] = [];
   for (let hour = 0; hour < 24; hour++) {
     timeSlots.push(`${hour.toString().padStart(2, '0')}:00`);
+    timeSlots.push(`${hour.toString().padStart(2, '0')}:30`);
   }
 
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -689,12 +690,12 @@ export default function TutorCalendar() {
   const getSlotColor = (status: string, dayIndex: number, timeSlot: string) => {
     switch (status) {
       case 'available':
-        return 'bg-green-100 border-green-300 hover:bg-green-200';
+        return 'bg-success/20 border-success/30 hover:bg-success/30';
       case 'booked':
-        return 'bg-blue-100 border-blue-300 hover:bg-blue-200';
+        return 'bg-warning/20 border-warning/30 hover:bg-warning/30';
       case 'unavailable':
       default:
-        return 'bg-gray-50 border-gray-200 hover:bg-gray-100';
+        return 'bg-surface border-border/50 hover:bg-surface-accent';
     }
   };
 
@@ -808,22 +809,22 @@ export default function TutorCalendar() {
       title: 'Available Slots',
       value: calendarData.week_stats.available_slots,
       icon: <Clock className="w-6 h-6" />,
-      iconBgColor: 'bg-green-100',
-      iconColor: 'text-green-600'
+      iconBgColor: 'bg-success/20',
+      iconColor: 'text-success'
     },
     {
       title: 'Booked Lessons',
       value: calendarData.week_stats.booked_lessons,
       icon: <Calendar className="w-6 h-6" />,
-      iconBgColor: 'bg-blue-100',
-      iconColor: 'text-blue-600'
+      iconBgColor: 'bg-warning/20',
+      iconColor: 'text-warning'
     },
     {
       title: 'Booking Rate',
       value: `${calendarData.week_stats.booking_rate}%`,
       icon: <div className="w-6 h-6 font-bold text-center">%</div>,
-      iconBgColor: 'bg-purple-100',
-      iconColor: 'text-purple-600'
+      iconBgColor: 'bg-accent/20',
+      iconColor: 'text-accent'
     }
   ];
 
@@ -851,15 +852,15 @@ export default function TutorCalendar() {
         {notification && (
           <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg border max-w-md transition-all duration-300 ${
             notification.type === 'success' 
-              ? 'bg-green-50 border-green-200 text-green-800' 
-              : 'bg-red-50 border-red-200 text-red-800'
+              ? 'bg-success/10 border-success/30 text-success' 
+              : 'bg-error/10 border-error/30 text-error'
           }`}>
             <div className="flex items-start space-x-3">
               <div className="flex-shrink-0">
                 {notification.type === 'success' ? (
-                  <CheckCircle className="w-5 h-5 text-green-600" />
+                  <CheckCircle className="w-5 h-5 text-success" />
                 ) : (
-                  <XCircle className="w-5 h-5 text-red-600" />
+                  <XCircle className="w-5 h-5 text-error" />
                 )}
               </div>
               <div className="flex-1">
@@ -872,7 +873,7 @@ export default function TutorCalendar() {
               </div>
               <button
                 onClick={() => setNotification(null)}
-                className="flex-shrink-0 text-gray-400 hover:text-gray-600"
+                className="flex-shrink-0 text-text-secondary hover:text-text"
               >
                 <XCircle className="w-4 h-4" />
               </button>
@@ -881,10 +882,10 @@ export default function TutorCalendar() {
         )}
 
         {/* Timezone Notice */}
-        <Card className="p-4 mb-6 bg-blue-50 border border-blue-200 rounded-xl" variant="outlined">
+        <Card className="p-4 mb-6 bg-info/10 border border-info/30 rounded-xl" variant="outlined">
           <div className="flex items-center">
-            <Info className="w-5 h-5 text-blue-600 mr-2 flex-shrink-0" />
-            <Text variant="small" className="text-blue-800">
+            <Info className="w-5 h-5 text-info mr-2 flex-shrink-0" />
+            <Text variant="small" className="text-info">
               All times shown in your local timezone ({calendarData.tutor_timezone}). You can adjust your timezone in settings.
             </Text>
           </div>
@@ -912,16 +913,23 @@ export default function TutorCalendar() {
           {/* Legend */}
           <div className="flex flex-wrap items-center gap-6 text-sm">
             <div className="flex items-center">
-              <div className="w-4 h-4 bg-green-100 border border-green-300 rounded mr-2"></div>
-              <span className="text-token-text-secondary">Available</span>
+              <div className="w-6 h-4 bg-success/20 border border-success/30 rounded mr-3 flex items-center justify-center">
+                <div className="w-1.5 h-1.5 bg-success rounded-full"></div>
+              </div>
+              <span className="text-token-text font-medium">Available</span>
             </div>
             <div className="flex items-center">
-              <div className="w-4 h-4 bg-blue-100 border border-blue-300 rounded mr-2"></div>
-              <span className="text-token-text-secondary">Booked</span>
+              <div className="w-6 h-4 bg-warning/20 border border-warning/30 rounded mr-3 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-0.5">
+                  <div className="w-1 h-1 bg-warning rounded-full"></div>
+                  <span className="text-warning text-[8px] font-semibold leading-none">Booked</span>
+                </div>
+              </div>
+              <span className="text-token-text font-medium">Booked</span>
             </div>
             <div className="flex items-center">
-              <div className="w-4 h-4 bg-gray-50 border border-gray-200 rounded mr-2"></div>
-              <span className="text-token-text-secondary">Unavailable</span>
+              <div className="w-6 h-4 bg-surface border border-border/50 rounded mr-3"></div>
+              <span className="text-token-text font-medium">Unavailable</span>
             </div>
           </div>
         </Card>
@@ -931,14 +939,14 @@ export default function TutorCalendar() {
           <div className="overflow-x-auto">
             <div className="min-w-full">
               {/* Header Row */}
-              <div className="grid grid-cols-8 gap-2 mb-4">
-                <div className="p-2 text-center font-medium text-token-text-secondary">Time</div>
+              <div className="grid grid-cols-8 gap-1 mb-3">
+                <div className="p-3 text-center font-semibold text-token-text-secondary bg-surface rounded-lg">Time</div>
                 {daysOfWeek.map((day, index) => {
                   const date = new Date(weekStart);
                   date.setDate(weekStart.getDate() + index);
                   return (
-                    <div key={day} className="p-2 text-center">
-                      <div className="font-medium text-token-text-primary">{day}</div>
+                    <div key={day} className="p-3 text-center bg-surface rounded-lg">
+                      <div className="font-semibold text-token-text-primary">{day}</div>
                       <div className="text-sm text-token-text-secondary">
                         {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </div>
@@ -949,8 +957,8 @@ export default function TutorCalendar() {
 
               {/* Time Slots */}
               {timeSlots.map((timeSlot, slotIndex) => (
-                <div key={timeSlot} className="grid grid-cols-8 gap-2 mb-2">
-                  <div className="p-2 text-center text-sm text-token-text-secondary font-medium">
+                <div key={timeSlot} className="grid grid-cols-8 gap-1 mb-1">
+                  <div className="p-2 text-center text-sm text-token-text-secondary font-medium bg-surface/50 rounded">
                     {timeSlot}
                   </div>
                   {daysOfWeek.map((_, dayIndex) => {
@@ -959,7 +967,7 @@ export default function TutorCalendar() {
                     return (
                       <div
                         key={`${dayIndex}-${timeSlot}`}
-                        className={`p-2 h-12 border rounded cursor-pointer transition-colors ${getSlotColor(status, dayIndex, timeSlot)} ${isSelected ? 'ring-2 ring-token-primary bg-token-primary/10' : ''}`}
+                        className={`p-1 h-8 border-2 rounded-md cursor-pointer transition-all duration-200 ${getSlotColor(status, dayIndex, timeSlot)} ${isSelected ? 'ring-2 ring-primary bg-primary/10 shadow-md' : ''}`}
                         onClick={() => handleSlotClick(dayIndex, timeSlot)}
                         onMouseDown={() => {
                           setIsDragging(true);
@@ -1011,10 +1019,18 @@ export default function TutorCalendar() {
                         }}
                       >
                         {status === 'available' && (
-                          <div className="text-center text-xs text-green-700 font-medium">Open</div>
+                          <div className="w-full h-full bg-success/20 rounded-sm flex items-center justify-center relative">
+                            <div className="w-2 h-2 bg-success rounded-full"></div>
+                            <div className="absolute top-0.5 right-0.5 w-1 h-1 bg-success rounded-full opacity-60"></div>
+                          </div>
                         )}
                         {status === 'booked' && (
-                          <div className="text-center text-xs text-blue-700 font-medium">Booked</div>
+                          <div className="w-full h-full bg-warning/20 rounded-sm flex items-center justify-center relative">
+                            <div className="flex flex-col items-center gap-0.5">
+                              <div className="w-1.5 h-1.5 bg-warning rounded-full"></div>
+                              <span className="text-warning text-[10px] font-semibold leading-none">Booked</span>
+                            </div>
+                          </div>
                         )}
                       </div>
                     );

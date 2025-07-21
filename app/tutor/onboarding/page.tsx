@@ -242,23 +242,23 @@ export default function TutorOnboardingPage() {
             <CheckCircle className="w-12 h-12 text-white" />
           </div>
 
-          <h1 className="text-4xl font-bold text-gray-800 mb-6">🎉 You're All Set!</h1>
-          <p className="text-xl text-gray-600 mb-4 leading-relaxed">Your tutor profile is now live.</p>
-          <p className="text-lg text-gray-600 mb-8">Students can start discovering and booking lessons with you.</p>
+          <h1 className="text-4xl font-bold text-token-text mb-6">🎉 You're All Set!</h1>
+          <p className="text-xl text-token-text-secondary mb-4 leading-relaxed">Your tutor profile is now live.</p>
+          <p className="text-lg text-token-text-secondary mb-8">Students can start discovering and booking lessons with you.</p>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8 text-left">
-            <h3 className="font-semibold text-blue-800 mb-3">What's next:</h3>
-            <ul className="text-blue-700 space-y-2">
+          <div className="bg-token-accent-50 border border-token-accent-200 rounded-lg p-6 mb-8 text-left">
+            <h3 className="font-semibold text-token-accent-800 mb-3">What's next:</h3>
+            <ul className="text-token-accent-700 space-y-2">
               <li className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-blue-600" />
+                <CheckCircle className="w-4 h-4 text-token-accent-600" />
                 You'll receive notifications when a student books
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-blue-600" />
+                <CheckCircle className="w-4 h-4 text-token-accent-600" />
                 You can edit your availability or profile anytime
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-blue-600" />
+                <CheckCircle className="w-4 h-4 text-token-accent-600" />
                 Keep an eye on your dashboard for lesson updates
               </li>
             </ul>
@@ -277,7 +277,7 @@ export default function TutorOnboardingPage() {
               onClick={handlePreviewProfile}
               variant="outline"
               size="lg"
-              className="border-2 border-gray-300 text-gray-600 hover:bg-gray-50 px-8 py-4 rounded-full text-lg font-semibold bg-transparent"
+              className="border-2 border-token-border text-token-text-secondary hover:bg-token-surface-subtle px-8 py-4 rounded-full text-lg font-semibold bg-transparent"
             >
               Preview My Public Profile
               <Eye className="ml-2 w-5 h-5" />
@@ -301,7 +301,7 @@ export default function TutorOnboardingPage() {
             </Button>
             <div>
               <h1 className="text-3xl font-bold">Profile Preview</h1>
-              <p className="text-[var(--color-text-secondary)]">This is how students will see your profile</p>
+              <p className="text-token-text-secondary">This is how students will see your profile</p>
             </div>
           </div>
 
@@ -325,12 +325,12 @@ export default function TutorOnboardingPage() {
                   <h2 className="text-3xl font-bold">{onboardingData.displayName}</h2>
                   <span className="text-lg">🇺🇸</span>
                 </div>
-                <p className="text-lg text-[var(--color-text-secondary)] mb-3">Native Language: English (American Accent)</p>
+                <p className="text-lg text-token-text-secondary mb-3">Native Language: English (American Accent)</p>
                 <div className="flex items-center gap-4 mb-4">
                   <div className="flex items-center gap-1">
                     <Star className="w-5 h-5 text-yellow-500 fill-current" />
                     <span className="font-semibold">4.8</span>
-                    <span className="text-[var(--color-text-secondary)]">(126 reviews)</span>
+                    <span className="text-token-text-secondary">(126 reviews)</span>
                   </div>
                 </div>
               </div>
@@ -396,10 +396,10 @@ export default function TutorOnboardingPage() {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-token-primary to-token-accent bg-clip-text text-transparent mb-4">
             Welcome to Your Tutor Onboarding
           </h1>
-          <p className="text-xl text-[var(--color-text-secondary)] leading-relaxed max-w-3xl mx-auto">
+          <p className="text-xl text-token-text-secondary leading-relaxed max-w-3xl mx-auto">
             {currentStep === 0 && "You're just 3 quick steps away from going live on the platform."}
             {currentStep === 1 && "This is what students will see when they discover your profile. Take a moment to make it shine!"}
             {currentStep === 2 && "Make sure your camera, mic, and internet connection are ready for live video lessons."}
@@ -410,23 +410,23 @@ export default function TutorOnboardingPage() {
         {/* Progress Bar */}
         <Card className="p-6 mb-12">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-lg font-semibold text-[var(--color-text)]">
+            <span className="text-lg font-semibold text-token-text">
               Step {currentStep + 1} of 4 — Tutor Onboarding
             </span>
-            <div className="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
+            <div className="flex items-center gap-2 text-sm text-token-text-secondary">
               <Save className="w-4 h-4" />
               Progress saved automatically
             </div>
           </div>
-          <div className="w-full bg-[var(--color-gray-200)] rounded-full h-3">
+          <div className="w-full bg-token-surface-subtle rounded-full h-3">
             <div
-              className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] h-3 rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-token-primary to-token-secondary h-3 rounded-full transition-all duration-500"
               style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
             ></div>
           </div>
           <div className="flex justify-between mt-4 text-sm">
             {steps.map((step, idx) => (
-              <div key={step} className={`flex items-center gap-2 ${currentStep >= idx ? "text-[var(--color-success)]" : "text-[var(--color-gray-400)]"}`}>
+              <div key={step} className={`flex items-center gap-2 ${currentStep >= idx ? "text-token-success" : "text-token-text-muted"}`}>
                 {currentStep > idx ? (
                   <CheckCircle className="w-4 h-4" />
                 ) : (
@@ -483,14 +483,14 @@ export default function TutorOnboardingPage() {
           ) : currentStep === 1 ? (
             <div className="space-y-8">
               <div className="flex items-center gap-3 mb-6">
-                <User className="w-6 h-6 text-[var(--color-primary)]" />
+                <User className="w-6 h-6 text-token-primary" />
                 <h2 className="text-2xl font-bold">Finalize Your Tutor Profile</h2>
               </div>
 
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium mb-2">Display Name</label>
-                  <p className="text-sm text-[var(--color-text-secondary)] mb-3">
+                  <p className="text-sm text-token-text-secondary mb-3">
                     This is your public name. Students will see this across the platform.
                   </p>
                   <Input
@@ -502,7 +502,7 @@ export default function TutorOnboardingPage() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Profile Bio</label>
-                  <p className="text-sm text-[var(--color-text-secondary)] mb-3">
+                  <p className="text-sm text-token-text-secondary mb-3">
                     Write a short, friendly introduction. What kind of students do you love teaching? (Recommended: 200–300 words)
                   </p>
                   <Textarea
@@ -510,14 +510,14 @@ export default function TutorOnboardingPage() {
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setOnboardingData((prev) => ({ ...prev, profileBio: e.target.value }))}
                     className="min-h-[120px]"
                   />
-                  <div className="text-right text-sm text-[var(--color-text-secondary)] mt-2">
+                  <div className="text-right text-sm text-token-text-secondary mt-2">
                     {onboardingData.profileBio.length} characters
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Teaching Style & Focus</label>
-                  <p className="text-sm text-[var(--color-text-secondary)] mb-3">
+                  <p className="text-sm text-token-text-secondary mb-3">
                     How do you structure lessons? What do you focus on? (e.g., conversational, grammar-focused, test prep)
                   </p>
                   <Textarea
@@ -529,7 +529,7 @@ export default function TutorOnboardingPage() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Languages You Speak</label>
-                  <p className="text-sm text-[var(--color-text-secondary)] mb-3">
+                  <p className="text-sm text-token-text-secondary mb-3">
                     This helps match you with students who speak your native or second languages. (Edit fluency levels if needed.)
                   </p>
                   <div className="space-y-4">
@@ -586,12 +586,12 @@ export default function TutorOnboardingPage() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Profile Photo</label>
-                  <p className="text-sm text-[var(--color-text-secondary)] mb-3">
+                  <p className="text-sm text-token-text-secondary mb-3">
                     Upload a clear, professional headshot. You can update it anytime.
                   </p>
-                  <div className="border-2 border-dashed border-[var(--color-gray-300)] rounded-lg p-6 text-center hover:border-[var(--color-secondary)] transition-colors">
-                    <Camera className="w-8 h-8 text-[var(--color-gray-400)] mx-auto mb-3" />
-                    <p className="text-[var(--color-text-secondary)] mb-3">Upload your profile photo</p>
+                  <div className="border-2 border-dashed border-token-border rounded-lg p-6 text-center hover:border-token-secondary transition-colors">
+                    <Camera className="w-8 h-8 text-token-text-muted mx-auto mb-3" />
+                    <p className="text-token-text-secondary mb-3">Upload your profile photo</p>
                     <input
                       type="file"
                       accept="image/*"
@@ -605,7 +605,7 @@ export default function TutorOnboardingPage() {
                       </Button>
                     </label>
                     {onboardingData.profilePhoto && (
-                      <p className="text-sm text-[var(--color-success)] mt-2">
+                      <p className="text-sm text-token-success mt-2">
                         Photo selected: {onboardingData.profilePhoto.name}
                       </p>
                     )}
@@ -614,12 +614,12 @@ export default function TutorOnboardingPage() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Intro Video</label>
-                  <p className="text-sm text-[var(--color-text-secondary)] mb-3">
+                  <p className="text-sm text-token-text-secondary mb-3">
                     Optional: Re-record or re-upload if you'd like to polish your video before going live.
                   </p>
-                  <div className="border-2 border-dashed border-[var(--color-gray-300)] rounded-lg p-6 text-center hover:border-[var(--color-accent)] transition-colors">
-                    <Video className="w-8 h-8 text-[var(--color-gray-400)] mx-auto mb-3" />
-                    <p className="text-[var(--color-text-secondary)] mb-3">Upload your intro video (optional)</p>
+                  <div className="border-2 border-dashed border-token-border rounded-lg p-6 text-center hover:border-token-accent transition-colors">
+                    <Video className="w-8 h-8 text-token-text-muted mx-auto mb-3" />
+                    <p className="text-token-text-secondary mb-3">Upload your intro video (optional)</p>
                     <input
                       type="file"
                       accept="video/*"
@@ -642,7 +642,7 @@ export default function TutorOnboardingPage() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Educational Background</label>
-                  <p className="text-sm text-[var(--color-text-secondary)] mb-3">
+                  <p className="text-sm text-token-text-secondary mb-3">
                     Share your academic background, degrees, and institutions. This helps students understand your qualifications.
                   </p>
                   <Textarea
@@ -655,7 +655,7 @@ export default function TutorOnboardingPage() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Teaching Certificates</label>
-                  <p className="text-sm text-[var(--color-text-secondary)] mb-3">
+                  <p className="text-sm text-token-text-secondary mb-3">
                     Select any teaching certifications you have. These help build trust with students.
                   </p>
 
@@ -663,7 +663,7 @@ export default function TutorOnboardingPage() {
                     {certifications.map((cert) => (
                       <label
                         key={cert}
-                        className="flex items-center space-x-3 p-3 border-2 border-[var(--color-gray-200)] rounded-lg hover:border-[var(--color-secondary)] cursor-pointer transition-colors"
+                        className="flex items-center space-x-3 p-3 border-2 border-token-border rounded-lg hover:border-token-secondary cursor-pointer transition-colors"
                       >
                         <input
                           type="checkbox"
@@ -681,7 +681,7 @@ export default function TutorOnboardingPage() {
                               }));
                             }
                           }}
-                          className="w-4 h-4 text-[var(--color-secondary)] border-[var(--color-gray-300)] rounded focus:ring-[var(--color-secondary)]"
+                          className="w-4 h-4 text-token-secondary border-token-border rounded focus:ring-token-secondary"
                         />
                         <span className="text-sm font-medium">{cert}</span>
                       </label>
@@ -693,12 +693,12 @@ export default function TutorOnboardingPage() {
                       <label className="block text-sm font-medium mb-2">
                         Upload Certificate Files (Optional)
                       </label>
-                      <p className="text-sm text-[var(--color-text-secondary)] mb-3">
+                      <p className="text-sm text-token-text-secondary mb-3">
                         Upload proof of your selected certifications to build additional trust with students.
                       </p>
-                      <div className="border-2 border-dashed border-[var(--color-gray-300)] rounded-lg p-6 text-center hover:border-[var(--color-secondary)] transition-colors">
-                        <Upload className="w-8 h-8 text-[var(--color-gray-400)] mx-auto mb-3" />
-                        <p className="text-[var(--color-text-secondary)] mb-3">Upload certificate files (PDF, JPG, PNG)</p>
+                      <div className="border-2 border-dashed border-token-border rounded-lg p-6 text-center hover:border-token-secondary transition-colors">
+                        <Upload className="w-8 h-8 text-token-text-muted mx-auto mb-3" />
+                        <p className="text-token-text-secondary mb-3">Upload certificate files (PDF, JPG, PNG)</p>
                         <input
                           type="file"
                           multiple
@@ -713,7 +713,7 @@ export default function TutorOnboardingPage() {
                           </Button>
                         </label>
                         {onboardingData.certificateFiles.length > 0 && (
-                          <p className="text-sm text-[var(--color-success)] mt-2">
+                          <p className="text-sm text-token-success mt-2">
                             {onboardingData.certificateFiles.length} file(s) selected
                           </p>
                         )}
@@ -724,11 +724,11 @@ export default function TutorOnboardingPage() {
               </div>
 
               {/* Preview Box */}
-              <Card className="p-6 bg-[var(--color-accent-50)]">
-                <h3 className="text-lg font-bold text-[var(--color-accent-800)] mb-4">Your profile will look like this to students</h3>
-                <div className="bg-white rounded-lg p-6 border border-[var(--color-accent-200)]">
+              <Card className="p-6 bg-token-accent-50">
+                <h3 className="text-lg font-bold text-token-accent-800 mb-4">Your profile will look like this to students</h3>
+                <div className="bg-white rounded-lg p-6 border border-token-accent-200">
                   <div className="flex items-start gap-4 mb-4">
-                    <div className="w-16 h-16 bg-[var(--color-gray-200)] rounded-full overflow-hidden flex-shrink-0">
+                    <div className="w-16 h-16 bg-token-surface-subtle rounded-full overflow-hidden flex-shrink-0">
                       {onboardingData.profilePhoto ? (
                         <img
                           src={URL.createObjectURL(onboardingData.profilePhoto)}
@@ -737,21 +737,21 @@ export default function TutorOnboardingPage() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <User className="w-8 h-8 text-[var(--color-gray-400)]" />
+                          <User className="w-8 h-8 text-token-text-muted" />
                         </div>
                       )}
                     </div>
                     <div>
                       <h4 className="text-xl font-bold">{onboardingData.displayName}</h4>
-                      <p className="text-[var(--color-text-secondary)]">Native Language: English (American Accent)</p>
+                      <p className="text-token-text-secondary">Native Language: English (American Accent)</p>
                       <div className="flex items-center gap-1 mt-1">
                         <Star className="w-4 h-4 text-yellow-500 fill-current" />
                         <span className="text-sm font-semibold">4.8</span>
-                        <span className="text-sm text-[var(--color-text-secondary)]">(126 reviews)</span>
+                        <span className="text-sm text-token-text-secondary">(126 reviews)</span>
                       </div>
                     </div>
                   </div>
-                  <p className="text-[var(--color-text-secondary)] text-sm line-clamp-2">{onboardingData.profileBio}</p>
+                  <p className="text-token-text-secondary text-sm line-clamp-2">{onboardingData.profileBio}</p>
                 </div>
               </Card>
 
@@ -776,15 +776,15 @@ export default function TutorOnboardingPage() {
           ) : currentStep === 2 ? (
             <div className="space-y-8">
               <div className="flex items-center gap-3 mb-6">
-                <Monitor className="w-6 h-6 text-[var(--color-accent)]" />
+                <Monitor className="w-6 h-6 text-token-accent" />
                 <h2 className="text-2xl font-bold">Check Your System</h2>
               </div>
 
               <div className="text-center mb-8">
-                <p className="text-xl text-[var(--color-text-secondary)] mb-6">
+                <p className="text-xl text-token-text-secondary mb-6">
                   Make sure your camera, mic, and internet connection are ready for live video lessons.
                 </p>
-                <p className="text-lg text-[var(--color-text-secondary)] mb-8">
+                <p className="text-lg text-token-text-secondary mb-8">
                   Click the button below to test your setup.
                 </p>
 
@@ -793,7 +793,7 @@ export default function TutorOnboardingPage() {
                     onClick={runSystemTest}
                     size="lg"
                     disabled={isRunningTest}
-                    className="bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-secondary)] hover:from-[var(--color-secondary)] hover:to-[var(--color-accent)] text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="bg-gradient-to-r from-token-accent to-token-secondary hover:from-token-secondary hover:to-token-accent text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     <Play className="mr-2 w-5 h-5" />
                     {isRunningTest ? 'Testing...' : 'Run System Test'}
@@ -803,36 +803,36 @@ export default function TutorOnboardingPage() {
                     <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto">
                       <CheckCircle className="w-10 h-10 text-white" />
                     </div>
-                    <div className="bg-[var(--color-success-50)] border border-[var(--color-success-200)] rounded-lg p-6">
-                      <h3 className="font-semibold text-[var(--color-success-800)] mb-3">✅ Looks good!</h3>
-                      <p className="text-[var(--color-success-700)]">
-                        If students ever have trouble hearing or seeing you, we'll let you know.
-                      </p>
-                    </div>
+                                    <div className="bg-token-success-50 border border-token-success-200 rounded-lg p-6">
+                  <h3 className="font-semibold text-token-success-800 mb-3">✅ Looks good!</h3>
+                  <p className="text-token-success-700">
+                    If students ever have trouble hearing or seeing you, we'll let you know.
+                  </p>
+                </div>
                   </div>
                 )}
               </div>
 
               {/* System Check Items */}
               <div className="grid md:grid-cols-3 gap-6 mb-8">
-                <div className="text-center p-6 bg-[var(--color-accent-50)] rounded-lg border border-[var(--color-accent-200)]">
-                  <Camera className="w-12 h-12 text-[var(--color-accent-600)] mx-auto mb-3" />
-                  <h3 className="font-semibold text-[var(--color-accent-800)] mb-2">Camera</h3>
-                  <p className="text-sm text-[var(--color-accent-700)]">
+                <div className="text-center p-6 bg-token-accent-50 rounded-lg border border-token-accent-200">
+                  <Camera className="w-12 h-12 text-token-accent-600 mx-auto mb-3" />
+                  <h3 className="font-semibold text-token-accent-800 mb-2">Camera</h3>
+                  <p className="text-sm text-token-accent-700">
                     {systemTestComplete ? "✅ Working properly" : "Testing camera quality"}
                   </p>
                 </div>
-                <div className="text-center p-6 bg-[var(--color-secondary-50)] rounded-lg border border-[var(--color-secondary-200)]">
-                  <Mic className="w-12 h-12 text-[var(--color-secondary-600)] mx-auto mb-3" />
-                  <h3 className="font-semibold text-[var(--color-secondary-800)] mb-2">Microphone</h3>
-                  <p className="text-sm text-[var(--color-secondary-700)]">
+                <div className="text-center p-6 bg-token-secondary-50 rounded-lg border border-token-secondary-200">
+                  <Mic className="w-12 h-12 text-token-secondary-600 mx-auto mb-3" />
+                  <h3 className="font-semibold text-token-secondary-800 mb-2">Microphone</h3>
+                  <p className="text-sm text-token-secondary-700">
                     {systemTestComplete ? "✅ Clear audio detected" : "Testing microphone"}
                   </p>
                 </div>
-                <div className="text-center p-6 bg-[var(--color-success-50)] rounded-lg border border-[var(--color-success-200)]">
-                  <Wifi className="w-12 h-12 text-[var(--color-success-600)] mx-auto mb-3" />
-                  <h3 className="font-semibold text-[var(--color-success-800)] mb-2">Internet</h3>
-                  <p className="text-sm text-[var(--color-success-700)]">
+                <div className="text-center p-6 bg-token-success-50 rounded-lg border border-token-success-200">
+                  <Wifi className="w-12 h-12 text-token-success-600 mx-auto mb-3" />
+                  <h3 className="font-semibold text-token-success-800 mb-2">Internet</h3>
+                  <p className="text-sm text-token-success-700">
                     {systemTestComplete ? "✅ Connection stable" : "Testing connection speed"}
                   </p>
                 </div>
@@ -843,7 +843,7 @@ export default function TutorOnboardingPage() {
                   <Button
                     onClick={() => setCurrentStep(3)}
                     size="lg"
-                    className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-600)] text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="bg-gradient-to-r from-token-primary to-token-primary-600 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     Continue to Availability
                   </Button>
@@ -853,16 +853,16 @@ export default function TutorOnboardingPage() {
           ) : currentStep === 3 ? (
             <div className="space-y-8">
               <div className="flex items-center gap-3 mb-6">
-                <Calendar className="w-6 h-6 text-[var(--color-secondary)]" />
+                <Calendar className="w-6 h-6 text-token-secondary" />
                 <h2 className="text-2xl font-bold">Set Your Weekly Availability</h2>
               </div>
 
               <div className="mb-8">
-                <p className="text-xl text-[var(--color-text-secondary)] mb-4">
+                <p className="text-xl text-token-text-secondary mb-4">
                   Choose time slots when you're available for students to book lessons.
                 </p>
-                <div className="bg-[var(--color-accent-50)] border border-[var(--color-accent-200)] rounded-lg p-4">
-                  <ul className="text-[var(--color-accent-700)] space-y-1">
+                <div className="bg-token-accent-50 border border-token-accent-200 rounded-lg p-4">
+                  <ul className="text-token-accent-700 space-y-1">
                     <li>• Select 30-minute time slots you'd like to teach</li>
                     <li>• Open at least 3 slots to activate your profile</li>
                     <li>• You can adjust this anytime in your dashboard</li>
@@ -873,8 +873,8 @@ export default function TutorOnboardingPage() {
               {/* Calendar Widget */}
               <div className="space-y-6 mb-8">
                 {weekDays.map((day) => (
-                  <div key={day.key} className="border border-[var(--color-gray-200)] rounded-lg p-4">
-                    <h3 className="font-semibold text-[var(--color-text)] mb-3">
+                  <div key={day.key} className="border border-token-border rounded-lg p-4">
+                    <h3 className="font-semibold text-token-text mb-3">
                       {day.label} • {day.date}
                     </h3>
                     <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
@@ -884,8 +884,8 @@ export default function TutorOnboardingPage() {
                           onClick={() => toggleTimeSlot(day.key, time)}
                           className={`p-2 text-sm rounded-lg border-2 transition-all ${
                             onboardingData.availability[day.key]?.includes(time)
-                              ? "bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-accent)] text-white border-[var(--color-secondary)]"
-                              : "bg-white text-[var(--color-text-secondary)] border-[var(--color-gray-300)] hover:border-[var(--color-secondary)] hover:bg-[var(--color-secondary-50)]"
+                              ? "bg-gradient-to-r from-token-secondary to-token-accent text-white border-token-secondary"
+                              : "bg-white text-token-text-secondary border-token-border hover:border-token-secondary hover:bg-token-secondary-50"
                           }`}
                         >
                           {time}
@@ -897,22 +897,22 @@ export default function TutorOnboardingPage() {
               </div>
 
               {/* Timezone Reminder */}
-              <div className="bg-[var(--color-warning-50)] border border-[var(--color-warning-200)] rounded-lg p-4 mb-8">
+              <div className="bg-token-warning-50 border border-token-warning-200 rounded-lg p-4 mb-8">
                 <div className="flex items-center gap-2">
-                  <Globe className="w-5 h-5 text-[var(--color-warning-600)]" />
-                  <p className="text-[var(--color-warning-800)]">
+                  <Globe className="w-5 h-5 text-token-warning-600" />
+                  <p className="text-token-warning-800">
                     All times are displayed in your local timezone (GMT+8). You can change this in your settings.
                   </p>
                 </div>
               </div>
 
               {/* Summary */}
-              <div className="bg-[var(--color-success-50)] border border-[var(--color-success-200)] rounded-lg p-4 mb-8">
-                <h3 className="font-semibold text-[var(--color-success-800)] mb-2">Availability Summary</h3>
-                <p className="text-[var(--color-success-700)]">
+              <div className="bg-token-success-50 border border-token-success-200 rounded-lg p-4 mb-8">
+                <h3 className="font-semibold text-token-success-800 mb-2">Availability Summary</h3>
+                <p className="text-token-success-700">
                   You have selected {getTotalAvailableSlots()} time slots across the week.
                   {getTotalAvailableSlots() < 3 && (
-                    <span className="text-[var(--color-warning-600)] ml-2">
+                    <span className="text-token-warning-600 ml-2">
                       (You need at least 3 slots to activate your profile)
                     </span>
                   )}
@@ -924,7 +924,7 @@ export default function TutorOnboardingPage() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="border-2 border-[var(--color-gray-300)] text-[var(--color-text-secondary)] hover:bg-[var(--color-gray-50)] px-8 py-4 rounded-full text-lg font-semibold bg-transparent"
+                  className="border-2 border-token-border text-token-text-secondary hover:bg-token-surface-subtle px-8 py-4 rounded-full text-lg font-semibold bg-transparent"
                 >
                   Skip for Now
                 </Button>
@@ -932,7 +932,7 @@ export default function TutorOnboardingPage() {
                   onClick={() => setIsComplete(true)}
                   disabled={getTotalAvailableSlots() < 3}
                   size="lg"
-                  className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-600)] hover:from-[var(--color-primary-600)] hover:to-[var(--color-primary-700)] text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-gradient-to-r from-token-primary to-token-primary-600 hover:from-token-primary-600 hover:to-token-primary-700 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Save Availability
                 </Button>

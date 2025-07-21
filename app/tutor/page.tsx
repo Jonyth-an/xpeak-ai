@@ -184,29 +184,29 @@ export default function TutorDashboard() {
       title: "Today's Lessons",
       value: dashboardData.summary.completed_lessons,
       icon: <Calendar className="w-6 h-6" />, 
-      iconBgColor: 'bg-blue-100',
-      iconColor: 'text-blue-600'
+      iconBgColor: 'bg-accent/20',
+      iconColor: 'text-accent'
     },
     {
       title: "This Month",
       value: dashboardData.summary.total_lessons,
       icon: <CheckCircle className="w-6 h-6" />, 
-      iconBgColor: 'bg-green-100',
-      iconColor: 'text-green-600'
+      iconBgColor: 'bg-success/20',
+      iconColor: 'text-success'
     },
     {
       title: "Active Students",
       value: dashboardData.summary.total_students,
       icon: <Users className="w-6 h-6" />, 
-      iconBgColor: 'bg-purple-100',
-      iconColor: 'text-purple-600'
+      iconBgColor: 'bg-primary/20',
+      iconColor: 'text-primary'
     },
     {
       title: "This Month",
       value: formatCurrency(dashboardData.summary.total_earnings),
       icon: <DollarSign className="w-6 h-6" />, 
-      iconBgColor: 'bg-orange-100',
-      iconColor: 'text-orange-600'
+      iconBgColor: 'bg-warning/20',
+      iconColor: 'text-warning'
     }
   ];
 
@@ -400,7 +400,7 @@ export default function TutorDashboard() {
                     Rating
                   </Text>
                   <div className="flex items-center">
-                    <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                    <Star className="w-4 h-4 text-warning mr-1" />
                     <Text variant="body" className="font-medium text-token-text-primary">
                       {dashboardData.performance_metrics.student_satisfaction > 0 ? (dashboardData.performance_metrics.student_satisfaction / 20).toFixed(1) : 'N/A'}
                     </Text>

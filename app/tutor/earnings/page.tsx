@@ -28,7 +28,8 @@ import {
   Wallet,
   ArrowUpRight,
   ArrowDownRight,
-  RefreshCw
+  RefreshCw,
+  BarChart3
 } from 'lucide-react';
 
 interface EarningsData {
@@ -83,6 +84,8 @@ interface EarningsData {
       next_payout_eligible: boolean;
       next_payout_date: string;
       minimum_payout: number;
+      pending_amount: number;
+      available_amount: number;
     };
   };
   trends: {
@@ -103,6 +106,15 @@ interface EarningsData {
     time_range: string;
     page: number;
     limit: number;
+  };
+  overview: {
+    total_earnings: number;
+    current_month_earnings: number;
+  };
+  breakdown?: {
+    lesson_earnings: number;
+    bonus_earnings: number;
+    referral_earnings: number;
   };
 }
 
@@ -217,20 +229,20 @@ export default function EarningsDashboard() {
 
   const getEarningTypeColor = (type: string) => {
     switch (type) {
-      case 'lesson': return 'text-blue-600 bg-blue-100';
-      case 'bonus': return 'text-green-600 bg-green-100';
-      case 'referral': return 'text-purple-600 bg-purple-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'lesson': return 'text-primary bg-primary/20';
+      case 'bonus': return 'text-token-success bg-token-success/20';
+      case 'referral': return 'text-accent bg-accent/20';
+      default: return 'text-token-text-secondary bg-token-surface-accent';
     }
   };
 
-  const getPayoutStatusIcon = (status: string) => {
+  const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'completed': return <CheckCircle className="w-4 h-4 text-green-600" />;
-      case 'pending': return <Clock className="w-4 h-4 text-yellow-600" />;
-      case 'processing': return <RefreshCw className="w-4 h-4 text-blue-600" />;
-      case 'failed': return <XCircle className="w-4 h-4 text-red-600" />;
-      default: return <AlertCircle className="w-4 h-4 text-gray-600" />;
+      case 'completed': return <CheckCircle className="w-4 h-4 text-token-success" />;
+      case 'pending': return <Clock className="w-4 h-4 text-token-warning" />;
+      case 'processing': return <RefreshCw className="w-4 h-4 text-primary" />;
+      case 'failed': return <XCircle className="w-4 h-4 text-token-error" />;
+      default: return <AlertCircle className="w-4 h-4 text-token-text-secondary" />;
     }
   };
 
@@ -253,11 +265,12 @@ export default function EarningsDashboard() {
     return (
       <TutorLayout>
         <TutorPageLayout containerWidth="xl" padding="lg">
-          <LoadingState 
-            message="Loading your earnings data..." 
-            size="lg" 
-            variant="spinner"
-          />
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <Text variant="body" className="text-token-text-secondary">Loading earnings data...</Text>
+            </div>
+          </div>
         </TutorPageLayout>
       </TutorLayout>
     );
@@ -266,47 +279,47 @@ export default function EarningsDashboard() {
   if (error || !earningsData) {
     return (
       <TutorLayout>
-        <TutorPageLayout containerWidth="lg" padding="lg">
-          <ErrorState
-            title="Unable to Load Earnings Data"
-            message={error || 'No data available'}
-            onRetry={fetchEarningsData}
-            showDetails={false}
-          />
+        <TutorPageLayout containerWidth="xl" padding="lg">
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="text-center">
+              <Text variant="h2" className="text-token-error mb-2">Unable to Load Earnings</Text>
+              <Text variant="body" className="text-token-text-secondary mb-4">{error || 'No earnings data available'}</Text>
+              <Button variant="primary" onClick={fetchEarningsData}>Retry</Button>
+            </div>
+          </div>
         </TutorPageLayout>
       </TutorLayout>
     );
   }
 
-  // Prepare metrics for MetricsGrid
   const metrics = [
     {
       title: 'Total Earnings',
-      value: formatCurrency(earningsData.summary.total_earnings),
+      value: `$${earningsData?.overview?.total_earnings || '0.00'}`,
       icon: <DollarSign className="w-6 h-6" />,
-      iconBgColor: 'bg-green-100',
-      iconColor: 'text-green-600'
+      iconBgColor: 'bg-token-success/20',
+      iconColor: 'text-token-success'
     },
     {
-      title: 'Available Balance',
-      value: formatCurrency(earningsData.summary.pending_earnings),
-      icon: <Wallet className="w-6 h-6" />,
-      iconBgColor: 'bg-blue-100',
-      iconColor: 'text-blue-600'
-    },
-    {
-      title: `This ${timeRange === 'week' ? 'Week' : timeRange === 'month' ? 'Month' : timeRange === 'quarter' ? 'Quarter' : 'Year'}`,
-      value: formatCurrency(earningsData.summary.period_earnings),
+      title: 'This Month',
+      value: `$${earningsData?.overview?.current_month_earnings || '0.00'}`,
       icon: <TrendingUp className="w-6 h-6" />,
-      iconBgColor: 'bg-purple-100',
-      iconColor: 'text-purple-600'
+      iconBgColor: 'bg-primary/20',
+      iconColor: 'text-primary'
     },
     {
-      title: 'Total Paid Out',
-      value: formatCurrency(earningsData.payouts.summary.completed_payouts),
-      icon: <CreditCard className="w-6 h-6" />,
-      iconBgColor: 'bg-orange-100',
-      iconColor: 'text-orange-600'
+      title: 'Pending Payouts',
+      value: `$${earningsData?.payouts?.summary?.pending_amount || '0.00'}`,
+      icon: <Clock className="w-6 h-6" />,
+      iconBgColor: 'bg-accent/20',
+      iconColor: 'text-accent'
+    },
+    {
+      title: 'Next Payout',
+      value: earningsData?.payouts?.summary?.next_payout_date ? formatDate(earningsData.payouts.summary.next_payout_date) : 'TBD',
+      icon: <Calendar className="w-6 h-6" />,
+      iconBgColor: 'bg-token-warning/20',
+      iconColor: 'text-token-warning'
     }
   ];
 
@@ -314,37 +327,32 @@ export default function EarningsDashboard() {
     <TutorLayout>
       <TutorPageLayout containerWidth="xl" padding="lg">
         <TutorPageHeader
-          title="Earnings & Payouts"
-          subtitle="Track your income and manage withdrawals"
+          title="Earnings Dashboard"
+          subtitle="Track your income, payouts, and financial performance"
           titleVariant="h1"
           subtitleVariant="body"
           actions={
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-token-success/20 rounded-full flex items-center justify-center">
+                <DollarSign className="w-4 h-4 text-token-success" />
+              </div>
               <select
                 value={timeRange}
                 onChange={(e) => setTimeRange(e.target.value)}
-                className="px-4 py-2 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
+                className="px-4 py-2 border border-border rounded-lg bg-surface text-token-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                 aria-label="Select time range"
               >
                 <option value="week">This Week</option>
                 <option value="month">This Month</option>
                 <option value="quarter">This Quarter</option>
                 <option value="year">This Year</option>
+                <option value="all">All Time</option>
               </select>
-              
-              <Button
-                variant="primary"
-                onClick={() => setShowPayoutModal(true)}
-                disabled={!earningsData.payouts.summary.next_payout_eligible}
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Request Payout
-              </Button>
             </div>
           }
         />
 
-        {/* Summary Cards */}
+        {/* Key Metrics Cards */}
         <MetricsGrid 
           metrics={metrics} 
           columns={4} 
@@ -355,138 +363,155 @@ export default function EarningsDashboard() {
 
         {/* Earnings Breakdown */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Earnings by Type */}
-          <Card className="p-6 rounded-xl" variant="default">
-            <div className="flex items-center mb-4">
-              <Banknote className="w-5 h-5 text-token-primary mr-2" />
-              <Text variant="h3" className="text-token-primary">Earnings Breakdown</Text>
+          {/* Earnings Overview */}
+          <Card className="p-6 rounded-xl shadow-sm" variant="default">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                <BarChart3 className="w-4 h-4 text-primary" />
+              </div>
+              <Text variant="h3" className="text-token-text font-semibold">Earnings Breakdown</Text>
             </div>
             
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between p-3 bg-primary/5 rounded-lg border border-primary/20">
                 <div className="flex items-center">
-                  <Calendar className="w-4 h-4 text-blue-600 mr-2" />
+                  <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center mr-3">
+                    <Calendar className="w-4 h-4 text-primary" />
+                  </div>
                   <Text variant="body" className="text-token-text-secondary">Lesson Earnings</Text>
                 </div>
-                <Text variant="body" className="font-medium text-token-text-primary">
-                  {formatCurrency(earningsData.summary.lesson_earnings)}
+                <Text variant="body" className="font-semibold text-primary">
+                  ${earningsData?.breakdown?.lesson_earnings || '0.00'}
                 </Text>
               </div>
               
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between p-3 bg-token-success/5 rounded-lg border border-token-success/20">
                 <div className="flex items-center">
-                  <TrendingUp className="w-4 h-4 text-green-600 mr-2" />
+                  <div className="w-8 h-8 bg-token-success/20 rounded-full flex items-center justify-center mr-3">
+                    <TrendingUp className="w-4 h-4 text-token-success" />
+                  </div>
                   <Text variant="body" className="text-token-text-secondary">Bonus Earnings</Text>
                 </div>
-                <Text variant="body" className="font-medium text-token-text-primary">
-                  {formatCurrency(earningsData.summary.bonus_earnings)}
+                <Text variant="body" className="font-semibold text-token-success">
+                  ${earningsData?.breakdown?.bonus_earnings || '0.00'}
                 </Text>
               </div>
               
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between p-3 bg-accent/5 rounded-lg border border-accent/20">
                 <div className="flex items-center">
-                  <ArrowUpRight className="w-4 h-4 text-purple-600 mr-2" />
+                  <div className="w-8 h-8 bg-accent/20 rounded-full flex items-center justify-center mr-3">
+                    <ArrowUpRight className="w-4 h-4 text-accent" />
+                  </div>
                   <Text variant="body" className="text-token-text-secondary">Referral Earnings</Text>
                 </div>
-                <Text variant="body" className="font-medium text-token-text-primary">
-                  {formatCurrency(earningsData.summary.referral_earnings)}
+                <Text variant="body" className="font-semibold text-accent">
+                  ${earningsData?.breakdown?.referral_earnings || '0.00'}
                 </Text>
               </div>
             </div>
           </Card>
 
           {/* Payout Status */}
-          <Card className="p-6 rounded-xl" variant="default">
-            <div className="flex items-center mb-4">
-              <CreditCard className="w-5 h-5 text-token-primary mr-2" />
-              <Text variant="h3" className="text-token-primary">Payout Status</Text>
+          <Card className="p-6 rounded-xl shadow-sm" variant="default">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 bg-accent/20 rounded-full flex items-center justify-center">
+                <Download className="w-4 h-4 text-accent" />
+              </div>
+              <Text variant="h3" className="text-token-text font-semibold">Payout Status</Text>
             </div>
             
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Text variant="body" className="text-token-text-secondary">Next Payout Date</Text>
-                <Text variant="body" className="font-medium text-token-text-primary">
-                  {formatDate(earningsData.payouts.summary.next_payout_date)}
-                </Text>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <Text variant="body" className="text-token-text-secondary">Minimum Payout</Text>
-                <Text variant="body" className="font-medium text-token-text-primary">
-                  {formatCurrency(earningsData.payouts.summary.minimum_payout)}
-                </Text>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <Text variant="body" className="text-token-text-secondary">Eligible for Payout</Text>
-                <div className="flex items-center">
-                  {earningsData.payouts.summary.next_payout_eligible ? (
-                    <CheckCircle className="w-4 h-4 text-green-600 mr-1" />
-                  ) : (
-                    <XCircle className="w-4 h-4 text-red-600 mr-1" />
-                  )}
-                  <Text variant="body" className={`font-medium ${earningsData.payouts.summary.next_payout_eligible ? 'text-green-600' : 'text-red-600'}`}>
-                    {earningsData.payouts.summary.next_payout_eligible ? 'Yes' : 'No'}
+              <div className="p-4 bg-token-surface-accent rounded-lg border border-border">
+                <div className="flex items-center justify-between mb-3">
+                  <Text variant="body" className="text-token-text-secondary font-medium">Next Payout Eligible</Text>
+                  <div className="flex items-center">
+                    {earningsData?.payouts?.summary?.next_payout_eligible ? (
+                      <CheckCircle className="w-4 h-4 text-token-success mr-1" />
+                    ) : (
+                      <XCircle className="w-4 h-4 text-token-error mr-1" />
+                    )}
+                    <Text variant="body" className={`font-semibold ${earningsData?.payouts?.summary?.next_payout_eligible ? 'text-token-success' : 'text-token-error'}`}>
+                      {earningsData?.payouts?.summary?.next_payout_eligible ? 'Yes' : 'No'}
+                    </Text>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <Text variant="body" className="text-token-text-secondary font-medium">Available Amount</Text>
+                  <Text variant="body" className="font-bold text-token-text">
+                    ${earningsData?.payouts?.summary?.available_amount || '0.00'}
                   </Text>
                 </div>
               </div>
+
+              <Button
+                variant="primary"
+                onClick={() => setShowPayoutModal(true)}
+                disabled={!earningsData?.payouts?.summary?.next_payout_eligible}
+                className="w-full"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Request Payout
+              </Button>
             </div>
           </Card>
         </div>
 
-        {/* Earnings History & Recent Payouts */}
+        {/* Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Recent Earnings */}
-          <Card className="p-6 rounded-xl" variant="default">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center">
-                <DollarSign className="w-5 h-5 text-token-primary mr-2" />
-                <Text variant="h3" className="text-token-primary">Recent Earnings</Text>
+          <Card className="p-6 rounded-xl shadow-sm" variant="default">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-token-success/20 rounded-full flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 text-token-success" />
+                </div>
+                <Text variant="h3" className="text-token-text font-semibold">Recent Earnings</Text>
               </div>
-              
-              <select
-                value={earningType}
-                onChange={(e) => setEarningType(e.target.value)}
-                className="px-3 py-1 border border-token rounded-md bg-token-surface text-sm focus:outline-none focus:ring-2 focus:ring-token-primary"
-                aria-label="Filter by earning type"
-              >
-                <option value="all">All Types</option>
-                <option value="lesson">Lessons</option>
-                <option value="bonus">Bonuses</option>
-                <option value="referral">Referrals</option>
-              </select>
+              <Button variant="outline" size="sm">
+                View All
+              </Button>
             </div>
             
-            <div className="space-y-3 max-h-80 overflow-y-auto">
-              {earningsData.earnings.data.length === 0 ? (
-                <Text variant="body" className="text-token-text-secondary text-center py-4">
-                  No earnings found
-                </Text>
+            <div className="space-y-4">
+              {(!earningsData?.earnings?.recent || earningsData.earnings.recent.length === 0) ? (
+                <div className="text-center py-8">
+                  <div className="w-12 h-12 bg-token-text-muted/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <DollarSign className="w-6 h-6 text-token-text-muted" />
+                  </div>
+                  <Text variant="body" className="text-token-text-secondary">
+                    No recent earnings
+                  </Text>
+                </div>
               ) : (
-                earningsData.earnings.data.slice(0, 10).map((earning) => (
-                  <div key={earning.id} className="flex items-center justify-between p-3 border border-token rounded-lg">
-                    <div className="flex items-center">
-                      <div className={`p-2 rounded-lg mr-3 ${getEarningTypeColor(earning.earning_type)}`}>
-                        {getEarningTypeIcon(earning.earning_type)}
-                      </div>
-                      <div>
-                        <Text variant="body" className="font-medium text-token-text-primary">
-                          {earning.description}
-                        </Text>
-                        <Text variant="small" className="text-token-text-muted">
-                          {formatDate(earning.earned_at)}
-                        </Text>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <Text variant="body" className="font-medium text-green-600">
-                        +{formatCurrency(earning.amount)}
-                      </Text>
+                earningsData.earnings.recent.slice(0, 5).map((earning, index) => (
+                  <div key={index} className="p-4 bg-token-surface-accent rounded-lg border border-border">
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center">
-                        <div className={`w-2 h-2 rounded-full mr-1 ${earning.is_paid ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
-                        <Text variant="small" className="text-token-text-muted">
-                          {earning.is_paid ? 'Paid' : 'Pending'}
+                        <div className="mr-3">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getEarningTypeColor(earning.type)}`}>
+                            {earning.type}
+                          </span>
+                        </div>
+                        <div>
+                          <Text variant="body" className="font-semibold text-token-text mb-1">
+                            {earning.description || 'Lesson Payment'}
+                          </Text>
+                          <Text variant="small" className="text-token-text-muted">
+                            {formatDate(earning.date)}
+                          </Text>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <Text variant="body" className="font-semibold text-token-success">
+                          +${earning.amount || '0.00'}
                         </Text>
+                        <div className="flex items-center">
+                          <div className={`w-2 h-2 rounded-full mr-1 ${earning.is_paid ? 'bg-token-success' : 'bg-token-warning'}`}></div>
+                          <Text variant="small" className="text-token-text-muted">
+                            {earning.is_paid ? 'Paid' : 'Pending'}
+                          </Text>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -512,7 +537,7 @@ export default function EarningsDashboard() {
                   <div key={payout.id} className="flex items-center justify-between p-3 border border-token rounded-lg">
                     <div className="flex items-center">
                       <div className="mr-3">
-                        {getPayoutStatusIcon(payout.status)}
+                        {getStatusIcon(payout.status)}
                       </div>
                       <div>
                         <Text variant="body" className="font-medium text-token-text-primary">
@@ -528,10 +553,10 @@ export default function EarningsDashboard() {
                         {formatCurrency(payout.amount)}
                       </Text>
                       <Text variant="small" className={`capitalize ${
-                        payout.status === 'completed' ? 'text-green-600' :
-                        payout.status === 'pending' ? 'text-yellow-600' :
-                        payout.status === 'processing' ? 'text-blue-600' :
-                        'text-red-600'
+                        payout.status === 'completed' ? 'text-token-success' :
+                        payout.status === 'pending' ? 'text-token-warning' :
+                        payout.status === 'processing' ? 'text-primary' :
+                        'text-token-error'
                       }`}>
                         {payout.status}
                       </Text>
@@ -570,7 +595,7 @@ export default function EarningsDashboard() {
                       </Text>
                     </td>
                     <td className="py-3 px-4">
-                      <Text variant="body" className="font-medium text-green-600">
+                      <Text variant="body" className="font-medium text-token-success">
                         {formatCurrency(month.total_earnings)}
                       </Text>
                     </td>
@@ -598,7 +623,7 @@ export default function EarningsDashboard() {
 
         {/* Payout Request Modal */}
         {showPayoutModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-token-overlay flex items-center justify-center z-50">
             <div className="bg-token-surface rounded-xl p-6 w-full max-w-md">
               <div className="flex items-center justify-between mb-4">
                 <Text variant="h3" className="text-token-primary">
@@ -611,10 +636,10 @@ export default function EarningsDashboard() {
               
               <div className="mb-4">
                 <Text variant="body" className="text-token-text-secondary mb-2">
-                  Available Balance: {formatCurrency(earningsData.summary.pending_earnings)}
+                  Available Balance: {formatCurrency(earningsData?.summary?.pending_earnings || 0)}
                 </Text>
                 <Text variant="small" className="text-token-text-muted">
-                  Minimum payout: {formatCurrency(earningsData.payouts.summary.minimum_payout)}
+                  Minimum payout: {formatCurrency(earningsData?.payouts?.summary?.minimum_payout || 0)}
                 </Text>
               </div>
               
@@ -629,7 +654,7 @@ export default function EarningsDashboard() {
                     onChange={(e) => setPayoutAmount(e.target.value)}
                     placeholder="Enter amount"
                     min="50"
-                    max={earningsData.summary.pending_earnings}
+                    max={earningsData?.summary?.pending_earnings || 0}
                     className="w-full p-3 border border-token rounded-md bg-token-surface focus:outline-none focus:ring-2 focus:ring-token-primary"
                   />
                 </div>

@@ -184,6 +184,7 @@ a {
 .text-token-accent { color: var(--color-accent-dark, #0369A1); }
 .text-token-link { color: var(--color-accent-dark, #0369A1); }
 .text-token-error { color: var(--color-error-dark, #B91C1C); }
+.text-token-text-inverse { color: var(--color-text-inverse, #FFFFFF); }
 
 /* Typography Token Utilities */
 /* Font Sizes */

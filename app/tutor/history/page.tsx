@@ -177,11 +177,11 @@ export default function LessonHistory() {
 
   const getStatusBadge = (status: string, cancellationReason?: string) => {
     const statusColors = {
-      completed: 'bg-green-100 text-green-700 border-green-200',
-      confirmed: 'bg-blue-100 text-blue-700 border-blue-200',
-      cancelled: 'bg-red-100 text-red-700 border-red-200',
-      no_show: 'bg-orange-100 text-orange-700 border-orange-200',
-      pending: 'bg-yellow-100 text-yellow-700 border-yellow-200'
+      completed: 'bg-token-success/20 text-token-success border-token-success/30',
+      confirmed: 'bg-token-info/20 text-token-info border-token-info/30',
+      cancelled: 'bg-token-error/20 text-token-error border-token-error/30',
+      no_show: 'bg-token-warning/20 text-token-warning border-token-warning/30',
+      pending: 'bg-token-warning/20 text-token-warning border-token-warning/30'
     };
     
     const statusLabels = {
@@ -196,19 +196,19 @@ export default function LessonHistory() {
     };
 
     return (
-      <span className={`px-2 py-1 rounded text-xs font-medium border ${statusColors[status as keyof typeof statusColors] || 'bg-gray-100 text-gray-700 border-gray-200'}`}>
+      <span className={`px-2 py-1 rounded text-xs font-medium border ${statusColors[status as keyof typeof statusColors] || 'bg-token-surface-accent text-token-text-secondary border-token-border'}`}>
         {statusLabels[status as keyof typeof statusLabels] || status}
       </span>
     );
   };
 
-  const renderRatingStars = (rating: number) => {
+  const renderStars = (rating: number) => {
     return (
-      <div className="flex items-center">
+      <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`w-4 h-4 ${star <= rating ? 'text-yellow-500 fill-current' : 'text-gray-300'}`}
+            className={`w-4 h-4 ${star <= rating ? 'text-token-warning fill-current' : 'text-token-text-muted'}`}
           />
         ))}
       </div>
@@ -218,8 +218,8 @@ export default function LessonHistory() {
   const renderRatingPreview = (lesson: Lesson) => {
     if (!lesson.feedback) {
       return (
-        <Text variant="small" className="text-gray-500">
-          No rating yet
+        <Text variant="small" className="text-token-text-secondary">
+          No rating provided
         </Text>
       );
     }
@@ -230,12 +230,12 @@ export default function LessonHistory() {
     return (
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          {renderRatingStars(rating)}
-          <Text variant="small" className="font-medium text-gray-900">
+          {renderStars(rating)}
+          <Text variant="small" className="font-medium text-token-text">
             {rating}/5
           </Text>
         </div>
-        <Text variant="small" className="text-gray-600">
+        <Text variant="small" className="text-token-text-secondary">
           {preview}
         </Text>
         {comment.length > 50 && (
@@ -244,7 +244,7 @@ export default function LessonHistory() {
               setSelectedRating({ rating, comment });
               setShowRatingModal(true);
             }}
-            className="text-xs text-blue-600 hover:text-blue-800 underline"
+            className="text-xs text-primary hover:text-primary/80 underline"
           >
             View full review
           </button>
@@ -333,8 +333,8 @@ export default function LessonHistory() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <Card className="p-6 bg-token-surface border border-token rounded-xl">
               <div className="flex items-center">
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <BookOpen className="w-6 h-6 text-blue-600" />
+                <div className="p-3 bg-primary/20 rounded-lg">
+                  <BookOpen className="w-6 h-6 text-primary" />
                 </div>
                 <div className="ml-4">
                   <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
@@ -349,8 +349,8 @@ export default function LessonHistory() {
 
             <Card className="p-6 bg-token-surface border border-token rounded-xl">
               <div className="flex items-center">
-                <div className="p-3 bg-green-100 rounded-lg">
-                  <Users className="w-6 h-6 text-green-600" />
+                <div className="p-3 bg-token-success/20 rounded-lg">
+                  <Users className="w-6 h-6 text-token-success" />
                 </div>
                 <div className="ml-4">
                   <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
@@ -365,8 +365,8 @@ export default function LessonHistory() {
 
             <Card className="p-6 bg-token-surface border border-token rounded-xl">
               <div className="flex items-center">
-                <div className="p-3 bg-purple-100 rounded-lg">
-                  <Clock className="w-6 h-6 text-purple-600" />
+                <div className="p-3 bg-accent/20 rounded-lg">
+                  <Clock className="w-6 h-6 text-accent" />
                 </div>
                 <div className="ml-4">
                   <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
@@ -381,8 +381,8 @@ export default function LessonHistory() {
 
             <Card className="p-6 bg-token-surface border border-token rounded-xl">
               <div className="flex items-center">
-                <div className="p-3 bg-orange-100 rounded-lg">
-                  <Calendar className="w-6 h-6 text-orange-600" />
+                <div className="p-3 bg-token-warning/20 rounded-lg">
+                  <Calendar className="w-6 h-6 text-token-warning" />
                 </div>
                 <div className="ml-4">
                   <Text variant="h2" as="h2" className="text-2xl font-bold text-token-text-primary">
@@ -400,17 +400,17 @@ export default function LessonHistory() {
           {historyData.lessons.length > 0 && (
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Calendar className="w-4 h-4 text-blue-600" />
-                </div>
-                <Text variant="h3" className="font-bold text-gray-900">
+                                  <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                    <Calendar className="w-4 h-4 text-primary" />
+                  </div>
+                <Text variant="h3" className="font-bold text-token-text">
                   Recent Lessons (8)
                 </Text>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {historyData.lessons.slice(0, 8).map((lesson) => (
-                  <Card key={lesson.id} className="p-4 border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow" variant="outlined">
+                  <Card key={lesson.id} className="p-4 border border-border bg-surface rounded-xl shadow-sm hover:shadow-md transition-shadow" variant="outlined">
                     <div className="flex items-start gap-3">
                       {/* Student Avatar */}
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-sm">
@@ -433,24 +433,24 @@ export default function LessonHistory() {
                       <div className="flex-1 min-w-0">
                         {/* Student Name and Rating */}
                         <div className="flex items-start justify-between mb-2">
-                          <Text variant="body" className="font-medium text-gray-900 truncate">
+                          <Text variant="body" className="font-medium text-token-text-primary">
                             {lesson.student.name}
                           </Text>
                           {lesson.feedback && (
                             <div className="flex items-center gap-1 flex-shrink-0">
-                              {renderRatingStars(lesson.feedback.rating)}
+                              {renderStars(lesson.feedback.rating)}
                             </div>
                           )}
                         </div>
                         
                         {/* Lesson Time */}
-                        <Text variant="small" className="text-gray-600 mb-2">
+                        <Text variant="small" className="text-token-text-secondary mb-2">
                           {formatDate(lesson.scheduled_start)} at {formatTime(lesson.scheduled_start)}
                         </Text>
                         
                         {/* Lesson Type */}
                         <div className="mb-2">
-                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                          <span className="px-2 py-1 bg-token-info-light text-token-info rounded text-xs font-medium">
                             {lesson.lesson_type}
                           </span>
                         </div>
@@ -463,7 +463,7 @@ export default function LessonHistory() {
                         {/* Review Preview */}
                         {lesson.feedback && lesson.feedback.comment && (
                           <div className="mt-2">
-                            <Text variant="small" className="text-gray-600 line-clamp-2">
+                            <Text variant="small" className="text-token-text-secondary line-clamp-2">
                               "{lesson.feedback.comment.length > 60 
                                 ? `${lesson.feedback.comment.substring(0, 60)}...` 
                                 : lesson.feedback.comment}"
@@ -477,7 +477,7 @@ export default function LessonHistory() {
                                   });
                                   setShowRatingModal(true);
                                 }}
-                                className="text-xs text-blue-600 hover:text-blue-800 underline mt-1"
+                                className="text-xs text-primary hover:text-primary/80 underline mt-1"
                               >
                                 Read more
                               </button>
@@ -663,6 +663,9 @@ export default function LessonHistory() {
                                 <Text variant="body" className="font-medium text-token-text-primary">
                                   {lesson.student.name}
                                 </Text>
+                                <Text variant="small" className="text-token-text-secondary">
+                                  {getCountryFlag(lesson.student.country)} {lesson.student.country}
+                                </Text>
                               </div>
                             </div>
                           </td>
@@ -749,8 +752,8 @@ export default function LessonHistory() {
 
           {/* Notes Modal */}
           {showNotesModal && selectedLesson && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-token-surface rounded-xl p-6 w-full max-w-lg">
+            <div className="fixed inset-0 bg-token-overlay flex items-center justify-center z-50">
+              <div className="bg-surface rounded-lg p-6 max-w-md w-full mx-4 border border-border shadow-lg">
                 <div className="flex items-center justify-between mb-4">
                   <Text variant="h3" className="text-token-primary">
                     Lesson Notes
@@ -796,8 +799,8 @@ export default function LessonHistory() {
 
           {/* Rating Modal */}
           {showRatingModal && selectedRating && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-token-surface rounded-xl p-6 w-full max-w-lg">
+            <div className="fixed inset-0 bg-token-overlay flex items-center justify-center z-50">
+              <div className="bg-surface rounded-lg p-6 max-w-2xl w-full mx-4 border border-border shadow-lg">
                 <div className="flex items-center justify-between mb-4">
                   <Text variant="h3" className="text-token-primary">
                     Student Review
@@ -809,14 +812,14 @@ export default function LessonHistory() {
                 
                 <div className="mb-6">
                   <div className="flex items-center gap-2 mb-3">
-                    {renderRatingStars(selectedRating.rating)}
-                    <Text variant="body" className="font-medium text-gray-900">
+                    {renderStars(selectedRating.rating)}
+                    <Text variant="body" className="font-medium text-token-text">
                       {selectedRating.rating}/5
                     </Text>
                   </div>
                   
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <Text variant="body" className="text-gray-900 leading-relaxed">
+                  <div className="bg-token-surface-accent rounded-lg p-4">
+                    <Text variant="body" className="text-token-text leading-relaxed">
                       {selectedRating.comment}
                     </Text>
                   </div>

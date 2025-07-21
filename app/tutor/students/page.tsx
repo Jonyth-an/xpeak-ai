@@ -216,48 +216,55 @@ export default function MyStudents() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
-            <Text variant="h1" as="h1" className="text-token-primary mb-2">
-              My Students
-            </Text>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                <Users className="w-4 h-4 text-primary" />
+              </div>
+              <Text variant="h1" as="h1" className="text-token-text font-bold">
+                My Students
+              </Text>
+            </div>
             <Text variant="body" className="text-token-text-secondary">
               Manage your student relationships and track their progress.
             </Text>
           </div>
 
           {/* Student Overview */}
-          <Card className="p-6 bg-token-surface border border-token mb-6 rounded-xl">
-            <div className="flex items-center mb-4">
-              <Calendar className="w-5 h-5 text-token-primary mr-2" />
-              <Text variant="h3" className="text-token-primary">Student Overview</Text>
+          <Card className="p-6 bg-surface border border-border mb-6 rounded-xl shadow-sm">
+            <div className="flex items-center mb-6">
+              <div className="w-6 h-6 bg-token-success/20 rounded-full flex items-center justify-center mr-3">
+                <TrendingUp className="w-4 h-4 text-token-success" />
+              </div>
+              <Text variant="h3" className="text-token-text font-semibold">Student Overview</Text>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="text-center">
-                <Text variant="h2" className="text-3xl font-bold text-blue-600">
+              <div className="text-center p-4 bg-primary/5 rounded-lg border border-primary/20">
+                <Text variant="h2" className="text-3xl font-bold text-primary mb-1">
                   {studentsData.overview.active_students}
                 </Text>
                 <Text variant="body" className="text-token-text-secondary">
                   Active Students
                 </Text>
               </div>
-              <div className="text-center">
-                <Text variant="h2" className="text-3xl font-bold text-green-600">
+              <div className="text-center p-4 bg-token-success/5 rounded-lg border border-token-success/20">
+                <Text variant="h2" className="text-3xl font-bold text-token-success mb-1">
                   {studentsData.overview.total_lessons}
                 </Text>
                 <Text variant="body" className="text-token-text-secondary">
                   Total Lessons
                 </Text>
               </div>
-              <div className="text-center">
-                <Text variant="h2" className="text-3xl font-bold text-purple-600">
+              <div className="text-center p-4 bg-accent/5 rounded-lg border border-accent/20">
+                <Text variant="h2" className="text-3xl font-bold text-accent mb-1">
                   {studentsData.overview.total_hours}
                 </Text>
                 <Text variant="body" className="text-token-text-secondary">
                   Total Hours
                 </Text>
               </div>
-              <div className="text-center">
-                <Text variant="h2" className="text-3xl font-bold text-orange-600">
+              <div className="text-center p-4 bg-token-warning/5 rounded-lg border border-token-warning/20">
+                <Text variant="h2" className="text-3xl font-bold text-token-warning mb-1">
                   {studentsData.overview.countries}
                 </Text>
                 <Text variant="body" className="text-token-text-secondary">
@@ -268,7 +275,11 @@ export default function MyStudents() {
           </Card>
 
           {/* Search */}
-          <Card className="p-6 bg-token-surface border border-token mb-6 rounded-xl">
+          <Card className="p-6 bg-surface border border-border mb-6 rounded-xl shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <Search className="w-5 h-5 text-token-text-secondary" />
+              <Text variant="h3" className="text-token-text font-semibold">Find Students</Text>
+            </div>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-token-text-muted w-4 h-4" />
               <input
@@ -277,116 +288,131 @@ export default function MyStudents() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                className="w-full pl-10 pr-4 py-3 border border-token rounded-md bg-token-surface"
+                className="w-full pl-10 pr-4 py-3 border border-border rounded-lg bg-surface text-token-text placeholder:text-token-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
               />
             </div>
           </Card>
 
           {/* Students Grid */}
           {studentsData.students.length === 0 ? (
-            <Card className="p-8 bg-token-surface border border-token text-center rounded-xl">
-              <Users className="w-12 h-12 text-token-text-muted mx-auto mb-4" />
-              <Text variant="h3" className="text-token-text-secondary mb-2">No Students Yet</Text>
-              <Text variant="body" className="text-token-text-muted">
-                Your students will appear here once they book lessons with you.
-              </Text>
+            <Card className="p-12 bg-surface border border-border text-center rounded-xl shadow-sm">
+              <div className="flex flex-col items-center">
+                <div className="w-16 h-16 bg-token-text-muted/10 rounded-full flex items-center justify-center mb-4">
+                  <Users className="w-8 h-8 text-token-text-muted" />
+                </div>
+                <Text variant="h3" className="text-token-text font-semibold mb-2">No Students Yet</Text>
+                <Text variant="body" className="text-token-text-secondary max-w-md">
+                  Your students will appear here once they book lessons with you. Check your calendar to set your availability.
+                </Text>
+              </div>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {studentsData.students.map((student) => (
-                <Card key={student.id} className="p-6 bg-token-surface border border-token rounded-xl">
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-token-primary rounded-full flex items-center justify-center text-white font-medium mr-3">
-                      {student.avatar_url ? (
-                        <img
-                          src={student.avatar_url}
-                          alt={student.name}
-                          className="w-full h-full rounded-full object-cover"
-                        />
-                      ) : (
-                        student.name.split(' ').map(n => n[0]).join('')
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center mb-1">
-                        <Text variant="h4" className="text-token-text-primary mr-2">
-                          {student.name}
-                        </Text>
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${getLevelColor(student.level)}`}>
-                          {student.level.charAt(0).toUpperCase() + student.level.slice(1)}
-                        </span>
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center">
+                  <Users className="w-4 h-4 text-primary" />
+                </div>
+                <Text variant="h3" className="text-token-text font-semibold">
+                  Your Students ({studentsData.students.length})
+                </Text>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {studentsData.students.map((student) => (
+                  <Card key={student.id} className="p-6 bg-surface border border-border rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex items-center mb-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-text-inverse font-medium mr-3 shadow-sm">
+                        {student.avatar_url ? (
+                          <img
+                            src={student.avatar_url}
+                            alt={student.name}
+                            className="w-full h-full rounded-full object-cover"
+                          />
+                        ) : (
+                          student.name.split(' ').map(n => n[0]).join('')
+                        )}
                       </div>
-                      <div className="flex items-center">
-                        <span className="text-lg mr-1">{getCountryFlag(student.country)}</span>
+                      <div className="flex-1">
+                        <div className="flex items-center mb-1">
+                          <Text variant="h4" className="text-token-text font-semibold mr-2">
+                            {student.name}
+                          </Text>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getLevelColor(student.level)}`}>
+                            {student.level.charAt(0).toUpperCase() + student.level.slice(1)}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="text-lg mr-1">{getCountryFlag(student.country)}</span>
+                          <Text variant="small" className="text-token-text-secondary">
+                            {student.country}
+                          </Text>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="text-center p-3 bg-primary/5 rounded-lg border border-primary/20">
+                        <Text variant="h3" className="text-xl font-bold text-primary mb-1">
+                          {student.total_lessons}
+                        </Text>
                         <Text variant="small" className="text-token-text-secondary">
-                          {student.country}
+                          Lessons
+                        </Text>
+                      </div>
+                      <div className="text-center p-3 bg-token-success/5 rounded-lg border border-token-success/20">
+                        <Text variant="h3" className="text-xl font-bold text-token-success mb-1">
+                          {student.total_hours}
+                        </Text>
+                        <Text variant="small" className="text-token-text-secondary">
+                          Hours
                         </Text>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Stats */}
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="text-center">
-                      <Text variant="h3" className="text-2xl font-bold text-blue-600">
-                        {student.total_lessons}
+                    {/* Last Lesson */}
+                    <div className="mb-4 p-3 bg-token-surface-accent rounded-lg">
+                      <Text variant="small" className="text-token-text-secondary font-medium uppercase tracking-wide">
+                        Last Lesson
                       </Text>
-                      <Text variant="small" className="text-token-text-secondary">
-                        Lessons
+                      <Text variant="body" className="font-semibold text-token-text">
+                        {formatDate(student.last_lesson_date)}
                       </Text>
                     </div>
-                    <div className="text-center">
-                      <Text variant="h3" className="text-2xl font-bold text-green-600">
-                        {student.total_hours}
-                      </Text>
-                      <Text variant="small" className="text-token-text-secondary">
-                        Hours
-                      </Text>
+
+                    {/* Goals */}
+                    {student.goals && (
+                      <div className="mb-4 p-3 bg-accent/5 rounded-lg border border-accent/20">
+                        <Text variant="small" className="text-token-text-secondary font-medium uppercase tracking-wide mb-1">
+                          Goals
+                        </Text>
+                        <Text variant="body" className="text-token-text leading-relaxed">
+                          {student.goals}
+                        </Text>
+                      </div>
+                    )}
+
+                    {/* Actions */}
+                    <div className="flex gap-2 pt-4 border-t border-border">
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <Eye className="w-4 h-4 mr-1" />
+                        Profile
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleNotesEdit(student)}>
+                        <MessageSquare className="w-4 h-4 mr-1" />
+                        Notes
+                      </Button>
                     </div>
-                  </div>
-
-                  {/* Last Lesson */}
-                  <div className="mb-4">
-                    <Text variant="small" className="text-token-text-secondary">
-                      Last Lesson
-                    </Text>
-                    <Text variant="body" className="font-medium text-token-text-primary">
-                      {formatDate(student.last_lesson_date)}
-                    </Text>
-                  </div>
-
-                  {/* Goals */}
-                  {student.goals && (
-                    <div className="mb-4">
-                      <Text variant="small" className="text-token-text-secondary">
-                        Goals
-                      </Text>
-                      <Text variant="body" className="text-token-text-primary">
-                        {student.goals}
-                      </Text>
-                    </div>
-                  )}
-
-                  {/* Actions */}
-                  <div className="flex space-x-2">
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Eye className="w-4 h-4 mr-1" />
-                      View Profile
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => handleNotesEdit(student)}>
-                      <MessageSquare className="w-4 h-4 mr-1" />
-                      Notes
-                    </Button>
-                  </div>
-                </Card>
-              ))}
+                  </Card>
+                ))}
+              </div>
             </div>
           )}
 
           {/* Notes Modal */}
           {showNotesModal && selectedStudent && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-token-surface rounded-xl p-6 w-full max-w-lg">
+            <div className="fixed inset-0 bg-token-overlay flex items-center justify-center z-50">
+              <div className="bg-surface rounded-lg p-6 w-full max-w-lg border border-border shadow-lg">
                 <div className="flex items-center justify-between mb-4">
                   <Text variant="h3" className="text-token-primary">
                     Student Notes (Private)

@@ -64,14 +64,6 @@ const safetyGuidelines = [
 
 const supportResources = [
   {
-    title: '24/7 Safety Hotline',
-    description: 'Immediate support for urgent safety concerns',
-    icon: Phone,
-    contact: '+1-800-XPEAK-HELP',
-    available: '24/7',
-    color: 'bg-token-error'
-  },
-  {
     title: 'Tutor Support Team',
     description: 'General questions and guidance for tutors',
     icon: Headphones,
@@ -229,60 +221,54 @@ export default function TutorSafety() {
     setReportDescription('');
   };
 
+  const reportTypes = [
+    { id: 'inappropriate_behavior', title: 'Inappropriate Behavior', description: 'Harassment, discrimination, or unprofessional conduct', severity: 'high', icon: AlertTriangle },
+    { id: 'safety_concerns', title: 'Safety Concerns', description: 'Threats, stalking, or dangerous behavior', severity: 'critical', icon: Shield },
+    { id: 'platform_violations', title: 'Platform Violations', description: 'Misuse of platform features or circumventing policies', severity: 'medium', icon: Flag },
+    { id: 'technical_issues', title: 'Technical Issues', description: 'Security vulnerabilities or technical problems', severity: 'medium', icon: AlertCircle }
+  ];
+
   return (
     <TutorLayout>
       <div className="min-h-screen bg-token-surface-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
-            <Text variant="h1" className="text-token-text-primary mb-2">
-              Safety & Trust Center
-            </Text>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 bg-token-error/20 rounded-full flex items-center justify-center">
+                <Shield className="w-4 h-4 text-token-error" />
+              </div>
+              <Text variant="h1" className="text-token-text font-bold">
+                Safety & Trust Center
+              </Text>
+            </div>
             <Text variant="body" className="text-token-text-secondary">
               Your safety and the safety of our learning community is our top priority
             </Text>
           </div>
 
-          {/* Emergency Contact */}
-          <Card className="p-6 mb-8 border-l-4 border-token-error rounded-xl">
-            <div className="flex items-center mb-4">
-              <Phone className="w-6 h-6 text-token-error mr-3" />
-              <Text variant="h3" className="text-token-text-primary">
-                Emergency Support
-              </Text>
-            </div>
-            <Text variant="body" className="text-token-text-secondary mb-4">
-              For immediate safety concerns or urgent issues, contact our 24/7 safety hotline:
-            </Text>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button variant="primary" className="bg-token-error hover:bg-token-error-dark">
-                <Phone className="w-4 h-4 mr-2" />
-                Call +1-800-XPEAK-HELP
-              </Button>
-              <Button variant="outline">
-                <MessageSquare className="w-4 h-4 mr-2" />
-                Start Emergency Chat
-              </Button>
-            </div>
-          </Card>
-
           {/* Safety Guidelines */}
           <div className="mb-8">
-            <Text variant="h2" className="text-token-text-primary mb-6">
-              Safety Guidelines
-            </Text>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center">
+                <UserCheck className="w-4 h-4 text-primary" />
+              </div>
+              <Text variant="h2" className="text-token-text font-bold">
+                Safety Guidelines
+              </Text>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {safetyGuidelines.map((guideline, index) => {
                 const Icon = guideline.icon;
                 return (
-                  <Card key={index} className="p-6 text-center rounded-xl">
-                    <div className={`w-12 h-12 ${guideline.color} rounded-lg flex items-center justify-center mx-auto mb-4`}>
-                      <Icon className="w-6 h-6 text-white" />
+                  <Card key={index} className="p-6 bg-surface border border-border text-center rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div className={`w-12 h-12 ${guideline.color}/20 rounded-lg flex items-center justify-center mx-auto mb-4 shadow-sm`}>
+                      <Icon className="w-6 h-6 text-token-text" />
                     </div>
-                    <Text variant="h4" className="text-token-text-primary mb-2">
+                    <Text variant="h4" className="text-token-text font-semibold mb-2">
                       {guideline.title}
                     </Text>
-                    <Text variant="small" className="text-token-text-secondary">
+                    <Text variant="small" className="text-token-text-secondary leading-relaxed">
                       {guideline.description}
                     </Text>
                   </Card>
@@ -328,103 +314,126 @@ export default function TutorSafety() {
             </div>
           </div>
 
-          {/* Report an Issue */}
-          <div className="mb-8">
-            <Text variant="h2" className="text-token-text-primary mb-6">
-              Report an Issue
-            </Text>
-            <Card className="p-6 rounded-xl">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                {reportingCategories.map((category, index) => {
-                  const Icon = category.icon;
-                  return (
-                    <div
-                      key={index}
-                      className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
-                        selectedReportType === category.title
-                          ? 'border-token-primary bg-token-primary-light'
-                          : 'border-token hover:border-token-primary'
-                      }`}
-                      onClick={() => setSelectedReportType(category.title)}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center">
-                          <Icon className="w-5 h-5 text-token-text-muted mr-2" />
-                          <Text variant="h4" className="text-token-text-primary">
-                            {category.title}
-                          </Text>
-                        </div>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getSeverityColor(category.severity)}`}>
-                          {category.severity}
-                        </span>
-                      </div>
-                      <Text variant="small" className="text-token-text-secondary">
-                        {category.description}
-                      </Text>
-                    </div>
-                  );
-                })}
+          {/* Reporting */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* Report an Issue */}
+            <Card className="p-6 bg-surface border border-border rounded-xl shadow-sm">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 bg-token-warning/20 rounded-full flex items-center justify-center">
+                  <Flag className="w-4 h-4 text-token-warning" />
+                </div>
+                <Text variant="h3" className="text-token-text font-semibold">
+                  Report an Issue
+                </Text>
               </div>
+              
+              <Text variant="body" className="text-token-text-secondary mb-6 leading-relaxed">
+                Help us maintain a safe learning environment by reporting any concerns or inappropriate behavior.
+              </Text>
 
-              {selectedReportType && (
-                <div className="border-t border-token pt-6">
-                  <Text variant="h4" className="text-token-text-primary mb-4">
-                    Report Details
-                  </Text>
-                  <textarea
-                    value={reportDescription}
-                    onChange={(e) => setReportDescription(e.target.value)}
-                    placeholder="Please provide detailed information about the issue..."
-                    className="w-full p-4 border border-token rounded-lg focus:outline-none focus:ring-2 focus:ring-token-primary min-h-[120px]"
-                  />
-                  <div className="flex justify-end gap-4 mt-4">
-                    <Button variant="outline" onClick={() => setSelectedReportType('')}>
-                      Cancel
-                    </Button>
-                    <Button variant="primary" onClick={handleReportSubmit}>
+              {!showReportForm ? (
+                <div className="space-y-3">
+                  {reportTypes.map((type) => (
+                    <button
+                      key={type.id}
+                      onClick={() => {
+                        setSelectedReportType(type.id);
+                        setShowReportForm(true);
+                      }}
+                      className="w-full p-4 text-left bg-token-surface-accent hover:bg-token-surface-accent/80 border border-border rounded-lg transition-colors"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className={`w-8 h-8 ${getSeverityColor(type.severity)}/20 rounded-lg flex items-center justify-center mr-3`}>
+                            <AlertTriangle className="w-4 h-4 text-token-text" />
+                          </div>
+                          <div>
+                            <Text variant="body" className="text-token-text font-medium">
+                              {type.title}
+                            </Text>
+                            <Text variant="small" className="text-token-text-secondary">
+                              {type.description}
+                            </Text>
+                          </div>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-token-text-muted" />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="p-4 bg-token-warning/5 border border-token-warning/30 rounded-lg">
+                    <Text variant="body" className="text-token-warning font-medium mb-2">
+                      Report Type: {reportTypes.find(t => t.id === selectedReportType)?.title}
+                    </Text>
+                    <Text variant="small" className="text-token-text-secondary">
+                      {reportTypes.find(t => t.id === selectedReportType)?.description}
+                    </Text>
+                  </div>
+                  
+                  <div>
+                    <Text variant="body" className="text-token-text font-medium mb-2">
+                      Please describe the issue:
+                    </Text>
+                    <textarea
+                      value={reportDescription}
+                      onChange={(e) => setReportDescription(e.target.value)}
+                      placeholder="Provide as much detail as possible to help us investigate..."
+                      rows={4}
+                      className="w-full p-3 border border-border rounded-lg bg-surface text-token-text placeholder:text-token-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-none"
+                    />
+                  </div>
+                  
+                  <div className="flex gap-3">
+                    <Button variant="primary" onClick={handleReportSubmit} className="flex-1">
                       Submit Report
+                    </Button>
+                    <Button variant="outline" onClick={() => setShowReportForm(false)}>
+                      Cancel
                     </Button>
                   </div>
                 </div>
               )}
             </Card>
-          </div>
 
-          {/* Support Resources */}
-          <div className="mb-8">
-            <Text variant="h2" className="text-token-text-primary mb-6">
-              Support Resources
-            </Text>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {supportResources.map((resource, index) => {
-                const Icon = resource.icon;
-                return (
-                  <Card key={index} className="p-6 rounded-xl">
-                    <div className="flex items-start mb-4">
-                      <div className={`w-12 h-12 ${resource.color} rounded-lg flex items-center justify-center mr-4`}>
-                        <Icon className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <Text variant="h4" className="text-token-text-primary mb-2">
-                          {resource.title}
-                        </Text>
-                        <Text variant="small" className="text-token-text-secondary mb-3">
-                          {resource.description}
-                        </Text>
-                        <div className="flex items-center justify-between">
-                          <Text variant="small" className="text-token-text-muted">
-                            Available: {resource.available}
-                          </Text>
-                          <Button variant="outline" size="sm">
-                            {resource.contact}
-                          </Button>
+            {/* Support Resources */}
+            <Card className="p-6 bg-surface border border-border rounded-xl shadow-sm">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 bg-accent/20 rounded-full flex items-center justify-center">
+                  <HelpCircle className="w-4 h-4 text-accent" />
+                </div>
+                <Text variant="h3" className="text-token-text font-semibold">
+                  Support Resources
+                </Text>
+              </div>
+              
+              <div className="space-y-4">
+                {supportResources.map((resource, index) => {
+                  const Icon = resource.icon;
+                  return (
+                    <div key={index} className="p-4 bg-token-surface-accent rounded-lg border border-border hover:shadow-sm transition-shadow">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center mr-3">
+                            <Icon className="w-4 h-4 text-primary" />
+                          </div>
+                          <div>
+                            <Text variant="body" className="text-token-text font-medium">
+                              {resource.title}
+                            </Text>
+                            <Text variant="small" className="text-token-text-secondary">
+                              {resource.description}
+                            </Text>
+                          </div>
                         </div>
+                        <ExternalLink className="w-4 h-4 text-token-text-muted" />
                       </div>
                     </div>
-                  </Card>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            </Card>
           </div>
 
           {/* Best Practices */}

@@ -217,11 +217,8 @@ export default function TutorLessonsPage() {
 
   const handleRescheduleLesson = async (lessonId: string) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
-      // Navigate to reschedule page or open reschedule modal
-      window.location.href = `/lessons/${lessonId}/reschedule`;
+      // Navigate to lesson detail page where reschedule modal is available
+      window.location.href = `/lessons/${lessonId}`;
     } catch (error) {
       console.error('Error initiating reschedule:', error);
     }
@@ -356,9 +353,9 @@ export default function TutorLessonsPage() {
     const timeString = formatDateTime(new Date(Date.now() + minutesUntil * 60000).toISOString());
     
     if (minutesUntil <= 15) {
-      return <span className="text-orange-600 font-medium">{timeString}</span>;
+      return <span className="text-token-warning font-medium">{timeString}</span>;
     } else if (minutesUntil <= 60) {
-      return <span className="text-orange-500">{timeString}</span>;
+      return <span className="text-token-warning/80">{timeString}</span>;
     } else {
       return <span className="text-token-text-secondary">{timeString}</span>;
     }
@@ -366,12 +363,16 @@ export default function TutorLessonsPage() {
 
   // Separate lessons with reschedule requests from regular lessons
   const lessonsWithRescheduleRequests = lessons.filter(lesson => 
-    rescheduleRequests.some(req => req.lesson_id === lesson.id)
+    rescheduleRequests.some(req => req.lesson_id === lesson.id) && lesson.status !== 'cancelled'
   );
   
   const regularLessons = lessons.filter(lesson => 
-    !rescheduleRequests.some(req => req.lesson_id === lesson.id)
+    !rescheduleRequests.some(req => req.lesson_id === lesson.id) && lesson.status !== 'cancelled'
   );
+
+  // Filter lessons into different status groups (excluding cancelled)
+  const pendingLessons = regularLessons.filter(lesson => lesson.status === 'pending');
+  const confirmedLessons = regularLessons.filter(lesson => lesson.status === 'confirmed');
 
   if (loading) return <LoadingState />;
   if (error) return <ErrorState message={error} />;
@@ -385,14 +386,14 @@ export default function TutorLessonsPage() {
         />
 
         {/* Rescheduling Rules */}
-        <Card className="p-6 bg-orange-50 border border-orange-200 rounded-xl mb-6" variant="outlined">
+        <Card className="p-6 bg-token-warning/10 border border-token-warning/30 rounded-xl mb-6" variant="outlined">
           <div className="flex items-start">
-            <AlertTriangle className="w-5 h-5 text-orange-600 mr-3 mt-0.5 flex-shrink-0" />
+            <AlertTriangle className="w-5 h-5 text-token-warning mr-3 mt-0.5 flex-shrink-0" />
             <div>
-              <Text variant="subtitle" className="font-semibold text-orange-800 mb-2">
+              <Text variant="subtitle" className="font-semibold text-token-warning mb-2">
                 Rescheduling Rules
               </Text>
-              <ul className="text-sm text-orange-700 space-y-1">
+              <ul className="text-sm text-token-warning/80 space-y-1">
                 <li>• Students can request to reschedule if more than 12 hours before the lesson</li>
                 <li>• Tutors are expected to avoid cancellations within 12 hours of the lesson start time</li>
                 <li>• All reschedule requests require confirmation from both parties</li>
@@ -405,10 +406,10 @@ export default function TutorLessonsPage() {
         {lessonsWithRescheduleRequests.length > 0 && (
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                <RefreshCw className="w-4 h-4 text-orange-600" />
+              <div className="w-8 h-8 bg-token-warning/20 rounded-full flex items-center justify-center">
+                <RefreshCw className="w-4 h-4 text-token-warning" />
               </div>
-              <Text variant="h3" className="font-bold text-gray-900">
+              <Text variant="h3" className="font-bold text-token-text">
                 Reschedule Requests ({lessonsWithRescheduleRequests.length})
               </Text>
             </div>
@@ -416,12 +417,12 @@ export default function TutorLessonsPage() {
               {lessonsWithRescheduleRequests.map((lesson) => {
                 const rescheduleRequest = rescheduleRequests.find(req => req.lesson_id === lesson.id);
                 return (
-                  <Card key={lesson.id} className="p-6 border border-gray-200 bg-orange-50 rounded-xl shadow-sm hover:shadow-md transition-shadow" variant="outlined">
+                  <Card key={lesson.id} className="p-6 border border-border bg-token-warning/5 rounded-xl shadow-sm hover:shadow-md transition-shadow" variant="outlined">
                     <div className="flex items-start justify-between">
                       {/* Left Section: Avatar, Name, Time, Details */}
                       <div className="flex items-start gap-4 flex-1">
                         {/* Student Avatar */}
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0 shadow-sm">
                           {lesson.student.profile_image_url ? (
                             <img 
                               src={lesson.student.profile_image_url} 
@@ -429,7 +430,7 @@ export default function TutorLessonsPage() {
                               className="w-12 h-12 rounded-full object-cover"
                             />
                           ) : (
-                            <User className="w-6 h-6 text-white" />
+                            <User className="w-6 h-6 text-text-inverse" />
                           )}
                         </div>
 
@@ -440,7 +441,7 @@ export default function TutorLessonsPage() {
                             <Text variant="h3" as="h3" className="truncate">
                               {lesson.student.name}
                             </Text>
-                            <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full whitespace-nowrap">
+                            <span className="px-2 py-0.5 bg-accent/20 text-accent text-xs font-medium rounded-full whitespace-nowrap">
                               Student
                             </span>
                             {lesson.minutes_until >= 0 && (
@@ -461,21 +462,21 @@ export default function TutorLessonsPage() {
                           {/* Labeled Details */}
                           <div className="grid grid-cols-3 gap-4 text-sm">
                             <div className="flex items-center gap-2">
-                              <BookOpen className="w-4 h-4 text-gray-400" />
+                              <BookOpen className="w-4 h-4 text-text-secondary" />
                               <div>
                                 <div className="text-xs text-token-text-muted uppercase tracking-wide">Lesson Type</div>
                                 <div className="font-medium text-token-text">{lesson.lesson_type}</div>
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Clock className="w-4 h-4 text-gray-400" />
+                              <Clock className="w-4 h-4 text-text-secondary" />
                               <div>
                                 <div className="text-xs text-token-text-muted uppercase tracking-wide">Duration</div>
                                 <div className="font-medium text-token-text">{lesson.duration_minutes} Minutes</div>
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
-                              <CheckCircle className="w-4 h-4 text-gray-400" />
+                              <CheckCircle className="w-4 h-4 text-text-secondary" />
                               <div>
                                 <div className="text-xs text-token-text-muted uppercase tracking-wide">Status</div>
                                 <div className="font-medium text-token-text">
@@ -490,19 +491,19 @@ export default function TutorLessonsPage() {
 
                           {/* Reschedule Request Details */}
                           {rescheduleRequest && (
-                            <div className="mt-4 p-4 bg-white rounded-xl border border-orange-200 shadow-sm">
+                            <div className="mt-4 p-4 bg-surface rounded-xl border border-token-warning/30 shadow-sm">
                               <div className="flex items-center mb-4">
-                                <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mr-3">
-                                  <RefreshCw className="w-4 h-4 text-orange-600" />
+                                <div className="w-8 h-8 bg-token-warning/20 rounded-full flex items-center justify-center mr-3">
+                                  <RefreshCw className="w-4 h-4 text-token-warning" />
                                 </div>
-                                <Text variant="subtitle" className="font-semibold text-orange-800">
+                                <Text variant="subtitle" className="font-semibold text-token-warning">
                                   Reschedule Request
                                 </Text>
                               </div>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                 <div className="space-y-1">
-                                  <Text variant="caption" className="text-gray-500 font-medium uppercase tracking-wide">Current Schedule</Text>
-                                  <Text variant="body" className="text-gray-900 font-medium">
+                                  <Text variant="caption" className="text-text-secondary font-medium uppercase tracking-wide">Current Schedule</Text>
+                                  <Text variant="body" className="text-text font-medium">
                                     {new Date(lesson.scheduled_start).toLocaleDateString('en-US', { 
                                       weekday: 'short', 
                                       month: 'short', 
@@ -514,8 +515,8 @@ export default function TutorLessonsPage() {
                                   </Text>
                                 </div>
                                 <div className="space-y-1">
-                                  <Text variant="caption" className="text-gray-500 font-medium uppercase tracking-wide">Requested New Time</Text>
-                                  <Text variant="body" className="text-gray-900 font-medium">
+                                  <Text variant="caption" className="text-text-secondary font-medium uppercase tracking-wide">Requested New Time</Text>
+                                  <Text variant="body" className="text-text font-medium">
                                     {new Date(`${rescheduleRequest.requested_date}T${rescheduleRequest.requested_start_time}`).toLocaleDateString('en-US', { 
                                       weekday: 'short', 
                                       month: 'short', 
@@ -528,9 +529,9 @@ export default function TutorLessonsPage() {
                                 </div>
                               </div>
                               {rescheduleRequest.reason && (
-                                <div className="mt-4 pt-4 border-t border-orange-100">
-                                  <Text variant="caption" className="text-gray-500 font-medium uppercase tracking-wide mb-2 block">Reason</Text>
-                                  <Text variant="body" className="text-gray-900 leading-relaxed">{rescheduleRequest.reason}</Text>
+                                <div className="mt-4 pt-4 border-t border-token-warning/20">
+                                  <Text variant="caption" className="text-text-secondary font-medium uppercase tracking-wide mb-2 block">Reason</Text>
+                                  <Text variant="body" className="text-text leading-relaxed">{rescheduleRequest.reason}</Text>
                                 </div>
                               )}
                             </div>
@@ -548,7 +549,7 @@ export default function TutorLessonsPage() {
                     </div>
 
                     {/* Bottom Section: Action Buttons */}
-                    <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+                    <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border">
                       {/* Join button for lessons within 60 minutes */}
                       {lesson.can_join && (
                         <Link href={`/lessons/${lesson.id}/video`}>
@@ -566,7 +567,7 @@ export default function TutorLessonsPage() {
                             size="sm"
                             onClick={() => handleRescheduleAction(rescheduleRequest.id, 'approve')}
                             disabled={rescheduleActionLoading === rescheduleRequest.id}
-                            className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-green-50 hover:border-green-300 text-green-600 border-green-200"
+                            className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-success/10 hover:border-success/30 text-success border-success/20"
                           >
                             <Check className="w-3.5 h-3.5 mr-1.5" />
                             {rescheduleActionLoading === rescheduleRequest.id ? 'Approving...' : 'Approve'}
@@ -576,7 +577,7 @@ export default function TutorLessonsPage() {
                             size="sm"
                             onClick={() => handleRescheduleAction(rescheduleRequest.id, 'reject')}
                             disabled={rescheduleActionLoading === rescheduleRequest.id}
-                            className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-red-50 hover:border-red-300 text-red-600 border-red-200"
+                            className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-error/10 hover:border-error/30 text-error border-error/20"
                           >
                             <X className="w-3.5 h-3.5 mr-1.5" />
                             {rescheduleActionLoading === rescheduleRequest.id ? 'Rejecting...' : 'Reject'}
@@ -590,7 +591,7 @@ export default function TutorLessonsPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleCancelLesson(lesson.id)}
-                          className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-red-50 hover:border-red-300 hover:text-red-700"
+                          className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-token-error/10 hover:border-token-error/30 hover:text-token-error"
                         >
                           <X className="w-3.5 h-3.5 mr-1.5" />
                           Cancel
@@ -598,7 +599,7 @@ export default function TutorLessonsPage() {
                       )}
                       
                       <Link href={`/lessons/${lesson.id}`}>
-                        <Button variant="outline" size="sm" className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-gray-50 hover:border-gray-300">
+                        <Button variant="outline" size="sm" className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-surface hover:border-border">
                           <Eye className="w-3.5 h-3.5 mr-1.5" />
                           View Details
                         </Button>
@@ -611,25 +612,25 @@ export default function TutorLessonsPage() {
           </div>
         )}
 
-        {/* Other Lessons */}
-        {regularLessons.length > 0 && (
-          <div>
+        {/* Pending Confirmation Lessons */}
+        {pendingLessons.length > 0 && (
+          <div className="mb-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <Calendar className="w-4 h-4 text-blue-600" />
+              <div className="w-8 h-8 bg-token-warning/20 rounded-full flex items-center justify-center">
+                <Clock className="w-4 h-4 text-token-warning" />
               </div>
-              <Text variant="h3" className="font-bold text-gray-900">
-                Other Lessons ({regularLessons.length})
+              <Text variant="h3" className="font-bold text-token-text">
+                Pending Confirmation ({pendingLessons.length})
               </Text>
             </div>
             <div className="space-y-4">
-              {regularLessons.map((lesson) => (
-                <Card key={lesson.id} className="p-6 border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow" variant="outlined">
+              {pendingLessons.map((lesson) => (
+                <Card key={lesson.id} className="p-6 border border-border bg-token-warning/5 rounded-xl shadow-sm hover:shadow-md transition-shadow" variant="outlined">
                   <div className="flex items-start justify-between">
                     {/* Left Section: Avatar, Name, Time, Details */}
                     <div className="flex items-start gap-4 flex-1">
                       {/* Student Avatar */}
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0 shadow-sm">
                         {lesson.student.profile_image_url ? (
                           <img 
                             src={lesson.student.profile_image_url} 
@@ -637,7 +638,7 @@ export default function TutorLessonsPage() {
                             className="w-12 h-12 rounded-full object-cover"
                           />
                         ) : (
-                          <User className="w-6 h-6 text-white" />
+                          <User className="w-6 h-6 text-text-inverse" />
                         )}
                       </div>
 
@@ -648,7 +649,7 @@ export default function TutorLessonsPage() {
                           <Text variant="h3" as="h3" className="truncate">
                             {lesson.student.name}
                           </Text>
-                          <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full whitespace-nowrap">
+                          <span className="px-2 py-0.5 bg-primary/20 text-primary text-xs font-medium rounded-full whitespace-nowrap">
                             Student
                           </span>
                           {lesson.minutes_until >= 0 && (
@@ -669,28 +670,145 @@ export default function TutorLessonsPage() {
                         {/* Labeled Details */}
                         <div className="grid grid-cols-3 gap-4 text-sm">
                           <div className="flex items-center gap-2">
-                            <BookOpen className="w-4 h-4 text-gray-400" />
+                            <BookOpen className="w-4 h-4 text-text-secondary" />
                             <div>
                               <div className="text-xs text-token-text-muted uppercase tracking-wide">Lesson Type</div>
                               <div className="font-medium text-token-text">{lesson.lesson_type}</div>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Clock className="w-4 h-4 text-gray-400" />
+                            <Clock className="w-4 h-4 text-text-secondary" />
                             <div>
                               <div className="text-xs text-token-text-muted uppercase tracking-wide">Duration</div>
                               <div className="font-medium text-token-text">{lesson.duration_minutes} Minutes</div>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-gray-400" />
+                            <CheckCircle className="w-4 h-4 text-text-secondary" />
+                            <div>
+                              <div className="text-xs text-token-text-muted uppercase tracking-wide">Status</div>
+                              <div className="font-medium text-token-text">Pending Confirmation</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right Section: Status Badge */}
+                    <div className="flex-shrink-0 ml-4">
+                      <span className={`px-3 py-1.5 rounded-full text-sm font-medium border flex items-center gap-1.5 ${getStatusColor(lesson.status)}`}>
+                        {getStatusIcon(lesson.status)}
+                        Pending Confirmation
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center gap-3 mt-6 pt-6 border-t border-border">
+                    <Button 
+                      variant="primary"
+                      size="sm"
+                      onClick={() => handleConfirmLesson(lesson.id)}
+                      className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-primary/90 hover:border-primary/80 text-text-inverse border-primary"
+                    >
+                      <Check className="w-3 h-3 mr-1.5" />
+                      Confirm Lesson
+                    </Button>
+
+                    <Link href={`/lessons/${lesson.id}`}>
+                      <Button 
+                        variant="outline"
+                        size="sm"
+                        className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-surface hover:border-border text-token-text border-border"
+                      >
+                        <Eye className="w-3 h-3 mr-1.5" />
+                        View Details
+                      </Button>
+                    </Link>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Confirmed Lessons */}
+        {confirmedLessons.length > 0 && (
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 bg-token-success/20 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-4 h-4 text-token-success" />
+              </div>
+              <Text variant="h3" className="font-bold text-token-text">
+                Confirmed Lessons ({confirmedLessons.length})
+              </Text>
+            </div>
+            <div className="space-y-4">
+              {confirmedLessons.map((lesson) => (
+                <Card key={lesson.id} className="p-6 border border-border bg-surface rounded-xl shadow-sm hover:shadow-md transition-shadow" variant="outlined">
+                  <div className="flex items-start justify-between">
+                    {/* Left Section: Avatar, Name, Time, Details */}
+                    <div className="flex items-start gap-4 flex-1">
+                      {/* Student Avatar */}
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0 shadow-sm">
+                        {lesson.student.profile_image_url ? (
+                          <img 
+                            src={lesson.student.profile_image_url} 
+                            alt={lesson.student.name}
+                            className="w-12 h-12 rounded-full object-cover"
+                          />
+                        ) : (
+                          <User className="w-6 h-6 text-text-inverse" />
+                        )}
+                      </div>
+
+                      {/* Lesson Info */}
+                      <div className="flex-1 min-w-0">
+                        {/* Name and Time Until */}
+                        <div className="flex items-center gap-2 mb-1">
+                          <Text variant="h3" as="h3" className="truncate">
+                            {lesson.student.name}
+                          </Text>
+                          <span className="px-2 py-0.5 bg-primary/20 text-primary text-xs font-medium rounded-full whitespace-nowrap">
+                            Student
+                          </span>
+                          {lesson.minutes_until >= 0 && (
+                            <div className="flex items-center gap-1.5">
+                              <div className={`w-1.5 h-1.5 rounded-full ${lesson.minutes_until <= 15 ? 'bg-token-warning animate-pulse' : 'bg-token-success'}`}></div>
+                              <Text variant="small" className="text-token-text-secondary">
+                                {formatTimeUntilHighlighted(lesson.minutes_until)}
+                              </Text>
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Lesson Time */}
+                        <Text variant="body" className="text-token-text-secondary mb-3">
+                          {formatLessonTime(lesson.scheduled_start)}
+                        </Text>
+                        
+                        {/* Labeled Details */}
+                        <div className="grid grid-cols-3 gap-4 text-sm">
+                          <div className="flex items-center gap-2">
+                            <BookOpen className="w-4 h-4 text-text-secondary" />
+                            <div>
+                              <div className="text-xs text-token-text-muted uppercase tracking-wide">Lesson Type</div>
+                              <div className="font-medium text-token-text">{lesson.lesson_type}</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-text-secondary" />
+                            <div>
+                              <div className="text-xs text-token-text-muted uppercase tracking-wide">Duration</div>
+                              <div className="font-medium text-token-text">{lesson.duration_minutes} Minutes</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-text-secondary" />
                             <div>
                               <div className="text-xs text-token-text-muted uppercase tracking-wide">Status</div>
                               <div className="font-medium text-token-text">
-                                {lesson.status === 'confirmed' && lesson.can_join ? 'Ready to Join' :
-                                 lesson.status === 'confirmed' ? 'Confirmed' :
-                                 lesson.status === 'pending' ? 'Pending Confirmation' :
-                                 getLessonStatus(lesson)}
+                                {lesson.can_join ? 'Ready to Join' : 'Confirmed'}
                               </div>
                             </div>
                           </div>
@@ -702,87 +820,31 @@ export default function TutorLessonsPage() {
                     <div className="flex-shrink-0 ml-4">
                       <span className={`px-3 py-1.5 rounded-full text-sm font-medium border flex items-center gap-1.5 ${getStatusColor(lesson.status)}`}>
                         {getStatusIcon(lesson.status)}
-                        {getLessonStatus(lesson)}
+                        {lesson.can_join ? 'Ready to Join' : 'Confirmed'}
                       </span>
                     </div>
                   </div>
 
-                  {/* Bottom Section: Action Buttons */}
-                  <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
-                    {/* Join button for lessons within 60 minutes */}
+                  {/* Action Buttons */}
+                  <div className="flex items-center gap-3 mt-6 pt-6 border-t border-border">
                     {lesson.can_join && (
-                      <Link href={`/lessons/${lesson.id}/video`}>
-                        <Button variant="primary" size="sm" className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:shadow-md">
-                          <Video className="w-3.5 h-3.5 mr-1.5" />
-                          Join Lesson
-                        </Button>
-                      </Link>
-                    )}
-                    
-                    {/* Show Confirm and Cancel buttons for pending lessons */}
-                    {lesson.status === 'pending' && (
-                      <>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleConfirmLesson(lesson.id)}
-                          className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-green-50 hover:border-green-300 text-green-600 border-green-200"
-                        >
-                          <Check className="w-3.5 h-3.5 mr-1.5" />
-                          Confirm
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleCancelLesson(lesson.id)}
-                          className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-red-50 hover:border-red-300 hover:text-red-700"
-                        >
-                          <X className="w-3.5 h-3.5 mr-1.5" />
-                          Cancel
-                        </Button>
-                      </>
-                    )}
-                    
-                    {/* Show Reschedule and Cancel buttons for confirmed lessons */}
-                    {lesson.status === 'confirmed' && !lesson.can_join && (
-                      <>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleRescheduleLesson(lesson.id)}
-                          className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-blue-50 hover:border-blue-300 text-blue-600 border-blue-200"
-                        >
-                          <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
-                          Reschedule
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleCancelLesson(lesson.id)}
-                          className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-red-50 hover:border-red-300 hover:text-red-700"
-                        >
-                          <X className="w-3.5 h-3.5 mr-1.5" />
-                          Cancel
-                        </Button>
-                      </>
-                    )}
-                    
-                    {/* Show Cancel button for other lesson statuses that can be cancelled */}
-                    {['confirmed', 'reschedule_requested'].includes(lesson.status) && lesson.can_join && (
-                      <Button
-                        variant="outline"
+                      <Button 
+                        variant="primary"
                         size="sm"
-                        onClick={() => handleCancelLesson(lesson.id)}
-                        className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-red-50 hover:border-red-300 hover:text-red-700"
+                        className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-primary/90 hover:border-primary/80 text-text-inverse border-primary"
                       >
-                        <X className="w-3.5 h-3.5 mr-1.5" />
-                        Cancel
+                        <Video className="w-3 h-3 mr-1.5" />
+                        Join Lesson
                       </Button>
                     )}
-                    
+
                     <Link href={`/lessons/${lesson.id}`}>
-                      <Button variant="outline" size="sm" className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-gray-50 hover:border-gray-300">
-                        <Eye className="w-3.5 h-3.5 mr-1.5" />
+                      <Button 
+                        variant="outline"
+                        size="sm"
+                        className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-surface hover:border-border text-token-text border-border"
+                      >
+                        <Eye className="w-3 h-3 mr-1.5" />
                         View Details
                       </Button>
                     </Link>
@@ -793,17 +855,18 @@ export default function TutorLessonsPage() {
           </div>
         )}
 
-        {lessons.length === 0 && (
-          <Card className="p-12 text-center border border-gray-200 rounded-xl shadow-sm" variant="outlined">
-            <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Calendar className="w-10 h-10 text-gray-400" />
+        {/* Empty State */}
+        {lessonsWithRescheduleRequests.length === 0 && pendingLessons.length === 0 && confirmedLessons.length === 0 && !loading && (
+          <Card className="p-12 text-center border border-border bg-surface rounded-xl shadow-sm" variant="outlined">
+            <div className="flex flex-col items-center">
+              <Calendar className="w-10 h-10 text-token-text-muted" />
+              <Text variant="h3" className="font-bold text-token-text mb-3">
+                No Upcoming Lessons
+              </Text>
+              <Text variant="body" className="text-token-text-secondary max-w-md mx-auto leading-relaxed">
+                You don't have any upcoming lessons scheduled. Check your calendar to see your availability or wait for new bookings.
+              </Text>
             </div>
-            <Text variant="h3" className="font-bold text-gray-900 mb-3">
-              No upcoming lessons
-            </Text>
-            <Text variant="body" className="text-gray-600 max-w-md mx-auto leading-relaxed">
-              You don't have any upcoming lessons scheduled. New lesson requests will appear here once students book with you.
-            </Text>
           </Card>
         )}
       </TutorPageLayout>

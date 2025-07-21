@@ -133,22 +133,22 @@ export default function TutorDashboard() {
         title: 'Total Lessons',
         value: data.summary.total_lessons.toString(),
         icon: <BookOpen className="w-6 h-6" />,
-        iconBgColor: 'bg-blue-100',
-        iconColor: 'text-blue-600'
+        iconBgColor: 'bg-accent/20',
+        iconColor: 'text-accent'
       },
       {
         title: 'Active Students',
         value: data.summary.total_students.toString(),
         icon: <Users className="w-6 h-6" />,
-        iconBgColor: 'bg-green-100',
-        iconColor: 'text-green-600'
+        iconBgColor: 'bg-success/20',
+        iconColor: 'text-success'
       },
       {
         title: 'Average Rating',
         value: `${data.summary.average_rating.toFixed(1)} ⭐`,
         icon: <Star className="w-6 h-6" />,
-        iconBgColor: 'bg-yellow-100',
-        iconColor: 'text-yellow-600'
+        iconBgColor: 'bg-warning/20',
+        iconColor: 'text-warning'
       },
       {
         title: 'Total Earnings',
@@ -157,8 +157,8 @@ export default function TutorDashboard() {
           currency: data.summary.currency || 'USD'
         }).format(data.summary.total_earnings),
         icon: <TrendingUp className="w-6 h-6" />,
-        iconBgColor: 'bg-purple-100',
-        iconColor: 'text-purple-600'
+        iconBgColor: 'bg-primary/20',
+        iconColor: 'text-primary'
       }
     ];
   }, [dashboardData]);
@@ -302,13 +302,13 @@ export default function TutorDashboard() {
 
           {/* Next Lesson Section */}
           {data.next_lesson && (
-            <Card className="p-6 mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl" variant="default">
+            <Card className="p-6 mb-8 bg-gradient-to-r from-accent/10 to-primary/10 border border-accent/30 rounded-xl" variant="default">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center">
-                  <Clock className="w-6 h-6 text-blue-600 mr-3" />
+                  <Clock className="w-6 h-6 text-accent mr-3" />
                   <div>
-                    <Text variant="h3" className="text-blue-900 font-bold">Next Lesson</Text>
-                    <Text variant="small" className="text-blue-700">
+                    <Text variant="h3" className="text-text font-bold">Next Lesson</Text>
+                    <Text variant="small" className="text-text-secondary">
                       {data.next_lesson.minutes_until > 0 
                         ? `Starting in ${Math.floor(data.next_lesson.minutes_until / 60)}h ${data.next_lesson.minutes_until % 60}m`
                         : 'Starting now!'
@@ -317,15 +317,15 @@ export default function TutorDashboard() {
                   </div>
                 </div>
                 {data.next_lesson.can_join && (
-                  <Button variant="primary" className="bg-blue-600 hover:bg-blue-700">
+                  <Button variant="primary" className="bg-primary hover:bg-primary/90">
                     <Play className="w-4 h-4 mr-2" />
                     Join Lesson
                   </Button>
                 )}
               </div>
               
-              <div className="flex items-center p-4 bg-white rounded-lg border border-blue-100">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 mr-4">
+              <div className="flex items-center p-4 bg-surface rounded-lg border border-border">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0 mr-4">
                   {data.next_lesson.student_avatar ? (
                     <img 
                       src={data.next_lesson.student_avatar} 
@@ -333,20 +333,20 @@ export default function TutorDashboard() {
                       className="w-12 h-12 rounded-full object-cover"
                     />
                   ) : (
-                    <Users className="w-6 h-6 text-white" />
+                    <Users className="w-6 h-6 text-text-inverse" />
                   )}
                 </div>
                 
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
-                    <Text variant="h4" className="font-bold text-gray-900">
+                    <Text variant="h4" className="font-bold text-text">
                       {data.next_lesson.student_name}
                     </Text>
                     <span className="text-lg">{getCountryFlag(data.next_lesson.student_country)}</span>
                   </div>
                   
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                  <div className="flex items-center gap-4 text-sm text-text-secondary">
+                    <span className="px-2 py-1 bg-accent/20 text-accent rounded text-xs font-medium">
                       {data.next_lesson.lesson_type}
                     </span>
                     <span>{data.next_lesson.duration} minutes</span>
@@ -372,7 +372,7 @@ export default function TutorDashboard() {
                   <div className="flex items-center">
                     <div className="w-16 bg-token-surface-subtle rounded-full h-2 mr-2">
                       <div 
-                        className="bg-green-500 h-2 rounded-full" 
+                        className="bg-success h-2 rounded-full" 
                         style={{ width: `${data.performance_metrics.completion_rate}%` }}
                       ></div>
                     </div>
@@ -387,7 +387,7 @@ export default function TutorDashboard() {
                   <div className="flex items-center">
                     <div className="w-16 bg-token-surface-subtle rounded-full h-2 mr-2">
                       <div 
-                        className="bg-blue-500 h-2 rounded-full" 
+                        className="bg-accent h-2 rounded-full" 
                         style={{ width: `${data.performance_metrics.student_satisfaction}%` }}
                       ></div>
                     </div>
@@ -409,7 +409,7 @@ export default function TutorDashboard() {
                   <div className="flex items-center">
                     <div className="w-16 bg-token-surface-subtle rounded-full h-2 mr-2">
                       <div 
-                        className="bg-purple-500 h-2 rounded-full" 
+                        className="bg-primary h-2 rounded-full" 
                         style={{ width: `${data.performance_metrics.availability_score}%` }}
                       ></div>
                     </div>
@@ -437,10 +437,10 @@ export default function TutorDashboard() {
                   data.recent_activity.slice(0, 5).map((activity: any) => (
                     <div key={activity.id} className="flex items-center p-3 border border-token rounded-lg">
                       <div className="flex-shrink-0 w-8 h-8 bg-token-surface-subtle rounded-full flex items-center justify-center mr-3">
-                        {activity.type === 'lesson' && <BookOpen className="w-4 h-4 text-blue-600" />}
-                        {activity.type === 'rating' && <Star className="w-4 h-4 text-yellow-600" />}
-                        {activity.type === 'achievement' && <Award className="w-4 h-4 text-green-600" />}
-                        {activity.type === 'default' && <AlertTriangle className="w-4 h-4 text-gray-600" />}
+                        {activity.type === 'lesson' && <BookOpen className="w-4 h-4 text-accent" />}
+                        {activity.type === 'rating' && <Star className="w-4 h-4 text-warning" />}
+                        {activity.type === 'achievement' && <Award className="w-4 h-4 text-success" />}
+                        {activity.type === 'default' && <AlertTriangle className="w-4 h-4 text-text-secondary" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <Text variant="body" className="font-medium text-token-text-primary truncate">
@@ -504,7 +504,7 @@ export default function TutorDashboard() {
 
                     return (
                       <div key={lesson.id} className="flex items-center p-4 border border-token rounded-lg hover:bg-token-surface-subtle transition-colors">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 mr-4">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0 mr-4">
                           {lesson.student_avatar ? (
                             <img 
                               src={lesson.student_avatar} 
@@ -512,7 +512,7 @@ export default function TutorDashboard() {
                               className="w-10 h-10 rounded-full object-cover"
                             />
                           ) : (
-                            <Users className="w-5 h-5 text-white" />
+                            <Users className="w-5 h-5 text-text-inverse" />
                           )}
                         </div>
                         
