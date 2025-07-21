@@ -1,5 +1,7 @@
 import React from 'react';
-import { Button } from '@/app/components/ui';
+import { Card, Text, Button, Badge } from '@/app/components/ui';
+import { Star, TrendingUp, Award, Target, BarChart3, Users, Clock, Calendar, Globe, MapPin, GraduationCap, BookOpen, MessageSquare, Video, Camera, Mic, Shield, Heart, Scale, Clock as ClockIcon } from 'lucide-react';
+import Image from 'next/image';
 
 export default function BecomeTutorHero() {
   return (
@@ -28,9 +30,11 @@ export default function BecomeTutorHero() {
         </div>
         {/* Right: Image */}
         <div className="flex-1 flex justify-center">
-          <img
+          <Image
             src="/images/tutor-hero-group.jpg"
             alt="Diverse group of tutors and students on video call"
+            width={640}
+            height={320}
             className="rounded-token-2xl shadow-xl w-full max-w-xl object-cover"
             style={{ minHeight: 320 }}
           />

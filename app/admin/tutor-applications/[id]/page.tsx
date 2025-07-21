@@ -18,7 +18,7 @@ import {
   Globe,
   FileText,
   Video,
-  Image,
+  Image as ImageIcon,
   Mail,
   MapPin,
   GraduationCap,
@@ -34,6 +34,7 @@ import {
   BookOpen
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface AdminAction {
   action_type: string;
@@ -406,16 +407,18 @@ export default function TutorApplicationDetailPage() {
               {/* Profile Photos */}
               <Card className="p-6 bg-token-surface border border-token">
                 <div className="flex items-center mb-4">
-                  <Image className="w-5 h-5 text-token-success mr-2" />
+                  <ImageIcon className="w-5 h-5 text-token-success mr-2" />
                   <Text variant="h3" as="h3" className="text-token-primary">Profile Photos</Text>
                 </div>
                 {application.profile_photos && application.profile_photos.length > 0 ? (
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {application.profile_photos.map((photo, index) => (
                       <div key={index} className="aspect-square bg-token-surface-subtle rounded-lg overflow-hidden">
-                        <img 
+                        <Image 
                           src={photo} 
                           alt={`Profile photo ${index + 1}`}
+                          width={100}
+                          height={100}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -424,7 +427,7 @@ export default function TutorApplicationDetailPage() {
                 ) : (
                   <div className="aspect-square bg-token-surface-subtle rounded-lg flex items-center justify-center">
                     <div className="text-center">
-                      <Image className="w-12 h-12 text-token-text-muted mx-auto mb-2" />
+                      <ImageIcon className="w-12 h-12 text-token-text-muted mx-auto mb-2" />
                       <Text variant="small" className="text-token-text-secondary">No photos uploaded</Text>
                     </div>
                   </div>
@@ -531,9 +534,11 @@ export default function TutorApplicationDetailPage() {
                                <div key={index} className="bg-token-surface-subtle rounded-lg p-3 border border-token">
                                  {/* Image Preview */}
                                  <div className="aspect-[4/3] bg-token-surface rounded-lg overflow-hidden mb-3">
-                                   <img 
+                                   <Image 
                                      src={fileUrl} 
                                      alt={fileName || `Certificate ${index + 1}`}
+                                     width={100}
+                                     height={100}
                                      className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
                                      onClick={() => window.open(fileUrl, '_blank')}
                                    />
@@ -579,9 +584,11 @@ export default function TutorApplicationDetailPage() {
                     <div>
                       <Text variant="small" className="text-token-text-secondary font-medium mb-2">Experience Screenshot</Text>
                       <div className="bg-token-surface-subtle rounded-lg p-2">
-                        <img 
+                        <Image 
                           src={application.teaching_screenshot} 
                           alt="Teaching experience screenshot"
+                          width={100}
+                          height={100}
                           className="w-full max-w-md rounded-lg"
                         />
                       </div>

@@ -1,5 +1,47 @@
-import React, { memo, useMemo, useCallback, Suspense, lazy } from 'react';
-import { LoadingState, ErrorState } from './index';
+import React, { useState, useEffect, useRef, useCallback, useMemo, memo, Suspense } from 'react';
+import { Card, Text, Button, Badge, LoadingState, ErrorState } from '@/app/components/ui';
+import { 
+  Star, 
+  TrendingUp, 
+  Award, 
+  Target, 
+  BarChart3, 
+  Users, 
+  Clock, 
+  Calendar,
+  Globe,
+  MapPin,
+  GraduationCap,
+  BookOpen,
+  MessageSquare,
+  Video,
+  Camera,
+  Mic,
+  Shield,
+  Heart,
+  Scale,
+  Clock as ClockIcon,
+  CheckCircle,
+  AlertCircle,
+  X,
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  Download,
+  Upload,
+  Save,
+  RefreshCw,
+  UserPlus,
+  UserMinus,
+  Lock,
+  Unlock,
+  Key,
+  Crown,
+  Activity,
+  Zap
+} from 'lucide-react';
+import Image from 'next/image';
 
 // Memoized components to prevent unnecessary re-renders
 export const MemoizedCard = memo(({ children, className, ...props }: any) => (
@@ -149,46 +191,47 @@ interface OptimizedImageProps {
   onError?: () => void;
 }
 
-export const OptimizedImage = memo(({ 
+export const OptimizedImage = React.memo(({ 
   src, 
   alt, 
   className, 
-  placeholder = '/images/placeholder.svg',
+  placeholder,
   onLoad,
-  onError 
+  onError
 }: OptimizedImageProps) => {
-  const [imageSrc, setImageSrc] = React.useState(placeholder);
   const [isLoading, setIsLoading] = React.useState(true);
   const [hasError, setHasError] = React.useState(false);
+  const [imageSrc, setImageSrc] = React.useState(src);
 
   React.useEffect(() => {
-    if (src) {
-      setIsLoading(true);
-      setHasError(false);
-      
-      const img = new Image();
-      img.onload = () => {
-        setImageSrc(src);
-        setIsLoading(false);
-        if (onLoad) onLoad();
-      };
-      img.onerror = () => {
-        setHasError(true);
-        setIsLoading(false);
-        if (onError) onError();
-      };
-      img.src = src;
-    }
-  }, [src, onLoad, onError]);
+    setImageSrc(src);
+    setIsLoading(true);
+    setHasError(false);
+  }, [src]);
+
+  const handleLoad = useCallback(() => {
+    setIsLoading(false);
+    if (onLoad) onLoad();
+  }, [onLoad]);
+
+  const handleError = useCallback(() => {
+    setIsLoading(false);
+    setHasError(true);
+    if (onError) onError();
+  }, [onError]);
 
   return (
     <div className={`relative ${className || ''}`}>
-      <img
+      <Image
         src={imageSrc}
         alt={alt}
+        width={400}
+        height={300}
         className={`transition-opacity duration-300 ${
           isLoading ? 'opacity-0' : 'opacity-100'
         }`}
+        onLoad={handleLoad}
+        onError={handleError}
       />
       {isLoading && (
         <div className="absolute inset-0 bg-gray-200 animate-pulse rounded" />
@@ -219,7 +262,7 @@ export function DebouncedInput({
   delay = 300 
 }: DebouncedInputProps) {
   const [inputValue, setInputValue] = React.useState(value);
-  const timeoutRef = React.useRef<NodeJS.Timeout>();
+  const timeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
 
   React.useEffect(() => {
     setInputValue(value);

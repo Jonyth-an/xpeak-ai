@@ -1,31 +1,42 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
 import { useAuth } from '@/lib/AuthContext';
+import { useRouter, usePathname } from 'next/navigation';
+import { Card, Text, Button, Badge } from '@/app/components/ui';
+import { 
+  Home, 
+  Calendar, 
+  Users, 
+  BookOpen, 
+  DollarSign, 
+  BarChart3, 
+  Settings, 
+  LogOut,
+  Bell,
+  MessageSquare,
+  HelpCircle,
+  User,
+  Shield,
+  Palette,
+  Globe,
+  Clock,
+  Trophy,
+  Target,
+  TrendingUp,
+  Award,
+  Star,
+  CheckCircle,
+  AlertCircle,
+  ChevronRight,
+  Menu,
+  X
+} from 'lucide-react';
+import Image from 'next/image';
 import { useRoles } from '@/lib/RolesContext';
 import { supabase } from '@/lib/supabaseClient';
-import { Button } from '@/app/components/ui';
-import Text from '@/app/components/ui/Text';
-import { 
-  Home,
-  Calendar,
-  Clock,
-  BookOpen,
-  Users,
-  TrendingUp,
-  DollarSign,
-  Settings,
-  HelpCircle,
-  Shield,
-  Menu,
-  X,
-  Bell,
-  User,
-  LogOut,
-  ChevronDown
-} from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
+import Link from 'next/link';
 
 interface TutorProfile {
   id: string;
@@ -267,10 +278,12 @@ export default function TutorLayout({ children }: TutorLayoutProps) {
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
                     {tutorProfile?.profile_image_url ? (
-                      <img
-                        className="h-8 w-8 rounded-full"
+                      <Image
                         src={tutorProfile.profile_image_url}
                         alt={tutorProfile.display_name}
+                        width={32}
+                        height={32}
+                        className="h-8 w-8 rounded-full"
                       />
                     ) : (
                       <div className="h-8 w-8 rounded-full bg-token-primary flex items-center justify-center">
@@ -339,10 +352,12 @@ export default function TutorLayout({ children }: TutorLayoutProps) {
             className="p-2 rounded-md text-token-text-secondary hover:bg-token-surface-subtle"
           >
             {tutorProfile?.profile_image_url ? (
-              <img
-                className="h-6 w-6 rounded-full"
+              <Image
                 src={tutorProfile.profile_image_url}
                 alt={tutorProfile.display_name}
+                width={24}
+                height={24}
+                className="h-6 w-6 rounded-full"
               />
             ) : (
               <User className="h-6 w-6" />

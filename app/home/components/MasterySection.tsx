@@ -1,4 +1,7 @@
 import React from 'react';
+import { Card, Text, Button, Badge } from '@/app/components/ui';
+import { Star, TrendingUp, Award, Target, BarChart3, Users, Clock, Calendar } from 'lucide-react';
+import Image from 'next/image';
 
 const features = [
   {
@@ -107,7 +110,15 @@ const features = [
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 16v-4m0 0V8m0 4l-3-3m3 3l3-3" />
           </svg>
         </div>
-        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Coach" className="w-12 h-12 rounded-full border-2 border-pink-400 mb-2 shadow" />
+        <div className="flex items-center justify-center mb-4">
+          <Image 
+            src="https://randomuser.me/api/portraits/women/44.jpg" 
+            alt="Coach" 
+            width={48}
+            height={48}
+            className="w-12 h-12 rounded-full border-2 border-pink-400 mb-2 shadow" 
+          />
+        </div>
         <div className="bg-surface-muted rounded-lg px-4 py-2 text-xs text-pink-700 font-semibold mb-1 shadow">
           <div>Your Coach: Sarah</div>
           <div className="font-normal">Next session: Tomorrow 9PM</div>

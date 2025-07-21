@@ -3,7 +3,7 @@ import { serverSupabase } from '@/lib/serverSupabaseClient';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Get the user from the request
@@ -21,7 +21,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const requestId = params.id;
+    const { id: requestId } = await params;
 
     // Get the tutor profile for the current user
     const { data: tutorProfile, error: tutorError } = await serverSupabase

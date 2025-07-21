@@ -137,7 +137,7 @@ export function ConfirmModal({
       icon: null
     },
     danger: {
-      confirmVariant: 'destructive' as const,
+      confirmVariant: 'warning' as const,
       icon: null
     },
     warning: {

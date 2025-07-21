@@ -149,7 +149,7 @@ export async function GET(request: NextRequest) {
     }, {});
     
     const topTags = Object.entries(tagCounts)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([,a], [,b]) => (b as number) - (a as number))
       .slice(0, 10)
       .map(([tag, count]) => ({ tag, count }));
     

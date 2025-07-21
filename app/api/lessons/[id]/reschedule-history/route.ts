@@ -3,10 +3,10 @@ import { serverSupabase } from '@/lib/serverSupabaseClient';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const lessonId = params.id;
+    const { id: lessonId } = await params;
     
     // Get user from request
     const authHeader = request.headers.get('authorization');

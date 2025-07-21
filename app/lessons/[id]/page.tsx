@@ -1,40 +1,50 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { 
-  Card, 
-  Text, 
-  Button, 
-  LoadingState, 
-  ErrorState,
-  Avatar,
-  Badge
-} from '@/app/components/ui';
-import { Modal } from '@/app/components/ui/Modal';
-import { FormField, TextArea } from '@/app/components/ui/Form';
-import { supabase } from '@/lib/supabaseClient';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 import { 
-  ArrowLeft,
-  Calendar,
-  Clock,
-  User,
-  Video,
-  MessageCircle,
-  BookOpen,
-  MapPin,
-  Phone,
-  Mail,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Edit,
-  Trash2,
-  ExternalLink,
-  RefreshCw
+  Clock, 
+  Video, 
+  Phone, 
+  Mail, 
+  AlertCircle, 
+  CheckCircle, 
+  X, 
+  Edit, 
+  Trash2, 
+  ChevronRight, 
+  ChevronLeft, 
+  Search, 
+  Filter, 
+  Flag, 
+  MessageCircle, 
+  Ban, 
+  FileText, 
+  Download, 
+  Eye, 
+  DollarSign, 
+  Camera, 
+  Upload, 
+  HelpCircle, 
+  Palette, 
+  Trophy, 
+  MapPin, 
+  ClockIcon, 
+  User, 
+  Link 
 } from 'lucide-react';
-import Link from 'next/link';
+import Image from 'next/image';
+import { format } from 'date-fns';
+import { toast } from 'sonner';
+import { apiService } from '@/lib/services/apiService';
+import { getAvatarUrl } from '@/lib/utils/consolidatedUtils';
+import { LessonStatus, LessonType, RescheduleRequestStatus } from '@/lib/types/lesson';
+import { TutorProfile } from '@/lib/types/tutor';
+import { StudentProfile } from '@/lib/types/student';
 
 interface Lesson {
   id: string;
@@ -57,7 +67,7 @@ interface Lesson {
   student: {
     id: string;
     email: string;
-    user_metadata?: any;
+    user_metadata?: Record<string, unknown>;
   };
 }
 
@@ -85,8 +95,26 @@ interface RescheduleRequest {
   respondedAt?: string;
 }
 
+interface CalendarDay {
+  date: string;
+  day: number;
+  isPast: boolean;
+  available: boolean;
+  availableSlots: Array<{
+    start_time: string;
+    end_time: string;
+  }>;
+}
+
+interface RescheduleRequestBody {
+  action: 'accept' | 'reject' | 'propose';
+  proposedDate?: string;
+  proposedStartTime?: string;
+  proposedEndTime?: string;
+  reason?: string;
+}
+
 export default function LessonDetailsPage() {
-  const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
   const [lesson, setLesson] = useState<Lesson | null>(null);
@@ -109,12 +137,11 @@ export default function LessonDetailsPage() {
     requestedEndTime: '',
     reason: ''
   });
-  const [calendarData, setCalendarData] = useState<any[]>([]);
+  const [calendarData, setCalendarData] = useState<CalendarDay[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [rescheduleRequest, setRescheduleRequest] = useState<RescheduleRequest | null>(null);
-  const [loadingRescheduleRequest, setLoadingRescheduleRequest] = useState(false);
   const [respondingToReschedule, setRespondingToReschedule] = useState(false);
   const [showProposeTimeModal, setShowProposeTimeModal] = useState(false);
   const [proposeTimeForm, setProposeTimeForm] = useState({
@@ -124,7 +151,7 @@ export default function LessonDetailsPage() {
     reason: ''
   });
 
-  const lessonId = params.id as string;
+  const lessonId = router.query.id as string;
 
   useEffect(() => {
     fetchLesson();
@@ -190,7 +217,7 @@ export default function LessonDetailsPage() {
 
   const fetchRescheduleRequest = async () => {
     try {
-      setLoadingRescheduleRequest(true);
+      setRespondingToReschedule(true);
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
@@ -229,7 +256,7 @@ export default function LessonDetailsPage() {
     } catch (err) {
       console.error('Error fetching reschedule request:', err);
     } finally {
-      setLoadingRescheduleRequest(false);
+      setRespondingToReschedule(false);
     }
   };
 
@@ -311,23 +338,20 @@ export default function LessonDetailsPage() {
       }
       
       const data = await response.json();
-      const allSlots: any[] = [];
+      const allSlots: CalendarDay[] = [];
       
       // Extract all available slots from the calendar data
-      data.calendar.forEach((day: any) => {
-        if (day.available && day.availableSlots && day.availableSlots.length > 0) {
-          day.availableSlots.forEach((slot: any) => {
-            allSlots.push({
-              date: day.date,
-              startTime: slot.start_time,
-              endTime: slot.end_time,
-              displayText: `${day.date} at ${slot.start_time} - ${slot.end_time}`
-            });
-          });
-        }
+      data.calendar.forEach((day: CalendarDay) => {
+        allSlots.push({
+          date: day.date,
+          day: day.day,
+          isPast: day.isPast,
+          available: day.available,
+          availableSlots: day.availableSlots || []
+        });
       });
       
-      setCalendarData(data.calendar);
+      setCalendarData(allSlots);
     } catch (err) {
       console.error('Error fetching tutor availability:', err);
       setError('Failed to load tutor availability');
@@ -389,7 +413,7 @@ export default function LessonDetailsPage() {
         return;
       }
 
-      let requestBody: any = { action };
+      let requestBody: RescheduleRequestBody = { action };
       
       if (action === 'propose') {
         if (!proposeTimeForm.proposedDate || !proposeTimeForm.proposedStartTime || !proposeTimeForm.proposedEndTime) {
@@ -986,13 +1010,13 @@ export default function LessonDetailsPage() {
                 
                 {/* Calendar Days */}
                 <div className="grid grid-cols-7 gap-0.5">
-                  {calendarData.map((day: any, index: number) => (
+                  {calendarData.map((day: CalendarDay, index: number) => (
                     <button
                       key={index}
                       type="button"
-                      disabled={!day.day || day.isPast || !day.available}
+                      disabled={!day.available}
                       onClick={() => {
-                        if (day.available && day.availableSlots && day.availableSlots.length > 0) {
+                        if (day.available) {
                           setRescheduleForm(prev => ({
                             ...prev,
                             requestedDate: day.date,
@@ -1002,18 +1026,16 @@ export default function LessonDetailsPage() {
                         }
                       }}
                       className={`w-6 h-6 text-xs rounded transition-colors flex items-center justify-center ${
-                        !day.day || day.isPast || !day.available
+                        !day.available
                           ? 'text-gray-300 cursor-not-allowed'
-                          : day.available
-                          ? 'text-blue-600 hover:bg-blue-50 cursor-pointer'
-                          : 'text-gray-400'
+                          : 'text-blue-600 hover:bg-blue-50 cursor-pointer'
                       } ${
                         rescheduleForm.requestedDate === day.date
                           ? 'bg-blue-100 border border-blue-300'
                           : ''
                       }`}
                     >
-                      {day.day || ''}
+                      {day.day}
                     </button>
                   ))}
                 </div>
@@ -1029,7 +1051,7 @@ export default function LessonDetailsPage() {
                 day: 'numeric' 
               })}:</Text>
               <div className="grid grid-cols-2 gap-1">
-                {calendarData.find((day: any) => day.date === rescheduleForm.requestedDate)?.availableSlots?.map((slot: any, index: number) => (
+                {calendarData.find((day: CalendarDay) => day.date === rescheduleForm.requestedDate)?.availableSlots?.map((slot, index: number) => (
                   <button
                     key={index}
                     type="button"

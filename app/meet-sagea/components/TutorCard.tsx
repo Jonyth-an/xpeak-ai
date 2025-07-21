@@ -1,6 +1,8 @@
 'use client';
 import React from 'react';
-import { Button, Badge } from '@/app/components/ui';
+import { Card, Text, Badge, Button } from '@/app/components/ui';
+import { Star, MapPin, Globe, Clock, Users, Award } from 'lucide-react';
+import Image from 'next/image';
 
 interface TutorCardProps {
   tutor: {
@@ -22,9 +24,11 @@ export default function TutorCard({ tutor }: TutorCardProps) {
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
-          <img
+          <Image
             src={tutor.avatar}
             alt={tutor.name}
+            width={48}
+            height={48}
             className="w-12 h-12 rounded-full object-cover"
           />
           <div>

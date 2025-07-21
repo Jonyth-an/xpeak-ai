@@ -18,6 +18,7 @@ import {
   Calendar,
   BookOpen
 } from 'lucide-react';
+import Image from 'next/image';
 import { useAuth } from '@/lib/AuthContext';
 
 interface Tutor {
@@ -218,9 +219,11 @@ export default function StudentTutorsPage() {
                             <div className="flex-shrink-0">
                               <div className="w-20 h-20 bg-token-gray-200 rounded-full overflow-hidden flex items-center justify-center">
                                 {tutor.profileImageUrl ? (
-                                  <img
+                                  <Image
                                     src={tutor.profileImageUrl}
                                     alt={tutor.name}
+                                    width={80}
+                                    height={80}
                                     className="w-full h-full object-cover"
                                   />
                                 ) : (

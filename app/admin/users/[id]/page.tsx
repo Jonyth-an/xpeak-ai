@@ -240,7 +240,7 @@ export default function StudentDetailPage() {
           <Card className="p-token-8 mb-token-4 bg-token-elevated border border-token">
             <Text variant="h3" as="h3" className="mb-token-4 text-token-primary">Learning Preferences</Text>
             <div className="mb-token-3">
-              <b>Current Level:</b> <span className="text-token-success">{meta.current_level || 'N/A'}</span>
+              <b>Current Level:</b> <span className="text-token-success">{typeof meta.current_level === 'string' && meta.current_level ? meta.current_level : 'N/A'}</span>
             </div>
             <div className="mb-token-3">
               <b>Preferred Languages:</b>{' '}

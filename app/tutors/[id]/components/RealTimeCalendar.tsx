@@ -93,7 +93,7 @@ export default function RealTimeCalendar({
         console.log('🔍 fetchAvailability response data:', data);
         
         if (data.calendar) {
-          console.log('🔍 Setting calendar data:', data.calendar.map(d => ({ day: d.day, date: d.date, isToday: d.isToday })));
+          console.log('🔍 Setting calendar data:', data.calendar.map((d: any) => ({ day: d.day, date: d.date, isToday: d.isToday })));
           setCalendar(data.calendar);
           setMonth(data.month);
           setYear(data.year);

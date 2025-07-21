@@ -3,10 +3,10 @@ import { serverSupabase } from '@/lib/serverSupabaseClient';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const rescheduleRequestId = params.id;
+    const { id: requestId } = await params;
     
     // Get user from request
     const authHeader = request.headers.get('authorization');
@@ -50,7 +50,7 @@ export async function POST(
           status
         )
       `)
-      .eq('id', rescheduleRequestId)
+      .eq('id', requestId)
       .single();
     
     if (requestError || !rescheduleRequest) {
@@ -99,7 +99,7 @@ export async function POST(
           tutor_response_reason: reason,
           responded_at: new Date().toISOString()
         })
-        .eq('id', rescheduleRequestId);
+        .eq('id', requestId);
       
       if (requestUpdateError) {
         console.error('Error updating reschedule request:', requestUpdateError);
@@ -135,7 +135,7 @@ export async function POST(
           tutor_response_reason: reason,
           responded_at: new Date().toISOString()
         })
-        .eq('id', rescheduleRequestId);
+        .eq('id', requestId);
       
       if (requestUpdateError) {
         console.error('Error updating reschedule request:', requestUpdateError);
@@ -208,7 +208,7 @@ export async function POST(
           proposed_end_time: proposedEndTime,
           responded_at: new Date().toISOString()
         })
-        .eq('id', rescheduleRequestId);
+        .eq('id', requestId);
       
       if (requestUpdateError) {
         console.error('Error updating reschedule request:', requestUpdateError);

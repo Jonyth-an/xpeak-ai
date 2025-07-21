@@ -474,48 +474,53 @@ export default function EarningsDashboard() {
             </div>
             
             <div className="space-y-4">
-              {(!earningsData?.earnings?.recent || earningsData.earnings.recent.length === 0) ? (
+              {(!earningsData?.earnings?.data || earningsData.earnings.data.length === 0) ? (
                 <div className="text-center py-8">
                   <div className="w-12 h-12 bg-token-text-muted/10 rounded-full flex items-center justify-center mx-auto mb-3">
                     <DollarSign className="w-6 h-6 text-token-text-muted" />
                   </div>
-                  <Text variant="body" className="text-token-text-secondary">
+                  <Text variant="body" className="text-token-text-secondary mb-2">
                     No recent earnings
+                  </Text>
+                  <Text variant="small" className="text-token-text-tertiary">
+                    Your earnings will appear here once you complete lessons
                   </Text>
                 </div>
               ) : (
-                earningsData.earnings.recent.slice(0, 5).map((earning, index) => (
-                  <div key={index} className="p-4 bg-token-surface-accent rounded-lg border border-border">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <div className="mr-3">
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getEarningTypeColor(earning.type)}`}>
-                            {earning.type}
-                          </span>
-                        </div>
-                        <div>
-                          <Text variant="body" className="font-semibold text-token-text mb-1">
-                            {earning.description || 'Lesson Payment'}
-                          </Text>
-                          <Text variant="small" className="text-token-text-muted">
-                            {formatDate(earning.date)}
-                          </Text>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <Text variant="body" className="font-semibold text-token-success">
-                          +${earning.amount || '0.00'}
-                        </Text>
+                <div className="space-y-3">
+                  {earningsData.earnings.data.slice(0, 5).map((earning, index) => (
+                    <div key={index} className="p-4 bg-token-surface-accent rounded-lg border border-border">
+                      <div className="flex items-center justify-between">
                         <div className="flex items-center">
-                          <div className={`w-2 h-2 rounded-full mr-1 ${earning.is_paid ? 'bg-token-success' : 'bg-token-warning'}`}></div>
-                          <Text variant="small" className="text-token-text-muted">
-                            {earning.is_paid ? 'Paid' : 'Pending'}
+                          <div className="mr-3">
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${getEarningTypeColor(earning.earning_type)}`}>
+                              {earning.earning_type}
+                            </span>
+                          </div>
+                          <div>
+                            <Text variant="body" className="font-semibold text-token-text mb-1">
+                              {earning.description || 'Lesson Payment'}
+                            </Text>
+                            <Text variant="small" className="text-token-text-muted">
+                              {formatDate(earning.earned_at)}
+                            </Text>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <Text variant="body" className="font-semibold text-token-success">
+                            +${earning.amount || '0.00'}
                           </Text>
+                          <div className="flex items-center">
+                            <div className={`w-2 h-2 rounded-full mr-1 ${earning.is_paid ? 'bg-token-success' : 'bg-token-warning'}`}></div>
+                            <Text variant="small" className="text-token-text-muted">
+                              {earning.is_paid ? 'Paid' : 'Pending'}
+                            </Text>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  ))}
+                </div>
               )}
             </div>
           </Card>

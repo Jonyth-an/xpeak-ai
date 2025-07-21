@@ -19,7 +19,7 @@ export default function HomePage() {
   }, [])
 
   return (
-    <Layout heroBackgroundColor="linear-gradient(to bottom right, #f5f5f5, #f9fafb, #fff5f5)" seamlessHeader>
+    <Layout heroBackgroundColor="linear-gradient(to bottom right, #f5f5f5, #f9fafb, #fff5f5)">
       <div className="min-h-screen bg-gradient-to-br from-token-surface-subtle via-token-surface to-token-surface-accent">
         {/* Hero Section */}
         <section className="relative py-20 lg:py-32 overflow-hidden">

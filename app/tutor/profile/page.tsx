@@ -24,6 +24,7 @@ import {
   Upload,
   X
 } from 'lucide-react';
+import Image from 'next/image';
 
 // Certificate options for selection
 const certificateOptions = [
@@ -369,9 +370,11 @@ export default function TutorProfilePage() {
                 <>
                   {/* Image Preview */}
                   {(profileImagePreview || profileData.profile_image_url) ? (
-                    <img
-                      src={profileImagePreview || profileData.profile_image_url}
+                    <Image
+                      src={profileImagePreview || profileData.profile_image_url || ''}
                       alt={editingData?.display_name || profileData.display_name}
+                      width={200}
+                      height={200}
                       className="w-full h-full object-cover"
                     />
                   ) : (
@@ -412,9 +415,11 @@ export default function TutorProfilePage() {
               ) : (
                 <>
                   {profileData.profile_image_url ? (
-                    <img
+                    <Image
                       src={profileData.profile_image_url}
                       alt={profileData.display_name}
+                      width={200}
+                      height={200}
                       className="w-full h-full object-cover"
                     />
                   ) : (

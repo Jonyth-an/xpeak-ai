@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { Copy, MoreVertical, Trash2, Plus, User, Mail, Shield } from 'lucide-react';
+import { Plus, User, Mail, Shield } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Card, Button, Text } from '@/app/components/ui';
+import Image from 'next/image';
 
 interface PrivilegedUser {
   id: string;
@@ -22,7 +23,6 @@ export default function RoleAccessManagement() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('All Roles');
-  const [debug, setDebug] = useState<any>({});
   const [menuOpenUserId, setMenuOpenUserId] = useState<string | null>(null);
   const [roleActionLoading, setRoleActionLoading] = useState(false);
   const [roleActionError, setRoleActionError] = useState<string | null>(null);
@@ -32,7 +32,7 @@ export default function RoleAccessManagement() {
 
   useEffect(() => {
     async function fetchPrivilegedUsers() {
-      let debugInfo: any = {};
+      let debugInfo = {};
       console.log('🔍 RoleAccessManagement: Starting fetchPrivilegedUsers');
       
       const PRIVILEGED_ROLES = ['admin', 'marketer', 'tutor approver'];
@@ -88,7 +88,6 @@ export default function RoleAccessManagement() {
 
         // Fetch user emails and metadata from admin API endpoint as fallback
         let userEmailMap: Record<string, string> = {};
-        let userMetaMap: Record<string, any> = {};
         let adminApiError = null;
         let adminApiData = null;
         try {
@@ -104,7 +103,6 @@ export default function RoleAccessManagement() {
             (adminData.users || []).forEach((user: any) => {
               if (userIds.includes(user.id)) {
                 userEmailMap[user.id] = user.email;
-                userMetaMap[user.id] = user.user_metadata || {};
               }
             });
           } else {
@@ -141,8 +139,7 @@ export default function RoleAccessManagement() {
         (roleData || []).forEach((row: any, index: number) => {
           if (!userMap[row.user_id]) {
             const profile = profileMap[row.user_id] || {};
-            const meta = userMetaMap[row.user_id] || {};
-            const name = profile.full_name || meta.full_name || userEmailMap[row.user_id] || `User ${row.user_id.slice(0, 8)}...`;
+            const name = profile.full_name || userEmailMap[row.user_id] || `User ${row.user_id.slice(0, 8)}...`;
             const email = userEmailMap[row.user_id] || '';
             const avatar_url = profile.avatar_url || '';
             userMap[row.user_id] = {
@@ -297,7 +294,13 @@ export default function RoleAccessManagement() {
                       <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 rounded-full bg-token-primary-light flex items-center justify-center">
                           {user.avatar_url ? (
-                            <img src={user.avatar_url} alt="" className="w-10 h-10 rounded-full" />
+                            <Image
+                              src={user.avatar_url}
+                              alt=""
+                              width={20}
+                              height={20}
+                              className="w-10 h-10 rounded-full"
+                            />
                           ) : (
                             <User className="w-5 h-5 text-token-primary" />
                           )}

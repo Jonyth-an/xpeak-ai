@@ -1,5 +1,7 @@
 import React from 'react';
-import { Button } from '@/app/components/ui';
+import { Card, Text, Button, Badge } from '@/app/components/ui';
+import { Star, TrendingUp, Award, Target, BarChart3, Users, Clock, Calendar, Globe, MapPin, GraduationCap, BookOpen, MessageSquare, Video, Camera, Mic, Shield, Heart, Scale, Clock as ClockIcon } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 const avatars = [
@@ -22,10 +24,12 @@ export default function FinalCTA() {
       </p>
       <div className="flex justify-center gap-token-8 mb-token-10">
         {avatars.map((src, i) => (
-          <img
+          <Image
             key={i}
             src={src}
             alt="Coach avatar"
+            width={64}
+            height={64}
             className="w-16 h-16 rounded-full border-4 border-token-surface shadow-md object-cover"
           />
         ))}

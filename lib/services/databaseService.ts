@@ -670,7 +670,7 @@ class DatabaseService {
       throw new Error(`Database query error: ${error.message}`);
     }
 
-    return data || [];
+    return (data as T[]) || [];
   }
 
   private async executeBatchQuery<T extends Record<string, any>>(queries: Array<{ table: string; options: QueryOptions; key: keyof T }>): Promise<T> {
@@ -682,7 +682,7 @@ class DatabaseService {
     );
 
     return results.reduce((acc, { key, data }) => {
-      acc[key] = data;
+      acc[key] = data as T[keyof T];
       return acc;
     }, {} as T);
   }

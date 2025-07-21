@@ -32,6 +32,7 @@ import {
   Zap,
   Settings
 } from 'lucide-react';
+import Image from 'next/image';
 
 interface DashboardData {
   tutor: {
@@ -202,24 +203,11 @@ export default function TutorDashboard() {
       <TutorLayout>
         <TutorPageLayout containerWidth="lg" padding="lg">
           <ErrorState
-            type={errorHandler.error?.type === 'unknown' ? 'generic' : errorHandler.error?.type || 'generic'}
-            severity={errorHandler.error?.severity || 'medium'}
             title={errorHandler.error?.userMessage || 'Unable to load dashboard'}
             message={errorHandler.error?.technicalDetails}
             onRetry={errorRecovery.handleRetry}
-            onBack={errorRecovery.handleBack}
-            onHome={errorRecovery.handleHome}
             showDetails={process.env.NODE_ENV === 'development'}
-            showActions={true}
-          >
-            {errorHandler.retryCount > 0 && (
-              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                <Text variant="small" className="text-blue-800">
-                  Retry attempt {errorHandler.retryCount} of 3
-                </Text>
-              </div>
-            )}
-          </ErrorState>
+          />
         </TutorPageLayout>
       </TutorLayout>
     );
@@ -247,8 +235,6 @@ export default function TutorDashboard() {
       <TutorLayout>
         <TutorPageLayout containerWidth="lg" padding="lg">
           <ErrorState
-            type="not-found"
-            severity="low"
             title="Invalid Data Format"
             message="The dashboard data format is invalid"
             onRetry={refetch}
@@ -263,14 +249,13 @@ export default function TutorDashboard() {
 
   return (
     <ErrorBoundary
-      onError={(error, errorInfo) => {
-        console.error('Dashboard Error:', error, errorInfo);
-        errorHandler.handleError(error);
-      }}
-      showDetails={process.env.NODE_ENV === 'development'}
-      errorMessage="Something went wrong with the dashboard"
-      showHomeButton={true}
-      showBackButton={true}
+      fallback={
+        <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+          <div className="text-5xl mb-6">😢</div>
+          <h2 className="text-2xl font-bold mb-2">Dashboard Error</h2>
+          <p className="text-token-text-secondary mb-4">Something went wrong with the dashboard. Please try again later.</p>
+        </div>
+      }
     >
       <TutorLayout>
         <TutorPageLayout containerWidth="xl" padding="lg">
@@ -327,9 +312,11 @@ export default function TutorDashboard() {
               <div className="flex items-center p-4 bg-surface rounded-lg border border-border">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0 mr-4">
                   {data.next_lesson.student_avatar ? (
-                    <img 
+                    <Image 
                       src={data.next_lesson.student_avatar} 
                       alt={data.next_lesson.student_name}
+                      width={48}
+                      height={48}
                       className="w-12 h-12 rounded-full object-cover"
                     />
                   ) : (
@@ -403,7 +390,7 @@ export default function TutorDashboard() {
                     {data.performance_metrics.response_time} min
                   </Text>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <Text variant="body" className="text-token-text-secondary">Availability Score</Text>
                   <div className="flex items-center">
@@ -476,10 +463,10 @@ export default function TutorDashboard() {
             {/* Filter to only show upcoming lessons */}
             {(() => {
               const now = new Date();
-              const upcomingLessons = data.today_schedule?.filter(lesson => {
+              const upcomingLessons = data.today_schedule?.filter((lesson: any) => {
                 const lessonTime = new Date(lesson.scheduled_start);
                 return lessonTime > now && lesson.status === 'confirmed';
-              }).sort((a, b) => new Date(a.scheduled_start).getTime() - new Date(b.scheduled_start).getTime()) || [];
+              }).sort((a: any, b: any) => new Date(a.scheduled_start).getTime() - new Date(b.scheduled_start).getTime()) || [];
 
               if (upcomingLessons.length === 0) {
                 return (
@@ -497,7 +484,7 @@ export default function TutorDashboard() {
 
               return (
                 <div className="space-y-3">
-                  {upcomingLessons.map((lesson) => {
+                  {upcomingLessons.map((lesson: any) => {
                     const lessonTime = new Date(lesson.scheduled_start);
                     const minutesUntil = Math.max(0, Math.floor((lessonTime.getTime() - now.getTime()) / (1000 * 60)));
                     const canJoin = minutesUntil <= 60 && minutesUntil >= -60;
@@ -506,9 +493,11 @@ export default function TutorDashboard() {
                       <div key={lesson.id} className="flex items-center p-4 border border-token rounded-lg hover:bg-token-surface-subtle transition-colors">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0 mr-4">
                           {lesson.student_avatar ? (
-                            <img 
+                            <Image 
                               src={lesson.student_avatar} 
                               alt={lesson.student_name}
+                              width={40}
+                              height={40}
                               className="w-10 h-10 rounded-full object-cover"
                             />
                           ) : (

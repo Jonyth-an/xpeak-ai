@@ -5,10 +5,12 @@ import { useAuth } from '@/lib/AuthContext';
 import { 
   uploadAvatar, 
   removeAvatar as removeAvatarFromStorage, 
-  getAvatarUrl, 
   validateFile 
 } from '@/lib/storage';
 import { Button, Text } from '@/app/components/ui';
+import { Camera, Upload, X, CheckCircle, AlertCircle } from 'lucide-react';
+import { supabase } from '@/lib/supabaseClient';
+import Image from 'next/image';
 import ImageCropper from './ImageCropper';
 import { Avatar } from '@/app/components/ui';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -247,9 +249,11 @@ export default function AvatarUpload({ onAvatarUpdate, className = '', compact =
       {/* Current Avatar Display */}
       <div className="flex items-center space-x-4">
         <div className="relative">
-          <img
+          <Image
             src={currentAvatarUrl}
             alt="Current avatar"
+            width={80}
+            height={80}
             className="w-20 h-20 rounded-full object-cover border-2 border-token-border"
           />
           {isUploading && (

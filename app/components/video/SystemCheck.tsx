@@ -245,11 +245,11 @@ export default function SystemCheck({ onComplete, onBack }: SystemTestProps) {
       case "passed":
         return <Badge className="bg-success text-success-foreground">Camera working perfectly!</Badge>
       case "failed":
-        return <Badge variant="destructive">Camera not working</Badge>
+        return <Badge variant="error">Camera not working</Badge>
       case "testing":
         return <Badge variant="secondary">Testing...</Badge>
       default:
-        return <Badge variant="outline">Pending</Badge>
+        return <Badge variant="default">Pending</Badge>
     }
   }
 
@@ -258,11 +258,11 @@ export default function SystemCheck({ onComplete, onBack }: SystemTestProps) {
       case "passed":
         return <Badge className="bg-success text-success-foreground">Microphone working perfectly!</Badge>
       case "failed":
-        return <Badge variant="destructive">Microphone not working</Badge>
+        return <Badge variant="error">Microphone not working</Badge>
       case "testing":
         return <Badge variant="secondary">Testing...</Badge>
       default:
-        return <Badge variant="outline">Pending</Badge>
+        return <Badge variant="default">Pending</Badge>
     }
   }
 
@@ -271,11 +271,11 @@ export default function SystemCheck({ onComplete, onBack }: SystemTestProps) {
       case "passed":
         return <Badge className="bg-success text-success-foreground">Internet connection is excellent!</Badge>
       case "failed":
-        return <Badge variant="destructive">Connection issues</Badge>
+        return <Badge variant="error">Connection issues</Badge>
       case "testing":
         return <Badge variant="secondary">Testing...</Badge>
       default:
-        return <Badge variant="outline">Pending</Badge>
+        return <Badge variant="default">Pending</Badge>
     }
   }
 

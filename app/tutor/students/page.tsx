@@ -16,6 +16,7 @@ import {
   Calendar,
   TrendingUp
 } from 'lucide-react';
+import Image from 'next/image';
 
 interface Student {
   id: string;
@@ -323,9 +324,11 @@ export default function MyStudents() {
                     <div className="flex items-center mb-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-text-inverse font-medium mr-3 shadow-sm">
                         {student.avatar_url ? (
-                          <img
+                          <Image
                             src={student.avatar_url}
                             alt={student.name}
+                            width={48}
+                            height={48}
                             className="w-full h-full rounded-full object-cover"
                           />
                         ) : (

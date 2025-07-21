@@ -22,6 +22,12 @@ import {
 import { useAuth } from '@/lib/AuthContext';
 import { useRoles } from '@/lib/RolesContext';
 import { supabase } from '@/lib/supabaseClient';
+import dynamic from 'next/dynamic';
+
+// Dynamic imports for sidebar components
+const AvatarUpload = dynamic(() => import('./AvatarUpload'), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-16 w-16 rounded-full" />
+});
 
 interface ProfileSidebarProps {
   activeTab: string;

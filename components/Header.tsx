@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 // Context for hero background color
 export const HeroBackgroundContext = createContext<string | null>(null);
@@ -180,9 +181,11 @@ export default function Header({ heroBackgroundColor }: HeaderProps) {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button className="relative focus:outline-none">
-                          <img
+                          <Image
                             src={user.user_metadata?.avatar_url || '/images/default-avatar.svg'}
                             alt="User avatar"
+                            width={32}
+                            height={32}
                             className="w-8 h-8 rounded-full object-cover border-2 border-token-border cursor-pointer hover:ring-2 hover:ring-token-primary transition"
                             onError={(e) => {
                               e.currentTarget.src = '/images/default-avatar.svg';

@@ -1,14 +1,72 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '@/lib/AuthContext';
+import { useRouter } from 'next/navigation';
+import { Card, Text, Button, Badge, Avatar, LoadingState, ErrorState } from '@/app/components/ui';
 import Layout from '@/components/Layout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import RequireEmailVerification from '@/app/components/RequireEmailVerification';
-import { Card, Text } from '@/app/components/ui';
-import ProfileForm from './components/ProfileForm';
-import AvatarUpload from './components/AvatarUpload';
-import ProfileSidebar from './components/ProfileSidebar';
-import { useAuth } from '@/lib/AuthContext';
+import { 
+  User, 
+  Settings, 
+  CreditCard, 
+  Shield, 
+  Palette, 
+  Globe, 
+  Clock,
+  Camera,
+  Video,
+  GraduationCap,
+  MapPin,
+  Clock as ClockIcon
+} from 'lucide-react';
+import dynamic from 'next/dynamic';
+
+// Dynamic imports for heavy components
+const ProfileSidebar = dynamic(() => import('./components/ProfileSidebar'), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-64 rounded-lg" />
+});
+
+const ProfileForm = dynamic(() => import('./components/ProfileForm'), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-96 rounded-lg" />
+});
+
+const BillingSection = dynamic(() => import('./components/BillingSection'), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-96 rounded-lg" />
+});
+
+const LanguagePreferences = dynamic(() => import('./components/LanguagePreferences'), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-64 rounded-lg" />
+});
+
+const TimezonePreferences = dynamic(() => import('./components/TimezonePreferences'), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-64 rounded-lg" />
+});
+
+const PasswordChangeForm = dynamic(() => import('./components/PasswordChangeForm'), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-64 rounded-lg" />
+});
+
+const LearningStats = dynamic(() => import('./components/LearningStats'), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-64 rounded-lg" />
+});
+
+const TransactionHistory = dynamic(() => import('./components/TransactionHistory'), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-64 rounded-lg" />
+});
+
+const InvoiceHistory = dynamic(() => import('./components/InvoiceHistory'), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-64 rounded-lg" />
+});
+
+const ThemePickerClient = dynamic(() => import('./theme-picker/ThemePickerClient'), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-96 rounded-lg" />
+});
+
+const AvatarUpload = dynamic(() => import('./components/AvatarUpload'), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-32 rounded-lg" />
+});
 
 export default function ProfilePage() {
   const { user } = useAuth();

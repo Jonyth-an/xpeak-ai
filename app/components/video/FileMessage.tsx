@@ -10,10 +10,7 @@ import {
   File, 
   Download, 
   ExternalLink,
-  FileImage,
-  FilePdf,
-  FileSpreadsheet,
-  FilePresentation
+  FileImage
 } from 'lucide-react'
 
 interface FileMessageProps {
@@ -31,13 +28,13 @@ const getFileIcon = (fileType: string) => {
     return <Image className="h-4 w-4" />
   }
   if (fileType === 'application/pdf') {
-    return <FilePdf className="h-4 w-4" />
+    return <FileImage className="h-4 w-4" />
   }
   if (fileType.includes('spreadsheet') || fileType.includes('excel')) {
-    return <FileSpreadsheet className="h-4 w-4" />
+    return <FileImage className="h-4 w-4" />
   }
   if (fileType.includes('presentation') || fileType.includes('powerpoint')) {
-    return <FilePresentation className="h-4 w-4" />
+    return <FileImage className="h-4 w-4" />
   }
   if (fileType.startsWith('text/')) {
     return <FileText className="h-4 w-4" />

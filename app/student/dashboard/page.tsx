@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/AuthContext';
 import DashboardSidebar from './components/DashboardSidebar';
 import { supabase } from '@/lib/supabaseClient';
+import Image from 'next/image';
 
 interface Lesson {
   id: string;
@@ -277,7 +278,7 @@ export default function DashboardPage() {
                             No Upcoming Lessons
                           </Text>
                           <Text variant="body" className="text-token-text-muted mb-6">
-                            You don't have any upcoming lessons scheduled. Book your first lesson to get started!
+                            You don&apos;t have any upcoming lessons scheduled. Book your first lesson to get started!
                           </Text>
                           <Link href="/tutors">
                             <Button variant="primary">
@@ -296,9 +297,11 @@ export default function DashboardPage() {
                                   {/* Tutor Avatar */}
                                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-token-primary to-token-accent flex items-center justify-center flex-shrink-0">
                                     {lesson.tutor?.profile_image_url ? (
-                                      <img 
+                                      <Image 
                                         src={lesson.tutor.profile_image_url} 
                                         alt={lesson.tutor?.name || 'Tutor'}
+                                        width={48}
+                                        height={48}
                                         className="w-12 h-12 rounded-full object-cover"
                                       />
                                     ) : (

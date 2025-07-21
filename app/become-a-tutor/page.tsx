@@ -9,7 +9,7 @@ import FinalCTA from './components/FinalCTA';
 
 export default function BecomeTutorPage() {
   return (
-    <Layout seamlessHeader>
+    <Layout>
       <BecomeTutorHero />
       <TeachLanguageSection />
       <WhyTeachSection />

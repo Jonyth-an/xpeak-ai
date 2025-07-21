@@ -1,11 +1,13 @@
 import React from 'react';
 import { HeartIcon, PencilIcon, PaperAirplaneIcon, Cog6ToothIcon, UserGroupIcon } from '@heroicons/react/24/solid';
-import { Card } from '@/app/components/ui';
+import { Card, Text, Button, Badge } from '@/app/components/ui';
+import { Star, TrendingUp, Award, Target, BarChart3, Users, Clock, Calendar, Globe, MapPin, GraduationCap, BookOpen, MessageSquare, Video, Camera, Mic, Shield, Heart, Scale, Clock as ClockIcon } from 'lucide-react';
+import Image from 'next/image';
 
 const benefits = [
   {
     icon: HeartIcon, bg: 'bg-token-primary',
-    title: "Coach, Don't Just Chat",
+    title: "Coach, Don&apos;t Just Chat",
     desc: 'Support real learner growth through structured guidance, goal-setting, and mentorship — not just small talk. Be the coach who changes lives.'
   },
   {
@@ -77,10 +79,12 @@ export default function WhyTeachSection() {
           </p>
           <div className="flex justify-center gap-token-2 mb-token-2">
             {avatars.map((src, i) => (
-              <img
+              <Image
                 key={i}
                 src={src}
                 alt="Coach avatar"
+                width={40}
+                height={40}
                 className="w-10 h-10 rounded-full border-2 border-white object-cover"
               />
             ))}

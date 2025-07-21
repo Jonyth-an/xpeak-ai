@@ -9,6 +9,7 @@ import { Card, Button, Text, Input, Select } from "@/app/components/ui";
 import { Search, Download, Eye, CheckCircle, XCircle, Clock, Globe, Calendar } from "lucide-react";
 import Link from "next/link";
 import { StatusBadge } from "@/app/components/StatusBadge";
+import Image from "next/image";
 
 interface TutorApplication {
   id: string;
@@ -311,9 +312,11 @@ export default function TutorApplicationsPage() {
                   <div className="flex items-center gap-4">
                     {/* Profile image/avatar */}
                     {application.avatar_url ? (
-                      <img
+                      <Image
                         src={application.avatar_url}
                         alt={application.full_name}
+                        width={56}
+                        height={56}
                         className="w-14 h-14 rounded-full object-cover border border-token-border bg-token-surface"
                       />
                     ) : (

@@ -21,6 +21,7 @@ import {
   Edit,
   FileText
 } from 'lucide-react';
+import Image from 'next/image';
 
 interface Lesson {
   id: string;
@@ -415,14 +416,12 @@ export default function LessonHistory() {
                       {/* Student Avatar */}
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-sm">
                         {lesson.student.profile_image_url ? (
-                          <img 
+                          <Image 
                             src={lesson.student.profile_image_url} 
                             alt={lesson.student.name}
+                            width={40}
+                            height={40}
                             className="w-10 h-10 rounded-full object-cover"
-                            onError={(e) => {
-                              // Hide the image if it fails to load
-                              e.currentTarget.style.display = 'none';
-                            }}
                           />
                         ) : (
                           <Users className="w-5 h-5 text-white" />

@@ -4,9 +4,20 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/AuthContext"
 import { useRoles } from "@/lib/RolesContext"
-import SystemCheck from "@/app/components/video/SystemCheck"
-import VideoRoom from "@/app/components/video/VideoRoom"
-import LessonInterface from "@/app/components/video/LessonInterface"
+import dynamic from 'next/dynamic'
+
+// Dynamic imports for heavy video components
+const SystemCheck = dynamic(() => import("@/app/components/video/SystemCheck"), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-96 rounded-lg" />
+});
+
+const VideoRoom = dynamic(() => import("@/app/components/video/VideoRoom"), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-96 rounded-lg" />
+});
+
+const LessonInterface = dynamic(() => import("@/app/components/video/LessonInterface"), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-96 rounded-lg" />
+});
 
 interface Lesson {
   id: string

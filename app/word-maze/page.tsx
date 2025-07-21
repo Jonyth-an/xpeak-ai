@@ -27,7 +27,7 @@ export default function WordMazePublicPage() {
   }, [user, router]);
 
   return (
-    <Layout heroBackgroundColor="linear-gradient(to bottom right, #f5f5f5, #fff5f5, #fff8f8)" seamlessHeader>
+    <Layout heroBackgroundColor="linear-gradient(to bottom right, #f5f5f5, #fff5f5, #fff8f8)">
       <div className="min-h-screen bg-gradient-to-br from-token-surface-subtle via-token-surface-accent to-token-surface-accent-light">
         {/* Hero Section */}
         <div className="relative overflow-hidden">

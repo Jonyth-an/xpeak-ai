@@ -27,6 +27,7 @@ import {
   Flag
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface DashboardData {
   tutor: {
@@ -243,9 +244,11 @@ export default function TutorDashboard() {
                     <div className="flex items-center">
                       <div className="w-10 h-10 bg-token-primary rounded-full flex items-center justify-center text-white font-medium mr-3">
                         {dashboardData.next_lesson.student_avatar ? (
-                          <img
+                          <Image
                             src={dashboardData.next_lesson.student_avatar}
                             alt={dashboardData.next_lesson.student_name}
+                            width={20}
+                            height={20}
                             className="w-full h-full rounded-full object-cover"
                           />
                         ) : (
@@ -323,9 +326,11 @@ export default function TutorDashboard() {
                       <div className="flex items-center">
                         <div className="w-12 h-12 bg-token-primary rounded-full flex items-center justify-center text-white font-medium">
                           {lesson.student_avatar ? (
-                            <img
+                            <Image
                               src={lesson.student_avatar}
                               alt={lesson.student_name}
+                              width={20}
+                              height={20}
                               className="w-full h-full rounded-full object-cover"
                             />
                           ) : (

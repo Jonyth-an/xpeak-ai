@@ -29,6 +29,7 @@ import {
   BookOpen
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Lesson {
   id: string;
@@ -424,9 +425,11 @@ export default function TutorLessonsPage() {
                         {/* Student Avatar */}
                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0 shadow-sm">
                           {lesson.student.profile_image_url ? (
-                            <img 
+                            <Image 
                               src={lesson.student.profile_image_url} 
                               alt={lesson.student.name}
+                              width={48}
+                              height={48}
                               className="w-12 h-12 rounded-full object-cover"
                             />
                           ) : (
@@ -632,9 +635,11 @@ export default function TutorLessonsPage() {
                       {/* Student Avatar */}
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0 shadow-sm">
                         {lesson.student.profile_image_url ? (
-                          <img 
+                          <Image 
                             src={lesson.student.profile_image_url} 
                             alt={lesson.student.name}
+                            width={48}
+                            height={48}
                             className="w-12 h-12 rounded-full object-cover"
                           />
                         ) : (
@@ -752,9 +757,11 @@ export default function TutorLessonsPage() {
                       {/* Student Avatar */}
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0 shadow-sm">
                         {lesson.student.profile_image_url ? (
-                          <img 
+                          <Image 
                             src={lesson.student.profile_image_url} 
                             alt={lesson.student.name}
+                            width={48}
+                            height={48}
                             className="w-12 h-12 rounded-full object-cover"
                           />
                         ) : (
@@ -864,7 +871,7 @@ export default function TutorLessonsPage() {
                 No Upcoming Lessons
               </Text>
               <Text variant="body" className="text-token-text-secondary max-w-md mx-auto leading-relaxed">
-                You don't have any upcoming lessons scheduled. Check your calendar to see your availability or wait for new bookings.
+                You don&apos;t have any upcoming lessons scheduled. Check your calendar to see your availability or wait for new bookings.
               </Text>
             </div>
           </Card>
