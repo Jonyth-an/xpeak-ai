@@ -356,7 +356,7 @@ export default function TutorTools() {
     setEditingMaterial(material);
     setNewMaterial({
       title: material.title,
-      description: material.description,
+      description: material.description || '',
       url: material.url,
       tags: material.tags.join(', ')
     });

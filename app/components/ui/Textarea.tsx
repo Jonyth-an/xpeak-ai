@@ -106,7 +106,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
           className
         )}
         style={autoResize ? { height: textareaHeight } : undefined}
-        value={value}
+        value={value || ''}
         onChange={handleChange}
         maxLength={maxLength}
         {...props}
