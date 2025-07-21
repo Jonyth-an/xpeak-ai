@@ -128,7 +128,10 @@ export default function TutorTools() {
     const fetchMaterials = async () => {
       try {
         setIsLoading(true);
-        const fetchedMaterials = await materialsService.getMaterials();
+        if (!session) {
+          throw new Error('No active session');
+        }
+        const fetchedMaterials = await materialsService.getMaterials(session);
         setMaterials(fetchedMaterials);
       } catch (error) {
         console.error('Error fetching materials:', error);
@@ -283,6 +286,10 @@ export default function TutorTools() {
 
       // Automatically save the material to database
       try {
+        if (!session) {
+          throw new Error('No active session');
+        }
+
         const materialData = {
           title: file.name.replace(`.${fileExtension}`, ''),
           description: '',
@@ -292,7 +299,7 @@ export default function TutorTools() {
           fileSize: file.size
         };
 
-        const newMaterialObj = await materialsService.createMaterial(materialData);
+        const newMaterialObj = await materialsService.createMaterial(materialData, session);
         setMaterials(prev => [newMaterialObj, ...prev]);
         
         // Show success message
@@ -389,6 +396,11 @@ export default function TutorTools() {
       return;
     }
 
+    if (!session) {
+      alert('No active session. Please log in again.');
+      return;
+    }
+
     try {
       const materialData = {
         title: newMaterial.title,
@@ -404,14 +416,14 @@ export default function TutorTools() {
         const updatedMaterial = await materialsService.updateMaterial({
           ...materialData,
           id: editingMaterial.id
-        });
+        }, session);
         
         setMaterials(prev => 
           prev.map(m => m.id === editingMaterial.id ? updatedMaterial : m)
         );
       } else {
         // Create new material
-        const newMaterialObj = await materialsService.createMaterial(materialData);
+        const newMaterialObj = await materialsService.createMaterial(materialData, session);
         setMaterials(prev => [newMaterialObj, ...prev]);
       }
       
@@ -501,8 +513,13 @@ export default function TutorTools() {
       return;
     }
 
+    if (!session) {
+      alert('No active session. Please log in again.');
+      return;
+    }
+
     try {
-      await materialsService.deleteMaterial(id);
+      await materialsService.deleteMaterial(id, session);
       setMaterials(prev => prev.filter(m => m.id !== id));
     } catch (error) {
       console.error('Error deleting material:', error);

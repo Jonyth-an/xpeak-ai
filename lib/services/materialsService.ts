@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { Session } from '@supabase/supabase-js';
 
 export interface Material {
   id: string;
@@ -27,15 +27,9 @@ export interface UpdateMaterialData extends CreateMaterialData {
 }
 
 class MaterialsService {
-  private async getAuthHeaders(): Promise<HeadersInit> {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-    
-    const { data: { session } } = await supabase.auth.getSession();
+  private getAuthHeaders(session: Session): HeadersInit {
     if (!session?.access_token) {
-      throw new Error('No active session found');
+      throw new Error('No active session found. Please log in again.');
     }
     return {
       'Authorization': `Bearer ${session.access_token}`,
@@ -43,9 +37,9 @@ class MaterialsService {
     };
   }
 
-  async getMaterials(): Promise<Material[]> {
+  async getMaterials(session: Session): Promise<Material[]> {
     try {
-      const headers = await this.getAuthHeaders();
+      const headers = this.getAuthHeaders(session);
       const response = await fetch('/api/materials', {
         method: 'GET',
         headers
@@ -64,9 +58,9 @@ class MaterialsService {
     }
   }
 
-  async createMaterial(materialData: CreateMaterialData): Promise<Material> {
+  async createMaterial(materialData: CreateMaterialData, session: Session): Promise<Material> {
     try {
-      const headers = await this.getAuthHeaders();
+      const headers = this.getAuthHeaders(session);
       const response = await fetch('/api/materials', {
         method: 'POST',
         headers,
@@ -86,9 +80,9 @@ class MaterialsService {
     }
   }
 
-  async updateMaterial(materialData: UpdateMaterialData): Promise<Material> {
+  async updateMaterial(materialData: UpdateMaterialData, session: Session): Promise<Material> {
     try {
-      const headers = await this.getAuthHeaders();
+      const headers = this.getAuthHeaders(session);
       const response = await fetch(`/api/materials/${materialData.id}`, {
         method: 'PUT',
         headers,
@@ -108,9 +102,9 @@ class MaterialsService {
     }
   }
 
-  async deleteMaterial(id: string): Promise<void> {
+  async deleteMaterial(id: string, session: Session): Promise<void> {
     try {
-      const headers = await this.getAuthHeaders();
+      const headers = this.getAuthHeaders(session);
       const response = await fetch(`/api/materials/${id}`, {
         method: 'DELETE',
         headers
