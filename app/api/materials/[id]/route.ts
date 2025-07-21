@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { serverSupabase } from '@/lib/serverSupabaseClient';
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     // Get authorization header
     const authHeader = request.headers.get('authorization');
     
@@ -41,13 +39,13 @@ export async function PUT(
         file_type: fileType || null,
         file_size: fileSize || null
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id) // Extra security check
       .select()
       .single();
 
     if (error) {
-      console.error('Database error:', error);
+      console.error('Error updating material:', error);
       if (error.code === 'PGRST116') {
         return NextResponse.json({ error: 'Material not found' }, { status: 404 });
       }
@@ -56,16 +54,14 @@ export async function PUT(
 
     return NextResponse.json({ material });
   } catch (error) {
-    console.error('API error:', error);
+    console.error('Error in PUT /api/materials/[id]:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     // Get authorization header
     const authHeader = request.headers.get('authorization');
     
@@ -86,17 +82,17 @@ export async function DELETE(
     const { error } = await serverSupabase
       .from('materials')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id); // Extra security check
 
     if (error) {
-      console.error('Database error:', error);
+      console.error('Error deleting material:', error);
       return NextResponse.json({ error: 'Failed to delete material' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('API error:', error);
+    console.error('Error in DELETE /api/materials/[id]:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 } 

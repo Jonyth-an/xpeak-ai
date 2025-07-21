@@ -27,7 +27,8 @@ import {
   X,
   CheckCircle,
   AlertCircle,
-  Loader2
+  Loader2,
+  RefreshCw
 } from 'lucide-react';
 import {
   Settings,
@@ -110,6 +111,7 @@ export default function TutorTools() {
   const [isLinkLoading, setIsLinkLoading] = useState(false);
   const [editingMaterial, setEditingMaterial] = useState<MaterialType | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [cacheStatus, setCacheStatus] = useState<'fresh' | 'cached' | 'offline'>('fresh');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [newMaterial, setNewMaterial] = useState({
@@ -131,11 +133,39 @@ export default function TutorTools() {
         if (!session) {
           throw new Error('No active session');
         }
+
+        // Check cache stats before fetching
+        const cacheStats = materialsService.getCacheStats();
+        const hasCachedData = cacheStats.count > 0;
+
         const fetchedMaterials = await materialsService.getMaterials(session);
         setMaterials(fetchedMaterials);
+
+        // Determine cache status based on whether we had cached data
+        if (hasCachedData && cacheStats.lastSync) {
+          const timeSinceSync = Date.now() - cacheStats.lastSync;
+          if (timeSinceSync < 5 * 60 * 1000) { // Less than 5 minutes
+            setCacheStatus('fresh');
+          } else {
+            setCacheStatus('cached');
+          }
+        } else {
+          setCacheStatus('fresh');
+        }
       } catch (error) {
         console.error('Error fetching materials:', error);
-        // You might want to show a toast notification here
+        
+        // Check if we have cached data as fallback
+        const cacheStats = materialsService.getCacheStats();
+        if (cacheStats.count > 0) {
+          setCacheStatus('offline');
+          try {
+            const cachedMaterials = await materialsService.getMaterials(session, false);
+            setMaterials(cachedMaterials);
+          } catch (cacheError) {
+            console.error('Error loading cached materials:', cacheError);
+          }
+        }
       } finally {
         setIsLoading(false);
       }
@@ -144,6 +174,17 @@ export default function TutorTools() {
     if (session) {
       fetchMaterials();
     }
+  }, [session]);
+
+  // Background sync every 5 minutes
+  useEffect(() => {
+    if (!session) return;
+
+    const syncInterval = setInterval(() => {
+      materialsService.backgroundSync(session);
+    }, 5 * 60 * 1000); // 5 minutes
+
+    return () => clearInterval(syncInterval);
   }, [session]);
 
   // Auto-populate title from filename or URL
@@ -475,6 +516,22 @@ export default function TutorTools() {
     setIsModalOpen(true);
   };
 
+  // Manual refresh function
+  const handleRefresh = async () => {
+    if (!session) return;
+    
+    try {
+      setIsLoading(true);
+      const refreshedMaterials = await materialsService.getMaterials(session, true);
+      setMaterials(refreshedMaterials);
+      setCacheStatus('fresh');
+    } catch (error) {
+      console.error('Error refreshing materials:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const getTypeIcon = (type: string) => {
     switch(type) {
       case 'PDF':
@@ -789,7 +846,36 @@ export default function TutorTools() {
                         className="pl-10"
                       />
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
+                      {/* Cache Status Indicator */}
+                      {cacheStatus !== 'fresh' && (
+                        <div className="flex items-center gap-1 text-xs">
+                          {cacheStatus === 'cached' ? (
+                            <>
+                              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                              <span className="text-token-text-secondary">Cached</span>
+                            </>
+                          ) : cacheStatus === 'offline' ? (
+                            <>
+                              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                              <span className="text-token-text-secondary">Offline</span>
+                            </>
+                          ) : null}
+                        </div>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleRefresh}
+                        disabled={isLoading}
+                        className="px-2"
+                      >
+                        {isLoading ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <RefreshCw className="h-3 w-3" />
+                        )}
+                      </Button>
                       <CustomSelect 
                         value={filterType} 
                         onValueChange={setFilterType}
