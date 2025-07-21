@@ -302,8 +302,19 @@ export default function TutorTools() {
         const newMaterialObj = await materialsService.createMaterial(materialData, session);
         setMaterials(prev => [newMaterialObj, ...prev]);
         
+        // Set the modal to edit mode for the newly created material
+        setEditingMaterial(newMaterialObj);
+        setNewMaterial({
+          title: newMaterialObj.title,
+          description: newMaterialObj.description || '',
+          url: newMaterialObj.url,
+          tags: newMaterialObj.tags.join(', ')
+        });
+        setIsEditMode(true);
+        setIsModalOpen(true);
+        
         // Show success message
-        alert('Material uploaded and saved successfully!');
+        alert('Material uploaded successfully! You can now edit the details.');
       } catch (error) {
         console.error('Error saving uploaded material:', error);
         alert('File uploaded but failed to save material. You can manually save it from the form.');
@@ -755,7 +766,7 @@ export default function TutorTools() {
                 </div>
                 <div className="flex gap-3 pt-4">
                   <Button onClick={handleSubmit} className="flex-1 rounded-full font-medium bg-primary text-text-inverse">
-                    {isEditMode ? 'Update Material' : 'Save Material'}
+                    {isEditMode ? 'Update Material' : 'Create Material'}
                   </Button>
                   <Button variant="outline" onClick={handleModalClose} className="flex-1 rounded-full font-medium border-token-border text-token-text-secondary">
                     Cancel
