@@ -12,6 +12,8 @@ import CustomSelect from '@/app/components/ui/CustomSelect';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useAuth } from '@/lib/AuthContext';
 import { materialsService, Material as MaterialType } from '@/lib/services/materialsService';
+import { useEffect } from 'react';
+import { useToast } from '@/app/components/ui/ToastContainer';
 import {
   Plus,
   Search as SearchIcon,
@@ -99,6 +101,9 @@ const quickTools = [
 
 export default function TutorTools() {
   const { session } = useAuth();
+  const { showToast } = useToast();
+  
+  // State for materials
   const [materials, setMaterials] = useState<MaterialType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -267,18 +272,30 @@ export default function TutorTools() {
   // Handle file upload
   const handleFileUpload = async (file: File) => {
     if (file.size > maxFileSize) {
-      alert(`File size exceeds ${maxFileSize / (1024 * 1024)}MB limit`);
+      showToast({
+        type: 'error',
+        title: 'File size too large',
+        message: `File size exceeds ${maxFileSize / (1024 * 1024)}MB limit.`
+      });
       return;
     }
 
     const fileExtension = file.name.split('.').pop()?.toUpperCase();
     if (!supportedFormats.includes(fileExtension || '')) {
-      alert(`File type not supported. Supported formats: ${supportedFormats.join(', ')}`);
+      showToast({
+        type: 'error',
+        title: 'Unsupported file type',
+        message: `File type not supported. Supported formats: ${supportedFormats.join(', ')}.`
+      });
       return;
     }
 
     if (!session?.access_token) {
-      alert('No active session found. Please log in again.');
+      showToast({
+        type: 'error',
+        title: 'Session expired',
+        message: 'No active session found. Please log in again.'
+      });
       return;
     }
 
@@ -355,15 +372,27 @@ export default function TutorTools() {
         setIsModalOpen(true);
         
         // Show success message
-        alert('Material uploaded successfully! You can now edit the details.');
+        showToast({
+          type: 'success',
+          title: 'Material uploaded',
+          message: 'Material uploaded successfully! You can now edit the details.'
+        });
       } catch (error) {
         console.error('Error saving uploaded material:', error);
-        alert('File uploaded but failed to save material. You can manually save it from the form.');
+        showToast({
+          type: 'error',
+          title: 'Upload failed',
+          message: 'File uploaded but failed to save material. You can manually save it from the form.'
+        });
       }
 
     } catch (error) {
       console.error('Upload error:', error);
-      alert(`Upload failed: ${error instanceof Error ? error.message : 'Please try again.'}`);
+      showToast({
+        type: 'error',
+        title: 'Upload failed',
+        message: `Upload failed: ${error instanceof Error ? error.message : 'Please try again.'}`
+      });
     } finally {
       clearInterval(progressInterval);
       setIsUploading(false);
@@ -419,7 +448,11 @@ export default function TutorTools() {
   // Handle open button click
   const handleOpen = (material: MaterialType) => {
     if (!material.url) {
-      alert('No URL available for this material');
+      showToast({
+        type: 'error',
+        title: 'No URL available',
+        message: 'No URL available for this material.'
+      });
       return;
     }
     
@@ -439,17 +472,29 @@ export default function TutorTools() {
   // Handle form submission (create or update)
   const handleSubmit = async () => {
     if (!newMaterial.title.trim()) {
-      alert('Please enter a title for the material');
+      showToast({
+        type: 'error',
+        title: 'Title missing',
+        message: 'Please enter a title for the material.'
+      });
       return;
     }
 
     if (!newMaterial.url.trim()) {
-      alert('Please provide a file or link URL');
+      showToast({
+        type: 'error',
+        title: 'URL missing',
+        message: 'Please provide a file or link URL.'
+      });
       return;
     }
 
     if (!session) {
-      alert('No active session. Please log in again.');
+      showToast({
+        type: 'error',
+        title: 'Session expired',
+        message: 'No active session. Please log in again.'
+      });
       return;
     }
 
@@ -482,7 +527,11 @@ export default function TutorTools() {
       handleModalClose();
     } catch (error) {
       console.error('Error saving material:', error);
-      alert(`Failed to save material: ${error instanceof Error ? error.message : 'Please try again.'}`);
+      showToast({
+        type: 'error',
+        title: 'Save failed',
+        message: `Failed to save material: ${error instanceof Error ? error.message : 'Please try again.'}`
+      });
     }
   };
 
@@ -582,7 +631,11 @@ export default function TutorTools() {
     }
 
     if (!session) {
-      alert('No active session. Please log in again.');
+      showToast({
+        type: 'error',
+        title: 'Session expired',
+        message: 'No active session. Please log in again.'
+      });
       return;
     }
 
@@ -591,7 +644,11 @@ export default function TutorTools() {
       setMaterials(prev => prev.filter(m => m.id !== id));
     } catch (error) {
       console.error('Error deleting material:', error);
-      alert(`Failed to delete material: ${error instanceof Error ? error.message : 'Please try again.'}`);
+      showToast({
+        type: 'error',
+        title: 'Delete failed',
+        message: `Failed to delete material: ${error instanceof Error ? error.message : 'Please try again.'}`
+      });
     }
   };
 
