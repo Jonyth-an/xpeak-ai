@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import TutorLayout from '../TutorLayout';
 import { Card, Button } from '@/app/components/ui';
 import Text from '@/app/components/ui/Text';
@@ -10,10 +10,12 @@ import { Label } from '@/components/ui/label';
 import Textarea from '@/app/components/ui/Textarea';
 import CustomSelect from '@/app/components/ui/CustomSelect';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { SkeletonGrid, SkeletonCard, Skeleton } from '@/app/components/ui/Skeleton';
+import { SkeletonGrid, SkeletonCard } from '@/app/components/ui/Skeleton';
+import Skeleton from '@/app/components/ui/Skeleton';
 import { useAuth } from '@/lib/AuthContext';
 import { materialsService, Material as MaterialType } from '@/lib/services/materialsService';
 import { useToast } from '@/app/components/ui/ToastContainer';
+import { useDebounce } from '@/lib/hooks/useDebounce';
 import {
   Plus,
   Search as SearchIcon,
@@ -129,6 +131,80 @@ export default function TutorTools() {
   // File type validation
   const supportedFormats = ['PDF', 'DOC', 'DOCX', 'PPT', 'PPTX', 'JPEG', 'PNG', 'GIF', 'MP4', 'MP3', 'TXT'];
   const maxFileSize = 10 * 1024 * 1024; // 10MB
+
+  // Search and filter state
+  const [materialsSearchQuery, setMaterialsSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const [sortBy, setSortBy] = useState('recent');
+  
+  // Debounced search query
+  const debouncedSearchQuery = useDebounce(materialsSearchQuery, 300);
+  
+  // Filtered and sorted materials
+  const filteredAndSortedMaterials = useMemo(() => {
+    let filtered = materials;
+    
+    // Apply search filter
+    if (debouncedSearchQuery.trim()) {
+      const searchLower = debouncedSearchQuery.toLowerCase();
+      filtered = filtered.filter(material => 
+        material.title.toLowerCase().includes(searchLower) ||
+        material.description?.toLowerCase().includes(searchLower) ||
+        material.tags.some(tag => tag.toLowerCase().includes(searchLower)) ||
+        material.url.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    // Apply type filter
+    if (filterType !== 'all') {
+      filtered = filtered.filter(material => {
+        const materialType = getMaterialType(material.url);
+        return materialType === filterType;
+      });
+    }
+    
+    // Apply sorting
+    const sorted = [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case 'az':
+          return a.title.localeCompare(b.title);
+        case 'type':
+          const typeA = getMaterialType(a.url);
+          const typeB = getMaterialType(b.url);
+          return typeA.localeCompare(typeB);
+        case 'recent':
+        default:
+          return new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime();
+      }
+    });
+    
+    return sorted;
+  }, [materials, debouncedSearchQuery, filterType, sortBy]);
+  
+  // Helper function to get material type from URL
+  const getMaterialType = (url: string): string => {
+    if (url.includes('youtube.com') || url.includes('youtu.be')) return 'YouTube Video';
+    if (url.includes('http') && !url.includes('.')) return 'Website Link';
+    
+    const extension = url.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'pdf': return 'PDF';
+      case 'doc':
+      case 'docx': return 'Word Doc';
+      case 'ppt':
+      case 'pptx': return 'PowerPoint';
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif': return 'Image';
+      case 'mp4':
+      case 'mov':
+      case 'avi': return 'Video';
+      case 'mp3':
+      case 'wav': return 'Audio';
+      default: return 'Other File';
+    }
+  };
 
   // Fetch materials on component mount
   useEffect(() => {
@@ -652,30 +728,6 @@ export default function TutorTools() {
     }
   };
 
-  // Filter and sort materials
-  const filteredMaterials = materials.filter(material => {
-    const matchesSearch = material.title.toLowerCase().includes(materialsSearchQuery.toLowerCase()) ||
-                         material.description?.toLowerCase().includes(materialsSearchQuery.toLowerCase()) ||
-                         material.tags.some(tag => tag.toLowerCase().includes(materialsSearchQuery.toLowerCase()));
-    
-    const matchesFilter = filterType === 'all' || material.file_type === filterType;
-    
-    return matchesSearch && matchesFilter;
-  });
-
-  const sortedMaterials = [...filteredMaterials].sort((a, b) => {
-    switch (sortBy) {
-      case 'recent':
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      case 'az':
-        return a.title.localeCompare(b.title);
-      case 'type':
-        return (a.file_type || '').localeCompare(b.file_type || '');
-      default:
-        return 0;
-    }
-  });
-
   return (
     <TutorLayout>
       <div className="min-h-screen bg-token-surface-alt">
@@ -902,8 +954,19 @@ export default function TutorTools() {
                         onChange={(e) => setMaterialsSearchQuery(e.target.value)}
                         className="pl-10"
                       />
+                      {materialsSearchQuery !== debouncedSearchQuery && (
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                          <Loader2 className="h-4 w-4 animate-spin text-token-text-muted" />
+                        </div>
+                      )}
                     </div>
                     <div className="flex gap-2 items-center">
+                      {/* Search Results Counter */}
+                      {debouncedSearchQuery.trim() && (
+                        <div className="text-xs text-token-text-muted">
+                          {filteredAndSortedMaterials.length} of {materials.length} materials
+                        </div>
+                      )}
                       {/* Cache Status Indicator */}
                       {cacheStatus !== 'fresh' && (
                         <div className="flex items-center gap-1 text-xs">
@@ -986,50 +1049,96 @@ export default function TutorTools() {
             {/* Materials Grid */}
             {isLoading ? (
               <SkeletonGrid items={6} />
-            ) : sortedMaterials.length > 0 ? (
+            ) : filteredAndSortedMaterials.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {sortedMaterials.map((material) => {
-                  const IconComponent = getMaterialTypeIcon(material.file_type || 'Other File');
+                {filteredAndSortedMaterials.map((material) => {
+                  const IconComponent = getMaterialTypeIcon(material.url);
                   return (
                     <Card key={material.id} className="border-0 shadow-sm hover:shadow-md transition-shadow bg-surface">
                       <div className="p-4">
-                        <div className="flex items-start gap-3 mb-3">
-                          <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-surface-accent">
-                            <IconComponent className="h-5 w-5 text-primary" />
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-surface-accent flex items-center justify-center">
+                              <IconComponent className="h-5 w-5 text-token-text-muted" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-token-text truncate">{material.title}</h3>
+                              <p className="text-sm text-token-text-secondary line-clamp-2">{material.description}</p>
+                            </div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold mb-1 truncate text-token-text">{material.title}</h4>
-                            {material.description && (
-                              <p className="text-sm mb-2 line-clamp-2 text-token-text-secondary">{material.description}</p>
-                            )}
-                            <div className="flex flex-wrap gap-1 mb-2">
-                              {material.tags.map((tag, index) => (
-                                <Badge key={index} variant="secondary" className="text-xs px-2 py-1">#{tag}</Badge>
-                              ))}
-                            </div>
-                            <div className="flex items-center gap-1 text-xs text-token-text-muted">
-                              <Calendar className="h-3 w-3" />
-                              Uploaded: {new Date(material.created_at).toLocaleDateString()}
-                            </div>
+                          <div className="flex gap-1">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleEdit(material)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleOpen(material)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleDeleteMaterial(material.id)}
+                              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
                         </div>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline" className="flex-1 text-xs bg-transparent" onClick={() => handleOpen(material)}>
-                            <ExternalLink className="h-3 w-3 mr-1" />
-                            Open
-                          </Button>
-                          <Button size="sm" variant="outline" className="px-2 bg-transparent" onClick={() => handleEdit(material)}>
-                            <Edit className="h-3 w-3" />
-                          </Button>
-                          <Button size="sm" variant="outline" className="px-2 hover:bg-red-50 hover:border-red-200 bg-transparent" onClick={() => handleDeleteMaterial(material.id)}>
-                            <Trash2 className="h-3 w-3 text-red-500" />
-                          </Button>
+                        
+                        {material.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mb-3">
+                            {material.tags.slice(0, 3).map((tag, index) => (
+                              <Badge key={index} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                            {material.tags.length > 3 && (
+                              <Badge variant="secondary" className="text-xs">
+                                +{material.tags.length - 3} more
+                              </Badge>
+                            )}
+                          </div>
+                        )}
+                        
+                        <div className="flex items-center justify-between text-xs text-token-text-muted">
+                          <div className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            Uploaded: {new Date(material.uploadedAt).toLocaleDateString()}
+                          </div>
                         </div>
                       </div>
                     </Card>
                   );
                 })}
               </div>
+            ) : debouncedSearchQuery.trim() ? (
+              <Card className="border-0 shadow-sm bg-surface">
+                <div className="p-12 text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-surface-accent">
+                    <SearchIcon className="h-8 w-8 text-token-text-muted" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-token-text mb-2">No materials found</h3>
+                  <p className="text-token-text-secondary mb-6">
+                    No materials match "{debouncedSearchQuery}". Try adjusting your search terms.
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setMaterialsSearchQuery('')}
+                    className="rounded-full"
+                  >
+                    Clear Search
+                  </Button>
+                </div>
+              </Card>
             ) : (
               <Card className="border-0 shadow-sm bg-surface">
                 <div className="p-12 text-center">
