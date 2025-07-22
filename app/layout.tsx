@@ -4,6 +4,7 @@ import './globals.css'
 import { AuthProvider } from '@/lib/AuthContext'
 import { ThemeProvider } from '@/lib/ThemeContext'
 import { RolesProvider } from '@/lib/RolesContext'
+import { RealtimeProvider } from '@/lib/contexts/RealtimeContext'
 import ToastContainer from '@/app/components/ui/ToastContainer'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -24,11 +25,13 @@ export default function RootLayout({
         <ThemeProvider>
           <AuthProvider>
             <RolesProvider>
-              <ToastContainer>
-                <div className="bg-token-bg text-token-text min-h-screen transition-colors duration-200">
-                  {children}
-                </div>
-              </ToastContainer>
+              <RealtimeProvider>
+                <ToastContainer>
+                  <div className="bg-token-bg text-token-text min-h-screen transition-colors duration-200">
+                    {children}
+                  </div>
+                </ToastContainer>
+              </RealtimeProvider>
             </RolesProvider>
           </AuthProvider>
         </ThemeProvider>

@@ -30,6 +30,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSocket } from '@/lib/hooks/useSocket';
+import { toast } from 'sonner';
 
 interface Lesson {
   id: string;
@@ -79,6 +81,7 @@ export default function TutorLessonsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [rescheduleActionLoading, setRescheduleActionLoading] = useState<string | null>(null);
+  const { joinRoom, leaveRoom, lastEvent } = useSocket();
 
   useEffect(() => {
     fetchLessons();
@@ -89,6 +92,30 @@ export default function TutorLessonsPage() {
     }, 60000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    // Join all lesson rooms for upcoming lessons
+    lessons.forEach(lesson => {
+      if (lesson.id) joinRoom && joinRoom(`lesson:${lesson.id}`);
+    });
+    return () => {
+      lessons.forEach(lesson => {
+        if (lesson.id) leaveRoom && leaveRoom(`lesson:${lesson.id}`);
+      });
+    };
+  }, [lessons, joinRoom, leaveRoom]);
+
+  useEffect(() => {
+    if (!lastEvent) return;
+    if (lastEvent.type === 'lesson_status_changed') {
+      setLessons(prevLessons => prevLessons.map(lesson =>
+        lesson.id === lastEvent.data.lessonId
+          ? { ...lesson, status: lastEvent.data.status }
+          : lesson
+      ));
+      toast.success(`Lesson status updated: ${lastEvent.data.status}`);
+    }
+  }, [lastEvent]);
 
   const fetchLessons = async () => {
     try {

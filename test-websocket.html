@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .connected { background-color: #d4edda; color: #155724; }
+        .disconnected { background-color: #f8d7da; color: #721c24; }
+        .connecting { background-color: #fff3cd; color: #856404; }
+        .log {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .primary { background-color: #007bff; color: white; }
+        .secondary { background-color: #6c757d; color: white; }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Connection Test</h1>
+    
+    <div id="status" class="status disconnected">
+        Status: Disconnected
+    </div>
+    
+    <div>
+        <button class="primary" onclick="connect()">Connect</button>
+        <button class="secondary" onclick="disconnect()">Disconnect</button>
+        <button class="primary" onclick="sendTestEvent()">Send Test Event</button>
+        <button class="secondary" onclick="clearLog()">Clear Log</button>
+    </div>
+    
+    <h3>Event Log:</h3>
+    <div id="log" class="log"></div>
+
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <script>
+        let socket = null;
+        const logElement = document.getElementById('log');
+        const statusElement = document.getElementById('status');
+
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function updateStatus(status, className) {
+            statusElement.textContent = `Status: ${status}`;
+            statusElement.className = `status ${className}`;
+        }
+
+        function connect() {
+            if (socket) {
+                log('Already connected');
+                return;
+            }
+
+            log('Attempting to connect...');
+            updateStatus('Connecting...', 'connecting');
+
+            socket = io('http://localhost:3000', {
+                transports: ['websocket', 'polling']
+            });
+
+            socket.on('connect', () => {
+                log('✅ Connected to server');
+                updateStatus('Connected', 'connected');
+                
+                // Authenticate (using a test token)
+                socket.emit('authenticate', { token: 'test-token' });
+            });
+
+            socket.on('disconnect', (reason) => {
+                log(`❌ Disconnected: ${reason}`);
+                updateStatus('Disconnected', 'disconnected');
+                socket = null;
+            });
+
+            socket.on('connect_error', (error) => {
+                log(`❌ Connection error: ${error.message}`);
+                updateStatus('Connection Error', 'disconnected');
+            });
+
+            socket.on('authenticated', () => {
+                log('✅ Authentication successful');
+            });
+
+            socket.on('authentication_error', (error) => {
+                log(`❌ Authentication failed: ${error.message}`);
+            });
+
+            socket.on('lesson_status_changed', (data) => {
+                log(`📚 Lesson status changed: ${JSON.stringify(data)}`);
+            });
+
+            socket.on('chat_message_received', (data) => {
+                log(`💬 Chat message received: ${JSON.stringify(data)}`);
+            });
+
+            socket.on('material_updated', (data) => {
+                log(`📄 Material updated: ${JSON.stringify(data)}`);
+            });
+
+            socket.on('notification_received', (data) => {
+                log(`🔔 Notification received: ${JSON.stringify(data)}`);
+            });
+        }
+
+        function disconnect() {
+            if (socket) {
+                socket.disconnect();
+                log('Disconnected manually');
+            } else {
+                log('Not connected');
+            }
+        }
+
+        function sendTestEvent() {
+            if (!socket || !socket.connected) {
+                log('❌ Not connected');
+                return;
+            }
+
+            const testData = {
+                message: 'Test event from browser',
+                timestamp: Date.now(),
+                userId: 'test-user'
+            };
+
+            socket.emit('test_event', testData);
+            log(`📤 Sent test event: ${JSON.stringify(testData)}`);
+        }
+
+        function clearLog() {
+            logElement.innerHTML = '';
+        }
+
+        // Auto-connect on page load
+        window.addEventListener('load', () => {
+            log('Page loaded, ready to connect');
+        });
+    </script>
+</body>
+</html> 

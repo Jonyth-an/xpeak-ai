@@ -32,6 +32,8 @@ import DashboardSidebar from '../dashboard/components/DashboardSidebar';
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSocket } from '@/lib/hooks/useSocket';
+import { toast } from 'sonner';
 
 interface Lesson {
   id: string;
@@ -94,12 +96,38 @@ export default function StudentLessonsPage() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [rescheduling, setRescheduling] = useState(false);
 
+  const { joinRoom, leaveRoom, lastEvent } = useSocket();
+
   useEffect(() => {
     fetchLessons();
     // Refresh every minute to update countdown timers
     const interval = setInterval(fetchLessons, 60000);
     return () => clearInterval(interval);
   }, [activeTab]);
+
+  useEffect(() => {
+    // Join all lesson rooms for upcoming lessons
+    upcomingLessons.forEach(lesson => {
+      if (lesson.id) joinRoom && joinRoom(`lesson:${lesson.id}`);
+    });
+    return () => {
+      upcomingLessons.forEach(lesson => {
+        if (lesson.id) leaveRoom && leaveRoom(`lesson:${lesson.id}`);
+      });
+    };
+  }, [upcomingLessons, joinRoom, leaveRoom]);
+
+  useEffect(() => {
+    if (!lastEvent) return;
+    if (lastEvent.type === 'lesson_status_changed') {
+      setUpcomingLessons(prevLessons => prevLessons.map(lesson =>
+        lesson.id === lastEvent.data.lessonId
+          ? { ...lesson, status: lastEvent.data.status }
+          : lesson
+      ));
+      toast.success(`Lesson status updated: ${lastEvent.data.status}`);
+    }
+  }, [lastEvent]);
 
   // Fetch tutor availability when reschedule modal is opened
   useEffect(() => {

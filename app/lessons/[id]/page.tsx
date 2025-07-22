@@ -35,7 +35,12 @@ import {
   MapPin, 
   ClockIcon, 
   User, 
-  Link 
+  Link,
+  ArrowLeft,
+  XCircle,
+  RefreshCw,
+  BookOpen,
+  AlertTriangle
 } from 'lucide-react';
 import Image from 'next/image';
 import { format } from 'date-fns';
@@ -45,6 +50,14 @@ import { getAvatarUrl } from '@/lib/utils/consolidatedUtils';
 import { LessonStatus, LessonType, RescheduleRequestStatus } from '@/lib/types/lesson';
 import { TutorProfile } from '@/lib/types/tutor';
 import { StudentProfile } from '@/lib/types/student';
+import { useSocket } from '@/lib/hooks/useSocket';
+import { Modal } from '@/components/ui/modal';
+import { FormField } from '@/components/ui/form-field';
+import { TextArea } from '@/components/ui/text-area';
+import { Text } from '@/components/ui/text';
+import { Avatar } from '@/components/ui/avatar';
+import { LoadingState } from '@/components/ui/loading-state';
+import { ErrorState } from '@/components/ui/error-state';
 
 interface Lesson {
   id: string;
@@ -150,6 +163,7 @@ export default function LessonDetailsPage() {
     proposedEndTime: '',
     reason: ''
   });
+  const { socket, joinRoom, leaveRoom, lastEvent } = useSocket();
 
   const lessonId = router.query.id as string;
 
@@ -171,6 +185,22 @@ export default function LessonDetailsPage() {
       console.log('❌ No lesson data, skipping fetchRescheduleRequest');
     }
   }, [lesson]);
+
+  useEffect(() => {
+    if (!lessonId) return;
+    joinRoom && joinRoom(`lesson:${lessonId}`);
+    return () => {
+      leaveRoom && leaveRoom(`lesson:${lessonId}`);
+    };
+  }, [lessonId, joinRoom, leaveRoom]);
+
+  useEffect(() => {
+    if (!lastEvent) return;
+    if (lastEvent.type === 'lesson_status_changed' && lastEvent.data.lessonId === lessonId) {
+      setLesson((prev) => prev ? { ...prev, status: lastEvent.data.status } : prev);
+      toast.success(`Lesson status updated: ${lastEvent.data.status}`);
+    }
+  }, [lastEvent, lessonId]);
 
   // Fetch tutor availability when reschedule modal is opened
   useEffect(() => {
