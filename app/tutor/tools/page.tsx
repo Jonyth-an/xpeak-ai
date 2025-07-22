@@ -12,7 +12,6 @@ import CustomSelect from '@/app/components/ui/CustomSelect';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useAuth } from '@/lib/AuthContext';
 import { materialsService, Material as MaterialType } from '@/lib/services/materialsService';
-import { useEffect } from 'react';
 import { useToast } from '@/app/components/ui/ToastContainer';
 import {
   Plus,
