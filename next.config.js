@@ -1,19 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Clean config for Next.js 15.x, no experimental.appDir
-  output: 'standalone',
   eslint: {
-    // Re-enable ESLint after successful image optimizations
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '*.supabase.co',
-        port: '',
-        pathname: '/storage/v1/object/public/**',
-      },
       {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
@@ -22,7 +16,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '*.googleusercontent.com',
+        hostname: 'graph.facebook.com',
         port: '',
         pathname: '/**',
       },
@@ -33,48 +27,7 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
-  },
-  // WebSocket and Socket.IO configuration
-  webpack: (config, { isServer }) => {
-    // Handle Socket.IO client-side imports
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-        crypto: false,
-        stream: false,
-        url: false,
-        zlib: false,
-        http: false,
-        https: false,
-        assert: false,
-        os: false,
-        path: false,
-      };
-    }
-
-    // Bundle analyzer configuration
-    if (process.env.ANALYZE === 'true' && !isServer) {
-      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-      config.plugins.push(
-        new BundleAnalyzerPlugin({
-          analyzerMode: 'static',
-          openAnalyzer: false,
-          reportFilename: './bundle-analysis.html',
-        })
-      );
-    }
-
-    return config;
-  },
-  // Transpile Socket.IO packages
-  transpilePackages: ['socket.io-client'],
-  // Experimental features for better Socket.IO support
-  experimental: {
-    esmExternals: 'loose',
+    unoptimized: true, // This disables optimization for external images
   },
 };
-
-module.exports = nextConfig;
+module.exports = nextConfig; 

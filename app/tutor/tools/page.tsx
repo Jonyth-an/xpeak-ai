@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import TutorLayout from '../TutorLayout';
-import { Card, Button } from '@/app/components/ui';
+import { Card, Button, Skeleton, SkeletonGrid, SkeletonCard } from '@/app/components/ui';
 import Text from '@/app/components/ui/Text';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -10,10 +10,6 @@ import { Label } from '@/components/ui/label';
 import Textarea from '@/app/components/ui/Textarea';
 import CustomSelect from '@/app/components/ui/CustomSelect';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { SkeletonGrid, SkeletonCard } from '@/app/components/ui/Skeleton';
-import Skeleton from '@/app/components/ui/Skeleton';
-import { useAuth } from '@/lib/AuthContext';
-import { materialsService, Material as MaterialType } from '@/lib/services/materialsService';
 import { useToast } from '@/app/components/ui/ToastContainer';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import {
@@ -43,6 +39,7 @@ import {
   Download,
   ExternalLink as ExternalLinkIcon,
 } from 'lucide-react';
+import { useAuth } from '@/lib/AuthContext';
 
 interface Material {
   id: string;

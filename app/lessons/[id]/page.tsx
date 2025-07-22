@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/lib/AuthContext';
+import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -40,24 +41,25 @@ import {
   XCircle,
   RefreshCw,
   BookOpen,
-  AlertTriangle
+  AlertTriangle,
+  Calendar
 } from 'lucide-react';
 import Image from 'next/image';
 import { format } from 'date-fns';
-import { toast } from 'sonner';
+import { useToast } from '@/app/components/ui/ToastContainer';
 import { apiService } from '@/lib/services/apiService';
 import { getAvatarUrl } from '@/lib/utils/consolidatedUtils';
 import { LessonStatus, LessonType, RescheduleRequestStatus } from '@/lib/types/lesson';
 import { TutorProfile } from '@/lib/types/tutor';
 import { StudentProfile } from '@/lib/types/student';
 import { useSocket } from '@/lib/hooks/useSocket';
-import { Modal } from '@/components/ui/modal';
-import { FormField } from '@/components/ui/form-field';
-import { TextArea } from '@/components/ui/text-area';
-import { Text } from '@/components/ui/text';
-import { Avatar } from '@/components/ui/avatar';
-import { LoadingState } from '@/components/ui/loading-state';
-import { ErrorState } from '@/components/ui/error-state';
+import { Modal } from '@/app/components/ui/Modal';
+import FormField from '@/app/components/ui/FormField';
+import Textarea from '@/app/components/ui/Textarea';
+import Text from '@/app/components/ui/Text';
+import Avatar from '@/app/components/ui/Avatar';
+import LoadingState from '@/app/components/ui/LoadingState';
+import ErrorState from '@/app/components/ui/ErrorState';
 
 interface Lesson {
   id: string;
@@ -129,6 +131,7 @@ interface RescheduleRequestBody {
 
 export default function LessonDetailsPage() {
   const router = useRouter();
+  const params = useParams();
   const { user } = useAuth();
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
@@ -164,11 +167,14 @@ export default function LessonDetailsPage() {
     reason: ''
   });
   const { socket, joinRoom, leaveRoom, lastEvent } = useSocket();
+  const { showToast } = useToast();
 
-  const lessonId = router.query.id as string;
+  const lessonId = params?.id as string;
 
   useEffect(() => {
-    fetchLesson();
+    if (lessonId) {
+      fetchLesson();
+    }
   }, [lessonId]);
 
   useEffect(() => {
@@ -195,10 +201,14 @@ export default function LessonDetailsPage() {
   }, [lessonId, joinRoom, leaveRoom]);
 
   useEffect(() => {
-    if (!lastEvent) return;
+    if (!lastEvent || !lessonId) return;
     if (lastEvent.type === 'lesson_status_changed' && lastEvent.data.lessonId === lessonId) {
       setLesson((prev) => prev ? { ...prev, status: lastEvent.data.status } : prev);
-      toast.success(`Lesson status updated: ${lastEvent.data.status}`);
+      showToast({ type: 'success', message: `Lesson status updated: ${lastEvent.data.status}` });
+    }
+    if (lastEvent.type === 'notification_received') {
+      const { title, message } = lastEvent.data;
+      showToast({ type: 'info', message, title });
     }
   }, [lastEvent, lessonId]);
 
@@ -212,6 +222,12 @@ export default function LessonDetailsPage() {
   const fetchLesson = async () => {
     try {
       setLoading(true);
+      
+      if (!lessonId) {
+        setError('Lesson ID is required');
+        return;
+      }
+      
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
@@ -521,7 +537,7 @@ export default function LessonDetailsPage() {
   };
 
   if (loading) {
-    return <LoadingState />;
+    return <LoadingState message="Loading lesson details..." />;
   }
 
   if (error) {
@@ -903,7 +919,7 @@ export default function LessonDetailsPage() {
       >
         <div className="space-y-4">
           <FormField label="Student Goals">
-            <TextArea
+            <Textarea
               value={editForm.student_goals}
               onChange={(e) => setEditForm(prev => ({ ...prev, student_goals: e.target.value }))}
               placeholder="What does the student want to achieve in this lesson?"
@@ -911,7 +927,7 @@ export default function LessonDetailsPage() {
             />
           </FormField>
           <FormField label="Lesson Notes">
-            <TextArea
+            <Textarea
               value={editForm.lesson_notes}
               onChange={(e) => setEditForm(prev => ({ ...prev, lesson_notes: e.target.value }))}
               placeholder="Notes about the lesson content or structure"
@@ -919,7 +935,7 @@ export default function LessonDetailsPage() {
             />
           </FormField>
           <FormField label="Homework Assigned">
-            <TextArea
+            <Textarea
               value={editForm.homework_assigned}
               onChange={(e) => setEditForm(prev => ({ ...prev, homework_assigned: e.target.value }))}
               placeholder="Homework or practice exercises for the student"
@@ -1178,7 +1194,7 @@ export default function LessonDetailsPage() {
           </div>
           
           <FormField label="Reason (Optional)">
-            <TextArea
+            <Textarea
               value={proposeTimeForm.reason}
               onChange={(e) => setProposeTimeForm(prev => ({ ...prev, reason: e.target.value }))}
               placeholder="Explain why you're proposing a different time..."

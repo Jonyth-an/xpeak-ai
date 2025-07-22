@@ -189,18 +189,20 @@ export default function TutorOnboardingPage() {
     
     try {
       // Request camera and microphone access
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: true, 
-        audio: true 
-      });
-      
-      // Simulate test duration
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Stop the stream
-      stream.getTracks().forEach(track => track.stop());
-      
-      setSystemTestComplete(true);
+      if (typeof navigator !== 'undefined') {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: true, 
+          audio: true 
+        });
+        
+        // Simulate test duration
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Stop the stream
+        stream.getTracks().forEach(track => track.stop());
+        
+        setSystemTestComplete(true);
+      }
     } catch (error) {
       console.error('System test failed:', error);
       // Still mark as complete for demo purposes

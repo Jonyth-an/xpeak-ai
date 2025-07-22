@@ -7,7 +7,7 @@
     "dev:next": "next dev -p 3000",
     "build": "next build",
     "build:analyze": "ANALYZE=true next build",
-    "start": "tsx server.ts",
+    "start": "next start",
     "start:next": "next start",
     "lint": "next lint",
     "lint:css": "stylelint \"**/*.{css,scss}\" --allow-empty-input",

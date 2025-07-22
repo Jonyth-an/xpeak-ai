@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/app/components/ui/Button';
 import Input from '@/app/components/ui/Input';
 import Textarea from '@/app/components/ui/Textarea';
-import Card from '@/app/components/ui/Card';
+import { Card } from '@/app/components/ui';
 
 interface AddWordModalProps {
   isOpen: boolean;

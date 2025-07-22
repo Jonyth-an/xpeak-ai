@@ -31,7 +31,7 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSocket } from '@/lib/hooks/useSocket';
-import { toast } from 'sonner';
+import { useToast } from '@/app/components/ui/ToastContainer';
 
 interface Lesson {
   id: string;
@@ -82,6 +82,7 @@ export default function TutorLessonsPage() {
   const [error, setError] = useState<string | null>(null);
   const [rescheduleActionLoading, setRescheduleActionLoading] = useState<string | null>(null);
   const { joinRoom, leaveRoom, lastEvent } = useSocket();
+  const { showToast } = useToast();
 
   useEffect(() => {
     fetchLessons();
@@ -113,7 +114,11 @@ export default function TutorLessonsPage() {
           ? { ...lesson, status: lastEvent.data.status }
           : lesson
       ));
-      toast.success(`Lesson status updated: ${lastEvent.data.status}`);
+      showToast({ type: 'success', message: `Lesson status updated: ${lastEvent.data.status}` });
+    }
+    if (lastEvent.type === 'notification_received') {
+      const { title, message } = lastEvent.data;
+      showToast({ type: 'info', message, title });
     }
   }, [lastEvent]);
 
@@ -198,8 +203,13 @@ export default function TutorLessonsPage() {
   const handleConfirmLesson = async (lessonId: string) => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
+      if (!session) {
+        console.error('No session found');
+        return;
+      }
 
+      console.log('Attempting to confirm lesson:', lessonId);
+      
       const response = await fetch(`/api/lessons/${lessonId}/confirm`, {
         method: 'POST',
         headers: {
@@ -209,13 +219,17 @@ export default function TutorLessonsPage() {
       });
 
       if (response.ok) {
+        console.log('Lesson confirmed successfully');
         // Refresh lessons
         await fetchLessons();
       } else {
-        console.error('Failed to confirm lesson:', response.status);
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Failed to confirm lesson:', response.status, errorData);
+        showToast('Failed to confirm lesson', 'error');
       }
     } catch (error) {
       console.error('Error confirming lesson:', error);
+      showToast('Error confirming lesson', 'error');
     }
   };
 
@@ -862,14 +876,16 @@ export default function TutorLessonsPage() {
                   {/* Action Buttons */}
                   <div className="flex items-center gap-3 mt-6 pt-6 border-t border-border">
                     {lesson.can_join && (
-                      <Button 
-                        variant="primary"
-                        size="sm"
-                        className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-primary/90 hover:border-primary/80 text-text-inverse border-primary"
-                      >
-                        <Video className="w-3 h-3 mr-1.5" />
-                        Join Lesson
-                      </Button>
+                      <Link href={`/lessons/${lesson.id}/video`}>
+                        <Button 
+                          variant="primary"
+                          size="sm"
+                          className="text-xs px-3 py-1.5 h-8 transition-all duration-150 hover:scale-105 hover:bg-primary/90 hover:border-primary/80 text-text-inverse border-primary"
+                        >
+                          <Video className="w-3 h-3 mr-1.5" />
+                          Join Lesson
+                        </Button>
+                      </Link>
                     )}
 
                     <Link href={`/lessons/${lesson.id}`}>

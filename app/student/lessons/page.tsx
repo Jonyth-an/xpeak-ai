@@ -33,7 +33,7 @@ import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSocket } from '@/lib/hooks/useSocket';
-import { toast } from 'sonner';
+import { useToast } from '@/app/components/ui/ToastContainer';
 
 interface Lesson {
   id: string;
@@ -97,6 +97,7 @@ export default function StudentLessonsPage() {
   const [rescheduling, setRescheduling] = useState(false);
 
   const { joinRoom, leaveRoom, lastEvent } = useSocket();
+  const { showToast } = useToast();
 
   useEffect(() => {
     fetchLessons();
@@ -125,7 +126,11 @@ export default function StudentLessonsPage() {
           ? { ...lesson, status: lastEvent.data.status }
           : lesson
       ));
-      toast.success(`Lesson status updated: ${lastEvent.data.status}`);
+      showToast({ type: 'success', message: `Lesson status updated: ${lastEvent.data.status}` });
+    }
+    if (lastEvent.type === 'notification_received') {
+      const { title, message } = lastEvent.data;
+      showToast({ type: 'info', message, title });
     }
   }, [lastEvent]);
 

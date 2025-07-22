@@ -63,6 +63,17 @@ export async function PUT(
     }
     // Emit real-time event via Socket.IO
     socketService.broadcastLessonStatus(lessonId, status);
+    // Emit notification to both student and tutor
+    const notification = {
+      type: 'lesson_status',
+      title: 'Lesson Status Updated',
+      message: `Lesson status changed to '${status}'.`,
+      lessonId,
+      status,
+      updatedBy: user.id,
+    };
+    socketService.sendNotification(lesson.student_id, notification);
+    socketService.sendNotification(tutorData.user_id, notification);
     return NextResponse.json({
       success: true,
       lesson: updatedLesson,

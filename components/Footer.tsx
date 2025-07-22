@@ -78,7 +78,7 @@ export default function Footer() {
               <li><Link href="/become-a-tutor" className="hover:text-primary-500 font-normal">Become a Tutor</Link></li>
               <li><Link href="/community" className="hover:text-primary-500 font-normal">Community</Link></li>
               <li><Link href="/career" className="hover:text-primary-500 font-normal">Careers</Link></li>
-              <li><Link href="/early-supporters" className="hover:text-primary-500 font-normal">Supporter Program</Link></li>
+      
             </ul>
           </div>
 

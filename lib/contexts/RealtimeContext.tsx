@@ -3,6 +3,13 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useSocket, SocketConnectionStatus, SocketEvent } from '@/lib/hooks/useSocket';
 import { useAuth } from '@/lib/AuthContext';
+import {
+  isNotificationSupported,
+  getNotificationPermission,
+  requestNotificationPermission,
+  showNativeNotification,
+  NotificationPayload
+} from '@/lib/utils/notificationUtils';
 
 export interface RealtimeState {
   connectionStatus: SocketConnectionStatus;
@@ -56,9 +63,11 @@ export const RealtimeProvider: React.FC<RealtimeProviderProps> = ({ children }) 
       authenticated: false
     },
     lastEvent: null,
-    isOnline: navigator.onLine,
+    isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
     pendingEvents: []
   });
+
+  const [hasPromptedNotification, setHasPromptedNotification] = useState(false);
 
   // Update state when socket connection status changes
   useEffect(() => {
@@ -166,6 +175,49 @@ export const RealtimeProvider: React.FC<RealtimeProviderProps> = ({ children }) 
       clearPendingEvents();
     }
   }, [state.connectionStatus.connected, state.pendingEvents, socket]);
+
+  useEffect(() => {
+    if (!state.lastEvent) return;
+    // Only prompt for permission on first relevant event
+    if (!hasPromptedNotification && isNotificationSupported()) {
+      if (
+        state.lastEvent.type === 'lesson_status_changed' ||
+        state.lastEvent.type === 'notification_received' ||
+        state.lastEvent.type === 'chat_message'
+      ) {
+        setHasPromptedNotification(true);
+        if (getNotificationPermission() === 'default') {
+          requestNotificationPermission();
+        }
+      }
+    }
+    // Show native notification if granted and tab is not focused
+    if (isNotificationSupported() && getNotificationPermission() === 'granted' && document.visibilityState !== 'visible') {
+      let payload: NotificationPayload | null = null;
+      if (state.lastEvent.type === 'lesson_status_changed') {
+        payload = {
+          title: 'Lesson Status Updated',
+          body: `Lesson status updated: ${state.lastEvent.data.status}`,
+          url: window.location.origin + '/lessons/' + state.lastEvent.data.lessonId
+        };
+      } else if (state.lastEvent.type === 'notification_received') {
+        payload = {
+          title: state.lastEvent.data.title || 'Notification',
+          body: state.lastEvent.data.message,
+          url: window.location.origin
+        };
+      } else if (state.lastEvent.type === 'chat_message') {
+        payload = {
+          title: state.lastEvent.data.senderName || 'New Chat Message',
+          body: state.lastEvent.data.text || 'You have a new message',
+          url: window.location.origin + '/chat/' + (state.lastEvent.data.conversationId || '')
+        };
+      }
+      if (payload) {
+        showNativeNotification(payload);
+      }
+    }
+  }, [state.lastEvent, hasPromptedNotification]);
 
   const contextValue: RealtimeContextType = {
     state,
