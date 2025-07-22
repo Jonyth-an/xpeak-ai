@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import Textarea from '@/app/components/ui/Textarea';
 import CustomSelect from '@/app/components/ui/CustomSelect';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { SkeletonGrid, SkeletonCard, Skeleton } from '@/app/components/ui/Skeleton';
 import { useAuth } from '@/lib/AuthContext';
 import { materialsService, Material as MaterialType } from '@/lib/services/materialsService';
 import { useToast } from '@/app/components/ui/ToastContainer';
@@ -964,12 +965,27 @@ export default function TutorTools() {
               </Card>
             )}
 
+            {/* Search & Filter Skeleton */}
+            {isLoading && materials.length === 0 && (
+              <Card className="mb-6 border-0 shadow-sm bg-surface">
+                <div className="p-4">
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex-1">
+                      <Skeleton height="2.5rem" width="100%" />
+                    </div>
+                    <div className="flex gap-2">
+                      <Skeleton height="2.5rem" width="2rem" />
+                      <Skeleton height="2.5rem" width="140px" />
+                      <Skeleton height="2.5rem" width="120px" />
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )}
+
             {/* Materials Grid */}
             {isLoading ? (
-              <div className="p-12 text-center">
-                <Loader2 className="h-16 w-16 mx-auto mb-4 text-primary animate-spin" />
-                <p className="text-lg text-token-text-secondary">Loading materials...</p>
-              </div>
+              <SkeletonGrid items={6} />
             ) : sortedMaterials.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {sortedMaterials.map((material) => {
@@ -1020,17 +1036,26 @@ export default function TutorTools() {
                   <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-surface-accent">
                     <FileText className="h-8 w-8 text-token-text-muted" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-2 text-token-text">You haven't added any materials yet.</h3>
-                  <p className="mb-6 text-token-text-secondary">Start building your teaching resource library by adding your first material.</p>
+                  <h3 className="text-lg font-semibold text-token-text mb-2">No materials yet</h3>
+                  <p className="text-token-text-secondary mb-6">Start by uploading your first teaching material</p>
                   <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
-                    <Button 
-                      onClick={handleAddNewMaterial}
-                      className="rounded-full px-6 py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-200 bg-primary text-text-inverse"
-                    >
+                    <Button onClick={handleAddNewMaterial} className="rounded-full font-medium">
                       <Plus className="h-4 w-4 mr-2" />
-                      Add Your First Material
+                      Add Material
                     </Button>
                   </Dialog>
+                </div>
+              </Card>
+            )}
+
+            {/* Empty State Skeleton */}
+            {isLoading && materials.length === 0 && (
+              <Card className="border-0 shadow-sm bg-surface">
+                <div className="p-12 text-center">
+                  <Skeleton className="w-16 h-16 mx-auto mb-4 rounded-full" />
+                  <Skeleton height="1.5rem" width="200px" className="mx-auto mb-2" />
+                  <Skeleton height="1rem" width="300px" className="mx-auto mb-6" />
+                  <Skeleton height="2.5rem" width="150px" className="mx-auto rounded-full" />
                 </div>
               </Card>
             )}
