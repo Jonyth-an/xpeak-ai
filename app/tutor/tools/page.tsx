@@ -120,6 +120,12 @@ export default function TutorTools() {
   const [editingMaterial, setEditingMaterial] = useState<MaterialType | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [cacheStatus, setCacheStatus] = useState<'fresh' | 'cached' | 'offline'>('fresh');
+  
+  // Optimistic UI state
+  const [optimisticUpdates, setOptimisticUpdates] = useState<{
+    [key: string]: { type: 'create' | 'update' | 'delete'; data?: MaterialType; originalData?: MaterialType[] }
+  }>({});
+  const [isOptimisticAction, setIsOptimisticAction] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [newMaterial, setNewMaterial] = useState({
@@ -200,6 +206,67 @@ export default function TutorTools() {
       case 'wav': return 'Audio';
       default: return 'Other File';
     }
+  };
+
+  // Optimistic UI helper functions
+  const applyOptimisticCreate = (newMaterial: MaterialType) => {
+    const updateId = `create-${Date.now()}`;
+    setOptimisticUpdates(prev => ({
+      ...prev,
+      [updateId]: { type: 'create', data: newMaterial, originalData: materials }
+    }));
+    setMaterials(prev => [newMaterial, ...prev]);
+    setIsOptimisticAction(true);
+    return updateId;
+  };
+
+  const applyOptimisticUpdate = (updatedMaterial: MaterialType) => {
+    const updateId = `update-${updatedMaterial.id}`;
+    setOptimisticUpdates(prev => ({
+      ...prev,
+      [updateId]: { type: 'update', data: updatedMaterial, originalData: materials }
+    }));
+    setMaterials(prev => prev.map(material => 
+      material.id === updatedMaterial.id ? updatedMaterial : material
+    ));
+    setIsOptimisticAction(true);
+    return updateId;
+  };
+
+  const applyOptimisticDelete = (materialId: string) => {
+    const materialToDelete = materials.find(m => m.id === materialId);
+    if (!materialToDelete) return null;
+    
+    const updateId = `delete-${materialId}`;
+    setOptimisticUpdates(prev => ({
+      ...prev,
+      [updateId]: { type: 'delete', data: materialToDelete, originalData: materials }
+    }));
+    setMaterials(prev => prev.filter(material => material.id !== materialId));
+    setIsOptimisticAction(true);
+    return updateId;
+  };
+
+  const rollbackOptimisticUpdate = (updateId: string) => {
+    const update = optimisticUpdates[updateId];
+    if (!update) return;
+    
+    setMaterials(update.originalData || []);
+    setOptimisticUpdates(prev => {
+      const newUpdates = { ...prev };
+      delete newUpdates[updateId];
+      return newUpdates;
+    });
+    setIsOptimisticAction(Object.keys(optimisticUpdates).length > 1);
+  };
+
+  const clearOptimisticUpdate = (updateId: string) => {
+    setOptimisticUpdates(prev => {
+      const newUpdates = { ...prev };
+      delete newUpdates[updateId];
+      return newUpdates;
+    });
+    setIsOptimisticAction(Object.keys(optimisticUpdates).length > 1);
   };
 
   // Fetch materials on component mount
@@ -343,6 +410,16 @@ export default function TutorTools() {
 
   // Handle file upload
   const handleFileUpload = async (file: File) => {
+    if (!session) {
+      showToast({
+        type: 'error',
+        title: 'Authentication Error',
+        message: 'Please log in to upload materials.'
+      });
+      return;
+    }
+
+    // Validate file size
     if (file.size > maxFileSize) {
       showToast({
         type: 'error',
@@ -352,121 +429,112 @@ export default function TutorTools() {
       return;
     }
 
+    // Validate file type
     const fileExtension = file.name.split('.').pop()?.toUpperCase();
-    if (!supportedFormats.includes(fileExtension || '')) {
+    if (!fileExtension || !supportedFormats.includes(fileExtension)) {
       showToast({
         type: 'error',
         title: 'Unsupported file type',
-        message: `File type not supported. Supported formats: ${supportedFormats.join(', ')}.`
+        message: `Please upload a supported file type: ${supportedFormats.join(', ')}`
       });
       return;
     }
-
-    if (!session?.access_token) {
-      showToast({
-        type: 'error',
-        title: 'Session expired',
-        message: 'No active session found. Please log in again.'
-      });
-      return;
-    }
-
-    setIsUploading(true);
-    setUploadProgress(0);
-
-    // Simulate upload progress
-    const progressInterval = setInterval(() => {
-      setUploadProgress(prev => {
-        if (prev >= 90) return prev;
-        return prev + Math.random() * 10;
-      });
-    }, 200);
 
     try {
+      setIsUploading(true);
+      setUploadProgress(0);
+
+      // Create optimistic material object
+      const optimisticMaterial: MaterialType = {
+        id: `temp-${Date.now()}`,
+        title: file.name.replace(/\.[^/.]+$/, ''),
+        description: '',
+        url: '',
+        tags: [],
+        uploadedAt: new Date(),
+        fileType: fileExtension,
+        fileSize: file.size
+      };
+
+      // Apply optimistic update
+      const updateId = applyOptimisticCreate(optimisticMaterial);
+
+      // Simulate upload progress
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 100);
+
+      // Upload file
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('materialId', 'new-material'); // We'll generate a proper ID later
+      formData.append('materialId', optimisticMaterial.id);
 
-      const uploadResponse = await fetch('/api/chat/upload', {
+      const response = await fetch('/api/chat/upload', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: formData
+        body: formData,
       });
 
-      if (!uploadResponse.ok) {
-        const errorData = await uploadResponse.json();
-        throw new Error(errorData.error || `Upload failed with status ${uploadResponse.status}`);
+      if (!response.ok) {
+        throw new Error('Upload failed');
       }
 
-      const result = await uploadResponse.json();
+      const uploadResult = await response.json();
       
-      // Complete the progress
+      clearInterval(progressInterval);
       setUploadProgress(100);
+
+      // Create material in database
+      const materialData = {
+        title: optimisticMaterial.title,
+        description: optimisticMaterial.description,
+        url: uploadResult.url,
+        tags: optimisticMaterial.tags
+      };
+
+      const newMaterialObj = await materialsService.createMaterial(materialData, session);
       
-      // Auto-populate fields
-      autoPopulateTitle(file.name);
-      const suggestedTags = getSmartTags(file.name);
-      setNewMaterial(prev => ({
-        ...prev,
-        url: result.file.url,
-        tags: suggestedTags.join(', ')
-      }));
+      // Clear optimistic update and update with real data
+      clearOptimisticUpdate(updateId);
+      setMaterials(prev => prev.map(material => 
+        material.id === optimisticMaterial.id ? newMaterialObj : material
+      ));
 
-      // Automatically save the material to database
-      try {
-        if (!session) {
-          throw new Error('No active session');
-        }
+      // Set modal to edit mode for the new material
+      setEditingMaterial(newMaterialObj);
+      setNewMaterial({
+        title: newMaterialObj.title,
+        description: newMaterialObj.description || '',
+        url: newMaterialObj.url,
+        tags: newMaterialObj.tags.join(', ')
+      });
+      setIsEditMode(true);
+      setIsModalOpen(true);
 
-        const materialData = {
-          title: file.name.replace(`.${fileExtension}`, ''),
-          description: '',
-          url: result.file.url,
-          tags: suggestedTags,
-          fileType: fileExtension,
-          fileSize: file.size
-        };
-
-        const newMaterialObj = await materialsService.createMaterial(materialData, session);
-        setMaterials(prev => [newMaterialObj, ...prev]);
-        
-        // Set the modal to edit mode for the newly created material
-        setEditingMaterial(newMaterialObj);
-        setNewMaterial({
-          title: newMaterialObj.title,
-          description: newMaterialObj.description || '',
-          url: newMaterialObj.url,
-          tags: newMaterialObj.tags.join(', ')
-        });
-        setIsEditMode(true);
-        setIsModalOpen(true);
-        
-        // Show success message
-        showToast({
-          type: 'success',
-          title: 'Material uploaded',
-          message: 'Material uploaded successfully! You can now edit the details.'
-        });
-      } catch (error) {
-        console.error('Error saving uploaded material:', error);
-        showToast({
-          type: 'error',
-          title: 'Upload failed',
-          message: 'File uploaded but failed to save material. You can manually save it from the form.'
-        });
-      }
+      showToast({
+        type: 'success',
+        title: 'Material uploaded',
+        message: 'Material uploaded successfully! You can now edit the details.'
+      });
 
     } catch (error) {
       console.error('Upload error:', error);
+      
+      // Rollback optimistic update on error
+      const updateId = `create-${Date.now() - 1000}`; // Approximate the update ID
+      rollbackOptimisticUpdate(updateId);
+      
       showToast({
         type: 'error',
         title: 'Upload failed',
-        message: `Upload failed: ${error instanceof Error ? error.message : 'Please try again.'}`
+        message: 'Failed to upload material. Please try again.'
       });
     } finally {
-      clearInterval(progressInterval);
       setIsUploading(false);
       setUploadProgress(0);
     }
@@ -543,10 +611,19 @@ export default function TutorTools() {
 
   // Handle form submission (create or update)
   const handleSubmit = async () => {
+    if (!session) {
+      showToast({
+        type: 'error',
+        title: 'Authentication Error',
+        message: 'Please log in to save materials.'
+      });
+      return;
+    }
+
     if (!newMaterial.title.trim()) {
       showToast({
         type: 'error',
-        title: 'Title missing',
+        title: 'Title Required',
         message: 'Please enter a title for the material.'
       });
       return;
@@ -555,54 +632,92 @@ export default function TutorTools() {
     if (!newMaterial.url.trim()) {
       showToast({
         type: 'error',
-        title: 'URL missing',
-        message: 'Please provide a file or link URL.'
-      });
-      return;
-    }
-
-    if (!session) {
-      showToast({
-        type: 'error',
-        title: 'Session expired',
-        message: 'No active session. Please log in again.'
+        title: 'URL Required',
+        message: 'Please provide a URL or upload a file.'
       });
       return;
     }
 
     try {
       const materialData = {
-        title: newMaterial.title,
-        description: newMaterial.description,
-        url: newMaterial.url,
-        tags: newMaterial.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-        fileType: newMaterial.url.split('.').pop()?.toUpperCase(),
-        fileSize: 0 // We don't have file size for links
+        title: newMaterial.title.trim(),
+        description: newMaterial.description.trim(),
+        url: newMaterial.url.trim(),
+        tags: newMaterial.tags.trim() ? newMaterial.tags.split(',').map(tag => tag.trim()).filter(Boolean) : []
       };
 
       if (isEditMode && editingMaterial) {
-        // Update existing material
-        const updatedMaterial = await materialsService.updateMaterial({
-          ...materialData,
-          id: editingMaterial.id
-        }, session);
-        
-        setMaterials(prev => 
-          prev.map(m => m.id === editingMaterial.id ? updatedMaterial : m)
-        );
+        // Optimistic update for edit
+        const optimisticMaterial = { ...editingMaterial, ...materialData };
+        const updateId = applyOptimisticUpdate(optimisticMaterial);
+
+        try {
+          const updatedMaterial = await materialsService.updateMaterial(editingMaterial.id, materialData, session);
+          
+          // Clear optimistic update and update with real data
+          clearOptimisticUpdate(updateId);
+          setMaterials(prev => prev.map(material => 
+            material.id === editingMaterial.id ? updatedMaterial : material
+          ));
+
+          showToast({
+            type: 'success',
+            title: 'Material updated',
+            message: 'Material updated successfully!'
+          });
+        } catch (error) {
+          // Rollback optimistic update on error
+          rollbackOptimisticUpdate(updateId);
+          throw error;
+        }
       } else {
-        // Create new material
-        const newMaterialObj = await materialsService.createMaterial(materialData, session);
-        setMaterials(prev => [newMaterialObj, ...prev]);
+        // Optimistic create
+        const optimisticMaterial: MaterialType = {
+          id: `temp-${Date.now()}`,
+          ...materialData,
+          uploadedAt: new Date()
+        };
+        
+        const updateId = applyOptimisticCreate(optimisticMaterial);
+
+        try {
+          const newMaterialObj = await materialsService.createMaterial(materialData, session);
+          
+          // Clear optimistic update and update with real data
+          clearOptimisticUpdate(updateId);
+          setMaterials(prev => prev.map(material => 
+            material.id === optimisticMaterial.id ? newMaterialObj : material
+          ));
+
+          showToast({
+            type: 'success',
+            title: 'Material created',
+            message: 'Material created successfully!'
+          });
+        } catch (error) {
+          // Rollback optimistic update on error
+          rollbackOptimisticUpdate(updateId);
+          throw error;
+        }
       }
-      
-      handleModalClose();
+
+      // Reset form
+      setNewMaterial({
+        title: '',
+        description: '',
+        url: '',
+        tags: ''
+      });
+      setEditingMaterial(null);
+      setIsEditMode(false);
+      setIsModalOpen(false);
+
     } catch (error) {
       console.error('Error saving material:', error);
       showToast({
         type: 'error',
         title: 'Save failed',
-        message: `Failed to save material: ${error instanceof Error ? error.message : 'Please try again.'}`
+        message: 'Failed to save material. Please try again.'
       });
     }
   };
@@ -698,28 +813,47 @@ export default function TutorTools() {
   };
 
   const handleDeleteMaterial = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this material?')) {
-      return;
-    }
-
     if (!session) {
       showToast({
         type: 'error',
-        title: 'Session expired',
-        message: 'No active session. Please log in again.'
+        title: 'Authentication Error',
+        message: 'Please log in to delete materials.'
+      });
+      return;
+    }
+
+    // Apply optimistic delete
+    const updateId = applyOptimisticDelete(id);
+    if (!updateId) {
+      showToast({
+        type: 'error',
+        title: 'Delete failed',
+        message: 'Material not found.'
       });
       return;
     }
 
     try {
       await materialsService.deleteMaterial(id, session);
-      setMaterials(prev => prev.filter(m => m.id !== id));
+      
+      // Clear optimistic update
+      clearOptimisticUpdate(updateId);
+      
+      showToast({
+        type: 'success',
+        title: 'Material deleted',
+        message: 'Material deleted successfully!'
+      });
     } catch (error) {
       console.error('Error deleting material:', error);
+      
+      // Rollback optimistic update on error
+      rollbackOptimisticUpdate(updateId);
+      
       showToast({
         type: 'error',
         title: 'Delete failed',
-        message: `Failed to delete material: ${error instanceof Error ? error.message : 'Please try again.'}`
+        message: 'Failed to delete material. Please try again.'
       });
     }
   };
@@ -729,18 +863,27 @@ export default function TutorTools() {
       <div className="min-h-screen bg-token-surface-alt">
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                <Settings className="w-4 h-4 text-primary" />
-              </div>
-              <Text variant="h1" className="text-token-text font-bold">
-                Teaching Tools & Materials
-              </Text>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-2xl font-bold text-token-text mb-2">Teaching Tools</h1>
+              <p className="text-token-text-secondary">Manage your teaching materials and resources</p>
             </div>
-            <Text variant="body" className="text-token-text-secondary">
-              Everything you need to deliver engaging and effective lessons
-            </Text>
+            <div className="flex items-center gap-3">
+              {isOptimisticAction && (
+                <div className="flex items-center gap-2 text-xs text-token-text-muted">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  <span>Saving changes...</span>
+                </div>
+              )}
+              <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
+                <DialogTrigger asChild>
+                  <Button className="rounded-full font-medium">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Material
+                  </Button>
+                </DialogTrigger>
+              </Dialog>
+            </div>
           </div>
 
           {/* Quick Tools */}
@@ -1049,8 +1192,13 @@ export default function TutorTools() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredAndSortedMaterials.map((material) => {
                   const IconComponent = getMaterialTypeIcon(material.url);
+                  const isOptimistic = material.id.startsWith('temp-') || 
+                    Object.keys(optimisticUpdates).some(key => 
+                      optimisticUpdates[key].data?.id === material.id
+                    );
+                  
                   return (
-                    <Card key={material.id} className="border-0 shadow-sm hover:shadow-md transition-shadow bg-surface">
+                    <Card key={material.id} className={`border-0 shadow-sm hover:shadow-md transition-shadow bg-surface ${isOptimistic ? 'opacity-75' : ''}`}>
                       <div className="p-4">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center gap-3">
@@ -1063,11 +1211,18 @@ export default function TutorTools() {
                             </div>
                           </div>
                           <div className="flex gap-1">
+                            {isOptimistic && (
+                              <div className="flex items-center gap-1 text-xs text-token-text-muted">
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                                <span>Saving...</span>
+                              </div>
+                            )}
                             <Button
                               size="sm"
                               variant="ghost"
                               onClick={() => handleEdit(material)}
                               className="h-8 w-8 p-0"
+                              disabled={isOptimistic}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -1076,6 +1231,7 @@ export default function TutorTools() {
                               variant="ghost"
                               onClick={() => handleOpen(material)}
                               className="h-8 w-8 p-0"
+                              disabled={isOptimistic}
                             >
                               <ExternalLink className="h-4 w-4" />
                             </Button>
@@ -1084,6 +1240,7 @@ export default function TutorTools() {
                               variant="ghost"
                               onClick={() => handleDeleteMaterial(material.id)}
                               className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                              disabled={isOptimistic}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
