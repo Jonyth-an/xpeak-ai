@@ -102,6 +102,7 @@ const quickTools = [
 ];
 
 export default function TutorTools() {
+  // Component state and hooks
   const { session } = useAuth();
   const { showToast } = useToast();
   
@@ -131,11 +132,6 @@ export default function TutorTools() {
   // File type validation
   const supportedFormats = ['PDF', 'DOC', 'DOCX', 'PPT', 'PPTX', 'JPEG', 'PNG', 'GIF', 'MP4', 'MP3', 'TXT'];
   const maxFileSize = 10 * 1024 * 1024; // 10MB
-
-  // Search and filter state
-  const [materialsSearchQuery, setMaterialsSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState('all');
-  const [sortBy, setSortBy] = useState('recent');
   
   // Debounced search query
   const debouncedSearchQuery = useDebounce(materialsSearchQuery, 300);
