@@ -1,24 +1,21 @@
+import { Button } from './Button'
+import { MessageIcon } from './MessageIcon'
 import React from 'react'
 
-interface MessageButtonProps {
-  label: string
-  onClick: () => void
+interface MessageButtonProps extends React.ComponentProps<typeof Button> {
+  label?: string
   icon?: React.ReactNode
-  disabled?: boolean
   loading?: boolean
-  className?: string
+  unreadCount?: number
 }
 
-export function MessageButton({ label, onClick, icon, disabled = false, loading = false, className = '' }: MessageButtonProps) {
+export function MessageButton({ label = 'Message', icon, loading = false, unreadCount = 0, ...props }: MessageButtonProps) {
   return (
-    <button
-      type="button"
-      className={`inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 ${className}`}
-      onClick={onClick}
-      disabled={disabled || loading}
-    >
-      {icon && <span className="mr-2">{icon}</span>}
-      {loading ? 'Loading...' : label}
-    </button>
+    <Button {...props} variant={props.variant || 'outline'} size={props.size || 'sm'}>
+      <span className="inline-flex items-center">
+        {icon || <MessageIcon unreadCount={unreadCount} className="w-4 h-4 mr-2" />}
+        {loading ? 'Loading...' : label}
+      </span>
+    </Button>
   )
 } 

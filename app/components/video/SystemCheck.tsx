@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Button } from '@/app/components/ui/Button';
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/app/components/ui"
 import { CheckCircle, XCircle, Camera, Mic, Wifi, AlertCircle, RefreshCw, Play, Volume2 } from "lucide-react"

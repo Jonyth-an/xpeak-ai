@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/app/components/ui/Button';
 import { Badge } from '@/app/components/ui'
 import { 
   FileText, 

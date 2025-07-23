@@ -19,7 +19,7 @@ import {
   BookOpen
 } from 'lucide-react';
 import Image from 'next/image';
-import { useAuth } from '@/lib/AuthContext';
+import { useAuth } from '@/lib/AuthContext'
 import { MessageButton } from '@/app/components/ui/MessageButton'
 import { chatService } from '@/lib/services/chatService'
 import { useRouter } from 'next/navigation'
@@ -293,20 +293,21 @@ export default function StudentTutorsPage() {
 
                               {/* Action Buttons */}
                               <div className="flex gap-3">
-                                <Button variant="outline" size="sm" onClick={() => window.location.href = `/tutors/${tutor.id}`}>
+                                <Button variant="outline" size="sm" onClick={() => window.location.href = `/tutors/${tutor.id}` }>
                                   <Eye className="w-4 h-4 mr-2" />
                                   View Profile
                                 </Button>
-                                <Button variant="outline" size="sm" onClick={() => window.location.href = `/tutors/${tutor.id}?booking_type=trial`}>
+                                <Button variant="outline" size="sm" onClick={() => window.location.href = `/tutors/${tutor.id}?booking_type=trial` }>
                                   <Calendar className="w-4 h-4 mr-2" />
                                   Book Trial
                                 </Button>
-                                <Button size="sm" onClick={() => window.location.href = `/tutors/${tutor.id}?booking_type=lesson`}>
+                                <Button size="sm" onClick={() => window.location.href = `/tutors/${tutor.id}?booking_type=lesson` }>
                                   <BookOpen className="w-4 h-4 mr-2" />
                                   Book Lesson
                                 </Button>
                                 <MessageButton
-                                  label={messageLoading === tutor.id ? 'Loading...' : 'Message'}
+                                  loading={messageLoading === tutor.id}
+                                  disabled={messageLoading === tutor.id}
                                   onClick={async () => {
                                     if (!user) return;
                                     setMessageLoading(tutor.id);
@@ -336,13 +337,18 @@ export default function StudentTutorsPage() {
                                         }
                                       }
                                     } catch (err) {
-                                      alert('Failed to start chat.');
+                                      if (err instanceof Error && err.message && err.message.includes('timeout')) {
+                                        alert('Request timed out. Please try again.');
+                                      } else {
+                                        alert('Failed to start chat.');
+                                      }
                                     } finally {
                                       setMessageLoading(null);
                                     }
                                   }}
-                                  disabled={messageLoading === tutor.id}
-                                />
+                                >
+                                  Message
+                                </MessageButton>
                               </div>
                             </div>
                           </div>

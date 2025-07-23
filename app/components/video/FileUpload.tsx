@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useCallback } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/app/components/ui/Button';
 import { Badge } from '@/app/components/ui'
 import { 
   Upload, 
