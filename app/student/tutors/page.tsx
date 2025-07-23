@@ -293,15 +293,15 @@ export default function StudentTutorsPage() {
 
                               {/* Action Buttons */}
                               <div className="flex gap-3">
-                                <Button variant="outline" size="sm" onClick={() => window.location.href = `/tutors/${tutor.id}` }>
+                                <Button variant="outline" size="sm" onClick={() => window.location.href = `/student/tutors/${tutor.id}` }>
                                   <Eye className="w-4 h-4 mr-2" />
                                   View Profile
                                 </Button>
-                                <Button variant="outline" size="sm" onClick={() => window.location.href = `/tutors/${tutor.id}?booking_type=trial` }>
+                                <Button variant="outline" size="sm" onClick={() => window.location.href = `/student/tutors/${tutor.id}?booking_type=trial` }>
                                   <Calendar className="w-4 h-4 mr-2" />
                                   Book Trial
                                 </Button>
-                                <Button size="sm" onClick={() => window.location.href = `/tutors/${tutor.id}?booking_type=lesson` }>
+                                <Button size="sm" onClick={() => window.location.href = `/student/tutors/${tutor.id}?booking_type=lesson` }>
                                   <BookOpen className="w-4 h-4 mr-2" />
                                   Book Lesson
                                 </Button>

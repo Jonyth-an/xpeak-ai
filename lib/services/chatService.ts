@@ -356,12 +356,15 @@ class ChatService {
   /**
    * Create a new conversation
    */
-  async createConversation(input: CreateConversationInput): Promise<Conversation | null> {
+  async createConversation(input: CreateConversationInput, supabaseClient?: any): Promise<Conversation | null> {
     try {
       console.log('Creating conversation with input:', input)
       
+      // Use provided client or fall back to default
+      const client = supabaseClient || supabase
+      
       // Check if user is authenticated
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      const { data: { session }, error: sessionError } = await client.auth.getSession()
       
       if (sessionError || !session) {
         console.error('Authentication error:', sessionError)
@@ -371,7 +374,7 @@ class ChatService {
       console.log('User authenticated, creating conversation...')
       
       // Start a transaction
-      const { data: conversation, error: conversationError } = await supabase
+      const { data: conversation, error: conversationError } = await client
         .from('conversations')
         .insert([{
           title: input.title,
@@ -406,7 +409,72 @@ class ChatService {
 
       console.log('Adding participants:', allParticipants)
 
-      const { error: participantsError } = await supabase
+      const { error: participantsError } = await client
+        .from('conversation_participants')
+        .insert(allParticipants)
+
+      if (participantsError) {
+        console.error('Error adding participants:', participantsError)
+        throw participantsError
+      }
+
+      console.log('Conversation created successfully:', conversation)
+      return conversation
+    } catch (error) {
+      console.error('Failed to create conversation:', error)
+      return null
+    }
+  }
+
+  /**
+   * Create a new conversation with a specific user
+   */
+  async createConversationWithUser(input: CreateConversationInput & { userId: string }, supabaseClient?: any): Promise<Conversation | null> {
+    try {
+      console.log('Creating conversation with user ID:', input.userId)
+      
+      // Use provided client or fall back to default
+      const client = supabaseClient || supabase
+      
+      console.log('Creating conversation...')
+      
+      // Start a transaction
+      const { data: conversation, error: conversationError } = await client
+        .from('conversations')
+        .insert([{
+          title: input.title,
+          conversation_type: input.conversation_type,
+          created_by: input.userId
+        }])
+        .select()
+        .single()
+
+      if (conversationError) {
+        console.error('Error creating conversation:', conversationError)
+        throw conversationError
+      }
+
+      console.log('Conversation created, adding participants...')
+
+      // Prepare participants list - filter out current user from input to avoid duplicates
+      const otherParticipants = input.participants.filter(userId => userId !== input.userId)
+      
+      const allParticipants = [
+        {
+          conversation_id: conversation.id,
+          user_id: input.userId,
+          role: 'student' as const // Default role for conversation creator
+        },
+        ...otherParticipants.map((userId, index) => ({
+          conversation_id: conversation.id,
+          user_id: userId,
+          role: input.participant_roles[index] || 'student'
+        }))
+      ]
+
+      console.log('Adding participants:', allParticipants)
+
+      const { error: participantsError } = await client
         .from('conversation_participants')
         .insert(allParticipants)
 
@@ -536,7 +604,7 @@ class ChatService {
       }
 
       const name = data.full_name || 'Unknown User'
-      const initials = name.split(' ').map(n => n[0]).join('').toUpperCase()
+      const initials = name.split(' ').map((n: string) => n[0]).join('').toUpperCase()
 
       return {
         name,

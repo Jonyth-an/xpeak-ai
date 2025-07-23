@@ -20,6 +20,19 @@ export default function ChatPage() {
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null)
   const [isLoadingConversations, setIsLoadingConversations] = useState(true)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
+  
+  // Check for conversation parameter in URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const conversationId = urlParams.get('conversation')
+    if (conversationId) {
+      setSelectedConversationId(conversationId)
+      // Clear the URL parameter after setting the conversation
+      const newUrl = new URL(window.location.href)
+      newUrl.searchParams.delete('conversation')
+      window.history.replaceState({}, '', newUrl.toString())
+    }
+  }, [])
   const [newConversationData, setNewConversationData] = useState({
     title: '',
     conversation_type: 'general' as ConversationType,
@@ -63,7 +76,7 @@ export default function ChatPage() {
   } = useGeneralChat({
     conversationId: selectedConversationId || '',
     userId: user?.id || '',
-    userName: user?.full_name || user?.email || 'User'
+    userName: user?.email || 'User'
   })
 
   // Handle conversation selection
@@ -87,7 +100,7 @@ export default function ChatPage() {
         title: newConversationData.title,
         conversation_type: newConversationData.conversation_type,
         participants: newConversationData.participants, // Backend will add current user automatically
-        participant_roles: newConversationData.participant_roles
+        participant_roles: newConversationData.participant_roles as ('student' | 'tutor' | 'admin')[]
       })
 
       if (newConversation) {
@@ -113,7 +126,7 @@ export default function ChatPage() {
   }
 
   const filteredConversations = conversations.filter(conversation =>
-    conversation.title.toLowerCase().includes(searchTerm.toLowerCase())
+    (conversation.title || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (!user || !session) {
@@ -186,7 +199,7 @@ export default function ChatPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex-1 min-w-0">
                         <h3 className="text-sm font-medium text-gray-900 truncate">
-                          {conversation.title}
+                          {conversation.title || 'Untitled Conversation'}
                         </h3>
                         <p className="text-xs text-gray-500 truncate">
                           {conversation.conversation_type}

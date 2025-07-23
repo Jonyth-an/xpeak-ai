@@ -15,7 +15,9 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const month = parseInt(searchParams.get('month') || String(new Date().getMonth() + 1));
     const year = parseInt(searchParams.get('year') || String(new Date().getFullYear()));
-    
+
+    console.log('🔍 Server-side fetchTutorAvailability called with ID:', id, 'month:', month, 'year:', year);
+
     // Get tutor profile to verify they exist and are active
     const { data: tutorProfile, error: tutorError } = await supabase
       .from('tutor_profiles')
@@ -25,7 +27,8 @@ export async function GET(
       .single();
 
     if (tutorError || !tutorProfile) {
-      return NextResponse.json({ error: 'Tutor not found' }, { status: 404 });
+      console.log('Tutor not found or inactive:', tutorError);
+      return NextResponse.json({ error: 'Tutor not found', calendar: null }, { status: 404 });
     }
 
     // Calculate month start and end dates
@@ -52,7 +55,8 @@ export async function GET(
       .not('specific_date', 'is', null);
 
     if (error) {
-      return NextResponse.json({ error: 'Failed to fetch availability' }, { status: 500 });
+      console.log('Database error:', error);
+      return NextResponse.json({ error: 'Failed to fetch availability', calendar: null }, { status: 500 });
     }
 
     // Get booked lessons for the month to mark slots as unavailable
@@ -62,19 +66,11 @@ export async function GET(
       .eq('tutor_id', id)
       .gte('scheduled_start', `${monthStartStr}T00:00:00`)
       .lte('scheduled_start', `${monthEndStr}T23:59:59`)
-      .in('status', ['pending', 'confirmed', 'reschedule_requested']);
+      .in('status', ['confirmed', 'completed']);
 
     if (lessonsError) {
-      return NextResponse.json({ error: 'Failed to fetch booked lessons' }, { status: 500 });
-    }
-
-    console.log('🔍 Found booked lessons:', bookedLessons?.length || 0);
-    if (bookedLessons && bookedLessons.length > 0) {
-      console.log('🔍 Booked lessons details:', bookedLessons.map(lesson => ({
-        start: lesson.scheduled_start,
-        end: lesson.scheduled_end,
-        status: lesson.status
-      })));
+      console.log('Error fetching booked lessons:', lessonsError);
+      return NextResponse.json({ error: 'Failed to fetch booked lessons', calendar: null }, { status: 500 });
     }
 
     // Generate calendar data for the specified month
@@ -96,17 +92,11 @@ export async function GET(
     
     // Add days of the month
     const today = new Date();
-    const todayDateOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     for (let day = 1; day <= daysInMonth; day++) {
-      // Create date in local time to match today's timezone
       const date = new Date(year, month - 1, day);
       const dateStr = date.toISOString().split('T')[0];
       const isToday = date.toDateString() === today.toDateString();
-      
-      // Treat dates as "past" only if they're more than 24 hours in the past
-      const yesterday = new Date(todayDateOnly);
-      yesterday.setDate(yesterday.getDate() - 1);
-      const isPast = date < yesterday;
+      const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
       
       // Find availability slots for this specific date
       const dayAvailability = availability?.filter(a => a.specific_date === dateStr) || [];
@@ -114,9 +104,7 @@ export async function GET(
       // Find booked lessons for this date
       const dayBookedLessons = bookedLessons?.filter(lesson => {
         const lessonDate = new Date(lesson.scheduled_start);
-        // Convert UTC lesson date to local date for comparison
-        const lessonLocalDate = new Date(lessonDate.getTime() - (lessonDate.getTimezoneOffset() * 60000));
-        return lessonLocalDate.toISOString().split('T')[0] === dateStr;
+        return lessonDate.toISOString().split('T')[0] === dateStr;
       }) || [];
 
       // Process available time slots, excluding booked times
@@ -166,19 +154,6 @@ export async function GET(
             return (interval.start < lessonEnd && interval.end > lessonStart);
           });
 
-          // Debug logging for conflicts
-          if (isBooked) {
-            console.log('🚫 Slot filtered out due to booking conflict:', {
-              slotStart: interval.start.toISOString(),
-              slotEnd: interval.end.toISOString(),
-              conflictingLessons: dayBookedLessons.filter(lesson => {
-                const lessonStart = new Date(lesson.scheduled_start);
-                const lessonEnd = new Date(lesson.scheduled_end);
-                return (interval.start < lessonEnd && interval.end > lessonStart);
-              })
-            });
-          }
-
           // Only add slots that are in the future and not booked
           if (!isBooked && !isPast) {
             availableSlots.push({
@@ -207,6 +182,8 @@ export async function GET(
       });
     }
 
+    console.log('Generated calendar data:', calendarData);
+
     return NextResponse.json({ 
       calendar: calendarData,
       month,
@@ -216,6 +193,10 @@ export async function GET(
     });
 
   } catch (error) {
-    return NextResponse.json({ error: 'Internal server error', details: error instanceof Error ? error.message : String(error) }, { status: 500 });
+    console.log('Error fetching tutor availability:', error);
+    return NextResponse.json(
+      { error: `Error fetching availability: ${error instanceof Error ? error.message : String(error)}`, calendar: null },
+      { status: 500 }
+    );
   }
 } 
