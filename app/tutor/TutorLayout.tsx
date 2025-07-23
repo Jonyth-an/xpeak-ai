@@ -30,13 +30,15 @@ import {
   AlertCircle,
   ChevronRight,
   Menu,
-  X
+  X,
+  MessageIcon
 } from 'lucide-react';
 import Image from 'next/image';
 import { useRoles } from '@/lib/RolesContext';
 import { supabase } from '@/lib/supabaseClient';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
+import { MessageIcon as MessageIconComponent } from '@/app/components/ui/MessageIcon'
 
 interface TutorProfile {
   id: string;
@@ -78,6 +80,12 @@ const navigationItems = [
     description: 'View and manage upcoming lessons'
   },
   {
+    name: 'Messages',
+    href: '/tutor/chat',
+    icon: MessageIconComponent,
+    description: 'View and send messages'
+  },
+  {
     name: 'Lesson History',
     href: '/tutor/history',
     icon: BookOpen,
@@ -114,6 +122,8 @@ const navigationItems = [
     description: 'Guidelines and support'
   }
 ];
+
+console.log('🟢 [TutorLayout] navigationItems:', navigationItems.map(i => i.name))
 
 export default function TutorLayout({ children }: TutorLayoutProps) {
   const { user } = useAuth();

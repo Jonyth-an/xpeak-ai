@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Home, Globe, Moon, User } from 'lucide-react';
+import { Home, Globe, Moon, User, MessageCircle } from 'lucide-react';
 
 export function DesktopNav() {
   return (
@@ -18,6 +18,12 @@ export function DesktopNav() {
       
       {/* Global Actions */}
       <div className="flex items-center gap-4">
+        {/* Chat */}
+        <Link href="/chat" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 transition-colors">
+          <MessageCircle className="w-4 h-4" />
+          <span className="text-sm">Chat</span>
+        </Link>
+        
         {/* Language Selector */}
         <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 transition-colors">
           <Globe className="w-4 h-4" />

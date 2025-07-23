@@ -20,6 +20,9 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/lib/AuthContext';
+import { MessageButton } from '@/app/components/ui/MessageButton'
+import { chatService } from '@/lib/services/chatService'
+import { useRouter } from 'next/navigation'
 
 interface Tutor {
   id: string;
@@ -54,12 +57,14 @@ interface Pagination {
 
 export default function StudentTutorsPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [tutors, setTutors] = useState<Tutor[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [messageLoading, setMessageLoading] = useState<string | null>(null); // tutorId loading
 
   useEffect(() => {
     fetchTutors();
@@ -300,6 +305,44 @@ export default function StudentTutorsPage() {
                                   <BookOpen className="w-4 h-4 mr-2" />
                                   Book Lesson
                                 </Button>
+                                <MessageButton
+                                  label={messageLoading === tutor.id ? 'Loading...' : 'Message'}
+                                  onClick={async () => {
+                                    if (!user) return;
+                                    setMessageLoading(tutor.id);
+                                    try {
+                                      // 1. Get all conversations for the user
+                                      const conversations = await chatService.getConversations(user.id);
+                                      // 2. Find a student_tutor conversation with this tutor
+                                      const existing = conversations.find(c =>
+                                        c.conversation_type === 'student_tutor' &&
+                                        c.participants &&
+                                        c.participants.some(p => p.user_id === tutor.id)
+                                      );
+                                      if (existing) {
+                                        router.push(`/student/chat/${existing.id}`);
+                                      } else {
+                                        // 3. Create new conversation
+                                        const newConv = await chatService.createConversation({
+                                          title: `Chat with ${tutor.name}`,
+                                          conversation_type: 'student_tutor',
+                                          participants: [tutor.id],
+                                          participant_roles: ['tutor']
+                                        });
+                                        if (newConv) {
+                                          router.push(`/student/chat/${newConv.id}`);
+                                        } else {
+                                          alert('Failed to start chat.');
+                                        }
+                                      }
+                                    } catch (err) {
+                                      alert('Failed to start chat.');
+                                    } finally {
+                                      setMessageLoading(null);
+                                    }
+                                  }}
+                                  disabled={messageLoading === tutor.id}
+                                />
                               </div>
                             </div>
                           </div>

@@ -18,8 +18,9 @@ import {
   XCircle,
   AlertCircle,
   BookOpen,
-  DollarSign
+  DollarSign,
 } from 'lucide-react';
+import { MessageIcon } from '@/app/components/ui/MessageIcon'
 import { useAuth } from '@/lib/AuthContext';
 import { useRoles } from '@/lib/RolesContext';
 import { supabase } from '@/lib/supabaseClient';
@@ -49,6 +50,13 @@ const navigationItems = [
     icon: GraduationCap,
     description: 'View lesson history',
     href: '/student/lessons'
+  },
+  {
+    id: 'messages',
+    label: 'Messages',
+    icon: MessageIcon,
+    description: 'View and send messages',
+    href: '/student/chat'
   },
   { 
     id: 'tutors', 
