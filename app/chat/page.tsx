@@ -145,11 +145,7 @@ export default function ChatPage() {
 
   return (
     <div className="container mx-auto p-6">
-      {/* Debug Banner */}
-      <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-        <strong>✅ DEBUG:</strong> Messages UI is loaded - changes applied successfully!
-      </div>
-      
+      {/* Debug Banner removed */}
       <div className="flex gap-6 h-[calc(100vh-120px)]">
         {/* Left Panel - Conversations */}
         <div className="w-1/3 border-r border-gray-200 bg-white">

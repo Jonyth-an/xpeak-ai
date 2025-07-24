@@ -16,6 +16,7 @@ import {
   ArrowLeft, 
   RefreshCw 
 } from 'lucide-react'
+import Avatar from '@/app/components/ui/Avatar'
 
 interface Conversation {
   id: string
@@ -279,9 +280,17 @@ export default function StudentChatPage() {
                                 }`}
                               >
                                 <div className="flex items-start space-x-3">
-                                  <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center">
-                                    <User className="h-5 w-5 text-white" />
-                                  </div>
+                                  {conversation.tutor.profile_image_url ? (
+                                    <img
+                                      src={conversation.tutor.profile_image_url}
+                                      alt={conversation.tutor.name}
+                                      className="h-10 w-10 rounded-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center">
+                                      <User className="h-5 w-5 text-white" />
+                                    </div>
+                                  )}
                                   <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between">
                                       <Text className="font-medium text-gray-900 dark:text-gray-100 truncate">
@@ -321,40 +330,7 @@ export default function StudentChatPage() {
                     <div className={`flex-1 flex flex-col ${selectedConversation ? 'flex' : 'hidden lg:flex'}`}>
                       {selectedConversation ? (
                         <>
-                          {/* Chat Header */}
-                          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-3">
-                                <Button
-                                  variant="tertiary"
-                                  size="sm"
-                                  onClick={() => setSelectedConversation(null)}
-                                  className="lg:hidden"
-                                >
-                                  <ArrowLeft className="w-4 h-4" />
-                                </Button>
-                                <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center">
-                                  <User className="h-5 w-5 text-white" />
-                                </div>
-                                <div>
-                                  <Text className="font-medium text-gray-900 dark:text-gray-100">
-                                    {selectedConversation.tutor.name}
-                                  </Text>
-                                  <Text className="text-sm text-gray-500 dark:text-gray-400">
-                                    {selectedConversation.tutor.email}
-                                  </Text>
-                                </div>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                {selectedConversation.unread_count > 0 && (
-                                  <Badge variant="error">
-                                    {selectedConversation.unread_count} unread
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-
+                          {/* Chat Header removed */}
                           {/* Chat Messages */}
                           <div className="flex-1 overflow-hidden">
                             <ChatWindow

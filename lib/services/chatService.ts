@@ -619,7 +619,14 @@ class ChatService {
 
       if (error) {
         console.error('Error fetching conversations:', error)
-        throw error
+        if (error.details || error.message || error.code) {
+          console.error('Error details:', {
+            details: error.details,
+            message: error.message,
+            code: error.code
+          })
+        }
+        return []
       }
 
       console.log('Conversations fetched successfully:', data?.length, 'conversations')
