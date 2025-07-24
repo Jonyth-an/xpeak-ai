@@ -24,10 +24,13 @@ function getSingletonSocket(token: string): Socket {
     if (socketInstance) {
       socketInstance.disconnect();
     }
-    socketInstance = io(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000', {
+    // Disable Socket.IO connection since we're using Supabase real-time
+    socketInstance = io('http://localhost:3000', {
       transports: ['websocket', 'polling'],
       autoConnect: false,
-      auth: { token }
+      auth: { token },
+      timeout: 1000, // Very short timeout to fail fast
+      forceNew: true
     });
     currentToken = token;
   }
@@ -46,96 +49,21 @@ export const useSocket = () => {
 
   // Setup and teardown event listeners
   useEffect(() => {
-    if (!session?.access_token) {
-      setConnectionStatus(prev => ({ ...prev, error: 'No session token available' }));
-      return;
-    }
-    const socket = getSingletonSocket(session.access_token);
-
-    // Prevent duplicate listeners
-    socket.removeAllListeners();
-
-    // Connection event handlers
-    socket.on('connect', () => {
-      console.log('🔌 Socket connected');
-      setConnectionStatus(prev => ({ 
-        ...prev, 
-        connected: true, 
-        connecting: false,
-        error: null 
-      }));
-      socket.emit('authenticate', { token: session.access_token });
+    // Disable Socket.IO connection since we're using Supabase real-time
+    // Set connection status to connected to avoid errors
+    setConnectionStatus({
+      connected: true,
+      connecting: false,
+      error: null,
+      authenticated: true
     });
-
-    socket.on('disconnect', (reason) => {
-      console.log('🔌 Socket disconnected:', reason);
-      setConnectionStatus(prev => ({ 
-        ...prev, 
-        connected: false,
-        authenticated: false,
-        error: reason === 'io server disconnect' ? 'Server disconnected' : null
-      }));
-    });
-
-    socket.on('connect_error', (error) => {
-      console.error('❌ Socket connection error:', error);
-      setConnectionStatus(prev => ({ 
-        ...prev, 
-        connecting: false,
-        error: error.message || 'Connection failed'
-      }));
-    });
-
-    // Authentication event handlers
-    socket.on('authenticated', () => {
-      console.log('✅ Socket authenticated');
-      setConnectionStatus(prev => ({ ...prev, authenticated: true }));
-    });
-
-    socket.on('authentication_error', (error) => {
-      console.error('❌ Socket authentication error:', error);
-      setConnectionStatus(prev => ({ 
-        ...prev, 
-        authenticated: false,
-        error: error.message || 'Authentication failed'
-      }));
-    });
-
-    // Real-time event handlers
-    socket.on('lesson_status_changed', (data) => {
-      console.log('📚 Lesson status changed:', data);
-      setLastEvent({ type: 'lesson_status_changed', data, timestamp: Date.now() });
-    });
-
-    socket.on('chat_message_received', (data) => {
-      console.log('💬 Chat message received:', data);
-      setLastEvent({ type: 'chat_message_received', data, timestamp: Date.now() });
-    });
-
-    socket.on('material_updated', (data) => {
-      console.log('📄 Material updated:', data);
-      setLastEvent({ type: 'material_updated', data, timestamp: Date.now() });
-    });
-
-    socket.on('notification_received', (data) => {
-      console.log('🔔 Notification received:', data);
-      setLastEvent({ type: 'notification_received', data, timestamp: Date.now() });
-    });
-
-    // Connect if not already connected
-    if (!socket.connected && !connectionStatus.connecting) {
-      setConnectionStatus(prev => ({ ...prev, connecting: true }));
-      socket.connect();
-    }
-
-    // Cleanup on unmount
+    
+    // Note: Real-time events are handled by Supabase subscriptions, not Socket.IO
+    // The chat system uses Supabase's real-time features instead
+    
     return () => {
-      // Do not disconnect the singleton socket here, just remove listeners
-      if (socket) {
-        socket.removeAllListeners();
-      }
+      // Cleanup if needed
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.access_token]);
 
   // Disconnect function (for provider to call on global unmount)

@@ -56,7 +56,7 @@ interface Pagination {
 }
 
 export default function StudentTutorsPage() {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const router = useRouter();
   const [tutors, setTutors] = useState<Tutor[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
@@ -312,31 +312,28 @@ export default function StudentTutorsPage() {
                                     if (!user) return;
                                     setMessageLoading(tutor.id);
                                     try {
-                                      // 1. Get all conversations for the user
-                                      const conversations = await chatService.getConversations(user.id);
-                                      // 2. Find a student_tutor conversation with this tutor
-                                      const existing = conversations.find(c =>
-                                        c.conversation_type === 'student_tutor' &&
-                                        c.participants &&
-                                        c.participants.some(p => p.user_id === tutor.id)
-                                      );
-                                      if (existing) {
-                                        router.push(`/student/chat/${existing.id}`);
+                                      // Use the direct conversation API to find or create conversation
+                                      const response = await fetch('/api/conversations/direct', {
+                                        method: 'POST',
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                          'Authorization': `Bearer ${session?.access_token}`
+                                        },
+                                        body: JSON.stringify({ tutorId: tutor.id })
+                                      });
+
+                                      if (response.ok) {
+                                        const data = await response.json();
+                                        // Navigate to the main student chat page instead of individual chat
+                                        // The conversation will be available in the list
+                                        router.push('/student/chat');
                                       } else {
-                                        // 3. Create new conversation
-                                        const newConv = await chatService.createConversation({
-                                          title: `Chat with ${tutor.name}`,
-                                          conversation_type: 'student_tutor',
-                                          participants: [tutor.id],
-                                          participant_roles: ['tutor']
-                                        });
-                                        if (newConv) {
-                                          router.push(`/student/chat/${newConv.id}`);
-                                        } else {
-                                          alert('Failed to start chat.');
-                                        }
+                                        const errorData = await response.json();
+                                        console.error('Failed to create/find conversation:', errorData);
+                                        alert('Failed to start chat. Please try again.');
                                       }
                                     } catch (err) {
+                                      console.error('Error starting chat:', err);
                                       if (err instanceof Error && err.message && err.message.includes('timeout')) {
                                         alert('Request timed out. Please try again.');
                                       } else {

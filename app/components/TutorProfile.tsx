@@ -100,7 +100,8 @@ export default function TutorProfile({ tutorId, showSidebar = true, showBreadcru
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto py-16 text-center">
+      <div className="text-center py-16">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-token-primary mx-auto mb-4"></div>
         <h1 className="text-2xl font-bold mb-4">Loading...</h1>
       </div>
     );
@@ -108,7 +109,7 @@ export default function TutorProfile({ tutorId, showSidebar = true, showBreadcru
 
   if (error) {
     return (
-      <div className="max-w-2xl mx-auto py-16 text-center">
+      <div className="text-center py-16">
         <h1 className="text-2xl font-bold mb-4">Error</h1>
         <p className="text-red-500 mb-4">{error}</p>
         <p className="text-sm text-gray-500">(Check server logs for details.)</p>
@@ -118,7 +119,7 @@ export default function TutorProfile({ tutorId, showSidebar = true, showBreadcru
 
   if (!tutor) {
     return (
-      <div className="max-w-2xl mx-auto py-16 text-center">
+      <div className="text-center py-16">
         <h1 className="text-2xl font-bold mb-4">Error</h1>
         <p className="text-red-500 mb-4">Tutor data not found</p>
       </div>
@@ -129,194 +130,162 @@ export default function TutorProfile({ tutorId, showSidebar = true, showBreadcru
   const userEmail = user?.email;
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-token-surface-accent-light via-token-surface to-token-surface-accent min-h-screen">
-      <div className="max-w-7xl mx-auto">
-        <div className="relative lg:flex lg:min-h-[600px]">
-          {/* Sidebar - only show if showSidebar is true */}
-          {showSidebar && (
-            <div className="hidden lg:block lg:w-72 lg:shrink-0">
-              <div className="sticky top-24">
-                {/* Import DashboardSidebar dynamically to avoid circular dependencies */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                  <h3 className="text-lg font-semibold mb-4">Navigation</h3>
-                  <nav className="space-y-2">
-                    <a href="/student/dashboard" className="block text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
-                      Dashboard
-                    </a>
-                    <a href="/student/tutors" className="block text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
-                      Browse Tutors
-                    </a>
-                    <a href="/student/lessons" className="block text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
-                      My Lessons
-                    </a>
-                  </nav>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {/* Main Content */}
-          <div className={showSidebar ? "lg:ml-8 flex-1" : "flex-1"}>
-            <div className="max-w-4xl mx-auto py-16">
-              {/* Profile Header */}
-              <div className="flex gap-6 mb-8">
-                {/* Profile Image */}
-                <div className="w-24 h-24 rounded-full overflow-hidden bg-token-gray-100 flex-shrink-0">
-                  <img
-                    src={tutor.profile_image_url}
-                    alt={tutor.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+    <div className="w-full">
+      {/* Profile Header */}
+      <div className="flex gap-6 mb-8">
+        {/* Profile Image */}
+        <div className="w-24 h-24 rounded-full overflow-hidden bg-token-gray-100 flex-shrink-0">
+          <img
+            src={tutor.profile_image_url}
+            alt={tutor.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-                {/* Profile Info */}
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h2 className="text-2xl font-bold">{tutor.name}</h2>
-                    <span className="text-lg">🇺🇸</span>
-                  </div>
-                  <div className="text-token-text-secondary mb-3">
-                    Native Language: English (American Accent)
-                  </div>
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="flex items-center gap-1">
-                      <span className="text-yellow-500">★</span>
-                      <span className="font-semibold">{tutor.average_rating || 5.0}</span>
-                      <span className="text-token-text-secondary text-sm">({tutor.review_count || 0} reviews)</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-token-accent">🌐</span>
-                    <span className="text-token-text-secondary text-sm">
-                      Also speaks: {tutor.languages_taught?.map((lang: any) => 
-                        `${lang.language} (${lang.fluency})`
-                      ).join(', ') || 'English (Fluent)'}
-                    </span>
-                  </div>
-                  
-                  {/* Message Tutor Button */}
-                  {user && (
-                    <div className="mt-4">
-                      <MessageTutorButton
-                        tutorId={tutor.id}
-                        tutorName={tutor.name}
-                        tutorImage={tutor.profile_image_url}
-                        variant="primary"
-                        size="md"
-                        className="w-full sm:w-auto"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Profile Sections */}
-              <div className="space-y-8">
-                {/* Intro Video */}
-                {tutor.intro_video_url && (
-                  <div>
-                    <h3 className="text-xl font-semibold mb-3">Intro Video</h3>
-                    <video
-                      src={tutor.intro_video_url}
-                      controls
-                      className="w-full max-w-md rounded border border-token-border bg-black"
-                      style={{ minHeight: 180 }}
-                    >
-                      Your browser does not support the video tag.
-                    </video>
-                  </div>
-                )}
-
-                {/* About Me */}
-                {tutor.bio && (
-                  <div>
-                    <h3 className="text-xl font-semibold mb-3">About Me</h3>
-                    <p className="text-token-text-secondary leading-relaxed">
-                      {tutor.bio}
-                    </p>
-                  </div>
-                )}
-
-                {/* Teaching Style */}
-                {tutor.teaching_style && (
-                  <div>
-                    <h3 className="text-xl font-semibold mb-3">Teaching Style</h3>
-                    <p className="text-token-text-secondary leading-relaxed">
-                      {tutor.teaching_style}
-                    </p>
-                  </div>
-                )}
-
-                {/* Education */}
-                {tutor.education && (
-                  <div>
-                    <h3 className="text-xl font-semibold mb-3">Education</h3>
-                    <p className="text-token-text-secondary leading-relaxed">
-                      {tutor.education}
-                    </p>
-                  </div>
-                )}
-
-                {/* Teaching Certificates */}
-                <div>
-                  <h3 className="text-xl font-semibold mb-3">Teaching Certificates</h3>
-                  {tutor.certificates && tutor.certificates.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {tutor.certificates.map((cert: string, i: number) => (
-                        <span key={i} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                          {cert}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-token-text-secondary leading-relaxed">
-                      No certifications added yet.
-                    </p>
-                  )}
-                </div>
-
-                {/* Languages I Teach */}
-                {tutor.languages_taught && tutor.languages_taught.length > 0 && (
-                  <div>
-                    <h3 className="text-xl font-semibold mb-3">Languages I Teach</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {tutor.languages_taught.map((lang: any, i: number) => (
-                        <span key={i} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                          {lang.language} ({lang.fluency})
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Teaching Focus Areas */}
-                {tutor.specializations && tutor.specializations.length > 0 && (
-                  <div>
-                    <h3 className="text-xl font-semibold mb-3">Teaching Focus Areas</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {tutor.specializations.map((spec: string, i: number) => (
-                        <span key={i} className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
-                          {spec}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Real-time Calendar Section */}
-              <div id="calendar-section">
-                <RealTimeCalendar 
-                  tutorId={tutor.id}
-                  initialCalendar={calendar || []}
-                  initialMonth={month || 1}
-                  initialYear={year || new Date().getFullYear()}
-                />
-              </div>
+        {/* Profile Info */}
+        <div className="flex-1">
+          <div className="flex items-center gap-3 mb-2">
+            <h2 className="text-2xl font-bold">{tutor.name}</h2>
+            <span className="text-lg">🇺🇸</span>
+          </div>
+          <div className="text-token-text-secondary mb-3">
+            Native Language: English (American Accent)
+          </div>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="flex items-center gap-1">
+              <span className="text-yellow-500">★</span>
+              <span className="font-semibold">{tutor.average_rating || 5.0}</span>
+              <span className="text-token-text-secondary text-sm">({tutor.review_count || 0} reviews)</span>
             </div>
           </div>
+          <div className="flex items-center gap-1">
+            <span className="text-token-accent">🌐</span>
+            <span className="text-token-text-secondary text-sm">
+              Also speaks: {tutor.languages_taught?.map((lang: any) => 
+                `${lang.language} (${lang.fluency})`
+              ).join(', ') || 'English (Fluent)'}
+            </span>
+          </div>
+          
+          {/* Message Tutor Button */}
+          {user && (
+            <div className="mt-4">
+              <MessageTutorButton
+                tutorId={tutor.id}
+                tutorName={tutor.name}
+                tutorImage={tutor.profile_image_url}
+                variant="primary"
+                size="md"
+                className="w-full sm:w-auto"
+              />
+            </div>
+          )}
         </div>
       </div>
-    </section>
+
+      {/* Profile Sections */}
+      <div className="space-y-8">
+        {/* Intro Video */}
+        {tutor.intro_video_url && (
+          <div>
+            <h3 className="text-xl font-semibold mb-3">Intro Video</h3>
+            <video
+              src={tutor.intro_video_url}
+              controls
+              className="w-full max-w-md rounded border border-token-border bg-black"
+              style={{ minHeight: 180 }}
+            >
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        )}
+
+        {/* About Me */}
+        {tutor.bio && (
+          <div>
+            <h3 className="text-xl font-semibold mb-3">About Me</h3>
+            <p className="text-token-text-secondary leading-relaxed">
+              {tutor.bio}
+            </p>
+          </div>
+        )}
+
+        {/* Teaching Style */}
+        {tutor.teaching_style && (
+          <div>
+            <h3 className="text-xl font-semibold mb-3">Teaching Style</h3>
+            <p className="text-token-text-secondary leading-relaxed">
+              {tutor.teaching_style}
+            </p>
+          </div>
+        )}
+
+        {/* Education */}
+        {tutor.education && (
+          <div>
+            <h3 className="text-xl font-semibold mb-3">Education</h3>
+            <p className="text-token-text-secondary leading-relaxed">
+              {tutor.education}
+            </p>
+          </div>
+        )}
+
+        {/* Teaching Certificates */}
+        <div>
+          <h3 className="text-xl font-semibold mb-3">Teaching Certificates</h3>
+          {tutor.certificates && tutor.certificates.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {tutor.certificates.map((cert: string, i: number) => (
+                <span key={i} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                  {cert}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-token-text-secondary leading-relaxed">
+              No certifications added yet.
+            </p>
+          )}
+        </div>
+
+        {/* Languages I Teach */}
+        {tutor.languages_taught && tutor.languages_taught.length > 0 && (
+          <div>
+            <h3 className="text-xl font-semibold mb-3">Languages I Teach</h3>
+            <div className="flex flex-wrap gap-2">
+              {tutor.languages_taught.map((lang: any, i: number) => (
+                <span key={i} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                  {lang.language} ({lang.fluency})
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Teaching Focus Areas */}
+        {tutor.specializations && tutor.specializations.length > 0 && (
+          <div>
+            <h3 className="text-xl font-semibold mb-3">Teaching Focus Areas</h3>
+            <div className="flex flex-wrap gap-2">
+              {tutor.specializations.map((spec: string, i: number) => (
+                <span key={i} className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+                  {spec}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Real-time Calendar Section */}
+      <div id="calendar-section">
+        <RealTimeCalendar 
+          tutorId={tutor.id}
+          initialCalendar={calendar || []}
+          initialMonth={month || 1}
+          initialYear={year || new Date().getFullYear()}
+        />
+      </div>
+    </div>
   );
 } 

@@ -73,33 +73,11 @@ export async function POST(request: NextRequest) {
 
     console.log('Looking for direct conversation between student:', user.id, 'and tutor user_id:', tutorProfile.user_id)
 
-    // First, check if a direct conversation already exists
-    const { data: existingConversations, error: fetchError } = await serverSupabase
-      .from('conversations')
-      .select(`
-        id,
-        title,
-        conversation_type,
-        created_at,
-        participants:conversation_participants(
-          user_id,
-          role
-        )
-      `)
-      .eq('conversation_type', 'student_tutor')
-      .eq('conversation_participants.user_id', user.id)
-
-    if (fetchError) {
-      console.error('Error fetching existing conversations:', fetchError)
-      return NextResponse.json(
-        { error: 'Failed to check existing conversations', details: fetchError.message },
-        { status: 500 }
-      )
-    }
-
-    // Find if there's already a conversation with this tutor (using their user_id)
-    const existingConversation = existingConversations?.find(conv => 
-      conv.participants?.some(p => p.user_id === tutorProfile.user_id)
+    // First, check if a direct conversation already exists using the chat service
+    const existingConversation = await chatService.findExistingConversation(
+      user.id, 
+      tutorProfile.user_id, 
+      'student_tutor'
     )
 
     if (existingConversation) {
@@ -109,6 +87,8 @@ export async function POST(request: NextRequest) {
         isNew: false
       })
     }
+
+    console.log('No existing conversation found, creating new one...')
 
     const conversationTitle = tutorProfile.display_name 
       ? `Chat with ${tutorProfile.display_name}`

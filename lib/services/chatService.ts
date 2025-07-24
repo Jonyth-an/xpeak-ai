@@ -242,9 +242,14 @@ class ChatService {
       // Determine which table to insert into
       const table = messageData.lesson_id ? 'lesson_chat_messages' : 'general_chat_messages'
       
+      // Filter out sender_name for general_chat_messages table since it doesn't have this column
+      const insertData = table === 'general_chat_messages' 
+        ? { ...messageData, sender_name: undefined }
+        : messageData
+      
       const { data, error } = await supabase
         .from(table)
-        .insert([messageData])
+        .insert([insertData])
         .select()
         .single()
 
@@ -350,6 +355,97 @@ class ChatService {
     } catch (error) {
       console.error('Failed to fetch general chat history:', error)
       return []
+    }
+  }
+
+  /**
+   * Find existing conversation between two users
+   */
+  async findExistingConversation(userId1: string, userId2: string, conversationType: string = 'student_tutor'): Promise<Conversation | null> {
+    try {
+      console.log('Finding existing conversation between users:', userId1, userId2, 'type:', conversationType)
+      
+      // Get all conversations where user1 is a participant
+      const { data: user1Conversations, error: user1Error } = await supabase
+        .from('conversations')
+        .select(`
+          id,
+          title,
+          conversation_type,
+          created_by,
+          created_at,
+          updated_at,
+          participants:conversation_participants(
+            id,
+            conversation_id,
+            user_id,
+            role,
+            joined_at
+          )
+        `)
+        .eq('conversation_type', conversationType)
+        .eq('conversation_participants.user_id', userId1)
+
+      if (user1Error) {
+        console.error('Error fetching user1 conversations:', user1Error)
+        return null
+      }
+
+      console.log('Found conversations for user1:', user1Conversations?.length || 0)
+
+      // Find conversation that also has user2 as participant
+      const existingConversation = user1Conversations?.find(conv => 
+        conv.participants?.some(p => p.user_id === userId2)
+      )
+
+      if (existingConversation) {
+        console.log('Found existing conversation:', existingConversation.id)
+        return existingConversation
+      }
+
+      // Also check from user2's perspective to be thorough
+      const { data: user2Conversations, error: user2Error } = await supabase
+        .from('conversations')
+        .select(`
+          id,
+          title,
+          conversation_type,
+          created_by,
+          created_at,
+          updated_at,
+          participants:conversation_participants(
+            id,
+            conversation_id,
+            user_id,
+            role,
+            joined_at
+          )
+        `)
+        .eq('conversation_type', conversationType)
+        .eq('conversation_participants.user_id', userId2)
+
+      if (user2Error) {
+        console.error('Error fetching user2 conversations:', user2Error)
+        return null
+      }
+
+      console.log('Found conversations for user2:', user2Conversations?.length || 0)
+
+      // Find conversation that also has user1 as participant
+      const existingConversationFromUser2 = user2Conversations?.find(conv => 
+        conv.participants?.some(p => p.user_id === userId1)
+      )
+
+      if (existingConversationFromUser2) {
+        console.log('Found existing conversation from user2 perspective:', existingConversationFromUser2.id)
+        return existingConversationFromUser2
+      }
+
+      console.log('No existing conversation found')
+      return null
+    } catch (error) {
+      console.error('Error finding existing conversation:', error)
+      return null
     }
   }
 

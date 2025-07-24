@@ -3,14 +3,21 @@ import { serverSupabase, getUserFromAuthHeader } from '@/lib/serverSupabaseClien
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const conversationId = params.id
-    const { message, messageType = 'text' } = await request.json()
+    const { id: conversationId } = await params
+    const { 
+      message, 
+      messageType = 'text',
+      file_url,
+      file_name,
+      file_size
+    } = await request.json()
 
     // Get the authorization header
     const authHeader = request.headers.get('authorization')
+    
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json(
         { error: 'Missing or invalid Authorization header' },
@@ -37,9 +44,6 @@ export async function POST(
       )
     }
 
-    console.log('Sending message to conversation:', conversationId)
-    console.log('Message from user:', user.id)
-
     // Verify the user is a participant in this conversation
     const { data: participant, error: participantError } = await serverSupabase
       .from('conversation_participants')
@@ -56,22 +60,15 @@ export async function POST(
       )
     }
 
-    // Get user profile for sender name
-    const { data: userProfile } = await serverSupabase
-      .from('profiles')
-      .select('full_name')
-      .eq('id', user.id)
-      .single()
-
-    const senderName = userProfile?.full_name || user.email || 'Unknown User'
-
     // Insert the message
     const messageData = {
       conversation_id: conversationId,
       sender_id: user.id,
-      sender_name: senderName,
       message: message,
-      message_type: messageType
+      message_type: messageType,
+      ...(file_url && { file_url }),
+      ...(file_name && { file_name }),
+      ...(file_size && { file_size })
     }
 
     const { data: sentMessage, error: insertError } = await serverSupabase
@@ -90,9 +87,37 @@ export async function POST(
 
     console.log('Message sent successfully:', sentMessage.id)
 
+    // Update conversation's updated_at timestamp and increment unread_count for other participants
+    const { error: updateError } = await serverSupabase
+      .from('conversations')
+      .update({ 
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', conversationId)
+
+    if (updateError) {
+      console.error('Error updating conversation:', updateError)
+      // Don't fail the request, just log the error
+    }
+
+    // Get sender profile information for the response
+    const { data: userProfile } = await serverSupabase
+      .from('profiles')
+      .select('full_name')
+      .eq('id', user.id)
+      .single()
+
+    const senderName = userProfile?.full_name || user.email || 'Unknown User'
+
+    // Return message with sender information
+    const messageWithSender = {
+      ...sentMessage,
+      sender_name: senderName
+    }
+
     return NextResponse.json({
       success: true,
-      message: sentMessage
+      message: messageWithSender
     })
 
   } catch (error) {
@@ -106,15 +131,16 @@ export async function POST(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const conversationId = params.id
+    const { id: conversationId } = await params
     const { searchParams } = new URL(request.url)
     const limit = parseInt(searchParams.get('limit') || '50')
 
     // Get the authorization header
     const authHeader = request.headers.get('authorization')
+    
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json(
         { error: 'Missing or invalid Authorization header' },
@@ -157,10 +183,21 @@ export async function GET(
       )
     }
 
-    // Get messages for this conversation
+    // Fetch messages with file fields
     const { data: messages, error: fetchError } = await serverSupabase
       .from('general_chat_messages')
-      .select('*')
+      .select(`
+        id,
+        conversation_id,
+        sender_id,
+        message,
+        message_type,
+        file_url,
+        file_name,
+        file_size,
+        created_at,
+        updated_at
+      `)
       .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true })
       .limit(limit)
@@ -173,9 +210,29 @@ export async function GET(
       )
     }
 
+    console.log(`Fetched ${messages?.length || 0} messages for conversation ${conversationId}`)
+
+    // Get sender information for all messages
+    const messagesWithSenders = await Promise.all(
+      (messages || []).map(async (message) => {
+        const { data: userProfile } = await serverSupabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', message.sender_id)
+          .single()
+
+        const senderName = userProfile?.full_name || 'Unknown User'
+
+        return {
+          ...message,
+          sender_name: senderName
+        }
+      })
+    )
+
     return NextResponse.json({
       success: true,
-      messages: messages || []
+      messages: messagesWithSenders
     })
 
   } catch (error) {
