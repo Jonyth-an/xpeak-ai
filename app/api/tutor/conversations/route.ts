@@ -115,11 +115,11 @@ export async function GET(request: NextRequest) {
         if (studentParticipant) {
           const { data: studentProfile } = await serverSupabase
             .from('profiles')
-            .select('profile_image_url')
+            .select('avatar_url')
             .eq('id', studentParticipant.user_id)
             .single()
-          
-          studentProfileImage = studentProfile?.profile_image_url
+          studentProfileImage = studentProfile?.avatar_url
+          console.log('DEBUG studentProfileImage:', studentProfileImage, 'for user_id:', studentParticipant.user_id)
         }
 
         // Get student profile data separately
@@ -128,12 +128,11 @@ export async function GET(request: NextRequest) {
         if (studentParticipant) {
           const { data: studentProfile } = await serverSupabase
             .from('profiles')
-            .select('full_name, email')
+            .select('full_name')
             .eq('id', studentParticipant.user_id)
             .single()
-          
-          studentName = studentProfile?.full_name || studentProfile?.email || 'Student'
-          studentEmail = studentProfile?.email || ''
+          studentName = studentProfile?.full_name || 'Student'
+          console.log('DEBUG studentProfile:', studentProfile, 'for user_id:', studentParticipant.user_id)
         }
         
         return {
@@ -147,7 +146,6 @@ export async function GET(request: NextRequest) {
           student: {
             id: studentParticipant?.user_id,
             name: studentName,
-            email: studentEmail,
             profile_image_url: studentProfileImage
           },
           latest_message: latestMessage ? {
