@@ -1,7 +1,16 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
-import { X, Send, Paperclip, ChevronDown, File, Download, Image } from 'lucide-react'
+import { 
+  Send, 
+  Paperclip, 
+  Download, 
+  Image, 
+  File, 
+  X, 
+  ChevronDown,
+  ChevronUp
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -60,16 +69,18 @@ export function ChatWindow({
   conversationId,
   isStudentView = false
 }: ChatWindowProps) {
+  const { user, session } = useAuth()
   const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [currentConversationId, setCurrentConversationId] = useState<string | undefined>(conversationId)
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(conversationId || null)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
+  const [isMinimized, setIsMinimized] = useState(false)
+  
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { user, session } = useAuth()
   const processedMessageIds = useRef<Set<string>>(new Set())
 
   // Scroll to bottom when new messages arrive
@@ -77,11 +88,103 @@ export function ChatWindow({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+  const loadConversation = async () => {
+    if (!user || !session || !isOpen) return
+    
+    setIsLoading(true)
+    setError(null)
+    
+    try {
+      // If we have a conversationId prop, use it directly
+      if (conversationId) {
+        console.log('Using provided conversation ID:', conversationId)
+        setCurrentConversationId(conversationId)
+        await loadMessages(conversationId)
+        return
+      }
 
-  // Load conversation and messages
+      // If we don't have a conversation ID, create or find one
+      if (!currentConversationId) {
+        console.log('Creating/finding conversation for tutor:', tutorId)
+        const requestBody = { tutorId }
+        console.log('Direct conversation request body:', requestBody)
+        
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
+        
+        let response
+        try {
+          response = await fetch('/api/conversations/direct', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session?.access_token}`
+            },
+            body: JSON.stringify(requestBody),
+            signal: controller.signal
+          })
+          clearTimeout(timeoutId)
+        } catch (error) {
+          clearTimeout(timeoutId)
+          if (error instanceof Error && error.name === 'AbortError') {
+            throw new Error('Request timeout - please try again')
+          }
+          throw error
+        }
+
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.error('❌ Failed to create/find conversation:', response.status, errorText)
+          console.log('🔍 Response headers:', Object.fromEntries(response.headers.entries()))
+          
+          // Parse error response for better user feedback
+          let errorMessage = 'Failed to create conversation'
+          try {
+            const errorData = JSON.parse(errorText)
+            console.log('🔍 Error data received:', errorData)
+            
+            if (errorData.code === 'SELF_MESSAGE_ATTEMPT') {
+              errorMessage = 'You cannot message your own tutor profile. Please select a different tutor.'
+            } else if (errorData.error) {
+              errorMessage = errorData.error
+            } else if (errorData.details) {
+              errorMessage = errorData.details
+            }
+            
+            // Log the specific error for debugging
+            console.log('🔍 Parsed error message:', errorMessage)
+          } catch (e) {
+            // If parsing fails, use the raw error text
+            console.log('🔍 Failed to parse error response:', e)
+            errorMessage = errorText
+          }
+          
+          throw new Error(errorMessage)
+        }
+
+        const data = await response.json()
+        console.log('✅ Conversation created/found:', data)
+        console.log('🔍 Response status:', response.status)
+        console.log('🔍 Is new conversation:', data.isNew)
+        
+        if (data.conversation?.id) {
+          setCurrentConversationId(data.conversation.id)
+          await loadMessages(data.conversation.id)
+        } else {
+          throw new Error('No conversation ID received')
+        }
+      } else {
+        // We have a conversation ID, just load messages
+        await loadMessages(currentConversationId)
+      }
+    } catch (err) {
+      console.error('Error loading conversation or messages:', err)
+      setError(err instanceof Error ? err.message : 'Failed to load chat history.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   useEffect(() => {
     if (!user || !session || !isOpen) return
 
@@ -93,80 +196,16 @@ export function ChatWindow({
     console.log('Tutor ID:', tutorId)
     console.log('Conversation ID prop:', conversationId)
 
-    const loadConversation = async () => {
-      setIsLoading(true)
-      setError(null)
-      
-      try {
-        // If we have a conversationId prop, use it directly
-        if (conversationId) {
-          console.log('Using provided conversation ID:', conversationId)
-          setCurrentConversationId(conversationId)
-          await loadMessages(conversationId)
-          return
-        }
-
-        // If we don't have a conversation ID, create or find one
-        if (!currentConversationId) {
-          console.log('Creating/finding conversation for tutor:', tutorId)
-          const requestBody = { tutorId }
-          console.log('Direct conversation request body:', requestBody)
-          
-          const controller = new AbortController()
-          const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
-          
-          let response
-          try {
-            response = await fetch('/api/conversations/direct', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${session?.access_token}`
-              },
-              body: JSON.stringify(requestBody),
-              signal: controller.signal
-            })
-            clearTimeout(timeoutId)
-          } catch (error) {
-            clearTimeout(timeoutId)
-            if (error instanceof Error && error.name === 'AbortError') {
-              throw new Error('Request timeout - please try again')
-            }
-            throw error
-          }
-
-          if (!response.ok) {
-            const errorText = await response.text()
-            console.error('Failed to create/find conversation:', response.status, errorText)
-            throw new Error(`Failed to create conversation: ${errorText}`)
-          }
-
-          const data = await response.json()
-          console.log('Conversation created/found:', data)
-          
-          if (data.conversation?.id) {
-            setCurrentConversationId(data.conversation.id)
-            await loadMessages(data.conversation.id)
-          } else {
-            throw new Error('No conversation ID received')
-          }
-        } else {
-          // We have a conversation ID, just load messages
-          await loadMessages(currentConversationId)
-        }
-      } catch (err) {
-        console.error('Error loading conversation or messages:', err)
-        setError(err instanceof Error ? err.message : 'Failed to load chat history.')
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
     loadConversation()
     // Clear processed message IDs when conversation changes
     processedMessageIds.current.clear()
     setMessages([]) // Clear messages when conversation changes
   }, [user, session, isOpen, conversationId, tutorId])
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
 
   // Set up real-time subscription for new messages
   useEffect(() => {
@@ -500,73 +539,145 @@ export function ChatWindow({
 
   if (!isOpen) return null
 
-  return (
-    <div className="w-full h-full flex flex-col bg-white dark:bg-gray-900">
-      <Card className="w-full h-full flex flex-col bg-white dark:bg-gray-900 shadow-xl">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-t-lg">
-          <div className="flex items-center space-x-3">
+  if (isMinimized) {
+    return (
+      <div className="fixed bottom-4 right-4 w-80 h-12 z-50 shadow-2xl rounded-lg overflow-hidden">
+        <Card className="w-full h-full flex items-center justify-between bg-white dark:bg-gray-900 shadow-xl px-3">
+          <div className="flex items-center space-x-2">
             <Avatar 
               src={tutorImage} 
               alt={tutorName} 
-              size="md"
-              className="h-10 w-10"
+              size="sm"
+              className="h-6 w-6"
             />
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
                 {tutorName}
               </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {messages.length > 0 ? `${messages.length} message${messages.length === 1 ? '' : 's'}` : 'Online'}
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {messages.length > 0 ? `${messages.length} message${messages.length === 1 ? '' : 's'}` : 'Click to chat'}
               </p>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => {/* TODO: Minimize functionality */}}
-              className="h-8 w-8 p-0"
+              onClick={() => setIsMinimized(false)}
+              className="h-6 w-6 p-0"
             >
-              <ChevronDown className="h-4 w-4" />
+              <ChevronUp className="h-3 w-3" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="h-8 w-8 p-0"
+              className="h-6 w-6 p-0"
             >
-              <X className="h-4 w-4" />
+              <X className="h-3 w-3" />
+            </Button>
+          </div>
+        </Card>
+      </div>
+    )
+  }
+
+  return (
+    <div className="fixed bottom-4 right-4 w-96 h-[500px] z-50 shadow-2xl rounded-lg overflow-hidden">
+      <Card className="w-full h-full flex flex-col bg-white dark:bg-gray-900 shadow-xl">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+          <div className="flex items-center space-x-3">
+            <Avatar 
+              src={tutorImage} 
+              alt={tutorName} 
+              size="md"
+              className="h-8 w-8"
+            />
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
+                {tutorName}
+              </h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {messages.length > 0 ? `${messages.length} message${messages.length === 1 ? '' : 's'}` : 'Online'}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsMinimized(true)}
+              className="h-6 w-6 p-0"
+            >
+              <ChevronDown className="h-3 w-3" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="h-6 w-6 p-0"
+            >
+              <X className="h-3 w-3" />
             </Button>
           </div>
         </div>
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-3 space-y-3">
           {!user || !session ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center text-gray-500 dark:text-gray-400">
-                <p>Please log in to start chatting</p>
+                <p className="text-sm">Please log in to start chatting</p>
                 <Button 
                   onClick={() => window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname)}
-                  className="mt-2"
+                  className="mt-2 text-xs"
+                  size="sm"
                 >
                   Log In
+                </Button>
+              </div>
+            </div>
+          ) : error ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center max-w-xs">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 mb-3">
+                  <div className="flex items-center justify-center mb-2">
+                    <div className="w-5 h-5 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center">
+                      <span className="text-red-600 dark:text-red-400 text-xs font-bold">!</span>
+                    </div>
+                  </div>
+                  <p className="text-red-800 dark:text-red-200 font-medium mb-1 text-sm">Unable to start chat</p>
+                  <p className="text-red-600 dark:text-red-300 text-xs">{error}</p>
+                </div>
+                <Button 
+                  onClick={() => {
+                    setError(null)
+                    // Retry loading the conversation
+                    if (isOpen) {
+                      loadConversation()
+                    }
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="text-xs"
+                >
+                  Try Again
                 </Button>
               </div>
             </div>
           ) : isLoading ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center text-gray-500 dark:text-gray-400">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
-                <p>Loading conversation...</p>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary mx-auto mb-2"></div>
+                <p className="text-sm">Loading conversation...</p>
               </div>
             </div>
           ) : messages.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center text-gray-500 dark:text-gray-400">
-                <p>Start a conversation with {tutorName}</p>
-                <p className="text-sm">Send a message to begin chatting</p>
+                <p className="text-sm">Start a conversation with {tutorName}</p>
+                <p className="text-xs">Send a message to begin chatting</p>
               </div>
             </div>
           ) : (
@@ -585,57 +696,99 @@ export function ChatWindow({
               return (
                 <div
                   key={`${message.id}-${index}`}
-                  className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
+                  className={`flex items-start space-x-3 ${isOwnMessage ? 'flex-row-reverse space-x-reverse' : ''}`}
                 >
-                  <div
-                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                  {/* Avatar */}
+                  <div className="flex-shrink-0">
+                    <div className="w-6 h-6 rounded-full bg-token-surface-alt flex items-center justify-center">
+                      {isOwnMessage ? (
+                        // Current user avatar (student in student view, tutor in tutor view)
+                        user?.user_metadata?.avatar_url ? (
+                          <img
+                            src={user.user_metadata.avatar_url}
+                            alt="You"
+                            className="w-6 h-6 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-6 h-6 rounded-full bg-token-primary text-white flex items-center justify-center text-xs font-semibold">
+                            {user?.email?.charAt(0).toUpperCase() || 'U'}
+                          </div>
+                        )
+                      ) : (
+                        // Other participant avatar (tutor in student view, student in tutor view)
+                        isStudentView ? (
+                          // In student view, show tutor avatar
+                          tutorImage ? (
+                            <img
+                              src={tutorImage}
+                              alt={tutorName}
+                              className="w-6 h-6 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-6 h-6 rounded-full bg-token-primary text-white flex items-center justify-center text-xs font-semibold">
+                              {tutorName?.charAt(0) || 'T'}
+                            </div>
+                          )
+                        ) : (
+                          // In tutor view, show student avatar (placeholder for now)
+                          <div className="w-6 h-6 rounded-full bg-token-primary text-white flex items-center justify-center text-xs font-semibold">
+                            S
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Message bubble */}
+                  <div className={`flex-1 min-w-0 ${isOwnMessage ? 'text-right' : ''}`}>
+                    <div className={`rounded-lg p-2 inline-block max-w-[280px] ${
                       isOwnMessage
                         ? 'bg-primary text-primary-foreground'
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-                    }`}
-                  >
-                    {message.message_type === 'file' ? (
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          {getFileIcon(message.file_name || '')}
-                          <span className="text-sm font-medium">{message.file_name}</span>
+                    }`}>
+                      {message.message_type === 'file' ? (
+                        <div className="space-y-1">
+                          <div className="flex items-center space-x-1">
+                            {getFileIcon(message.file_name || '')}
+                            <span className="text-xs font-medium">{message.file_name}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-xs">
+                            <span className={isOwnMessage ? 'text-primary-foreground/70' : 'text-gray-500 dark:text-gray-400'}>
+                              {formatFileSize(message.file_size || 0)}
+                            </span>
+                            {message.file_url && (
+                              <button
+                                onClick={() => handleFileDownload(message.file_url!, message.file_name!)}
+                                className={`flex items-center space-x-1 hover:underline ${
+                                  isOwnMessage ? 'text-primary-foreground/70 hover:text-primary-foreground' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                                }`}
+                              >
+                                <Download className="h-2 w-2" />
+                                <span className="text-xs">Download</span>
+                              </button>
+                            )}
+                          </div>
+                          <p className={`text-xs mt-1 ${
+                            isOwnMessage
+                              ? 'text-primary-foreground/70'
+                              : 'text-gray-500 dark:text-gray-400'
+                          }`}>
+                            {formatTime(message.created_at)}
+                          </p>
                         </div>
-                        <div className="flex items-center justify-between text-xs">
-                          <span className={isOwnMessage ? 'text-primary-foreground/70' : 'text-gray-500 dark:text-gray-400'}>
-                            {formatFileSize(message.file_size || 0)}
-                          </span>
-                          {message.file_url && (
-                            <button
-                              onClick={() => handleFileDownload(message.file_url!, message.file_name!)}
-                              className={`flex items-center space-x-1 hover:underline ${
-                                isOwnMessage ? 'text-primary-foreground/70 hover:text-primary-foreground' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
-                              }`}
-                            >
-                              <Download className="h-3 w-3" />
-                              <span>Download</span>
-                            </button>
-                          )}
-                        </div>
-                        <p className={`text-xs mt-1 ${
-                          isOwnMessage
-                            ? 'text-primary-foreground/70'
-                            : 'text-gray-500 dark:text-gray-400'
-                        }`}>
-                          {formatTime(message.created_at)}
-                        </p>
-                      </div>
-                    ) : (
-                      <>
-                        <p className="text-sm">{message.message}</p>
-                        <p className={`text-xs mt-1 ${
-                          isOwnMessage
-                            ? 'text-primary-foreground/70'
-                            : 'text-gray-500 dark:text-gray-400'
-                        }`}>
-                          {formatTime(message.created_at)}
-                        </p>
-                      </>
-                    )}
+                      ) : (
+                        <>
+                          <p className="text-xs">{message.message}</p>
+                          <p className={`text-xs mt-1 ${
+                            isOwnMessage
+                              ? 'text-primary-foreground/70'
+                              : 'text-gray-500 dark:text-gray-400'
+                          }`}>
+                            {formatTime(message.created_at)}
+                          </p>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               )
@@ -645,37 +798,37 @@ export function ChatWindow({
         </div>
 
         {/* Input Area */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="p-3 border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-2">
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 w-8 p-0"
+              className="h-7 w-7 p-0"
               onClick={() => fileInputRef.current?.click()}
               disabled={!user || !session || isUploading}
             >
-              <Paperclip className="h-4 w-4" />
+              <Paperclip className="h-3 w-3" />
             </Button>
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder={!user || !session ? "Please log in to send messages" : "Send a message"}
-              className="flex-1"
+              className="flex-1 text-sm h-8"
               disabled={!user || !session || !currentConversationId}
             />
             <Button
               size="sm"
               onClick={sendMessage}
               disabled={!user || !session || !newMessage.trim() || !currentConversationId || isUploading}
-              className="h-8 w-8 p-0"
+              className="h-7 w-7 p-0"
             >
-              <Send className="h-4 w-4" />
+              <Send className="h-3 w-3" />
             </Button>
           </div>
           {isUploading && (
-            <div className="mt-2 text-center text-sm text-gray-500 dark:text-gray-400">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mx-auto mb-1"></div>
+            <div className="mt-2 text-center text-xs text-gray-500 dark:text-gray-400">
+              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary mx-auto mb-1"></div>
               Uploading... {uploadProgress}%
             </div>
           )}

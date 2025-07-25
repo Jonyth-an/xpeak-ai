@@ -675,7 +675,7 @@ export default function StudentDetailPage() {
                                   </div>
                                   {/* Message bubble */}
                                   <div className={`flex-1 min-w-0 ${isRightAligned ? 'text-right' : ''}`}>                                  
-                                    <div className={`rounded-lg p-3 ${
+                                    <div className={`rounded-lg p-3 inline-block max-w-xs lg:max-w-md ${
                                       isRightAligned 
                                         ? 'bg-token-primary text-white' 
                                         : 'bg-token-surface-subtle'

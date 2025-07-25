@@ -63,23 +63,13 @@ export async function GET(request: NextRequest) {
         
         if (tutorParticipant) {
           const { data: tutorProfile } = await serverSupabase
-            .from('profiles')
-            .select('id, full_name, email')
-            .eq('id', tutorParticipant.user_id)
-            .single()
-          
-          tutorName = tutorProfile?.full_name || tutorProfile?.email || 'Tutor'
-          tutorEmail = tutorProfile?.email || ''
-          tutorId = tutorProfile?.id || ''
-          
-          // Get tutor profile image if available
-          const { data: tutorImage } = await serverSupabase
             .from('tutor_profiles')
-            .select('profile_image_url')
+            .select('profile_image_url, display_name')
             .eq('user_id', tutorParticipant.user_id)
             .single()
-          
-          tutorImageUrl = tutorImage?.profile_image_url || ''
+          tutorName = tutorProfile?.display_name || 'Tutor'
+          tutorImageUrl = tutorProfile?.profile_image_url || ''
+          tutorId = tutorParticipant.user_id
         }
 
         // Get the latest message for this conversation

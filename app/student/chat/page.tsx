@@ -7,7 +7,7 @@ import Layout from '@/components/Layout'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import RequireEmailVerification from '@/app/components/RequireEmailVerification'
 import DashboardSidebar from '@/app/student/dashboard/components/DashboardSidebar'
-import { ChatWindow } from '@/app/components/ChatWindow'
+import { FullPageChat } from '@/app/components/FullPageChat'
 import { Button, Input, Badge, Text } from '@/app/components/ui'
 import { 
   Search, 
@@ -330,17 +330,25 @@ export default function StudentChatPage() {
                     <div className={`flex-1 flex flex-col ${selectedConversation ? 'flex' : 'hidden lg:flex'}`}>
                       {selectedConversation ? (
                         <>
-                          {/* Chat Header removed */}
+                          {/* Mobile Back Button */}
+                          <div className="lg:hidden p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                            <Button
+                              variant="tertiary"
+                              size="sm"
+                              onClick={() => setSelectedConversation(null)}
+                              className="flex items-center gap-2"
+                            >
+                              <ArrowLeft className="h-4 w-4" />
+                              Back to Conversations
+                            </Button>
+                          </div>
                           {/* Chat Messages */}
                           <div className="flex-1 overflow-hidden">
-                            <ChatWindow
-                              isOpen={true}
-                              onClose={() => setSelectedConversation(null)}
-                              tutorId={selectedConversation.tutor.id}
+                            <FullPageChat
+                              conversationId={selectedConversation.id}
                               tutorName={selectedConversation.tutor.name}
                               tutorImage={selectedConversation.tutor.profile_image_url}
-                              conversationId={selectedConversation.id}
-                              isStudentView={true}
+                              onClose={() => setSelectedConversation(null)}
                             />
                           </div>
                         </>

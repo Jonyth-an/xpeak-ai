@@ -71,9 +71,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('Looking for direct conversation between student:', user.id, 'and tutor user_id:', tutorProfile.user_id)
+    console.log('🔍 Looking for direct conversation between student:', user.id, 'and tutor user_id:', tutorProfile.user_id)
+
+    // Prevent users from messaging themselves
+    if (user.id === tutorProfile.user_id) {
+      console.error('❌ User attempting to message themselves:', user.id)
+      return NextResponse.json(
+        { 
+          error: 'Cannot message yourself', 
+          details: 'You cannot start a conversation with your own tutor profile',
+          code: 'SELF_MESSAGE_ATTEMPT'
+        },
+        { status: 400 }
+      )
+    }
 
     // First, check if a direct conversation already exists using the chat service
+    console.log('🔍 Checking for existing conversation...')
     const existingConversation = await chatService.findExistingConversation(
       user.id, 
       tutorProfile.user_id, 
@@ -81,44 +95,77 @@ export async function POST(request: NextRequest) {
     )
 
     if (existingConversation) {
-      console.log('Found existing conversation:', existingConversation.id)
+      console.log('✅ Found existing conversation:', existingConversation.id)
       return NextResponse.json({ 
         conversation: existingConversation,
         isNew: false
       })
     }
 
-    console.log('No existing conversation found, creating new one...')
+    console.log('❌ No existing conversation found, creating new one...')
 
     const conversationTitle = tutorProfile.display_name 
       ? `Chat with ${tutorProfile.display_name}`
       : `Chat with Tutor`
 
-    console.log('Creating new direct conversation with title:', conversationTitle)
-    console.log('Tutor user_id:', tutorProfile.user_id)
+    console.log('🔄 Creating new direct conversation with title:', conversationTitle)
+    console.log('🔄 Tutor user_id:', tutorProfile.user_id)
 
     // Create new conversation using the tutor's user_id, not their profile ID
-    const newConversation = await chatService.createConversationWithUser({
-      title: conversationTitle,
-      conversation_type: 'student_tutor',
-      participants: [tutorProfile.user_id], // Use the tutor's user_id, not their profile ID
-      participant_roles: ['tutor'],
-      userId: user.id
-    }, serverSupabase)
+    try {
+      console.log('🔄 Calling chatService.createConversationWithUser...')
+      const newConversation = await chatService.createConversationWithUser({
+        title: conversationTitle,
+        conversation_type: 'student_tutor',
+        participants: [tutorProfile.user_id], // Use the tutor's user_id, not their profile ID
+        participant_roles: ['tutor'],
+        userId: user.id
+      }, serverSupabase)
 
-    if (!newConversation) {
-      console.error('Failed to create conversation - chatService returned null')
+      if (!newConversation) {
+        console.error('❌ Failed to create conversation - chatService returned null')
+        return NextResponse.json(
+          { error: 'Failed to create conversation', details: 'Chat service returned null' },
+          { status: 500 }
+        )
+      }
+
+      console.log('✅ Conversation created successfully:', newConversation.id)
+      return NextResponse.json({ 
+        conversation: newConversation,
+        isNew: true
+      })
+    } catch (error) {
+      console.error('❌ Error creating conversation:', error)
+      
+      // Handle specific error cases
+      if (error instanceof Error) {
+        console.log('❌ Error message:', error.message)
+        if (error.message.includes('Student and tutor must be different users')) {
+          console.log('❌ Self-messaging detected')
+          return NextResponse.json(
+            { 
+              error: 'Cannot message yourself', 
+              details: 'You cannot start a conversation with your own tutor profile',
+              code: 'SELF_MESSAGE_ATTEMPT'
+            },
+            { status: 400 }
+          )
+        }
+        
+        console.log('❌ Generic error, returning 500')
+        return NextResponse.json(
+          { error: 'Failed to create conversation', details: error.message },
+          { status: 500 }
+        )
+      }
+      
+      console.log('❌ Unknown error type')
       return NextResponse.json(
-        { error: 'Failed to create conversation', details: 'Chat service returned null' },
+        { error: 'Failed to create conversation', details: 'Unknown error occurred' },
         { status: 500 }
       )
     }
-
-    console.log('Direct conversation created successfully:', newConversation)
-    return NextResponse.json({ 
-      conversation: newConversation,
-      isNew: true
-    })
   } catch (error) {
     console.error('Error in direct conversation API:', error)
     return NextResponse.json(

@@ -363,7 +363,7 @@ class ChatService {
    */
   async findExistingConversation(userId1: string, userId2: string, conversationType: string = 'student_tutor'): Promise<Conversation | null> {
     try {
-      console.log('Finding existing conversation between users:', userId1, userId2, 'type:', conversationType)
+      console.log('🔍 Finding existing conversation between users:', userId1, userId2, 'type:', conversationType)
       
       // Get all conversations where user1 is a participant
       const { data: user1Conversations, error: user1Error } = await supabase
@@ -387,11 +387,18 @@ class ChatService {
         .eq('conversation_participants.user_id', userId1)
 
       if (user1Error) {
-        console.error('Error fetching user1 conversations:', user1Error)
+        console.error('❌ Error fetching user1 conversations:', user1Error)
         return null
       }
 
-      console.log('Found conversations for user1:', user1Conversations?.length || 0)
+      console.log('📊 Found conversations for user1:', user1Conversations?.length || 0)
+      if (user1Conversations && user1Conversations.length > 0) {
+        console.log('📋 User1 conversations:', user1Conversations.map(c => ({
+          id: c.id,
+          title: c.title,
+          participants: c.participants?.map(p => ({ user_id: p.user_id, role: p.role }))
+        })))
+      }
 
       // Find conversation that also has user2 as participant
       const existingConversation = user1Conversations?.find(conv => 
@@ -399,7 +406,7 @@ class ChatService {
       )
 
       if (existingConversation) {
-        console.log('Found existing conversation:', existingConversation.id)
+        console.log('✅ Found existing conversation:', existingConversation.id)
         return existingConversation
       }
 
@@ -425,11 +432,18 @@ class ChatService {
         .eq('conversation_participants.user_id', userId2)
 
       if (user2Error) {
-        console.error('Error fetching user2 conversations:', user2Error)
+        console.error('❌ Error fetching user2 conversations:', user2Error)
         return null
       }
 
-      console.log('Found conversations for user2:', user2Conversations?.length || 0)
+      console.log('📊 Found conversations for user2:', user2Conversations?.length || 0)
+      if (user2Conversations && user2Conversations.length > 0) {
+        console.log('📋 User2 conversations:', user2Conversations.map(c => ({
+          id: c.id,
+          title: c.title,
+          participants: c.participants?.map(p => ({ user_id: p.user_id, role: p.role }))
+        })))
+      }
 
       // Find conversation that also has user1 as participant
       const existingConversationFromUser2 = user2Conversations?.find(conv => 
@@ -437,14 +451,14 @@ class ChatService {
       )
 
       if (existingConversationFromUser2) {
-        console.log('Found existing conversation from user2 perspective:', existingConversationFromUser2.id)
+        console.log('✅ Found existing conversation from user2 perspective:', existingConversationFromUser2.id)
         return existingConversationFromUser2
       }
 
-      console.log('No existing conversation found')
+      console.log('❌ No existing conversation found')
       return null
     } catch (error) {
-      console.error('Error finding existing conversation:', error)
+      console.error('❌ Error finding existing conversation:', error)
       return null
     }
   }
@@ -511,14 +525,31 @@ class ChatService {
 
       if (participantsError) {
         console.error('Error adding participants:', participantsError)
-        throw participantsError
+        // Check for specific constraint violations
+        // @ts-ignore
+        if (participantsError.code === 'P0001' && participantsError.message.includes('Student-tutor conversations must have exactly')) {
+          const err = new Error('Cannot create conversation: Student and tutor must be different users')
+          // @ts-ignore
+          err.code = 'STUDENT_TUTOR_CONSTRAINT'
+          throw err
+        }
+        // @ts-ignore
+        if (participantsError.code) {
+          const err = new Error(participantsError.message || 'Failed to add participants')
+          // @ts-ignore
+          err.code = participantsError.code
+          throw err
+        }
+        throw new Error(participantsError.message || 'Failed to add participants')
       }
 
       console.log('Conversation created successfully:', conversation)
       return conversation
     } catch (error) {
       console.error('Failed to create conversation:', error)
-      return null
+      // Always throw, never return null
+      if (error instanceof Error) throw error
+      throw new Error('Failed to create conversation: Unknown error')
     }
   }
 
@@ -552,21 +583,43 @@ class ChatService {
 
       console.log('Conversation created, adding participants...')
 
-      // Prepare participants list - filter out current user from input to avoid duplicates
-      const otherParticipants = input.participants.filter(userId => userId !== input.userId)
+      // Prepare participants list for student-tutor conversations
+      let allParticipants
       
-      const allParticipants = [
-        {
-          conversation_id: conversation.id,
-          user_id: input.userId,
-          role: 'student' as const // Default role for conversation creator
-        },
-        ...otherParticipants.map((userId, index) => ({
-          conversation_id: conversation.id,
-          user_id: userId,
-          role: input.participant_roles[index] || 'student'
-        }))
-      ]
+      if (input.conversation_type === 'student_tutor') {
+        // For student-tutor conversations, ensure we have exactly one student and one tutor
+        const studentId = input.userId
+        const tutorId = input.participants[0] // The tutor should be the first (and only) participant
+        
+        allParticipants = [
+          {
+            conversation_id: conversation.id,
+            user_id: studentId,
+            role: 'student' as const
+          },
+          {
+            conversation_id: conversation.id,
+            user_id: tutorId,
+            role: 'tutor' as const
+          }
+        ]
+      } else {
+        // For other conversation types, use the original logic
+        const otherParticipants = input.participants.filter(userId => userId !== input.userId)
+        
+        allParticipants = [
+          {
+            conversation_id: conversation.id,
+            user_id: input.userId,
+            role: 'student' as const // Default role for conversation creator
+          },
+          ...otherParticipants.map((userId, index) => ({
+            conversation_id: conversation.id,
+            user_id: userId,
+            role: input.participant_roles[index] || 'student'
+          }))
+        ]
+      }
 
       console.log('Adding participants:', allParticipants)
 
@@ -576,6 +629,13 @@ class ChatService {
 
       if (participantsError) {
         console.error('Error adding participants:', participantsError)
+        
+        // Check for specific constraint violations
+        // @ts-ignore
+        if (participantsError.code === 'P0001' && participantsError.message.includes('Student-tutor conversations must have exactly')) {
+          throw new Error('Cannot create conversation: Student and tutor must be different users')
+        }
+        
         throw participantsError
       }
 
@@ -583,7 +643,13 @@ class ChatService {
       return conversation
     } catch (error) {
       console.error('Failed to create conversation:', error)
-      return null
+      
+      // Return a more specific error instead of null
+      if (error instanceof Error) {
+        throw error
+      }
+      
+      throw new Error('Failed to create conversation: Unknown error')
     }
   }
 
