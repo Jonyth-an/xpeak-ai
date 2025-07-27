@@ -24,10 +24,7 @@ import { useRoles } from '@/lib/RolesContext';
 import { supabase } from '@/lib/supabaseClient';
 import dynamic from 'next/dynamic';
 
-// Dynamic imports for sidebar components
-const AvatarUpload = dynamic(() => import('./AvatarUpload'), {
-  loading: () => <div className="animate-pulse bg-gray-200 h-16 w-16 rounded-full" />
-});
+// Dynamic imports for sidebar components (if needed)
 
 interface ProfileSidebarProps {
   activeTab: string;
@@ -185,7 +182,7 @@ export default function ProfileSidebar({
 
   const handleTutorApplicationClick = () => {
     // Navigate to tutor application page
-    window.location.href = '/tutor-application';
+    window.location.href = '/student/tutor-application';
   };
 
   const handleTabClick = (tabId: string) => {

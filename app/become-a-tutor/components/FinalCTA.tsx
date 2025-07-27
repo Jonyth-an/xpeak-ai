@@ -34,7 +34,7 @@ export default function FinalCTA() {
           />
         ))}
       </div>
-      <Link href="/become-a-tutor" passHref legacyBehavior>
+      <Link href="/become-a-tutor">
         <Button variant="primary" size="lg">
           Become a Tutor
         </Button>

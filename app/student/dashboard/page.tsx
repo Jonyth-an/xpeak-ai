@@ -6,7 +6,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import RequireEmailVerification from '@/app/components/RequireEmailVerification';
 import Text from '@/app/components/ui/Text';
 import { Button, Card } from '@/app/components/ui';
-import { Sparkles, BookOpen, Users, Trophy, ArrowRight, Calendar, Clock, User, Video, Eye, CheckCircle, X, RefreshCw } from 'lucide-react';
+import { Sparkles, BookOpen, Users, Trophy, ArrowRight, Calendar, Clock, User, Video, Eye, CheckCircle, X, RefreshCw, GraduationCap } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/AuthContext';
 import DashboardSidebar from './components/DashboardSidebar';
@@ -396,7 +396,7 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Quick Actions */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                       <Link href="/word-maze">
                         <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer border border-gray-200 rounded-xl">
                           <div className="w-12 h-12 bg-gradient-to-br from-token-primary to-token-accent rounded-xl flex items-center justify-center mb-4">
@@ -435,6 +435,20 @@ export default function DashboardPage() {
                           </Text>
                           <Text variant="body" className="text-token-text-secondary text-sm">
                             Find and book lessons with qualified language tutors
+                          </Text>
+                        </Card>
+                      </Link>
+
+                      <Link href="/student/tutor-application">
+                        <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer border border-gray-200 rounded-xl">
+                          <div className="w-12 h-12 bg-gradient-to-br from-token-success to-token-accent rounded-xl flex items-center justify-center mb-4">
+                            <GraduationCap className="w-6 h-6 text-white" />
+                          </div>
+                          <Text variant="h3" as="h3" className="mb-2">
+                            Become a Tutor
+                          </Text>
+                          <Text variant="body" className="text-token-text-secondary text-sm">
+                            Share your language skills and start teaching others
                           </Text>
                         </Card>
                       </Link>

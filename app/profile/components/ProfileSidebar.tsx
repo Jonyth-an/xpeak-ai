@@ -179,7 +179,7 @@ export default function ProfileSidebar({
 
   const handleTutorApplicationClick = () => {
     // Navigate to tutor application page
-    window.location.href = '/tutor-application';
+    window.location.href = '/student/tutor-application';
   };
 
   const handleTabClick = (tabId: string) => {

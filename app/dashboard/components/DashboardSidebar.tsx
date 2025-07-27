@@ -188,7 +188,7 @@ export default function DashboardSidebar({ userEmail }: DashboardSidebarProps) {
 
   const handleTutorApplicationClick = () => {
     // Navigate to tutor application page
-    window.location.href = '/become-a-tutor';
+    window.location.href = '/student/tutor-application';
   };
 
   const sidebarContent = (
