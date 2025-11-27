@@ -20,15 +20,6 @@ const languages = [
   "English",
   "Spanish",
   "Chinese (Mandarin)",
-  "French",
-  "German",
-  "Italian",
-  "Portuguese",
-  "Russian",
-  "Japanese",
-  "Korean",
-  "Arabic",
-  "Hindi",
 ];
 
 const fluencyLevels = ["Basic", "Intermediate", "Fluent", "Native"];

@@ -223,11 +223,20 @@ export default function TutorApplicationDetailPage() {
 
     setUpdating(true);
     try {
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
+      
+      if (!token) {
+        console.error('No authentication token available');
+        alert('Authentication error. Please log in again.');
+        return;
+      }
+
       const response = await fetch(`/api/admin/tutor-applications/${applicationId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           status: newStatus,
@@ -238,12 +247,29 @@ export default function TutorApplicationDetailPage() {
       });
 
       if (response.ok) {
+        const data = await response.json();
+        console.log('Application status updated successfully:', data);
         await loadApplication();
+        // Show success message
+        alert(`Application ${newStatus} successfully!`);
       } else {
-        console.error('Failed to update application status');
+        // Get error details from response
+        let errorMessage = 'Failed to update application status';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.message || errorMessage;
+          console.error('Failed to update application status:', response.status, errorData);
+        } catch (e) {
+          const errorText = await response.text();
+          console.error('Failed to update application status:', response.status, errorText);
+          errorMessage = errorText || errorMessage;
+        }
+        alert(`Error: ${errorMessage}`);
       }
     } catch (error) {
       console.error('Error updating application status:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      alert(`Error: ${errorMessage}`);
     } finally {
       setUpdating(false);
     }

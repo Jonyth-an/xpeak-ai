@@ -559,6 +559,16 @@ class ChatService {
   async createConversationWithUser(input: CreateConversationInput & { userId: string }, supabaseClient?: any): Promise<Conversation | null> {
     try {
       console.log('Creating conversation with user ID:', input.userId)
+      console.log('Input:', JSON.stringify(input, null, 2))
+      
+      // Validate input
+      if (!input.userId) {
+        throw new Error('User ID is required')
+      }
+      
+      if (!input.participants || input.participants.length === 0) {
+        throw new Error('At least one participant is required')
+      }
       
       // Use provided client or fall back to default
       const client = supabaseClient || supabase
@@ -578,7 +588,13 @@ class ChatService {
 
       if (conversationError) {
         console.error('Error creating conversation:', conversationError)
-        throw conversationError
+        console.error('Error details:', JSON.stringify(conversationError, null, 2))
+        const errorMessage = conversationError.message || 'Failed to create conversation'
+        throw new Error(errorMessage)
+      }
+      
+      if (!conversation || !conversation.id) {
+        throw new Error('Conversation was created but no ID was returned')
       }
 
       console.log('Conversation created, adding participants...')
@@ -590,6 +606,14 @@ class ChatService {
         // For student-tutor conversations, ensure we have exactly one student and one tutor
         const studentId = input.userId
         const tutorId = input.participants[0] // The tutor should be the first (and only) participant
+        
+        if (!tutorId) {
+          throw new Error('Tutor ID is required for student-tutor conversations')
+        }
+        
+        if (studentId === tutorId) {
+          throw new Error('Student and tutor must be different users')
+        }
         
         allParticipants = [
           {
@@ -616,12 +640,12 @@ class ChatService {
           ...otherParticipants.map((userId, index) => ({
             conversation_id: conversation.id,
             user_id: userId,
-            role: input.participant_roles[index] || 'student'
+            role: input.participant_roles?.[index] || 'student'
           }))
         ]
       }
 
-      console.log('Adding participants:', allParticipants)
+      console.log('Adding participants:', JSON.stringify(allParticipants, null, 2))
 
       const { error: participantsError } = await client
         .from('conversation_participants')
@@ -629,27 +653,42 @@ class ChatService {
 
       if (participantsError) {
         console.error('Error adding participants:', participantsError)
+        console.error('Error details:', JSON.stringify(participantsError, null, 2))
         
         // Check for specific constraint violations
-        // @ts-ignore
-        if (participantsError.code === 'P0001' && participantsError.message.includes('Student-tutor conversations must have exactly')) {
+        const errorMessage = participantsError.message || 'Failed to add participants'
+        const errorCode = (participantsError as any)?.code
+        
+        if (errorCode === 'P0001' || errorMessage.includes('Student-tutor conversations must have exactly')) {
           throw new Error('Cannot create conversation: Student and tutor must be different users')
         }
         
-        throw participantsError
+        if (errorMessage.includes('duplicate') || errorMessage.includes('unique')) {
+          throw new Error('Conversation already exists between these users')
+        }
+        
+        throw new Error(`Failed to add participants: ${errorMessage}`)
       }
 
-      console.log('Conversation created successfully:', conversation)
+      console.log('Conversation created successfully:', conversation.id)
       return conversation
     } catch (error) {
       console.error('Failed to create conversation:', error)
+      console.error('Error type:', typeof error)
+      console.error('Error object:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2))
       
-      // Return a more specific error instead of null
+      // Return a more specific error
       if (error instanceof Error) {
         throw error
       }
       
-      throw new Error('Failed to create conversation: Unknown error')
+      // Handle Supabase PostgrestError
+      if (error && typeof error === 'object' && 'message' in error) {
+        const errorMessage = (error as any).message || 'Unknown error'
+        throw new Error(`Failed to create conversation: ${errorMessage}`)
+      }
+      
+      throw new Error(`Failed to create conversation: ${String(error)}`)
     }
   }
 

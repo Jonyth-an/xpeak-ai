@@ -95,7 +95,7 @@ export default function Footer() {
         </div>
         <hr className="my-8 border-border" />
         <div className="flex flex-col md:flex-row items-center justify-between text-xs text-text-muted gap-2">
-          <div>© 2025 Xpeak Inc. | Help the World Speak as One</div>
+          <div>© 2025 Xpeak Lab Inc. | Help the World Speak as One</div>
           <div className="flex space-x-4">
             <Link href="#" className="hover:text-primary-500">Terms of Service</Link>
             <Link href="#" className="hover:text-primary-500">Privacy Policy</Link>

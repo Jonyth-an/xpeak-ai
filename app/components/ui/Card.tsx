@@ -19,7 +19,7 @@ export default function Card({
   ...props 
 }: CardProps) {
   const baseClasses = cn(
-    'bg-token-surface border border-token-surface-alt transition-all duration-token-base',
+    'bg-token-surface border border-token-surface-alt transition-all duration-token-base rounded-lg',
     interactive && !disabled && 'cursor-pointer hover:shadow-md focus:outline-none focus:ring-2 focus:ring-token-primary focus:ring-offset-2',
     disabled && 'opacity-50 cursor-not-allowed'
   );

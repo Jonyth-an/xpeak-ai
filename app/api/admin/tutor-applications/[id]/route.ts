@@ -121,7 +121,19 @@ export async function POST(
 
       if (error) {
         console.error('Error updating review notes:', error);
-        return NextResponse.json({ error: 'Failed to update review notes' }, { status: 500 });
+        console.error('Error details:', JSON.stringify(error, null, 2));
+        return NextResponse.json({ 
+          error: 'Failed to update review notes',
+          details: error.message,
+          code: error.code
+        }, { status: 500 });
+      }
+
+      if (!application) {
+        console.error('Review notes update returned no data');
+        return NextResponse.json({ 
+          error: 'Review notes update completed but no data was returned' 
+        }, { status: 500 });
       }
 
       return NextResponse.json({
@@ -170,7 +182,44 @@ export async function POST(
 
     if (error) {
       console.error('Error updating tutor application:', error);
-      return NextResponse.json({ error: 'Failed to update application' }, { status: 500 });
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      console.error('Update data:', JSON.stringify(updateData, null, 2));
+      console.error('Application ID:', id);
+      
+      // Provide more specific error messages
+      let errorMessage = 'Failed to update application';
+      let errorDetails = error.message || 'Unknown error';
+      
+      if (error.code === 'PGRST116') {
+        errorMessage = 'Application not found';
+      } else if (error.message) {
+        // Check for specific database errors
+        if (error.message.includes('hourly_rate')) {
+          errorMessage = 'Database configuration error: hourly_rate column issue';
+          errorDetails = 'The database trigger function needs to be updated. Please run the migration: database/migrations/fix_tutor_profile_trigger_no_hourly_rate.sql';
+        } else if (error.message.includes('column') && error.message.includes('does not exist')) {
+          errorMessage = 'Database schema error';
+          errorDetails = error.message;
+        } else {
+          errorMessage = `Failed to update application: ${error.message}`;
+        }
+      }
+      
+      return NextResponse.json({ 
+        error: errorMessage,
+        details: errorDetails,
+        code: error.code,
+        hint: error.message?.includes('hourly_rate') 
+          ? 'Run: node scripts/fix-tutor-profile-trigger.js or apply the migration manually'
+          : undefined
+      }, { status: 500 });
+    }
+
+    if (!application) {
+      console.error('Application update returned no data');
+      return NextResponse.json({ 
+        error: 'Application update completed but no data was returned' 
+      }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -180,6 +229,12 @@ export async function POST(
 
   } catch (error) {
     console.error('Error in tutor application review API:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('Error details:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
+    
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: errorMessage
+    }, { status: 500 });
   }
 } 

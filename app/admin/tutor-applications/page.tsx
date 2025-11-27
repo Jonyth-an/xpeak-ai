@@ -284,8 +284,6 @@ export default function TutorApplicationsPage() {
                   <option value="English">English</option>
                   <option value="Spanish">Spanish</option>
                   <option value="Chinese (Mandarin)">Chinese (Mandarin)</option>
-                  <option value="French">French</option>
-                  <option value="German">German</option>
                 </Select>
               </div>
               <div>

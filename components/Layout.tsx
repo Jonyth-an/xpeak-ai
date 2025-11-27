@@ -27,6 +27,7 @@ export default function Layout({ children, heroBackgroundColor }: LayoutProps) {
     '/dashboard',
     '/profile',
     '/admin',
+    '/student/tutor-application', // Tutor application page
     '/meet-sagea', // Has its own hero section
     '/topic-spark', // Has its own hero section
     '/word-maze', // Has its own hero section

@@ -23,10 +23,7 @@ const ProfileSidebar = dynamic(() => import('../profile/components/ProfileSideba
 
 // Data constants
 const languages = [
-  "English", "Spanish", "Chinese (Mandarin)", "French", "German", "Italian", 
-  "Portuguese", "Russian", "Japanese", "Korean", "Arabic", "Hindi", "Dutch", 
-  "Swedish", "Norwegian", "Danish", "Finnish", "Polish", "Czech", "Hungarian", 
-  "Turkish", "Greek"
+  "English", "Spanish", "Chinese (Mandarin)"
 ];
 
 const countries = [
@@ -251,7 +248,7 @@ export default function TutorApplicationPage() {
       <ProtectedRoute>
         <RequireEmailVerification>
           <Layout>
-            <section className="py-20 px-4 sm:px-6 lg:px-8 bg-token-surface-accent-light min-h-screen">
+            <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white min-h-screen">
               <div className="max-w-7xl mx-auto">
                 <div className="relative lg:flex lg:min-h-[600px]">
                   {/* Sidebar */}
@@ -317,7 +314,7 @@ export default function TutorApplicationPage() {
     <ProtectedRoute>
       <RequireEmailVerification>
         <Layout>
-          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-token-surface-accent-light min-h-screen">
+          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
               {/* Main Content with Sidebar - Use flex for large screens */}
               <div className="relative lg:flex lg:min-h-[600px]">

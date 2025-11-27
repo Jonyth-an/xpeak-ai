@@ -64,35 +64,32 @@ export default function Header({ heroBackgroundColor }: HeaderProps) {
   const contextHeroColor = useHeroBackground();
   const finalHeroColor = heroBackgroundColor || contextHeroColor;
 
+  // Pages that should always have a light header
+  const lightHeaderPages = [
+    '/student/tutor-application',
+    '/student/profile',
+    '/student/dashboard',
+    '/tutor',
+    '/admin'
+  ];
+  
+  const shouldUseLightHeader = lightHeaderPages.some(page => pathname.startsWith(page));
+
   // Determine header background based on scroll state and hero color
   const getHeaderBackground = () => {
-    if (isScrolled) {
-      return 'bg-white shadow-token-md';
-    }
-    
-    if (finalHeroColor) {
-      return 'backdrop-blur-sm';
-    }
-    
-    return 'bg-transparent backdrop-blur-sm';
+    // Always use white background for better consistency
+    return 'bg-white shadow-md';
   };
 
   const getHeaderStyle = () => {
-    if (isScrolled) {
-      return {};
-    }
-    
-    if (finalHeroColor) {
-      return { background: finalHeroColor };
-    }
-    
-    return {};
+    // Always use white background
+    return { background: '#ffffff' };
   };
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${getHeaderBackground()}`}
-      style={getHeaderStyle()}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white shadow-md`}
+      style={{ background: '#ffffff !important' }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">

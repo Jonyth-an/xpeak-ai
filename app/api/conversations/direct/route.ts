@@ -114,6 +114,15 @@ export async function POST(request: NextRequest) {
     // Create new conversation using the tutor's user_id, not their profile ID
     try {
       console.log('🔄 Calling chatService.createConversationWithUser...')
+      console.log('🔄 Student ID:', user.id)
+      console.log('🔄 Tutor user_id:', tutorProfile.user_id)
+      console.log('🔄 Title:', conversationTitle)
+      
+      // Validate that we have all required data
+      if (!tutorProfile.user_id) {
+        throw new Error('Tutor user_id is missing')
+      }
+      
       const newConversation = await chatService.createConversationWithUser({
         title: conversationTitle,
         conversation_type: 'student_tutor',
@@ -137,11 +146,14 @@ export async function POST(request: NextRequest) {
       })
     } catch (error) {
       console.error('❌ Error creating conversation:', error)
+      console.error('❌ Error type:', typeof error)
+      console.error('❌ Error details:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2))
       
       // Handle specific error cases
       if (error instanceof Error) {
         console.log('❌ Error message:', error.message)
-        if (error.message.includes('Student and tutor must be different users')) {
+        if (error.message.includes('Student and tutor must be different users') || 
+            error.message.includes('Cannot create conversation: Student and tutor must be different users')) {
           console.log('❌ Self-messaging detected')
           return NextResponse.json(
             { 
@@ -153,16 +165,52 @@ export async function POST(request: NextRequest) {
           )
         }
         
+        if (error.message.includes('Conversation already exists')) {
+          // If conversation already exists, try to find it
+          console.log('🔄 Conversation already exists, attempting to find it...')
+          const existingConversation = await chatService.findExistingConversation(
+            user.id, 
+            tutorProfile.user_id, 
+            'student_tutor'
+          )
+          
+          if (existingConversation) {
+            console.log('✅ Found existing conversation:', existingConversation.id)
+            return NextResponse.json({ 
+              conversation: existingConversation,
+              isNew: false
+            })
+          }
+        }
+        
         console.log('❌ Generic error, returning 500')
         return NextResponse.json(
-          { error: 'Failed to create conversation', details: error.message },
+          { 
+            error: 'Failed to create conversation', 
+            details: error.message || 'Unknown error occurred'
+          },
+          { status: 500 }
+        )
+      }
+      
+      // Handle Supabase PostgrestError
+      if (error && typeof error === 'object' && 'message' in error) {
+        const errorMessage = (error as any).message || 'Unknown error'
+        return NextResponse.json(
+          { 
+            error: 'Failed to create conversation', 
+            details: errorMessage
+          },
           { status: 500 }
         )
       }
       
       console.log('❌ Unknown error type')
       return NextResponse.json(
-        { error: 'Failed to create conversation', details: 'Unknown error occurred' },
+        { 
+          error: 'Failed to create conversation', 
+          details: error ? String(error) : 'Unknown error occurred' 
+        },
         { status: 500 }
       )
     }
